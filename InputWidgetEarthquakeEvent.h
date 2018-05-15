@@ -69,6 +69,7 @@ private:
    SimCenterWidget *theCurrentEvent;
 
    SimCenterWidget *theUniformInputMotion;
+   SimCenterWidget *m_SHAMotionWidget;
 };
 
 #endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
