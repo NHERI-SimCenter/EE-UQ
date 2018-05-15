@@ -14,6 +14,7 @@ TEMPLATE = app
 include(../widgets/Common/Common.pri)
 include(../widgets/RandomVariables/RandomVariables.pri)
 include(../widgets/InputSheetBM/InputSheetBM.pri)
+include(../Simcenter-EQSS/UI/GroundMotionWidgets.pri)
 
 INCLUDEPATH+="../NHERI/widgets/Common"
 INCLUDEPATH+="../NHERI/widgets/RandomVariables"
@@ -26,13 +27,15 @@ SOURCES += main.cpp\
         InputWidgetEE_UQ.cpp\
         InputWidgetSampling.cpp \
     UniformMotionInput.cpp \
-    InputWidgetEarthquakeEvent.cpp
+    InputWidgetEarthquakeEvent.cpp \
+    SHAMotionWidget.cpp
 
 HEADERS  += MainWindow.h\
         InputWidgetEE_UQ.h\
         InputWidgetSampling.h \
     UniformMotionInput.h \
-    InputWidgetEarthquakeEvent.h
+    InputWidgetEarthquakeEvent.h \
+    SHAMotionWidget.h
 
 
 #FORMS    += mainwindow.ui

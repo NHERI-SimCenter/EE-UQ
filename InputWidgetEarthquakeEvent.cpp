@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <InputWidgetEDP.h>
 
 #include <UniformMotionInput.h>
+#include "SHAMotionWidget.h"
 
 InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
     : SimCenterWidget(parent)
@@ -73,7 +74,8 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
     eventSelection->addItem(tr("Uniform"));
-    eventSelection->addItem(tr("OpenSHA"));
+    eventSelection->addItem(tr("SHA Based Event"));
+    eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
     theSelectionLayout->addWidget(eventSelection);
@@ -92,6 +94,10 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
     theUniformInputMotion = new UniformMotionInput();
     theStackedWidget->addWidget(theUniformInputMotion);
 
+    //Adding SHA based ground motion widget
+    m_SHAMotionWidget = new SHAMotionWidget(this);
+    theStackedWidget->addWidget(m_SHAMotionWidget);
+
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
 
@@ -108,6 +114,12 @@ bool
 InputWidgetEarthquakeEvent::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
+
+    if(eventSelection->currentIndex() == 1)
+    {
+        //SHA based event is selected
+        return m_SHAMotionWidget->outputToJSON(jsonObject);
+    }
 
     return result;
 }
@@ -126,5 +138,7 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
     // if more data than just num samples and seed code would go here to add or remove widgets from layout
     if (arg1 == "Uniform")
         theStackedWidget->setCurrentIndex(0);
+    else if(arg1 == "SHA Based Event")
+        theStackedWidget->setCurrentIndex(1);
 }
 
