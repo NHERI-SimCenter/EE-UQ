@@ -73,7 +73,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
   //defining bunch of items for inclusion in model
   QStandardItem *giItem    = new QStandardItem("GEN");
   QStandardItem *rvItem   = new QStandardItem("RVs");
-  QStandardItem *bimItem = new QStandardItem("BIM");
+  QStandardItem *bimItem = new QStandardItem("SIM");
   QStandardItem *evtItem = new QStandardItem("EVT");
   QStandardItem *anaItem = new QStandardItem("ANA");
   QStandardItem *uqItem = new QStandardItem("UQM");
@@ -90,12 +90,11 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 
   infoItemIdx = rootNode->index();
 
-
   //register the model
   treeView->setModel(standardModel);
   treeView->expandAll();
   treeView->setHeaderHidden(true);
-  treeView->setMaximumWidth(250);
+  treeView->setMaximumWidth(100);
 
   // set up so that a slection change triggers yje selectionChanged slot
   QItemSelectionModel *selectionModel= treeView->selectionModel();
@@ -119,12 +118,16 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
   theBM = new InputWidgetSheetBM();
   theEvent = new InputWidgetEarthquakeEvent();
   theUQ = new InputWidgetSampling();
+  theAnalysisOptions = new SimCenterWidget();
+  theResults = new SimCenterWidget();
 
   theStackedWidget->addWidget(theGI);
   theStackedWidget->addWidget(theRVs);
   theStackedWidget->addWidget(theBM);
   theStackedWidget->addWidget(theEvent);
+  theStackedWidget->addWidget(theAnalysisOptions);
   theStackedWidget->addWidget(theUQ);
+  theStackedWidget->addWidget(theResults);
 
   horizontalLayout->addWidget(theStackedWidget);
 
@@ -150,93 +153,21 @@ void InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelectio
     //get the text of the selected item
     const QModelIndex index = treeView->selectionModel()->currentIndex();
     QString selectedText = index.data(Qt::DisplayRole).toString();
-    //qDebug() << "new tree selection: " + selectedText;
 
-/*
- *  QStandardItem *giItem    = new QStandardItem("GEN");
-  QStandardItem *rvItem   = new QStandardItem("RVs");
-  QStandardItem *bimItem = new QStandardItem("BIM");
-  QStandardItem *evtItem = new QStandardItem("EVT");
-  QStandardItem *anaItem = new QStandardItem("ANA");
-  QStandardItem *uqItem = new QStandardItem("UQM");
-  QStandardItem *resultsItem = new QStandardItem("RES");
-  */
-    qDebug() << selectedText;
     if (selectedText == "GEN")
         theStackedWidget->setCurrentIndex(0);
     else if (selectedText == "RVs")
         theStackedWidget->setCurrentIndex(1);
-    else if (selectedText == "BIM")
+    else if (selectedText == "SIM")
         theStackedWidget->setCurrentIndex(2);
     else if (selectedText == "EVT")
          theStackedWidget->setCurrentIndex(3);
+    else if (selectedText == "ANA")
+         theStackedWidget->setCurrentIndex(4);
     else if (selectedText == "UQM")
-        theStackedWidget->setCurrentIndex(4);
-        ;
-
-    /*
-    // remove current widget from layout
-    if (currentWidget != 0) {
-        if (currentWidget != (SimCenterTableWidget *) theGeneralInformationInput ) {
-            //qDebug() << "disconnect edit menu items ";
-            // up call to detach the MainWindow Edit menun from this sheet
-            window->disconnectMenuItems(currentWidget);
-        }
-        horizontalLayout->removeWidget(currentWidget);
-        currentWidget->setParent(0);
-    }
-
-    //get the text of the selected item
-    //const QModelIndex index = treeView->selectionModel()->currentIndex();
-    //QString selectedText = index.data(Qt::DisplayRole).toString();
-
-    // add the user selected widget for editing
-    if (selectedText == tr("GeneralInformation")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theGeneralInformationInput, 1);
-        currentWidget = (SimCenterTableWidget *) theGeneralInformationInput;
-    } else if (selectedText == tr("Clines")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theClineInput, 1);
-        currentWidget = theClineInput;
-    } else if (selectedText == tr("Floors")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theFloorInput, 1);
-        currentWidget = theFloorInput;
-    } else if (selectedText == tr("Beams")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theBeamInput, 1);
-        currentWidget = theBeamInput;
-    } else if (selectedText == tr("Columns")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theColumnInput, 1);
-        currentWidget = theColumnInput;
-    } else if (selectedText == tr("Braces")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theBraceInput, 1);
-        currentWidget = theBraceInput;
-    } else if (selectedText == tr("Steel")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theSteelInput, 1);
-        currentWidget = theSteelInput;
-    } else if (selectedText == tr("Concrete")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theConcreteInput, 1);
-        currentWidget = theConcreteInput;
-    } else if (theFramesectionTypes.contains(selectedText.toLower())) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theFramesectionInputs[selectedText.toLower()], 1);
-        currentWidget = theFramesectionInputs[selectedText.toLower()];
-    } else if (selectedText == tr("Slabsections")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theSlabsectionInput, 1);
-        currentWidget = theSlabsectionInput;
-    } else if (theWallsectionTypes.contains(selectedText.toLower())) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theWallsectionInputs[selectedText.toLower()], 1);
-        currentWidget = theWallsectionInputs[selectedText.toLower()];
-    } else if (theConnectionTypes.contains(selectedText.toLower())) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, theConnectionInputs[selectedText.toLower()], 1);
-        currentWidget = theConnectionInputs[selectedText.toLower()];
-    } else if (selectedText == tr("Points")) {
-        horizontalLayout->insertWidget(horizontalLayout->count()-1, thePointInput, 1);
-        currentWidget = thePointInput;
-    }
-
-    if (currentWidget != 0) {
-        // up call to connect the MainWindow Edit menu to this sheet
-        window->connectMenuItems(currentWidget);
-    }
-    */
+        theStackedWidget->setCurrentIndex(5);
+    else if (selectedText == "RES")
+        theStackedWidget->setCurrentIndex(6);
   }
 
 

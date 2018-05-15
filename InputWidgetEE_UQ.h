@@ -104,6 +104,8 @@ private:
     InputWidgetSheetBM *theBM;
     InputWidgetSampling *theUQ;
     InputWidgetEarthquakeEvent *theEvent;
+    SimCenterWidget *theAnalysisOptions;
+    SimCenterWidget *theResults;
 
     QModelIndex infoItemIdx;
     SimCenterWidget  *currentWidget;

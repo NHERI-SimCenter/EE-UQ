@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("OpenSees @ DesignSafe-ci"));
+    header->setHeadingText(tr("EE-UQ: Response of Building to Earthquake"));
     layout->addWidget(header);
 
     // place a location for messages;
@@ -124,7 +124,6 @@ MainWindow::MainWindow(QWidget *parent)
 
    /*
    connect(uq,SIGNAL(uqWidgetChanged()), this,SLOT(onDakotaMethodChanged()));
-
    connect(theCLI,SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
    connect(theCLI,SIGNAL(sendFatalMessage(QString)), this, SLOT(fatalMessage(QString)));
    connect(fem,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
