@@ -177,12 +177,17 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop)
 {
     QJsonObject jsonObject;
 
-    /*
     // add GeneralInformation
     QJsonObject jsonObjGenInfo;
-    theGeneralInformationInput->outputToJSON(jsonObjGenInfo);
+    theGI->outputToJSON(jsonObjGenInfo);
     jsonObjectTop["GeneralInformation"] = jsonObjGenInfo;
 
+    QJsonObject jsonObjStructural;
+    theBM->outputToJSON(jsonObjStructural);
+    jsonObjectTop["StructuralInformation"] = jsonObjStructural;
+
+
+/*
     // add layout
     QJsonObject jsonObjLayout;
     theClineInput->outputToJSON(jsonObjLayout);
@@ -282,14 +287,16 @@ InputWidgetEE_UQ::clear(void)
 void
 InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 {
-    /*
+
    jsonObjOrig = new QJsonObject(jsonObject);
 
    QJsonObject jsonObjGeneralInformation = jsonObject["GeneralInformation"].toObject();
-   theGeneralInformationInput->inputFromJSON(jsonObjGeneralInformation);
+   theGI->inputFromJSON(jsonObjGeneralInformation);
+
 
    QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
-
+   theBM->inputFromJSON(jsonObjStructuralInformation);
+   /*
    QJsonObject jsonObjLayout = jsonObjStructuralInformation["layout"].toObject();
    theClineInput->inputFromJSON(jsonObjLayout);
    theFloorInput->inputFromJSON(jsonObjLayout);

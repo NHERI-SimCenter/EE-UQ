@@ -265,9 +265,10 @@ void MainWindow::loadFile(const QString &fileName)
     // validate the document
     // JsonValidator class already takes a model type param, add additional model types as required
 
-
+/*
     JsonValidator *jval = new JsonValidator();
     jval->validate(this, BIM, fileName);
+*/
 
     // place contents of file into json object
     QString val;

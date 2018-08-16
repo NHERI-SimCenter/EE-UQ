@@ -6,7 +6,7 @@
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QJsonObject>
-#include <JsonValidator.h>
+//#include <JsonValidator.h>
 
 class InputWidgetEE_UQ;
 class SimCenterWidget;

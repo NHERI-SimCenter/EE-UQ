@@ -11,16 +11,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
-include(../widgets/Common/Common.pri)
-include(../widgets/RandomVariables/RandomVariables.pri)
-include(../widgets/InputSheetBM/InputSheetBM.pri)
+include(../SimCenterCommon/Common/Common.pri)
+include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
+include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../Simcenter-EQSS/UI/GroundMotionWidgets.pri)
 
-INCLUDEPATH+="../NHERI/widgets/Common"
-INCLUDEPATH+="../NHERI/widgets/RandomVariables"
-INCLUDEPATH+="../NHERI/widgets/InputSheetBM"
-INCLUDEPATH+=/Users/fmckenna/NHERI/widgets/InputSheetBM
-INCLUDEPATH+=/Users/fmckenna/NHERI/widgets/RandomVariables
+INCLUDEPATH+="../NHERI/SimCenterCommon/Common"
+INCLUDEPATH+="../NHERI/SimCenterCommon/RandomVariables"
+INCLUDEPATH+="../NHERI/SimCenterCommon/InputSheetBM"
+INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/InputSheetBM
+INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/RandomVariables
 
 SOURCES += main.cpp\
         MainWindow.cpp\
