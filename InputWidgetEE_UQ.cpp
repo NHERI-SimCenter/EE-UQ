@@ -296,6 +296,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
    QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
    theBM->inputFromJSON(jsonObjStructuralInformation);
+
    /*
    QJsonObject jsonObjLayout = jsonObjStructuralInformation["layout"].toObject();
    theClineInput->inputFromJSON(jsonObjLayout);
