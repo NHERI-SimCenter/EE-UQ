@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include "GeneralInformationWidget.h"
-#include <InputWidgetSheetBM.h>
+#include <InputWidgetSheetSIM.h>
 #include <RandomVariableInputWidget.h>
 #include <InputWidgetSampling.h>
 
@@ -115,7 +115,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 
   theGI = new GeneralInformationWidget();
   theRVs = new RandomVariableInputWidget();
-  theBM = new InputWidgetSheetBM();
+  theSIM = new InputWidgetSheetSIM();
   theEvent = new InputWidgetEarthquakeEvent();
   theUQ = new InputWidgetSampling();
   theAnalysisOptions = new SimCenterWidget();
@@ -123,7 +123,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 
   theStackedWidget->addWidget(theGI);
   theStackedWidget->addWidget(theRVs);
-  theStackedWidget->addWidget(theBM);
+  theStackedWidget->addWidget(theSIM);
   theStackedWidget->addWidget(theEvent);
   theStackedWidget->addWidget(theAnalysisOptions);
   theStackedWidget->addWidget(theUQ);
@@ -183,7 +183,7 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop)
     jsonObjectTop["GeneralInformation"] = jsonObjGenInfo;
 
     QJsonObject jsonObjStructural;
-    theBM->outputToJSON(jsonObjStructural);
+    theSIM->outputToJSON(jsonObjStructural);
     jsonObjectTop["StructuralInformation"] = jsonObjStructural;
 
 
@@ -295,7 +295,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 
    QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
-   theBM->inputFromJSON(jsonObjStructuralInformation);
+   theSIM->inputFromJSON(jsonObjStructuralInformation);
 
    /*
    QJsonObject jsonObjLayout = jsonObjStructuralInformation["layout"].toObject();

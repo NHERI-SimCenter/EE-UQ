@@ -48,7 +48,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "MainWindow.h"
 
 class RandomVariableInputWidget;
-class InputWidgetSheetBM;
+class InputWidgetSheetSIM;
 class InputWidgetSampling;
 class EarthquakeLoadingInput;
 class AnalysisOptions;
@@ -101,7 +101,7 @@ private:
 
     GeneralInformationWidget *theGI;
     RandomVariableInputWidget *theRVs;
-    InputWidgetSheetBM *theBM;
+    InputWidgetSheetSIM *theSIM;
     InputWidgetSampling *theUQ;
     InputWidgetEarthquakeEvent *theEvent;
     SimCenterWidget *theAnalysisOptions;
