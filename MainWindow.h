@@ -28,6 +28,10 @@ class MainWindow : public QMainWindow
     bool save();
     bool saveAs();
 
+    void onRunButtonClicked();
+    void onRemoteRunButtonClicked();
+    void onRemoteGetButtonClicked();
+    void onExitButtonClicked();
 
   //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
     void connectMenuItems(SimCenterWidget  *widget);

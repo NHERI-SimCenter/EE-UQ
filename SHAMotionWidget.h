@@ -1,17 +1,18 @@
 #ifndef SHAMOTIONWIDGET_H
 #define SHAMOTIONWIDGET_H
 
-#include <QWidget>
-#include "SimCenterWidget.h"
+#include "SimCenterAppWidget.h"
 #include "PointSourceRupture.h"
 #include "GMPE.h"
 #include "RecordSelectionConfig.h"
 
-class SHAMotionWidget : public SimCenterWidget
+class RandomVariableInputWidget;
+
+class SHAMotionWidget : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit SHAMotionWidget(QWidget *parent = nullptr);
+    explicit SHAMotionWidget(RandomVariableInputWidget *, QWidget *parent = nullptr);
 
 signals:
 
@@ -21,11 +22,14 @@ public slots:
 public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
 private:
     PointSourceRupture* m_eqRupture;
     GMPE* m_gmpe;
     RecordSelectionConfig* m_selectionConfig;
+
+    RandomVariableInputWidget *theRandomVariableInputWidget;
 };
 
 #endif // SHAMOTIONWIDGET_H

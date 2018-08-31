@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
+#include <SimCenterAppWidget.h>
 
 #include <QGroupBox>
 #include <QVector>
@@ -47,16 +47,19 @@ class QComboBox;
 class QStackedWidget;
 class UniformMotionInput;
 
+class RandomVariableInputWidget;
 
-class InputWidgetEarthquakeEvent : public  SimCenterWidget
+class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(QWidget *parent = 0);
+    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
     ~InputWidgetEarthquakeEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
 
 signals:
 
@@ -66,10 +69,12 @@ public slots:
 private:
    QComboBox   *eventSelection;
    QStackedWidget *theStackedWidget;
-   SimCenterWidget *theCurrentEvent;
+   SimCenterAppWidget *theCurrentEvent;
 
-   SimCenterWidget *theUniformInputMotion;
-   SimCenterWidget *m_SHAMotionWidget;
+   SimCenterAppWidget *theUniformInputMotion;
+   SimCenterAppWidget *theSHA_MotionWidget;
+
+   RandomVariableInputWidget *theRandomVariableInputWidget;
 };
 
 #endif // INPUTWIDGET_EARTHQUAKE_EVENT_H

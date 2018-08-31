@@ -1,5 +1,6 @@
-#ifndef INPUT_WIDGET_EE_UQ_H
-#define INPUT_WIDGET_EE_UQ_H
+#ifndef 	INPUT_WIDGET_BIM_SELECTION_H
+#define 	INPUT_WIDGET_BIM_SELECTION_H
+
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +21,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,78 +40,56 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QWidget>
-
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHBoxLayout>
-#include "MainWindow.h"
+#include <SimCenterAppWidget.h>
+//#include "EDP.h"
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
 
 class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
-class InputWidgetSampling;
-class EarthquakeLoadingInput;
-class InputWidgetOpenSeesAnalysis;
-class UQOptions;
-class ResultsWidget;
-class GeneralInformationWidget;
-class InputWidgetEarthquakeEvent;
-class QStackedWidget;
 
-class RunLocalWidget;
-
-
-class InputWidgetEE_UQ : public QWidget
+class InputWidgetBIM_Selection : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEE_UQ(QWidget *parent = 0);
-    ~InputWidgetEE_UQ();
+    explicit InputWidgetBIM_Selection(RandomVariableInputWidget *, QWidget *parent = 0);
+    ~InputWidgetBIM_Selection();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-    void clear(void);
-
-    void setMainWindow(MainWindow* window);
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onRemoteGetButtonClicked();
-    void onExitButtonClicked();
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
 
 signals:
 
-public slots:  
-    void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
-    void runLocal(QString);
+public slots:
+   void clear(void);
+   void bimSelectionChanged(const QString &arg1);
+   void errorMessage(QString message);
+
+signals:
+    void bimWidgetChanged(void);
+ //  void uqMethodChanged(const QString &arg1);
+
 
 private:
+    QVBoxLayout *layout;
+    QWidget     *methodSpecific;
+    //    QComboBox   *samplingMethod;
+    //    QLineEdit   *numSamples;
+    //    QLineEdit   *randomSeed;
+    //    QPushButton *run;
 
-    MainWindow* window;
+    QComboBox   *bimSelection;
 
-    QHBoxLayout *horizontalLayout;
-    QTreeView *treeView;
-    QStandardItemModel *standardModel;
+    //    SimCenterWidget *uqType;
+    SimCenterAppWidget *bimInput;
+    bool selectionChangeOK;
 
+    RandomVariableInputWidget *theRandomVariableInputWidget;
 
-    GeneralInformationWidget *theGI;
-    RandomVariableInputWidget *theRVs;
-
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
-    InputWidgetEarthquakeEvent *theEvent;
-    InputWidgetOpenSeesAnalysis *theAnalysis;
-    SimCenterWidget *theResults;
-    RunLocalWidget *theRunLocalWidget;
-
-
-    QModelIndex infoItemIdx;
-    SimCenterWidget  *currentWidget;
-    QJsonObject *jsonObjOrig;
-
-    QStackedWidget *theStackedWidget;
 };
 
-#endif // INPUT_WIDGET_EE_UQ_H
+#endif // 	INPUT_WIDGET_BIM_SELECTION_H

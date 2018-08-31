@@ -62,7 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 InputWidgetSampling::InputWidgetSampling(QWidget *parent)
-    : SimCenterWidget(parent),uqSpecific(0)
+    : SimCenterAppWidget(parent),uqSpecific(0)
 {
     layout = new QVBoxLayout();
 
@@ -144,7 +144,6 @@ void InputWidgetSampling::clear(void)
 
 }
 
-
 bool
 InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 {
@@ -176,6 +175,74 @@ InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
     // get sampleingMethodData, if not present it's an error
 
     if (jsonObject.contains("samplingMethodData")) {
+        QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+
+        //
+        // get method, #sample and seed, if not present an error
+        // given method, set selection box to point to it and finnally input the EDPs
+        //
+
+        if (uq.contains("method") && uq.contains("samples") && uq.contains("seed")) {
+
+            QString method =uq["method"].toString();
+            int samples=uq["samples"].toInt();
+            double seed=uq["seed"].toDouble();
+
+            numSamples->setText(QString::number(samples));
+            randomSeed->setText(QString::number(seed));
+            int index = samplingMethod->findText(method);
+            if (index == -1) {
+                emit sendErrorMessage("ERROR: Sampling Input Widget - \"samplingMethodData\" invalid type .. keeping current");
+                return false;
+            }
+
+            samplingMethod->setCurrentIndex(index);
+            //      return theEdpWidget->inputFromJSON(uq);
+
+        } else {
+            emit sendErrorMessage("ERROR: Sampling Input Widget - no \"method\" ,\"samples\" or \"seed\" data");
+            return false;
+        }
+
+    } else {
+        emit sendErrorMessage("ERROR: Sampling Input Widget - no \"samplingMethodData\" input");
+        return false;
+    }
+
+    // should never get here .. if do my logic is screwy and need to return a false
+    emit sendErrorMessage("ERROR - faulty logic - contact code developers");
+    return result;
+}
+
+
+
+bool
+InputWidgetSampling::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+    bool result = true;
+
+    jsonObject["Application"] = "Dakota-UQ";
+    QJsonObject dataObj;
+    dataObj["type"]="UQ";
+    dataObj["method"]=samplingMethod->currentText();
+    dataObj["samples"]=numSamples->text().toInt();
+    dataObj["seed"]=randomSeed->text().toDouble();
+    jsonObject["ApplicationData"] = dataObj;
+
+    return result;
+}
+
+
+bool
+InputWidgetSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+    bool result = false;
+    this->clear();
+
+    //
+    // get sampleingMethodData, if not present it's an error
+
+    if (jsonObject.contains("ApplicationData")) {
         QJsonObject uq = jsonObject["samplingMethodData"].toObject();
 
         //

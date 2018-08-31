@@ -4,7 +4,8 @@
 #include "RecordSelectionWidget.h"
 #include "GMPEWidget.h"
 
-SHAMotionWidget::SHAMotionWidget(QWidget *parent) : SimCenterWidget(parent)
+SHAMotionWidget::SHAMotionWidget(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
 {
     QVBoxLayout* gmToolsLayout = new QVBoxLayout(this);
 
@@ -26,11 +27,10 @@ SHAMotionWidget::SHAMotionWidget(QWidget *parent) : SimCenterWidget(parent)
 }
 
 
-bool SHAMotionWidget::outputToJSON(QJsonObject &rvObject)
+bool SHAMotionWidget::outputToJSON(QJsonObject &jsonObject)
 {
-    bool result = false;
-
-    return result;
+    jsonObject["type"] = "Open-SHA";
+    return true;
 }
 
 bool SHAMotionWidget::inputFromJSON(QJsonObject &rvObject)
@@ -38,4 +38,21 @@ bool SHAMotionWidget::inputFromJSON(QJsonObject &rvObject)
     bool result = false;
 
     return result;
+}
+
+bool
+SHAMotionWidget::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+    jsonObject["Application"] = "Open-SHA";
+    QJsonObject dataObj;
+    jsonObject["ApplicationData"] = dataObj;
+
+    return true;
+}
+
+
+bool
+SHAMotionWidget::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+    return true;
 }

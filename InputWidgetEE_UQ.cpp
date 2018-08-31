@@ -51,87 +51,116 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QModelIndex>
 #include <QStackedWidget>
 #include <InputWidgetEarthquakeEvent.h>
+#include <RunLocalWidget.h>
 
 
 #include "GeneralInformationWidget.h"
-#include <InputWidgetSheetSIM.h>
+#include <InputWidgetBIM_Selection.h>
 #include <RandomVariableInputWidget.h>
 #include <InputWidgetSampling.h>
+#include <InputWidgetOpenSeesAnalysis.h>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 {
-  horizontalLayout = new QHBoxLayout();
-  this->setLayout(horizontalLayout);
 
-  //
-  // create a tree widget, assign it a mode and add to layout
-  //
-  treeView = new QTreeView();
-  standardModel = new QStandardItemModel ;
-  QStandardItem *rootNode = standardModel->invisibleRootItem();
+    //
+    // create the various widgets
+    //
 
-  //defining bunch of items for inclusion in model
-  QStandardItem *giItem    = new QStandardItem("GEN");
-  QStandardItem *rvItem   = new QStandardItem("RVs");
-  QStandardItem *bimItem = new QStandardItem("SIM");
-  QStandardItem *evtItem = new QStandardItem("EVT");
-  QStandardItem *anaItem = new QStandardItem("ANA");
-  QStandardItem *uqItem = new QStandardItem("UQM");
-  QStandardItem *resultsItem = new QStandardItem("RES");
+    theRVs = new RandomVariableInputWidget();
+    theGI = new GeneralInformationWidget();
+    theSIM = new InputWidgetBIM_Selection(theRVs);
+    theEvent = new InputWidgetEarthquakeEvent(theRVs);
+    theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
+    theUQ = new InputWidgetSampling();
 
-  //building up the hierarchy of the model
-  rootNode->appendRow(giItem);
-  rootNode->appendRow(rvItem);
-  rootNode->appendRow(bimItem);
-  rootNode->appendRow(evtItem);
-  rootNode->appendRow(anaItem);
-  rootNode->appendRow(uqItem);
-  rootNode->appendRow(resultsItem);
+    theResults = new SimCenterWidget();
+    theRunLocalWidget = new RunLocalWidget(theUQ);
 
-  infoItemIdx = rootNode->index();
+    //
+    // connect signals and slots
+    //
 
-  //register the model
-  treeView->setModel(standardModel);
-  treeView->expandAll();
-  treeView->setHeaderHidden(true);
-  treeView->setMaximumWidth(100);
+    connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString)), this, SLOT(runLocal(QString)));
 
-  // set up so that a slection change triggers yje selectionChanged slot
-  QItemSelectionModel *selectionModel= treeView->selectionModel();
-  connect(selectionModel,
-          SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-          this,
-          SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
+    //
+    //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
+    //  and we will use a QStacked widget for displaying the widget. Which of widgets displayed in StackedView depends on
+    //  item selected in tree view.
+    //
 
-  // add the TreeView widget to the layout
-  horizontalLayout->addWidget(treeView);
+    //
+    // create layout to hold tree view and stackedwidget
+    //
 
+    horizontalLayout = new QHBoxLayout();
+    this->setLayout(horizontalLayout);
 
-  //
-  // create the input widgets for the different types
-  //
-  theStackedWidget = new QStackedWidget();
+    //
+    // create a TreeView widget & provide items for each widget to be displayed & add to layout
+    //
 
+    treeView = new QTreeView();
+    standardModel = new QStandardItemModel ;
+    QStandardItem *rootNode = standardModel->invisibleRootItem();
 
-  theGI = new GeneralInformationWidget();
-  theRVs = new RandomVariableInputWidget();
-  theSIM = new InputWidgetSheetSIM();
-  theEvent = new InputWidgetEarthquakeEvent();
-  theUQ = new InputWidgetSampling();
-  theAnalysisOptions = new SimCenterWidget();
-  theResults = new SimCenterWidget();
+    //defining bunch of items for inclusion in model
+    QStandardItem *giItem    = new QStandardItem("GEN");
+    QStandardItem *rvItem   = new QStandardItem("RVs");
+    QStandardItem *bimItem = new QStandardItem("SIM");
+    QStandardItem *evtItem = new QStandardItem("EVT");
+    QStandardItem *anaItem = new QStandardItem("ANA");
+    //QStandardItem *uqItem = new QStandardItem("UQM");
+    QStandardItem *resultsItem = new QStandardItem("RES");
 
-  theStackedWidget->addWidget(theGI);
-  theStackedWidget->addWidget(theRVs);
-  theStackedWidget->addWidget(theSIM);
-  theStackedWidget->addWidget(theEvent);
-  theStackedWidget->addWidget(theAnalysisOptions);
-  theStackedWidget->addWidget(theUQ);
-  theStackedWidget->addWidget(theResults);
+    //building up the hierarchy of the model
+    rootNode->appendRow(giItem);
+    rootNode->appendRow(bimItem);
+    rootNode->appendRow(evtItem);
+    rootNode->appendRow(anaItem);
+    rootNode->appendRow(rvItem);
+    //rootNode->appendRow(uqItem);
+    rootNode->appendRow(resultsItem);
 
-  horizontalLayout->addWidget(theStackedWidget);
+    infoItemIdx = rootNode->index();
 
-  treeView->setCurrentIndex( infoItemIdx );
+    //register the model
+    treeView->setModel(standardModel);
+    treeView->expandAll();
+    treeView->setHeaderHidden(true);
+    treeView->setMaximumWidth(100);
+
+    //
+    // set up so that a slection change triggers the selectionChanged slot
+    //
+
+    QItemSelectionModel *selectionModel= treeView->selectionModel();
+    connect(selectionModel,
+            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this,
+            SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
+
+    // add the TreeView widget to the layout
+    horizontalLayout->addWidget(treeView);
+
+    //
+    // create the staked widget, and add to it the widgets to be displayed, and add the stacked widget itself to layout
+    //
+
+    theStackedWidget = new QStackedWidget();
+    theStackedWidget->addWidget(theGI);
+    theStackedWidget->addWidget(theSIM);
+    theStackedWidget->addWidget(theEvent);
+    theStackedWidget->addWidget(theAnalysis);
+    theStackedWidget->addWidget(theRVs);
+    // theStackedWidget->addWidget(theUQ);
+    theStackedWidget->addWidget(theResults);
+
+    // add stacked widget to layout
+    horizontalLayout->addWidget(theStackedWidget);
+
+    // set current selection to GI
+    treeView->setCurrentIndex( infoItemIdx );
 
 }
 
@@ -147,8 +176,8 @@ void InputWidgetEE_UQ::setMainWindow(MainWindow* main)
 }
 
 
-void InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection & /*oldSelection*/)
-{
+void
+InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection & /*oldSelection*/) {
 
     //get the text of the selected item
     const QModelIndex index = treeView->selectionModel()->currentIndex();
@@ -156,28 +185,29 @@ void InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelectio
 
     if (selectedText == "GEN")
         theStackedWidget->setCurrentIndex(0);
-    else if (selectedText == "RVs")
-        theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "SIM")
-        theStackedWidget->setCurrentIndex(2);
+        theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "EVT")
-         theStackedWidget->setCurrentIndex(3);
+        theStackedWidget->setCurrentIndex(2);
     else if (selectedText == "ANA")
-         theStackedWidget->setCurrentIndex(4);
-    else if (selectedText == "UQM")
-        theStackedWidget->setCurrentIndex(5);
+        theStackedWidget->setCurrentIndex(3);
+    else if (selectedText == "RVs")
+        theStackedWidget->setCurrentIndex(4);
+    //else if (selectedText == "UQM")
+    //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(6);
-  }
+        theStackedWidget->setCurrentIndex(5);
+}
 
 
+bool
+InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
+    //
+    // get each of the main widgets to output themselves
+    //
 
-void
-InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop)
-{
-    QJsonObject jsonObject;
+    QJsonObject apps;
 
-    // add GeneralInformation
     QJsonObject jsonObjGenInfo;
     theGI->outputToJSON(jsonObjGenInfo);
     jsonObjectTop["GeneralInformation"] = jsonObjGenInfo;
@@ -185,175 +215,155 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop)
     QJsonObject jsonObjStructural;
     theSIM->outputToJSON(jsonObjStructural);
     jsonObjectTop["StructuralInformation"] = jsonObjStructural;
+    QJsonObject appsSIM;
+    theSIM->outputAppDataToJSON(appsSIM);
+    apps["Modeling"]=appsSIM;
+
+    // FMK - note to self, random varaibales need to be changed
+    //QJsonObject jsonObjectRVs;
+    //theRVs->outputToJSON(jsonObjectRVs);
+    //jsonObjectTop["RandomVariables"] = jsonObjectRVs;
+    theRVs->outputToJSON(jsonObjectTop);
+
+    QJsonObject jsonObjectUQ;
+    theUQ->outputToJSON(jsonObjectUQ);
+    jsonObjectTop["UQ_Method"] = jsonObjectUQ;
+
+    QJsonObject appsUQ;
+    theUQ->outputAppDataToJSON(appsUQ);
+    apps["UQ"]=appsUQ;
+
+    QJsonObject jsonObjectAna;
+    theAnalysis->outputToJSON(jsonObjectAna);
+    jsonObjectTop["Analysis"] = jsonObjectAna;
+
+    QJsonObject appsAna;
+    theAnalysis->outputAppDataToJSON(appsAna);
+    apps["Simulation"]=appsAna;
+
+   // NOTE: Events treated differently, due to array nature of objects
+
+    //QJsonObject jsonObjEvent;
+    theEvent->outputToJSON(jsonObjectTop);
+    // jsonObjectTop["Events"] = jsonObjEvent;
+    //QJsonObject appsEVT;
+    theEvent->outputAppDataToJSON(apps);
+    // apps["EVT"]=appsEVT;
 
 
-/*
-    // add layout
-    QJsonObject jsonObjLayout;
-    theClineInput->outputToJSON(jsonObjLayout);
-    theFloorInput->outputToJSON(jsonObjLayout);
-    jsonObject["layout"]=jsonObjLayout;
+    jsonObjectTop["Applications"]=apps;
 
-    // add geometry
-    QJsonObject jsonObjGeometry;
-    theBeamInput->outputToJSON(jsonObjGeometry);
-    theColumnInput->outputToJSON(jsonObjGeometry);
-    theBraceInput->outputToJSON(jsonObjGeometry);
-
-    jsonObject["geometry"]=jsonObjGeometry;
-
-    // add properties
-    QJsonObject jsonObjProperties;
-    theSlabsectionInput->outputToJSON(jsonObjProperties);
-    thePointInput->outputToJSON(jsonObjProperties);
-
-    QJsonArray theFramesectionsArray;
-    jsonObjProperties["framesections"]=theFramesectionsArray;
-
-    for (int i=0; i<theFramesectionTypes.size(); i++) {
-        theFramesectionInputs[theFramesectionTypes[i]]->outputToJSON(theFramesectionsArray);
-    }
-    jsonObjProperties["framesections"]=theFramesectionsArray;
-
-    QJsonArray theWallsectionsArray;
-    jsonObjProperties["wallsections"]=theWallsectionsArray;
-
-    for (int i=0; i<theWallsectionTypes.size(); i++) {
-        theWallsectionInputs[theWallsectionTypes[i]]->outputToJSON(theWallsectionsArray);
-    }
-    jsonObjProperties["wallsections"]=theWallsectionsArray;
-
-    QJsonArray theConnectionsArray;
-    jsonObjProperties["connections"]=theConnectionsArray;
-
-    for (int i=0; i<theConnectionTypes.size(); i++) {
-        theConnectionInputs[theConnectionTypes[i]]->outputToJSON(theConnectionsArray);
-    }
-    jsonObjProperties["connections"]=theConnectionsArray;
-
-    //
-    // create a json array and get all material inputs to enter their data
-    //
-    QJsonArray theMaterialsArray;
-    jsonObjProperties["materials"]=theMaterialsArray;
-
-    theSteelInput->outputToJSON(theMaterialsArray);
-    theConcreteInput->outputToJSON(theMaterialsArray);
-    jsonObjProperties["materials"]=theMaterialsArray;
-
-
-    jsonObject["properties"]=jsonObjProperties;
-
-    jsonObjectTop["StructuralInformation"] = jsonObject;
-    */
-
+    return true;
 }
 
 void
 InputWidgetEE_UQ::clear(void)
 {
-    /*
-    theGeneralInformationInput->clear();
-    theClineInput->clear();
-    theFloorInput->clear();
-    theColumnInput->clear();
-    theBeamInput->clear();
-    theBraceInput->clear();
-    theSteelInput->clear();
-    theConcreteInput->clear();
-
-    for (int i=0; i<theFramesectionTypes.size(); i++) {
-        theFramesectionInputs[theFramesectionTypes[i]]->clear();
-    }
-
-    theSlabsectionInput->clear();
-
-    for (int i=0; i<theWallsectionTypes.size(); i++) {
-        theWallsectionInputs[theWallsectionTypes[i]]->clear();
-    }
-
-    for (int i=0; i<theConnectionTypes.size(); i++) {
-        theConnectionInputs[theConnectionTypes[i]]->clear();
-    }
-
-    thePointInput->clear();
-
-    if (jsonObjOrig) {
-        delete jsonObjOrig;
-    }
-    */
+    theGI->clear();
+    theSIM->clear();
 }
 
-void
+bool
 InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 {
 
-   jsonObjOrig = new QJsonObject(jsonObject);
+    //
+    // get each of the main widgets to input themselves
+    //
 
-   QJsonObject jsonObjGeneralInformation = jsonObject["GeneralInformation"].toObject();
-   theGI->inputFromJSON(jsonObjGeneralInformation);
+    if (jsonObject.contains("GeneralInformation")) {
+        QJsonObject jsonObjGeneralInformation = jsonObject["GeneralInformation"].toObject();
+        theGI->inputFromJSON(jsonObjGeneralInformation);
+    } else
+        return false;
+
+    if (jsonObject.contains("StructuralInformation")) {
+        QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
+        theSIM->inputFromJSON(jsonObjStructuralInformation);
+    } else
+        return false;
+
+    /*
+    ** Note to me - RVs and Events treated differently as both use arrays .. rethink API!
+    */
+
+    theEvent->inputFromJSON(jsonObject);
+    theRVs->inputFromJSON(jsonObject);
+
+    /*
+    if (jsonObject.contains("Events")) {
+        QJsonObject jsonObjEventInformation = jsonObject["Event"].toObject();
+        theEvent->inputFromJSON(jsonObjEventInformation);
+    } else
+        return false;
+
+    if (jsonObject.contains("RandomVariables")) {
+        QJsonObject jsonObjRVsInformation = jsonObject["RandomVariables"].toObject();
+        theRVS->inputFromJSON(jsonObRVSInformation);
+    } else
+        return false;
+    */
+
+    if (jsonObject.contains("UQ")) {
+        QJsonObject jsonObjUQInformation = jsonObject["UQ"].toObject();
+        theEvent->inputFromJSON(jsonObjUQInformation);
+    } else
+        return false;
+
+    if (jsonObject.contains("Applications")) {
+        QJsonObject theApplicationObject = jsonObject["Applications"].toObject();
+
+        if (theApplicationObject.contains("Modeling")) {
+            QJsonObject theObject = theApplicationObject["Modeling"].toObject();
+            theSIM->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+
+        // see note above as to why different for events
+        theEvent->inputAppDataFromJSON(jsonObject);
+        /*
+        if (theApplicationObject.contains("Event")) {
+            QJsonObject theObject = theApplicationObject["Event"].toObject();
+            theEvent->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+            */
+
+        if (theApplicationObject.contains("UQ")) {
+            QJsonObject theObject = theApplicationObject["UQ"].toObject();
+            theEvent->inputAppDataFromJSON(theObject);
+        } else
+            return false;
 
 
-   QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
-   theSIM->inputFromJSON(jsonObjStructuralInformation);
+    } else
+        return false;
 
-   /*
-   QJsonObject jsonObjLayout = jsonObjStructuralInformation["layout"].toObject();
-   theClineInput->inputFromJSON(jsonObjLayout);
-   theFloorInput->inputFromJSON(jsonObjLayout);
-
-   //
-   // parse the properties
-   //
-
-   QJsonObject jsonObjProperties = jsonObjStructuralInformation["properties"].toObject();
-   theSlabsectionInput->inputFromJSON(jsonObjProperties);
-   thePointInput->inputFromJSON(jsonObjProperties);
-
-   QJsonArray theFramesectionsArray = jsonObjProperties["framesections"].toArray();
-   for (int i=0; i<theFramesectionTypes.size(); i++) {
-       theFramesectionInputs[theFramesectionTypes[i]]->inputFromJSON(theFramesectionsArray);
-   }
-
-   QJsonArray theWallsectionsArray = jsonObjProperties["wallsections"].toArray();
-   for (int i=0; i<theWallsectionTypes.size(); i++) {
-       theWallsectionInputs[theWallsectionTypes[i]]->inputFromJSON(theWallsectionsArray);
-   }
-
-   QJsonArray theConnectionsArray = jsonObjProperties["connections"].toArray();
-   for (int i=0; i<theConnectionTypes.size(); i++) {
-       theConnectionInputs[theConnectionTypes[i]]->inputFromJSON(theConnectionsArray);
-   }
-
-   // first the materials
-   // get the array and for every object in array determine it's type and get
-   // the approprate inputwidget to parse the data
-   //
-
-   QJsonArray theMaterialArray = jsonObjProperties["materials"].toArray();
-   foreach (const QJsonValue &theValue, theMaterialArray) {
-
-       QJsonObject theObject = theValue.toObject();
-       QString theType = theObject["type"].toString();
-
-       if (theType == QString(tr("steel"))) {
-            theSteelInput->inputFromJSON(theObject);
-       } else if (theType == QString(tr("concrete"))) {
-           theConcreteInput->inputFromJSON(theObject);
-      }
-   }
-
-
-   //
-   // parse the geometry
-   //
-
-   QJsonObject jsonObjGeometry = jsonObjStructuralInformation["geometry"].toObject();
-   theColumnInput->inputFromJSON(jsonObjGeometry);
-   theBeamInput->inputFromJSON(jsonObjGeometry);
-   theBraceInput->inputFromJSON(jsonObjGeometry);
-*/
-
+    return true;
 }
 
 
+void
+InputWidgetEE_UQ::onRunButtonClicked() {
+    theRunLocalWidget->show();
+}
+
+void
+InputWidgetEE_UQ::onRemoteRunButtonClicked(){
+
+}
+void
+InputWidgetEE_UQ::onRemoteGetButtonClicked(){
+
+};
+
+void
+InputWidgetEE_UQ::onExitButtonClicked(){
+
+}
+
+void
+InputWidgetEE_UQ::runLocal(QString workingDir) {
+    qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir;\
+    theRunLocalWidget->hide();
+}

@@ -1,5 +1,5 @@
-#ifndef INPUT_WIDGET_EE_UQ_H
-#define INPUT_WIDGET_EE_UQ_H
+#ifndef EARTHQUAKERECORD_H
+#define EARTHQUAKERECORD_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,78 +39,28 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <QWidget>
+#include <QString>
+class QJsonObject;
 
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHBoxLayout>
-#include "MainWindow.h"
-
-class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
-class InputWidgetSampling;
-class EarthquakeLoadingInput;
-class InputWidgetOpenSeesAnalysis;
-class UQOptions;
-class ResultsWidget;
-class GeneralInformationWidget;
-class InputWidgetEarthquakeEvent;
-class QStackedWidget;
-
-class RunLocalWidget;
-
-
-class InputWidgetEE_UQ : public QWidget
+class EarthquakeRecord
 {
-    Q_OBJECT
 public:
-    explicit InputWidgetEE_UQ(QWidget *parent = 0);
-    ~InputWidgetEE_UQ();
+    EarthquakeRecord();
+    EarthquakeRecord(QString fileName);
+    EarthquakeRecord(QString name, int numSteps, double dt, double *data);
+    ~EarthquakeRecord();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    void clear(void);
-
-    void setMainWindow(MainWindow* window);
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onRemoteGetButtonClicked();
-    void onExitButtonClicked();
-
-signals:
-
-public slots:  
-    void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
-    void runLocal(QString);
-
-private:
-
-    MainWindow* window;
-
-    QHBoxLayout *horizontalLayout;
-    QTreeView *treeView;
-    QStandardItemModel *standardModel;
+    double getScaleFactor(void);
+    void setScaleFactor(double);
+    void outputToJSON(QJsonObject &jsonObj);
+    int inputFromJSON(QJsonObject &jsonObj);
 
 
-    GeneralInformationWidget *theGI;
-    RandomVariableInputWidget *theRVs;
-
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
-    InputWidgetEarthquakeEvent *theEvent;
-    InputWidgetOpenSeesAnalysis *theAnalysis;
-    SimCenterWidget *theResults;
-    RunLocalWidget *theRunLocalWidget;
-
-
-    QModelIndex infoItemIdx;
-    SimCenterWidget  *currentWidget;
-    QJsonObject *jsonObjOrig;
-
-    QStackedWidget *theStackedWidget;
+    QString name;
+    int numSteps;
+    double dt;
+    double *data;
+    double scaleFactor;
 };
 
-#endif // INPUT_WIDGET_EE_UQ_H
+#endif // EARTHQUAKERECORD_H

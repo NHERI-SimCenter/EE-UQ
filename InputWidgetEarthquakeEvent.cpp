@@ -49,6 +49,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QPushButton>
 #include <QJsonObject>
+#include <QJsonArray>
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QDebug>
@@ -60,8 +62,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UniformMotionInput.h>
 #include "SHAMotionWidget.h"
 
-InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
-    : SimCenterWidget(parent)
+InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)
 {
     QVBoxLayout *layout = new QVBoxLayout();
 
@@ -80,7 +82,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
     theSelectionLayout->addWidget(label);
     theSelectionLayout->addWidget(eventSelection);
     theSelectionLayout->addStretch();
-    layout ->addLayout(theSelectionLayout);
+    layout->addLayout(theSelectionLayout);
 
     //
     // create the stacked widget
@@ -91,15 +93,16 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(QWidget *parent)
     // create the individual load widgets & add to stacked widget
     //
 
-    theUniformInputMotion = new UniformMotionInput();
+    theUniformInputMotion = new UniformMotionInput(theRandomVariableInputWidget);
     theStackedWidget->addWidget(theUniformInputMotion);
 
     //Adding SHA based ground motion widget
-    m_SHAMotionWidget = new SHAMotionWidget(this);
-    theStackedWidget->addWidget(m_SHAMotionWidget);
+    theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
+    theStackedWidget->addWidget(theSHA_MotionWidget);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
+    theCurrentEvent=theUniformInputMotion;
 
     connect(eventSelection,SIGNAL(currentIndexChanged(QString)),this,SLOT(eventSelectionChanged(QString)));
 }
@@ -113,32 +116,103 @@ InputWidgetEarthquakeEvent::~InputWidgetEarthquakeEvent()
 bool
 InputWidgetEarthquakeEvent::outputToJSON(QJsonObject &jsonObject)
 {
-    bool result = true;
+    QJsonArray eventArray;
+    QJsonObject singleEventData;
+    theCurrentEvent->outputToJSON(singleEventData);
+    eventArray.append(singleEventData);
+    jsonObject["Events"]=eventArray;
 
-    if(eventSelection->currentIndex() == 1)
-    {
-        //SHA based event is selected
-        return m_SHAMotionWidget->outputToJSON(jsonObject);
-    }
-
-    return result;
+    return true;
 }
 
 
 bool
-InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject)
-{
-    bool result = false;
+InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
-    return result;
+    QString type;
+    QJsonObject theEvent;
+
+    if (jsonObject.contains("Events")) {
+        QJsonArray theEvents = jsonObject["Events"].toArray();
+        QJsonValue theValue = theEvents.at(0);
+        if (theValue.isNull()) {
+          return false;
+        }
+        theEvent = theValue.toObject();
+        if (theEvent.contains("type")) {
+            QJsonValue theName = theEvent["type"];
+            type = theName.toString();
+        } else
+            return false;
+    } else
+        return false;
+
+    this->eventSelectionChanged(type);
+
+    // if worked, just invoke method on new type
+
+    if (theCurrentEvent != 0) {
+        return theCurrentEvent->inputFromJSON(theEvent);
+    }
+
+    return false;
 }
 
 void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
 {
-    // if more data than just num samples and seed code would go here to add or remove widgets from layout
-    if (arg1 == "Uniform")
+    //
+    // switch stacked widgets depending on text
+    // note type output in json and name in pull down are not the same and hence the ||
+    //
+
+    if (arg1 == "Uniform" || arg1 == "UniformMotion") {
         theStackedWidget->setCurrentIndex(0);
-    else if(arg1 == "SHA Based Event")
+        theCurrentEvent = theUniformInputMotion;
+    }
+
+    else if(arg1 == "SHA Based Event" || arg1 == "Open-SHA") {
         theStackedWidget->setCurrentIndex(1);
+        theCurrentEvent = theSHA_MotionWidget;
+    }
+
+    else {
+        qDebug() << "ERROR .. InputWidgetEarthquakeEvent selection .. type unknown: " << arg1;
+    }
 }
 
+bool
+InputWidgetEarthquakeEvent::outputAppDataToJSON(QJsonObject &jsonObject)
+{
+    QJsonArray eventArray;
+    QJsonObject singleEventData;
+    theCurrentEvent->outputAppDataToJSON(singleEventData);
+    eventArray.append(singleEventData);
+    jsonObject["Events"]=eventArray;
+
+    return true;
+}
+
+
+bool
+InputWidgetEarthquakeEvent::inputAppDataFromJSON(QJsonObject &jsonObject)
+{
+
+    QJsonObject theEvent;
+
+    if (jsonObject.contains("Events")) {
+        QJsonArray theEvents = jsonObject["Events"].toArray();
+        QJsonValue theValue = theEvents.at(0);
+        if (theValue.isNull()) {
+          return false;
+        }
+        theEvent = theValue.toObject();
+    } else
+        return false;
+
+
+    // if worked, just invoke method on new type
+
+    if (theCurrentEvent != 0 && !theEvent.isEmpty()) {
+        return theCurrentEvent->inputAppDataFromJSON(theEvent);
+    }
+}

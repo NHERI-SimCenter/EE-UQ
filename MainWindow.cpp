@@ -96,6 +96,11 @@ MainWindow::MainWindow(QWidget *parent)
    pushButtonLayout->addWidget(runButton);
 */
 
+
+   QPushButton *runButton = new QPushButton();
+   runButton->setText(tr("RUN"));
+   pushButtonLayout->addWidget(runButton);
+
    QPushButton *runDesignSafeButton = new QPushButton();
    runDesignSafeButton->setText(tr("RUN at DesignSafe"));
    pushButtonLayout->addWidget(runDesignSafeButton);
@@ -118,8 +123,10 @@ MainWindow::MainWindow(QWidget *parent)
    //connect(theRemoteInterface,SIGNAL(statusMessage(QString)),this,SLOT(errorMessage(QString)));
 
    // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
-   connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onSubmitButtonClicked()));
-   connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onJobsManagerButtonClicked()));
+   // connect job manager
+   connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
+   connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
+   connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteButtonClicked()));
    connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
    /*
@@ -444,3 +451,23 @@ void MainWindow::connectMenuItems(SimCenterWidget  *inputwidget)
 */
 }
 
+
+void
+MainWindow::onRunButtonClicked() {
+    inputWidget->onRunButtonClicked();
+}
+
+void
+MainWindow::onRemoteRunButtonClicked(){
+    inputWidget->onRemoteRunButtonClicked();
+}
+void
+MainWindow::onRemoteGetButtonClicked(){
+    inputWidget->onRemoteGetButtonClicked();
+};
+
+void MainWindow::onExitButtonClicked(){
+    //RandomVariableInputWidget *theParameters = uq->getParameters();
+    inputWidget->onExitButtonClicked();
+    QApplication::quit();
+}
