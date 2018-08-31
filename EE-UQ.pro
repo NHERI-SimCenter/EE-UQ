@@ -23,20 +23,35 @@ INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/InputSheetBM
 INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/RandomVariables
 
 SOURCES += main.cpp\
-        MainWindow.cpp\
-        InputWidgetEE_UQ.cpp\
-        InputWidgetSampling.cpp \
+    MainWindow.cpp\
+    InputWidgetEE_UQ.cpp\
+    InputWidgetSampling.cpp \
     UniformMotionInput.cpp \
     InputWidgetEarthquakeEvent.cpp \
-    SHAMotionWidget.cpp
+    InputWidgetBIM_Selection.cpp \
+    InputWidgetOpenSees.cpp \
+    InputWidgetOpenSeesAnalysis.cpp \
+    SHAMotionWidget.cpp \
+    OpenSeesParser.cpp \
+    EarthquakeRecord.cpp \
+    RunLocalWidget.cpp
 
 HEADERS  += MainWindow.h\
-        InputWidgetEE_UQ.h\
-        InputWidgetSampling.h \
+    InputWidgetEE_UQ.h\
+    InputWidgetSampling.h \
     UniformMotionInput.h \
     InputWidgetEarthquakeEvent.h \
-    SHAMotionWidget.h
+    InputWidgetBIM_Selection.h \
+    InputWidgetOpenSees.h \
+    InputWidgetOpenSeesAnalysis.h \
+    SHAMotionWidget.h \
+    OpenSeesParser.h \
+    EarthquakeRecord.h \
+    RunLocalWidget.h
 
+
+RESOURCES += \
+    images.qrc \
 
 #FORMS    += mainwindow.ui
 

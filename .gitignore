@@ -41,3 +41,7 @@ moc*
 *.pro.user
 qcustomplot.h
 qcustomplot.cpp
+*.stash
+
+# OTHER
+Makefile
