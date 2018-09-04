@@ -5,6 +5,7 @@
 #include "PointSourceRupture.h"
 #include "GMPE.h"
 #include "RecordSelectionConfig.h"
+#include "IntensityMeasure.h"
 
 class RandomVariableInputWidget;
 
@@ -18,8 +19,8 @@ signals:
 
 public slots:
 
-    // SimCenterWidget interface
 public:
+    // SimCenterWidget interface
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
@@ -28,6 +29,7 @@ private:
     PointSourceRupture* m_eqRupture;
     GMPE* m_gmpe;
     RecordSelectionConfig* m_selectionConfig;
+    IntensityMeasure* m_intensityMeasure;
 
     RandomVariableInputWidget *theRandomVariableInputWidget;
 };
