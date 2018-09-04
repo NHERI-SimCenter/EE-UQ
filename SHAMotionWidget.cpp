@@ -3,6 +3,7 @@
 #include "RuptureWidget.h"
 #include "RecordSelectionWidget.h"
 #include "GMPEWidget.h"
+#include "IntensityMeasureWidget.h"
 
 SHAMotionWidget::SHAMotionWidget(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
@@ -15,13 +16,18 @@ SHAMotionWidget::SHAMotionWidget(RandomVariableInputWidget *theRandomVariableIW,
     RuptureWidget* ruptureWidget = new RuptureWidget(*this->m_eqRupture, this, Qt::Horizontal);
     gmToolsLayout->addWidget(ruptureWidget, 0);
 
-    m_gmpe = new GMPE();
+    m_gmpe = new GMPE(this);
     GMPEWidget* gmpeWidget = new GMPEWidget(*this->m_gmpe, this);
     gmToolsLayout->addWidget(gmpeWidget);
 
-    m_selectionConfig = new RecordSelectionConfig();
+    m_intensityMeasure = new IntensityMeasure(this);
+    IntensityMeasureWidget* imWidget = new IntensityMeasureWidget(*m_intensityMeasure, this);
+    gmToolsLayout->addWidget(imWidget, 0);
+
+    m_selectionConfig = new RecordSelectionConfig(this);
     RecordSelectionWidget* selectionWidget = new RecordSelectionWidget(*m_selectionConfig, this);
     gmToolsLayout->addWidget(selectionWidget, 0);
+
     gmToolsLayout->addStretch(1);
     this->setMaximumWidth(450);
 }
@@ -29,8 +35,16 @@ SHAMotionWidget::SHAMotionWidget(RandomVariableInputWidget *theRandomVariableIW,
 
 bool SHAMotionWidget::outputToJSON(QJsonObject &jsonObject)
 {
+    bool result = true;
+
     jsonObject["type"] = "Open-SHA";
-    return true;
+
+    jsonObject.insert("EqRupture", m_eqRupture->getJson());
+    jsonObject.insert("GMPE", m_gmpe->getJson());
+    jsonObject.insert("RecordSelection", m_selectionConfig->getJson());
+    jsonObject.insert("IntensityMeasure", m_intensityMeasure->getJson());
+
+    return result;
 }
 
 bool SHAMotionWidget::inputFromJSON(QJsonObject &rvObject)
@@ -43,7 +57,7 @@ bool SHAMotionWidget::inputFromJSON(QJsonObject &rvObject)
 bool
 SHAMotionWidget::outputAppDataToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["Application"] = "Open-SHA";
+    jsonObject["Application"] = "SHA-GM.py";
     QJsonObject dataObj;
     jsonObject["ApplicationData"] = dataObj;
 
