@@ -66,6 +66,7 @@ private:
     QLineEdit   *theConvergenceTest;
     QLineEdit   *theAlgorithm;
     QLineEdit   *theIntegration;
+    QLineEdit   *dampingRatio;
 
     RandomVariableInputWidget *theRandomVariableInputWidget;
 };

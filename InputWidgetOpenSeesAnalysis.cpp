@@ -66,7 +66,7 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     label1->setText(QString("Algorithm: "));
     layout->addWidget(label1, 0, 0);
     theAlgorithm = new QLineEdit();
-    theAlgorithm->setText("Newmark");
+    theAlgorithm->setText("Newton");
     layout->addWidget(theAlgorithm, 0, 1);
 
     QLabel *label2 = new QLabel();
@@ -90,6 +90,17 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     theTolerance->setText("0.01");
     layout->addWidget(theTolerance, 3, 1);
 
+    QLabel *label5 = new QLabel();
+    label5->setText(QString("Damping Ratio: "));
+    layout->addWidget(label5, 4, 0);
+    dampingRatio = new QLineEdit();
+    dampingRatio->setText("0.02");
+    layout->addWidget(dampingRatio, 4, 1);
+
+    QWidget *dummy = new QWidget();
+    layout->addWidget(dummy,5,0);
+    layout->setRowStretch(5,1);
+
     // set the widgets layout
     this->setLayout(layout);
 
@@ -107,18 +118,19 @@ void InputWidgetOpenSeesAnalysis::clear(void) {
     theAlgorithm->setText("Newmark");
     theConvergenceTest->setText("NormUnbalance");
     theTolerance->setText("0.01");
+    dampingRatio->setText("0.02");
 }
 
 bool
 InputWidgetOpenSeesAnalysis::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
-
-    jsonObject["type"]="OpenSeesAnalysis";
+    jsonObject["Application"] = "OpenSees-Simulation";
     jsonObject["integration"]=theIntegration->text();
     jsonObject["algorithm"]=theAlgorithm->text();
     jsonObject["tolerance"]=theTolerance->text();
     jsonObject["convergenceTest"]=theConvergenceTest->text();
+    jsonObject["dampingRatio"]=dampingRatio->text();
 
     return result;
 }
@@ -129,7 +141,6 @@ InputWidgetOpenSeesAnalysis::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
     this->clear();
-
 
     if (jsonObject.contains("integration") && jsonObject.contains("algorithm")
             && jsonObject.contains("convergenceTest") && jsonObject.contains("tolerance")) {
