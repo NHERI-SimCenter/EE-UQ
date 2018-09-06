@@ -48,6 +48,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QPushButton>
 #include <QJsonObject>
+#include <QStandardPaths>
+#include <QCoreApplication>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -60,27 +62,25 @@ RunLocalWidget::RunLocalWidget(SimCenterWidget *theUQ, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     QGridLayout *runLayout = new QGridLayout();
 
-    /*
-
-    QLabel *nameLabel = new QLabel();
-    nameLabel->setText(QString("job Name:"));
-    layout->addWidget(nameLabel, 0,0);
-
-    nameLineEdit = new QLineEdit();
-    layout->addWidget(nameLineEdit,0,1);
-  */
     QLabel *workingDirLabel = new QLabel();
-    workingDirLabel->setText(QString("workingDir:"));
+    workingDirLabel->setText(QString("Working Dir Location:"));
     runLayout->addWidget(workingDirLabel,1,0);
 
-
     workingDirName = new QLineEdit();
-    workingDirName->setText("1");
+    workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
     runLayout->addWidget(workingDirName,1,1);
+
+    QLabel *appDirLabel = new QLabel();
+    appDirLabel->setText(QString("Application Dir Location:"));
+    runLayout->addWidget(appDirLabel,2,0);
+
+    appDirName = new QLineEdit();
+    appDirName->setText(QCoreApplication::applicationDirPath());
+    runLayout->addWidget(appDirName,2,1);
 
     QPushButton *pushButton = new QPushButton();
     pushButton->setText("Submit");
-    runLayout->addWidget(pushButton,5,1);
+    runLayout->addWidget(pushButton,3,1);
 
     layout->addWidget(theUQ);
     layout->addLayout(runLayout);
@@ -92,6 +92,34 @@ RunLocalWidget::RunLocalWidget(SimCenterWidget *theUQ, QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+}
+
+bool
+RunLocalWidget::outputToJSON(QJsonObject &jsonObject)
+{
+    jsonObject["localAppDir"]=appDirName->text();
+    jsonObject["remoteAppDir"]=appDirName->text();
+    jsonObject["workingDir"]=workingDirName->text();
+
+    return true;
+}
+
+bool
+RunLocalWidget::inputFromJSON(QJsonObject &dataObject) {
+
+    if (dataObject.contains("localAppDir")) {
+        QJsonValue theName = dataObject["localAppDir"];
+        appDirName->setText(theName.toString());
+    } else
+        return false;
+
+    if (dataObject.contains("workingDir")) {
+        QJsonValue theName = dataObject["workingDir"];
+        workingDirName->setText(theName.toString());
+    } else
+        return false;
+
+    return true;
 }
 
 

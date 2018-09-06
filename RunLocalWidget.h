@@ -52,6 +52,8 @@ class RunLocalWidget : public SimCenterWidget
     Q_OBJECT
 public:
     explicit RunLocalWidget(SimCenterWidget *, QWidget *parent = nullptr);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
 signals:
    void runButtonPressed(QString);
@@ -63,6 +65,8 @@ private:
     void submitJob(void);
 
     QLineEdit *workingDirName;
+    QLineEdit *appDirName;
+
     SimCenterWidget *theUQ_Method;
 };
 
