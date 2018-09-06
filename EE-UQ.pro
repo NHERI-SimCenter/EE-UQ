@@ -31,6 +31,7 @@ SOURCES += main.cpp\
     InputWidgetBIM_Selection.cpp \
     InputWidgetOpenSees.cpp \
     InputWidgetOpenSeesAnalysis.cpp \
+    InputWidgetExistingEvent.cpp \
     SHAMotionWidget.cpp \
     OpenSeesParser.cpp \
     EarthquakeRecord.cpp \
@@ -44,6 +45,7 @@ HEADERS  += MainWindow.h\
     InputWidgetBIM_Selection.h \
     InputWidgetOpenSees.h \
     InputWidgetOpenSeesAnalysis.h \
+    InputWidgetExistingEvent.h \
     SHAMotionWidget.h \
     OpenSeesParser.h \
     EarthquakeRecord.h \
