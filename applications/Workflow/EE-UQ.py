@@ -64,7 +64,6 @@ def main(run_type, inputFile, applicationsRegistry):
             # convert all relative paths to full paths
             # relative2fullpath(data)
 
-
         if 'runDir' in data:
             runDIR = data['runDir']
         else:
@@ -79,6 +78,15 @@ def main(run_type, inputFile, applicationsRegistry):
             localAppDir = data['localAppDir']
         else:
             raise WorkFlowInputError('Need a localAppDir Entry')
+
+        #
+        # before running chdir to templatedir
+        #
+
+        workflow_log('run Directory:               %s' % runDIR)
+
+        os.chdir(runDIR)
+        os.chdir('templatedir')
 
 
         #

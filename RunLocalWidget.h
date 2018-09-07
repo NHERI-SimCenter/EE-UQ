@@ -54,9 +54,10 @@ public:
     explicit RunLocalWidget(SimCenterWidget *, QWidget *parent = nullptr);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+   // QString getRunDir();
 
 signals:
-   void runButtonPressed(QString);
+   void runButtonPressed(QString, QString);
 
 public slots:
     void onRunButtonPressed(void);

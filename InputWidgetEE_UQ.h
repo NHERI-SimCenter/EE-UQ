@@ -83,7 +83,7 @@ signals:
 
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
-    void runLocal(QString);
+    void runLocal(QString, QString);
 
 private:
 

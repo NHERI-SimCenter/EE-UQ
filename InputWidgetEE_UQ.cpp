@@ -85,7 +85,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     // connect signals and slots
     //
 
-    connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString)), this, SLOT(runLocal(QString)));
+    connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
     //
     //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
@@ -378,9 +378,9 @@ InputWidgetEE_UQ::onExitButtonClicked(){
 }
 
 void
-InputWidgetEE_UQ::runLocal(QString workingDir) {
+InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
 
-    qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir;\
+    qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir << " appDir: " << appDir;
     theRunLocalWidget->hide();
 
    // errorMessage("");
@@ -395,28 +395,27 @@ InputWidgetEE_UQ::runLocal(QString workingDir) {
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      //  destinationDirectory.removeRecursively();
+      destinationDirectory.removeRecursively();
     } else
         destinationDirectory.mkpath(tmpDirectory);
 
-    tmpDirectory  = tmpDirectory + QDir::separator() + QString("templatedir");
-    destinationDirectory.mkpath(tmpDirectory);
+    QString templateDirectory  = tmpDirectory + QDir::separator() + QString("templatedir");
+    destinationDirectory.mkpath(templateDirectory);
 
     // copyPath(path, tmpDirectory, false);
-    theSIM->copyFiles(tmpDirectory);
-    theEvent->copyFiles(tmpDirectory);
-    theAnalysis->copyFiles(tmpDirectory);
-    theUQ->copyFiles(tmpDirectory);
-
+    theSIM->copyFiles(templateDirectory);
+    theEvent->copyFiles(templateDirectory);
+    theAnalysis->copyFiles(templateDirectory);
+    theUQ->copyFiles(templateDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
     // NOTE: we append object workingDir to this which points to template dir
     //
 
-    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
+    QString inputFile = templateDirectory + QDir::separator() + tr("dakota.json");
 
-    QFile file(filenameTMP);
+    QFile file(inputFile);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         //errorMessage();
         return;
@@ -433,48 +432,29 @@ InputWidgetEE_UQ::runLocal(QString workingDir) {
     file.close();
 
     //
-    // now use the applications parseJSON file to run dakota and produce output files:
+    // now use the applications Workflow Application EE-UQ.py  to run dakota and produce output files:
     //    dakota.in dakota.out dakotaTab.out dakota.err
     //
 
-    QString homeDIR = QDir::homePath();
-    QString appDIR(QCoreApplication::applicationDirPath());
 
-
-    //QString appDIR = qApp->applicationDirPath();
-
-  //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
-  //    QDir::separator() + QString("localApp");
-
-    //
-
-    QString pySCRIPT = appDIR +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
+    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
             QString("EE-UQ.py");
 
+    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
+            QString("WorkflowApplications.json");
     qDebug() << pySCRIPT;
-    QString tDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter");
 
-    return;
-    /*
-    // remove current results widget
-
-   //FMK results->setResultWidget(0);
-
-    //
-    // want to first remove old dakota files from the current directory
-    //
-
-    QString sourceDir = workingDir + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
-    QString destinationDir = workingDir + QDir::separator();
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
+   /************************************************************************
     for (int i = 0; i < files.size(); i++) {
         QString copy = files.at(i);
         QFile file(destinationDir + copy);
         file.remove();
     }
+    ***********************************************************************/
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -489,40 +469,23 @@ InputWidgetEE_UQ::runLocal(QString workingDir) {
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
-   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-     tmpDirectory + QString(" runningLocal");
-
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
-    //        tmpDirectory + QString(" runningLocal");
+   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
+     registryFile;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
 
     qInfo() << command;
 
-    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
 #endif
     proc->waitForStarted();
 
     //
-    // now copy results file from tmp.SimCenter directory and remove tmp directory
-    //
-
-   for (int i = 0; i < files.size(); i++) {
-       QString copy = files.at(i);
-       QFile::copy(sourceDir + copy, destinationDir + copy);
-   }
-
-   QDir dirToRemove(sourceDir);
-   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
-                                    // so to debug you can simply comment it
-
-    //
     // process the results
     //
-
+/*
     QString filenameOUT = destinationDir + tr("dakota.out");
     QString filenameTAB = destinationDir + tr("dakotaTab.out");
-
-   // this->processResults(filenameOUT, filenameTAB);
 */
+   // this->processResults(filenameOUT, filenameTAB);
+
 }
