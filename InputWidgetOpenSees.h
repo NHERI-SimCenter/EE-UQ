@@ -43,7 +43,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QGroupBox>
 #include <QVector>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QComboBox>
 
 class InputWidgetParameters;
@@ -60,6 +60,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &dirName);
 
     QString getMainInput();
 
@@ -75,13 +76,14 @@ public slots:
 
 private:
 
-    QVBoxLayout *layout;
+    QGridLayout *layout;
     QWidget     *femSpecific;
 
     QString fileName1;
     QLineEdit *file1;
     QLineEdit *nodes;
     QLineEdit *elements;
+    QLineEdit *ndm;
 
     RandomVariableInputWidget *theRandomVariableInputWidget;
     QStringList varNamesAndValues;

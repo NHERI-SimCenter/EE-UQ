@@ -48,6 +48,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPushButton>
 #include <sectiontitle.h>
 #include <QFileInfo>
+#include <string>
+#include <sstream>
+#include <iostream>
+using namespace std;
+#include <QGridLayout>
 
 #include <OpenSeesParser.h>
 #include <RandomVariableInputWidget.h>
@@ -59,42 +64,39 @@ InputWidgetOpenSees::InputWidgetOpenSees(RandomVariableInputWidget *theRandomVar
 {
     femSpecific = 0;
 
-    layout = new QVBoxLayout();
+    layout = new QGridLayout();
 
     QLabel *label1 = new QLabel();
     label1->setText("Input Script");
 
-    QHBoxLayout *fileName1Layout = new QHBoxLayout();
+   // QHBoxLayout *fileName1Layout = new QHBoxLayout();
     file1 = new QLineEdit;
     QPushButton *chooseFile1 = new QPushButton();
     chooseFile1->setText(tr("Choose"));
     connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
-    fileName1Layout->addWidget(label1);
-    fileName1Layout->addWidget(file1);
-    fileName1Layout->addWidget(chooseFile1);
-    fileName1Layout->addStretch();
+    layout->addWidget(label1,0,0);
+    layout->addWidget(file1,0,1);
+    layout->addWidget(chooseFile1,0,2);
 
-    QHBoxLayout *fileName2Layout = new QHBoxLayout();
     QLabel *label2 = new QLabel();
-    label2->setText("Nodes");
+    label2->setText("List of CLine Nodes:");
     nodes = new QLineEdit;
-    fileName2Layout->addWidget(label2);
-    fileName2Layout->addWidget(nodes);
-    fileName2Layout->addStretch();
 
-    fileName1Layout->setSpacing(10);
-    fileName1Layout->setMargin(0);
-    fileName2Layout->setSpacing(10);
-    fileName2Layout->setMargin(0);
+    layout->addWidget(label2,1,0);
+    layout->addWidget(nodes,1,1);
 
-    layout->addLayout(fileName1Layout);
-    layout->addLayout(fileName2Layout);
-    layout->setSpacing(10);
-    layout->setMargin(0);
-    layout->addStretch();
+    QLabel *label3 = new QLabel();
+    label3->setText("Spatial Dimension:");
+    ndm = new QLineEdit();
+    ndm->setText("2");
+    ndm->setMaximumWidth(50);
+    layout->addWidget(label3,2,0);
+    layout->addWidget(ndm,2,1);
 
-    layout->setMargin(0);
-    layout->addStretch();
+    QWidget *dummyR = new QWidget();
+    layout->addWidget(dummyR,3,0);
+    layout->setRowStretch(4,1);
+    //layout->setColumnStretch(3,1);
 
     this->setLayout(layout);
 
@@ -118,6 +120,32 @@ InputWidgetOpenSees::outputToJSON(QJsonObject &jsonObject)
 {
     // just need to send the class type here.. type needed in object in case user screws up
     jsonObject["type"]="OpenSeesInput";
+    QJsonArray nodeTags;
+    string nodeString = nodes->text().toStdString();
+    string s1(nodeString); // this line is needed as nodeString cannot be passed directly to the line below!
+    stringstream nodeStream(s1);
+    int nodeTag;
+    while (nodeStream >> nodeTag) {
+            nodeTags.append(QJsonValue(nodeTag));
+            if (nodeStream.peek() == ',')
+                       nodeStream.ignore();
+    }
+
+    jsonObject["nodes"]=nodeTags;
+
+    jsonObject["ndm"]=ndm->text().toInt();
+
+    QJsonArray rvArray;
+    for (int i=0; i<varNamesAndValues.size()-1; i+=2) {
+        QJsonObject rvObject;
+        QString name = varNamesAndValues.at(i);
+        rvObject["name"]=name;
+        rvObject["value"]=QString("RV.")+name;
+       rvArray.append(rvObject);
+    }
+
+    jsonObject["randomVar"]=rvArray;
+
     return true;
 }
 
@@ -125,7 +153,36 @@ InputWidgetOpenSees::outputToJSON(QJsonObject &jsonObject)
 bool
 InputWidgetOpenSees::inputFromJSON(QJsonObject &jsonObject)
 {
+    varNamesAndValues.clear();
+
     this->clear();
+    QString stringNodes;
+    if (jsonObject.contains("nodes")) {
+        QJsonArray nodeTags = jsonObject["nodes"].toArray();
+        foreach (const QJsonValue & value, nodeTags) {
+            int tag = value.toInt();
+            stringNodes = stringNodes + " " +  QString::number(tag);
+        }
+    }
+
+    nodes->setText(stringNodes);
+
+    if (jsonObject.contains("randomVar")) {
+        QJsonArray randomVars = jsonObject["randomVar"].toArray();
+        foreach (const QJsonValue & value, randomVars) {
+            QJsonObject theRV = value.toObject();
+            QString name = theRV["name"].toString();
+            QString zero = "0";
+            varNamesAndValues.append(name);
+            varNamesAndValues.append(zero);
+        }
+    }
+
+    int theNDM = jsonObject["ndm"].toInt();
+    qDebug() << "NDM: " << theNDM;
+
+    ndm->setText(QString::number(theNDM));
+
     return true;
 }
 
@@ -145,9 +202,6 @@ InputWidgetOpenSees::outputAppDataToJSON(QJsonObject &jsonObject) {
 
     dataObj["fileName"]= fileInfo.fileName();
     dataObj["filePath"]=fileInfo.path();
-    // dataObj["inputFile"]=file1->text();
-
-    dataObj["nodes"]=nodes->text();
 
     jsonObject["ApplicationData"] = dataObj;
 
@@ -156,13 +210,20 @@ InputWidgetOpenSees::outputAppDataToJSON(QJsonObject &jsonObject) {
 bool
 InputWidgetOpenSees::inputAppDataFromJSON(QJsonObject &jsonObject) {
 
-    if (jsonObject.contains("ApplicationData")) {
+    //
+    // from ApplicationData
+    //
 
-        QJsonValue theName = jsonObject["name"];
-        QJsonObject dataObject = theName.toObject();
+    if (jsonObject.contains("ApplicationData")) {
+        QJsonObject dataObject = jsonObject["ApplicationData"].toObject();
+
+        //
+        // retrieve filename and path, set the QLIne Edit
+        //
 
         QString fileName;
         QString filePath;
+
 
         if (dataObject.contains("fileName")) {
             QJsonValue theName = dataObject["fileName"];
@@ -177,6 +238,10 @@ InputWidgetOpenSees::inputAppDataFromJSON(QJsonObject &jsonObject) {
             return false;
 
         file1->setText(QDir(filePath).filePath(fileName));
+
+        //
+        // get nodes and set QLineEdit
+        //
 
         if (dataObject.contains("nodes")) {
             QJsonValue theName = dataObject["nodes"];
@@ -231,7 +296,7 @@ InputWidgetOpenSees::specialCopyMainInput(QString fileName, QStringList varNames
     // if OpenSees or FEAP parse the file for the variables
     if (varNames.size() > 0) {
         OpenSeesParser theParser;
-        theParser.writeFile(file1->text(), fileName,varNames);
+        theParser.writeFile(file1->text(), fileName, varNames);
     }
 }
 
@@ -240,4 +305,27 @@ QString InputWidgetOpenSees::getMainInput() {
     return fileName1;
 }
 
+ bool
+ InputWidgetOpenSees::copyFiles(QString &dirName) {
+
+     QString fileName = file1->text();
+
+     if (fileName.isEmpty()) {
+         emit sendErrorMessage("OpenSeesInput - no file set");
+         return false;
+     }
+     QFileInfo fileInfo(fileName);
+
+     QString theFile = fileInfo.fileName();
+     QString thePath = fileInfo.path();
+
+     SimCenterAppWidget::copyPath(thePath, dirName, false);
+
+     QStringList varNames = theRandomVariableInputWidget->getRandomVariableNames();
+
+     // now create special copy of original main script that handles the RV
+     OpenSeesParser theParser;
+     QString copiedFile = dirName + QDir::separator() + theFile;
+     theParser.writeFile(fileName, copiedFile, varNames);
+ }
 
