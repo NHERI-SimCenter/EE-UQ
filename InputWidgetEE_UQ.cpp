@@ -52,6 +52,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStackedWidget>
 #include <InputWidgetEarthquakeEvent.h>
 #include <RunLocalWidget.h>
+#include <QProcess>
+#include <QCoreApplication>
 
 
 #include "GeneralInformationWidget.h"
@@ -59,6 +61,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RandomVariableInputWidget.h>
 #include <InputWidgetSampling.h>
 #include <InputWidgetOpenSeesAnalysis.h>
+#include <QDir>
+#include <QFile>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 {
@@ -225,6 +229,12 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     //jsonObjectTop["RandomVariables"] = jsonObjectRVs;
     theRVs->outputToJSON(jsonObjectTop);
 
+    QJsonObject appsEDP;
+    appsEDP["Application"] = "StandardEarthquakeEDP";
+    QJsonObject dataObj;
+    appsEDP["ApplicationData"] = dataObj;
+    apps["EDP"] = appsEDP;
+
     QJsonObject jsonObjectUQ;
     theUQ->outputToJSON(jsonObjectUQ);
     jsonObjectTop["UQ_Method"] = jsonObjectUQ;
@@ -235,23 +245,21 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     QJsonObject jsonObjectAna;
     theAnalysis->outputToJSON(jsonObjectAna);
-    jsonObjectTop["Analysis"] = jsonObjectAna;
+    jsonObjectTop["Simulation"] = jsonObjectAna;
 
     QJsonObject appsAna;
     theAnalysis->outputAppDataToJSON(appsAna);
     apps["Simulation"]=appsAna;
 
-   // NOTE: Events treated differently, due to array nature of objects
 
-    //QJsonObject jsonObjEvent;
+   // NOTE: Events treated differently, due to array nature of objects
     theEvent->outputToJSON(jsonObjectTop);
-    // jsonObjectTop["Events"] = jsonObjEvent;
-    //QJsonObject appsEVT;
     theEvent->outputAppDataToJSON(apps);
-    // apps["EVT"]=appsEVT;
 
 
     jsonObjectTop["Applications"]=apps;
+
+    theRunLocalWidget->outputToJSON(jsonObjectTop);
 
     return true;
 }
@@ -304,13 +312,14 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         return false;
     */
 
-    if (jsonObject.contains("UQ")) {
+    if (jsonObject.contains("UQ_Method")) {
         QJsonObject jsonObjUQInformation = jsonObject["UQ"].toObject();
         theEvent->inputFromJSON(jsonObjUQInformation);
     } else
         return false;
 
     if (jsonObject.contains("Applications")) {
+
         QJsonObject theApplicationObject = jsonObject["Applications"].toObject();
 
         if (theApplicationObject.contains("Modeling")) {
@@ -319,19 +328,23 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         } else
             return false;
 
-        // see note above as to why different for events
-        theEvent->inputAppDataFromJSON(jsonObject);
-        /*
-        if (theApplicationObject.contains("Event")) {
-            QJsonObject theObject = theApplicationObject["Event"].toObject();
-            theEvent->inputAppDataFromJSON(theObject);
+        // note: Events is different because the object is an Array
+        if (theApplicationObject.contains("Events")) {
+            QJsonObject theObject = theApplicationObject["Events"].toObject();
+            theEvent->inputAppDataFromJSON(theApplicationObject);
         } else
             return false;
-            */
+
 
         if (theApplicationObject.contains("UQ")) {
             QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            theEvent->inputAppDataFromJSON(theObject);
+            theUQ->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+
+        if (theApplicationObject.contains("Simulation")) {
+            QJsonObject theObject = theApplicationObject["Simulation"].toObject();
+            theAnalysis->inputAppDataFromJSON(theObject);
         } else
             return false;
 
@@ -339,7 +352,9 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-    return true;
+    return theRunLocalWidget->inputFromJSON(jsonObject);
+
+    //return true;
 }
 
 
@@ -364,6 +379,150 @@ InputWidgetEE_UQ::onExitButtonClicked(){
 
 void
 InputWidgetEE_UQ::runLocal(QString workingDir) {
+
     qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir;\
     theRunLocalWidget->hide();
+
+   // errorMessage("");
+
+
+    //
+    // create temporary directory in working dir
+    // and copy all files needed to this directory by invoking copyFiles() on app widgets
+    //
+
+    QString tmpDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter"); // + QDir::separator() + QString("templatedir");
+    QDir destinationDirectory(tmpDirectory);
+
+    if(destinationDirectory.exists()) {
+      //  destinationDirectory.removeRecursively();
+    } else
+        destinationDirectory.mkpath(tmpDirectory);
+
+    tmpDirectory  = tmpDirectory + QDir::separator() + QString("templatedir");
+    destinationDirectory.mkpath(tmpDirectory);
+
+    // copyPath(path, tmpDirectory, false);
+    theSIM->copyFiles(tmpDirectory);
+    theEvent->copyFiles(tmpDirectory);
+    theAnalysis->copyFiles(tmpDirectory);
+    theUQ->copyFiles(tmpDirectory);
+
+
+    //
+    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
+    // NOTE: we append object workingDir to this which points to template dir
+    //
+
+    QString filenameTMP = tmpDirectory + QDir::separator() + tr("dakota.json");
+
+    QFile file(filenameTMP);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        //errorMessage();
+        return;
+    }
+    QJsonObject json;
+    this->outputToJSON(json);
+
+    json["runDir"]=tmpDirectory;
+    json["WorkflowType"]="Building Simulation";
+
+
+    QJsonDocument doc(json);
+    file.write(doc.toJson());
+    file.close();
+
+    //
+    // now use the applications parseJSON file to run dakota and produce output files:
+    //    dakota.in dakota.out dakotaTab.out dakota.err
+    //
+
+    QString homeDIR = QDir::homePath();
+    QString appDIR(QCoreApplication::applicationDirPath());
+
+
+    //QString appDIR = qApp->applicationDirPath();
+
+  //   appDIR = homeDIR + QDir::separator() + QString("NHERI") + QDir::separator() + QString("uqFEM") +
+  //    QDir::separator() + QString("localApp");
+
+    //
+
+    QString pySCRIPT = appDIR +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
+            QString("EE-UQ.py");
+
+    qDebug() << pySCRIPT;
+    QString tDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter");
+
+    return;
+    /*
+    // remove current results widget
+
+   //FMK results->setResultWidget(0);
+
+    //
+    // want to first remove old dakota files from the current directory
+    //
+
+    QString sourceDir = workingDir + QDir::separator() + QString("tmp.SimCenter") + QDir::separator();
+    QString destinationDir = workingDir + QDir::separator();
+
+    QStringList files;
+    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+    for (int i = 0; i < files.size(); i++) {
+        QString copy = files.at(i);
+        QFile file(destinationDir + copy);
+        file.remove();
+    }
+
+    //
+    // now invoke dakota, done via a python script in tool app dircetory
+    //
+
+    QProcess *proc = new QProcess();
+
+#ifdef Q_OS_WIN
+    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    qDebug() << command;
+    proc->execute("cmd", QStringList() << "/C" << command);
+    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+
+#else
+   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+     tmpDirectory + QString(" runningLocal");
+
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") +
+    //        tmpDirectory + QString(" runningLocal");
+
+    proc->execute("bash", QStringList() << "-c" <<  command);
+
+    qInfo() << command;
+
+    // proc->start("bash", QStringList("-i"), QIODevice::ReadWrite);
+#endif
+    proc->waitForStarted();
+
+    //
+    // now copy results file from tmp.SimCenter directory and remove tmp directory
+    //
+
+   for (int i = 0; i < files.size(); i++) {
+       QString copy = files.at(i);
+       QFile::copy(sourceDir + copy, destinationDir + copy);
+   }
+
+   QDir dirToRemove(sourceDir);
+   dirToRemove.removeRecursively(); // padhye 4/28/2018, this removes the temprorary directory
+                                    // so to debug you can simply comment it
+
+    //
+    // process the results
+    //
+
+    QString filenameOUT = destinationDir + tr("dakota.out");
+    QString filenameTAB = destinationDir + tr("dakotaTab.out");
+
+   // this->processResults(filenameOUT, filenameTAB);
+*/
 }
