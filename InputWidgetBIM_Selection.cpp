@@ -142,9 +142,8 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
     this->clear();
 
     //
-    // get type, and invoke bimSelectionChanged with type info
+    // get type, determine index & invoke setCurrentIndex on combobox
     //
-
 
     QString type;
     if (jsonObject.contains("type")) {
@@ -153,7 +152,16 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-    this->bimSelectionChanged(type);
+    int index = 0;
+    if (type == QString("SimCenterSIM")) {
+       index = 0;
+    } else if (type == QString("OpenSeesInput")) {
+       index = 1;
+    } else {
+        return false;
+    }
+
+    bimSelection->setCurrentIndex(index);
 
     // if worked, just invoke method on new type
 
@@ -183,13 +191,22 @@ InputWidgetBIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    this->clear();
-
     if (bimInput != 0) {
         result = bimInput->inputAppDataFromJSON(jsonObject);
     }
 
     return result;
+}
+
+
+bool
+InputWidgetBIM_Selection::copyFiles(QString &destDir) {
+
+    if (bimInput != 0) {
+        return  bimInput->copyFiles(destDir);
+    }
+
+    return false;
 }
 
 void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)

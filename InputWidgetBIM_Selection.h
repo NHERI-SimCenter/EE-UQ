@@ -61,6 +61,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &destDir);
 
 signals:
 
