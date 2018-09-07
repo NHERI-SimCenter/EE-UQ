@@ -1,0 +1,105 @@
+#include <jansson.h> 
+#include <stdlib.h>
+#include <stdio.h>
+//#include <string>
+//#include <sstream>
+//#include <map>
+
+int
+main(int argc, char **argv) {
+
+  // OpenSeesInput -filenameBIM file? -filenameEVENT file? -filenameSAM file? -filePath path? -fileName file? <-getRV>
+
+  if (argc == 12) {
+
+    char *filenameBIM = argv[2];
+    // NOT USED: char *filenameEVENT = argv[4]; 
+    char *filenameSAM = argv[6];
+    // NOT USED: char *filePath = argv[8];
+    char *fileName = argv[10];
+    
+    json_error_t error;
+    json_t *rootBIM = json_object();
+    json_t *rootSAM = json_object();
+
+    json_object_set(rootSAM,"mainScript",json_string(fileName));
+    json_object_set(rootSAM,"type",json_string("OpenSeesInput"));
+
+    //
+    // now the node mapping array, needed for EDP
+    // create array, lop over nodes in list and fill in
+    //
+
+    json_t *mappingArray = json_array();
+
+    //
+    // load input file & get the array of nodes
+    //
+
+    rootBIM = json_load_file(filenameBIM, 0, &error);
+    json_t *theSI = json_object_get(rootBIM,"StructuralInformation");
+
+    json_t *theNodes = json_object_get(theSI,"nodes");
+
+    // check nodes exists
+    if (theSI == NULL ||  theNodes == NULL) {
+      fprintf(stderr,"OpenSeesInput - no nodes section found ");    
+      return -1;
+    }
+    
+    // loop over each node in nodes list, creating nodeMapping entry
+    int index;
+    json_t *intObj;
+    int floor = 1;
+    char floorString[10];
+    
+    json_array_foreach(theNodes, index, intObj) {
+      json_t *nodeEntry = json_object();
+      int tag = json_integer_value(intObj);
+      json_object_set(nodeEntry,"node",json_integer(tag));
+      json_object_set(nodeEntry,"cline",json_string("1"));
+      sprintf(floorString,"%d",floor);
+      //  itoa(floor, floorString, floor); NOT IN STANDARD
+      json_object_set(nodeEntry,"floor",json_string(floorString));
+      floor++;
+      json_array_append(mappingArray, nodeEntry);
+    }
+
+    json_object_set(rootSAM,"NodeMapping",mappingArray);
+
+    // add #story and ndm
+    int nStory = floor -2;
+    json_object_set(rootSAM,"numStory",json_integer(nStory));
+
+    json_t *ndm = json_object_get(theSI, "ndm");
+    json_object_set(rootSAM,"ndm", ndm);
+
+
+    json_t *theRVs = json_object_get(theSI,"randomVar");
+
+    // check nodes exists
+    if (theSI == NULL ||  theRVs == NULL) {
+      fprintf(stdout,"OpenSeesInput - no randomVar section found ");    
+      return -1;
+    }
+    
+    // loop over each node in nodes list, creating nodeMapping entry
+    json_t *rvObj;
+    json_t *rvArray = json_array();
+    json_array_foreach(theRVs, index, rvObj) {
+      
+      //      json_t *nodeEntry = json_object();
+      //      int tag = json_integer_value(intObj);
+      json_array_append(rvArray, rvObj);
+    }
+    json_object_set(rootSAM,"randomVar",rvArray);
+
+    //
+    // dump json to file
+    //
+
+    json_dump_file(rootSAM,filenameSAM,0);
+  }
+
+  return 0;
+}
