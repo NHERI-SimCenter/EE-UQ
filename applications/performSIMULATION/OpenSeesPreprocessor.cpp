@@ -7,9 +7,9 @@
 #include <iostream>
 
 OpenSeesPreprocessor::OpenSeesPreprocessor()
-  :rootBIM(0), rootEDP(0), rootEVENT(0), mapping(0),
+  :rootBIM(0), rootSAM(0), rootEVENT(0), rootEDP(0), rootSIM(0), 
    fileBIM(0), fileSAM(0), fileEVENT(0), fileEDP(0), fileSIM(0),
-   analysisType(-1), numSteps(0), dT(0.0), nStory(0)
+   analysisType(-1), numSteps(0), dT(0.0), nStory(0), mapping(0)
 {
 
 }
@@ -136,7 +136,7 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
   }
 
   // process damping
-  rootSAM = json_load_file(SIM, 0, &error);
+  rootSIM = json_load_file(SIM, 0, &error);
   processDamping(tclFile);
 
   //
