@@ -45,3 +45,8 @@ qcustomplot.cpp
 
 # OTHER
 Makefile
+StandardEarthquakeEDP
+OpenSeesInput
+OpenSeesPostprocessor
+OpenSeesPreprocessor
+extractEDP
