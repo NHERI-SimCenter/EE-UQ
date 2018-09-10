@@ -63,6 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetOpenSeesAnalysis.h>
 #include <QDir>
 #include <QFile>
+#include <DakotaResultsSampling.h>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 {
@@ -78,7 +79,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
     theUQ = new InputWidgetSampling();
 
-    theResults = new SimCenterWidget();
+    theResults = new DakotaResultsSampling();
     theRunLocalWidget = new RunLocalWidget(theUQ);
 
     //
@@ -385,7 +386,6 @@ InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
 
    // errorMessage("");
 
-
     //
     // create temporary directory in working dir
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
@@ -482,10 +482,11 @@ InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
     //
     // process the results
     //
-/*
-    QString filenameOUT = destinationDir + tr("dakota.out");
-    QString filenameTAB = destinationDir + tr("dakotaTab.out");
-*/
-   // this->processResults(filenameOUT, filenameTAB);
+
+    QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
+    QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
+
+    theResults->processResults(filenameOUT, filenameTAB);
+    qDebug() << "PROCESSED RESULTS";
 
 }

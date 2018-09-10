@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts concurrent network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,7 +35,10 @@ SOURCES += main.cpp\
     SHAMotionWidget.cpp \
     OpenSeesParser.cpp \
     EarthquakeRecord.cpp \
-    RunLocalWidget.cpp
+    RunLocalWidget.cpp \
+    DakotaResults.cpp \
+    DakotaResultsSampling.cpp \
+    MyTableWidget.cpp
 
 HEADERS  += MainWindow.h\
     InputWidgetEE_UQ.h\
@@ -49,7 +52,10 @@ HEADERS  += MainWindow.h\
     SHAMotionWidget.h \
     OpenSeesParser.h \
     EarthquakeRecord.h \
-    RunLocalWidget.h
+    RunLocalWidget.h \
+    DakotaResults.h \
+    DakotaResultsSampling.h \
+    MyTableWidget.h
 
 
 RESOURCES += \

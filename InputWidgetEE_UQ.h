@@ -58,6 +58,7 @@ class ResultsWidget;
 class GeneralInformationWidget;
 class InputWidgetEarthquakeEvent;
 class QStackedWidget;
+class DakotaResults;
 
 class RunLocalWidget;
 
@@ -102,7 +103,7 @@ private:
     InputWidgetSampling *theUQ;
     InputWidgetEarthquakeEvent *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
-    SimCenterWidget *theResults;
+    DakotaResults *theResults;
     RunLocalWidget *theRunLocalWidget;
 
 
