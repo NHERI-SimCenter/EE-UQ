@@ -16,11 +16,11 @@ include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../Simcenter-EQSS/UI/GroundMotionWidgets.pri)
 
-INCLUDEPATH+="../NHERI/SimCenterCommon/Common"
-INCLUDEPATH+="../NHERI/SimCenterCommon/RandomVariables"
-INCLUDEPATH+="../NHERI/SimCenterCommon/InputSheetBM"
-INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/InputSheetBM
-INCLUDEPATH+=/Users/fmckenna/NHERI/SimCenterCommon/RandomVariables
+INCLUDEPATH+="../SimCenterCommon/Common"
+INCLUDEPATH+="../SimCenterCommon/RandomVariables"
+INCLUDEPATH+="../SimCenterCommon/InputSheetBM"
+INCLUDEPATH+=../SimCenterCommon/InputSheetBM
+INCLUDEPATH+=../SimCenterCommon/RandomVariables
 
 SOURCES += main.cpp\
     MainWindow.cpp\
