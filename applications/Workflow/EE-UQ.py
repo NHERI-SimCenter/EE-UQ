@@ -364,7 +364,10 @@ def main(run_type, inputFile, applicationsRegistry):
         driverFILE.close()
 
         uqAppDataList = [uqAppExeLocal, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
-                         '-filenameEDP', edpFILE, '-filenameSIM', simFILE, 'driverFile', driverFile]
+                         '-filenameEDP', edpFILE, '-filenameSIM', simFILE, '-driverFile', driverFile]
+
+        if (uqAppExe.endswith('.py')):
+            uqAppDataList.insert(0, 'python')
 
         #for key in uqAppData.keys():
         #    uqAppDataList.append('-' + key.encode('ascii', 'ignore'))
