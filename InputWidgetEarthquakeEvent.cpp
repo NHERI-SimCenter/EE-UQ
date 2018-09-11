@@ -77,7 +77,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
     eventSelection->addItem(tr("Existing"));
-    eventSelection->addItem(tr("SHA Based Event"));
+    eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
@@ -152,7 +152,7 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
     int index = 0;
     if (type == QString("SimCenterEvent")) {
        index = 0;
-    } else if (type == QString("Open-SHA")) {
+    } else if (type == QString("Hazard BAsed Event")) {
        index = 1;
     } else {
         return false;
@@ -180,7 +180,7 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = theExistingEventsWidget;
     }
 
-    else if(arg1 == "SHA Based Event" || arg1 == "Open-SHA") {
+    else if(arg1 == "Hazard Based Event") {
         theStackedWidget->setCurrentIndex(1);
         theCurrentEvent = theSHA_MotionWidget;
     }

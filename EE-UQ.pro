@@ -14,13 +14,7 @@ TEMPLATE = app
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
-include(../Simcenter-EQSS/UI/GroundMotionWidgets.pri)
-
-INCLUDEPATH+="../SimCenterCommon/Common"
-INCLUDEPATH+="../SimCenterCommon/RandomVariables"
-INCLUDEPATH+="../SimCenterCommon/InputSheetBM"
-INCLUDEPATH+=../SimCenterCommon/InputSheetBM
-INCLUDEPATH+=../SimCenterCommon/RandomVariables
+include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
 
 SOURCES += main.cpp\
     MainWindow.cpp\

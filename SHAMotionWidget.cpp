@@ -37,12 +37,15 @@ bool SHAMotionWidget::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
-    jsonObject["type"] = "Open-SHA";
+    jsonObject["type"] = "HazardBasedEvent";
 
-    jsonObject.insert("EqRupture", m_eqRupture->getJson());
-    jsonObject.insert("GMPE", m_gmpe->getJson());
-    jsonObject.insert("RecordSelection", m_selectionConfig->getJson());
-    jsonObject.insert("IntensityMeasure", m_intensityMeasure->getJson());
+    QJsonObject groundMotion;
+    groundMotion.insert("EqRupture", m_eqRupture->getJson());
+    groundMotion.insert("GMPE", m_gmpe->getJson());
+    groundMotion.insert("RecordSelection", m_selectionConfig->getJson());
+    groundMotion.insert("IntensityMeasure", m_intensityMeasure->getJson());
+
+    jsonObject.insert("GroundMotion", groundMotion);
 
     return result;
 }
@@ -57,9 +60,10 @@ bool SHAMotionWidget::inputFromJSON(QJsonObject &rvObject)
 bool
 SHAMotionWidget::outputAppDataToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["Application"] = "SHA-GM.py";
+    jsonObject["Application"] = "HazardBasedEvent";
     QJsonObject dataObj;
     jsonObject["ApplicationData"] = dataObj;
+    jsonObject["EventClassification"] = "Earthquake";
 
     return true;
 }

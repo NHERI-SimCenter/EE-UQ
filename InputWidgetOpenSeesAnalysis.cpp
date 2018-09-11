@@ -128,9 +128,20 @@ InputWidgetOpenSeesAnalysis::outputToJSON(QJsonObject &jsonObject)
     jsonObject["Application"] = "OpenSees-Simulation";
     jsonObject["integration"]=theIntegration->text();
     jsonObject["algorithm"]=theAlgorithm->text();
-    jsonObject["tolerance"]=theTolerance->text();
     jsonObject["convergenceTest"]=theConvergenceTest->text();
-    jsonObject["dampingRatio"]=dampingRatio->text();
+
+    bool isDouble = false;
+    double tolerance = theTolerance->text().toDouble(&isDouble);
+    if(isDouble)
+        jsonObject["tolerance"]=tolerance;
+    else
+        jsonObject["tolerance"]=theTolerance->text();
+
+    double dampingRatioValue = dampingRatio->text().toDouble(&isDouble);
+    if(isDouble)
+        jsonObject["dampingRatio"]=dampingRatioValue;
+    else
+        jsonObject["dampingRatio"]=dampingRatio->text();
 
     return result;
 }

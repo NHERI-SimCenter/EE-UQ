@@ -26,14 +26,9 @@
 	]
       },
       {
-        "Name": "Open-SHA",
-        "ExecutablePath": "applications/createEVENT/OpenSHA.py",
-        "ApplicationSpecificInputs":[{
-            "id": "scenarioConfig",
-            "type": "path",
-            "description":"Configuration file of the earthquake scenario including rupture, site grid, GMPE, IM and records selection"
-          }
-        ]
+        "Name": "HazardBasedEvent",
+        "ExecutablePath": "applications/createEVENT/HazardBasedEvent.py",
+        "ApplicationSpecificInputs":[]
       }
     ]
   },
