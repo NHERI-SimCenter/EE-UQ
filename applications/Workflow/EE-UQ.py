@@ -339,6 +339,9 @@ def main(run_type, inputFile, applicationsRegistry):
         simAppDataList = [simAppExeRemote, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
                           '-filenameEDP', edpFILE, '-filenameSIM', simFILE]
 
+        if (simAppExe.endswith('.py')):
+            simAppDataList.insert(0, 'python')
+
         for key in simAppData.keys():
             simAppDataList.append('-' + key.encode('ascii', 'ignore'))
             simAppDataList.append(simAppData.get(key).encode('ascii', 'ignore'))
@@ -349,9 +352,9 @@ def main(run_type, inputFile, applicationsRegistry):
 
         simAppDataList.append('-getRV')
         if (simAppExe.endswith('.py')):
-            simAppDataList[0] = simAppExeLocal
-        else:
             simAppDataList[1] = simAppExeLocal
+        else:
+            simAppDataList[0] = simAppExeLocal
 
         command, result, returncode = runApplication(simAppDataList)
         log_output.append([command, result, returncode])
