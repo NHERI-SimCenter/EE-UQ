@@ -5,18 +5,15 @@ import json
 import os
 import sys
 import subprocess
-import hashlib
-from scipy import spatial
 import glob
 import re
 
 def computeScenario(gmConfig, location):
-    eqHazardPath = os.path.abspath(gmConfig["AppConfig"]["EQHazardPath"])
-    simulateIMPath = os.path.abspath(gmConfig["AppConfig"]["SimulateIMPath"])
-    selectRecordPath = os.path.abspath(gmConfig["AppConfig"]["SelectRecordPath"])
-
-    #We no longer need the app config
-    del gmConfig["AppConfig"]
+    scriptDir = os.path.dirname(os.path.realpath(__file__))
+    eqHazardPath = "{}/GMU/EQHazard.jar".format(scriptDir)
+    simulateIMPath = "{}/GMU/SimulateIM".format(scriptDir)
+    selectRecordPath = "{}/GMU/SelectRecord".format(scriptDir)
+    recordDatabasePath = "{}/GMU/NGAWest2-1000.csv".format(scriptDir)
 
     #Separate Selection Config
     selectionConfig = gmConfig["RecordSelection"]
@@ -57,7 +54,7 @@ def computeScenario(gmConfig, location):
     #Now we can run record selection
     #
     selectionConfig["Target"]["File"] = "./HazardWorkDir/Hazard_Sim.json"
-    selectionConfig["Database"]["File"] = os.path.abspath(selectionConfig["Database"]["File"])
+    selectionConfig["Database"]["File"] = recordDatabasePath
     with open("./HazardWorkDir/Selection_Config.json", 'w') as selectionConfigFile:
         json.dump(selectionConfig, selectionConfigFile,  indent=4)
     selectionCommand = [selectRecordPath, "./HazardWorkDir/Selection_Config.json", "./HazardWorkDir/Records_Selection.json"]
@@ -139,6 +136,10 @@ def createNGAWest2Event(rsn, scaleFactor, recordsFolder, eventFilePath):
 def main():
     inputArgs = sys.argv
 
+    #Process only if -getRV is passed
+    if not "-getRV" in inputArgs:
+        sys.exit(0)
+
     #First let's process the arguments
     argBIM = inputArgs.index("-filenameBIM") + 1
     bimFilePath = inputArgs[argBIM]
@@ -153,9 +154,10 @@ def main():
         bim = json.load(bimFile)
         location = [bim["GeneralInformation"]["location"]["latitude"], bim["GeneralInformation"]["location"]["longitude"]]
     
-    recordsFolder = os.path.abspath(bim["GroundMotion"]["AppConfig"]["RecordsFolder"])
+    scriptDir = os.path.dirname(os.path.realpath(__file__))
+    recordsFolder = "{}/GMU/NGAWest2Records".format(scriptDir)
 
-    computeScenario(bim["GroundMotion"], location)
+    computeScenario(bim["Events"][0]["GroundMotion"], location)
 
     
     #We need to read the building location
