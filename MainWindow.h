@@ -6,6 +6,8 @@
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QJsonObject>
+#include <AgaveCurl.h>
+
 //#include <JsonValidator.h>
 
 class InputWidgetEE_UQ;
@@ -14,28 +16,41 @@ class QPushButton;
 class QLabel;
 
 
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
     
     public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(AgaveCurl *theRemoteInterface, QWidget *parent = 0);
   ~MainWindow();
-  
+
+ signals:
+    void attemptLogin(QString, QString);
+    void logout();
+
   public slots:
+    // for menu items
     void newFile();
     void open();
     bool save();
     bool saveAs();
 
+    // for main actions
     void onRunButtonClicked();
     void onRemoteRunButtonClicked();
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
 
-  //void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
-    void connectMenuItems(SimCenterWidget  *widget);
-    void disconnectMenuItems(SimCenterWidget  *widget);
+    // for login
+    void onLoginButtonClicked();
+    void onLoginSubmitButtonClicked();
+    void attemptLoginReturn(bool);
+    void logoutReturn(bool);
+
+    void statusMessage(QString message);
+    void errorMessage(QString message);
+    void fatalMessage(QString message);
 
  private:
     void setCurrentFile(const QString &fileName);
@@ -43,7 +58,6 @@ class MainWindow : public QMainWindow
     void loadFile(const QString &fileName);
 
     void createActions();
-
 
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -54,12 +68,20 @@ class MainWindow : public QMainWindow
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
 
+    // some variables for logging in
+    QWidget *loginWindow;
+    QLineEdit *nameLineEdit;
+    QLineEdit *passwordLineEdit;
+    QPushButton *loginSubmitButton;
+    bool loggedIn;
+    int numTries;
 
     //Ui::MainWindow *ui;
 
     QString currentFile;
     InputWidgetEE_UQ *inputWidget;
-    SimCenterWidget *currentWidget;
+    AgaveCurl *theRemoteInterface;
+    //SimCenterWidget *currentWidget;
 
     QPushButton *loginButton;
     QLabel *errorLabel;

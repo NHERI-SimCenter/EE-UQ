@@ -11,6 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
+macos:LIBS += /usr/lib/libcurl.dylib
+win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
+win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
+
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
@@ -32,7 +36,9 @@ SOURCES += main.cpp\
     RunLocalWidget.cpp \
     DakotaResults.cpp \
     DakotaResultsSampling.cpp \
-    MyTableWidget.cpp
+    MyTableWidget.cpp \
+    AgaveCurl.cpp \
+    RemoteApplication.cpp
 
 HEADERS  += MainWindow.h\
     InputWidgetEE_UQ.h\
@@ -49,7 +55,9 @@ HEADERS  += MainWindow.h\
     RunLocalWidget.h \
     DakotaResults.h \
     DakotaResultsSampling.h \
-    MyTableWidget.h
+    MyTableWidget.h \
+    AgaveCurl.h \
+    RemoteApplication.h
 
 
 RESOURCES += \
