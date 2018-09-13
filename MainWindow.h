@@ -85,7 +85,6 @@ class MainWindow : public QMainWindow
 
     QPushButton *loginButton;
     QLabel *errorLabel;
-
 };
 
 #endif // MAINWINDOW_H

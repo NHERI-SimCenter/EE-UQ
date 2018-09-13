@@ -38,7 +38,10 @@ SOURCES += main.cpp\
     DakotaResultsSampling.cpp \
     MyTableWidget.cpp \
     AgaveCurl.cpp \
-    RemoteApplication.cpp
+    RemoteApplication.cpp \
+    RunWidget.cpp \
+    LocalApplication.cpp \
+    Application.cpp
 
 HEADERS  += MainWindow.h\
     InputWidgetEE_UQ.h\
@@ -57,8 +60,10 @@ HEADERS  += MainWindow.h\
     DakotaResultsSampling.h \
     MyTableWidget.h \
     AgaveCurl.h \
-    RemoteApplication.h
-
+    RemoteApplication.h \
+    RunWidget.h \
+    LocalApplication.h \
+    Application.h
 
 RESOURCES += \
     images.qrc \

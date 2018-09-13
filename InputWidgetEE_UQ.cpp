@@ -64,6 +64,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDir>
 #include <QFile>
 #include <DakotaResultsSampling.h>
+#include <LocalApplication.h>
+#include <RunWidget.h>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 {
@@ -80,13 +82,26 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     theUQ = new InputWidgetSampling();
 
     theResults = new DakotaResultsSampling();
-    theRunLocalWidget = new RunLocalWidget(theUQ);
+    localApp = new LocalApplication;
+    remoteApp = new LocalApplication;
+
+   // theRunLocalWidget = new RunLocalWidget(theUQ);
+    SimCenterWidget *theWidgets[2];
+    theWidgets[0] = theAnalysis;
+    theWidgets[1] = theUQ;
+    int numWidgets = 2;
+    theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 2);
+
 
     //
     // connect signals and slots
     //
 
-    connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
+    connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
+    connect(localApp,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
+
+    //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
     //
     //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
@@ -114,7 +129,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     QStandardItem *rvItem   = new QStandardItem("RVs");
     QStandardItem *bimItem = new QStandardItem("SIM");
     QStandardItem *evtItem = new QStandardItem("EVT");
-    QStandardItem *anaItem = new QStandardItem("ANA");
+   // QStandardItem *anaItem = new QStandardItem("ANA");
     //QStandardItem *uqItem = new QStandardItem("UQM");
     QStandardItem *resultsItem = new QStandardItem("RES");
 
@@ -122,7 +137,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     rootNode->appendRow(giItem);
     rootNode->appendRow(bimItem);
     rootNode->appendRow(evtItem);
-    rootNode->appendRow(anaItem);
+   // rootNode->appendRow(anaItem);
     rootNode->appendRow(rvItem);
     //rootNode->appendRow(uqItem);
     rootNode->appendRow(resultsItem);
@@ -156,7 +171,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     theStackedWidget->addWidget(theGI);
     theStackedWidget->addWidget(theSIM);
     theStackedWidget->addWidget(theEvent);
-    theStackedWidget->addWidget(theAnalysis);
+   // theStackedWidget->addWidget(theAnalysis);
     theStackedWidget->addWidget(theRVs);
     // theStackedWidget->addWidget(theUQ);
     theStackedWidget->addWidget(theResults);
@@ -182,7 +197,7 @@ void InputWidgetEE_UQ::setMainWindow(MainWindow* main)
 
 
 void
-InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection & /*oldSelection*/) {
+InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
 
     //get the text of the selected item
     const QModelIndex index = treeView->selectionModel()->currentIndex();
@@ -194,14 +209,14 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
         theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "EVT")
         theStackedWidget->setCurrentIndex(2);
-    else if (selectedText == "ANA")
-        theStackedWidget->setCurrentIndex(3);
+    //else if (selectedText == "ANA")
+    //    theStackedWidget->setCurrentIndex(3);
     else if (selectedText == "RVs")
-        theStackedWidget->setCurrentIndex(4);
+        theStackedWidget->setCurrentIndex(3);
     //else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(5);
+        theStackedWidget->setCurrentIndex(4);
 }
 
 
@@ -258,12 +273,23 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     theEvent->outputAppDataToJSON(apps);
 
 
+    theRunWidget->outputToJSON(jsonObjectTop);
+
     jsonObjectTop["Applications"]=apps;
 
-    theRunLocalWidget->outputToJSON(jsonObjectTop);
+    //theRunLocalWidget->outputToJSON(jsonObjectTop);
+
 
     return true;
 }
+
+
+ void
+ InputWidgetEE_UQ::processResults(QString &dakotaOut, QString &dakotaTab){
+      theResults->processResults(dakotaOut, dakotaTab);
+      theRunWidget->hide();
+      theStackedWidget->setCurrentIndex(4);
+ }
 
 void
 InputWidgetEE_UQ::clear(void)
@@ -298,7 +324,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
     theEvent->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
-
+    theRunWidget->inputFromJSON(jsonObject);
     /*
     if (jsonObject.contains("Events")) {
         QJsonObject jsonObjEventInformation = jsonObject["Event"].toObject();
@@ -353,7 +379,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-    return theRunLocalWidget->inputFromJSON(jsonObject);
+    return true;//theRunLocalWidget->inputFromJSON(jsonObject);
 
     //return true;
 }
@@ -361,12 +387,12 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 void
 InputWidgetEE_UQ::onRunButtonClicked() {
-    theRunLocalWidget->show();
+    theRunWidget->showLocalApplication();
 }
 
 void
 InputWidgetEE_UQ::onRemoteRunButtonClicked(){
-
+    theRunWidget->showRemoteApplication();
 }
 void
 InputWidgetEE_UQ::onRemoteGetButtonClicked(){
@@ -379,10 +405,10 @@ InputWidgetEE_UQ::onExitButtonClicked(){
 }
 
 void
-InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
+InputWidgetEE_UQ::runLocal(QString &workingDir, QString &appDir) {
 
     qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir << " appDir: " << appDir;
-    theRunLocalWidget->hide();
+    //theRunLocalWidget->hide();
 
    // errorMessage("");
 
@@ -397,7 +423,7 @@ InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
     if(destinationDirectory.exists()) {
       destinationDirectory.removeRecursively();
     } else
-        destinationDirectory.mkpath(tmpDirectory);
+      destinationDirectory.mkpath(tmpDirectory);
 
     QString templateDirectory  = tmpDirectory + QDir::separator() + QString("templatedir");
     destinationDirectory.mkpath(templateDirectory);
@@ -486,7 +512,65 @@ InputWidgetEE_UQ::runLocal(QString workingDir, QString appDir) {
     QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
-    theResults->processResults(filenameOUT, filenameTAB);
+
     qDebug() << "PROCESSED RESULTS";
 
+}
+
+void
+InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
+
+qDebug() << "working dir: " << workingDir << " subDir : " << subDir;
+
+   // errorMessage("");
+
+    //
+    // create temporary directory in working dir
+    // and copy all files needed to this directory by invoking copyFiles() on app widgets
+    //
+
+    QString tmpDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter"); // + QDir::separator() + QString("templatedir");
+    QDir destinationDirectory(tmpDirectory);
+
+    if(destinationDirectory.exists()) {
+      destinationDirectory.removeRecursively();
+    } else
+      destinationDirectory.mkpath(tmpDirectory);
+
+    QString templateDirectory  = tmpDirectory + QDir::separator() + subDir;
+    destinationDirectory.mkpath(templateDirectory);
+
+    // copyPath(path, tmpDirectory, false);
+    theSIM->copyFiles(templateDirectory);
+    theEvent->copyFiles(templateDirectory);
+    theAnalysis->copyFiles(templateDirectory);
+    theUQ->copyFiles(templateDirectory);
+
+    //
+    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
+    // NOTE: we append object workingDir to this which points to template dir
+    //
+
+    QString inputFile = templateDirectory + QDir::separator() + tr("dakota.json");
+
+    QFile file(inputFile);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        //errorMessage();
+        return;
+    }
+    QJsonObject json;
+    this->outputToJSON(json);
+
+    json["runDir"]=tmpDirectory;
+    json["WorkflowType"]="Building Simulation";
+
+
+    QJsonDocument doc(json);
+    file.write(doc.toJson());
+    file.close();
+
+
+    emit setUpForApplicationRunDone(tmpDirectory, inputFile);
+    qDebug() << "EE_UQ setupDone";
+    //return tmpDirectory;
 }

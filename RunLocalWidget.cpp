@@ -143,3 +143,4 @@ RunLocalWidget::onRunButtonPressed(void)
     emit runButtonPressed(workingDir, appDir);
 
 }
+

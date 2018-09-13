@@ -32,7 +32,6 @@
 MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
   : QMainWindow(parent), theRemoteInterface(theInterface)
 {
-
     //
     // create a layout & widget for central area of this QMainWidget
     //  to this widget we will add a header, selection, button and footer widgets

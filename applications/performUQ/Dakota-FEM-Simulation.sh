@@ -48,8 +48,19 @@ driverFile=${14}
 #dakotaName=$6
 #outName=$7
 
+
+echo $bimName
+echo $samName
+echo $evtName
+echo $lossName
+echo $simName
+echo $driverFile
+
+
 scriptDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 numSamples=5
+
+echo $scriptDir
 
 
 # parse json file, creating dakota input and other files

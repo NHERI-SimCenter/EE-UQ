@@ -206,10 +206,10 @@ f.close()  # you can omit in most cases as the destructor will call it
 f = open('workflow_driver', 'w')
 
 # want to dprepro the files with the random variables
-f.write('dpreproSimCenter $1 bim.j ' + bimName + '\n')
-f.write('dpreproSimCenter $1 sam.j ' + samName + '\n')
-f.write('dpreproSimCenter $1 evt.j ' + evtName + '\n')
-f.write('dpreproSimCenter $1 edp.j ' + edpName + '\n')
+f.write('./dpreproSimCenter $1 bim.j ' + bimName + '\n')
+f.write('./dpreproSimCenter $1 sam.j ' + samName + '\n')
+f.write('./dpreproSimCenter $1 evt.j ' + evtName + '\n')
+f.write('./dpreproSimCenter $1 edp.j ' + edpName + '\n')
 
 with open(driverFile) as fp:
     for line in fp:

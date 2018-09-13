@@ -61,6 +61,8 @@ class QStackedWidget;
 class DakotaResults;
 
 class RunLocalWidget;
+class RunWidget;
+class Application;
 
 
 class InputWidgetEE_UQ : public QWidget
@@ -80,11 +82,16 @@ public:
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
 
+    
 signals:
+    void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
 
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
-    void runLocal(QString, QString);
+
+    void setUpForApplicationRun(QString &, QString &);
+    void runLocal(QString &, QString &);
+    void processResults(QString &dakotaOut, QString &dakotaTab);
 
 private:
 
@@ -93,7 +100,6 @@ private:
     QHBoxLayout *horizontalLayout;
     QTreeView *treeView;
     QStandardItemModel *standardModel;
-
 
     GeneralInformationWidget *theGI;
     RandomVariableInputWidget *theRVs;
@@ -104,8 +110,10 @@ private:
     InputWidgetEarthquakeEvent *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
-    RunLocalWidget *theRunLocalWidget;
-
+   // RunLocalWidget *theRunLocalWidget;
+    RunWidget *theRunWidget;
+    Application *localApp;
+    Application *remoteApp;
 
     QModelIndex infoItemIdx;
     SimCenterWidget  *currentWidget;
