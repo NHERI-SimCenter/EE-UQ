@@ -164,8 +164,9 @@ RemoteApplication::outputToJSON(QJsonObject &jsonObject)
 {
     jsonObject["localAppDir"]=localAppDirName->text();
     jsonObject["remoteAppDir"]=remoteAppDirName->text();
-    jsonObject["remoteAppWorkingDirDir"]=remoteAppDirName->text(); // we use this one so that default not overwritten if run local
+    jsonObject["remoteAppWorkingDir"]=remoteAppDirName->text(); // we use this one so that default not overwritten if run local
     jsonObject["workingDir"]=workingDirName->text();
+    jsonObject["runType"]=QString("HPC");
 
     return true;
 }
@@ -179,7 +180,7 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
     } else
         return false;
 
-    if (dataObject.contains("remoteAppWorkingDirDir")) {
+    if (dataObject.contains("remoteAppWorkingDir")) {
         QJsonValue theName = dataObject["remoteAppWorkingDir"];
         remoteAppDirName->setText(theName.toString());
     }

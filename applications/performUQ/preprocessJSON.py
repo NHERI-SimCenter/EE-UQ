@@ -25,9 +25,27 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     global discreteDesignSetStringName
     global discreteDesignSetStringValues
 
+    #
+    # get UQ method data
+    #
+
+    with open('dakota.json') as data_file:    
+        data = json.load(data_file)
+        
+    uqData = data["UQ_Method"];
+    samplingData = uqData["samplingMethodData"];
+    method = samplingData["method"];
+    if (method == "Monte Carlo"):
+        method = 'random'
+    else:
+        method = 'lhs'
+    numSamples=samplingData["samples"];
+    seed = samplingData["seed"];
+
     # 
     # parse the data
     #
+
     parseFileForRV(bimName)
     parseFileForRV(evtName)
     parseFileForRV(samName)
@@ -45,12 +63,20 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     f.write("tabular_data\n")
     f.write("tabular_data_file = \'dakotaTab.out\'\n\n")
 
-    f.write("method\n")
-    f.write("sampling,\n")
-    f.write('samples=' '{}'.format(numSamples))
-    #f.write("samples=5\n")
-    f.write("\nseed=98765,\n")
-    f.write("sample_type random\n")
+    f.write('method,\n')
+    f.write('sampling\n');
+    method = samplingData["method"];
+    if (method == "Monte Carlo"):
+        method = 'random'
+    else:
+        method = 'lhs'
+    numSamples=samplingData["samples"];
+    seed = samplingData["seed"];
+    f.write('sample_type = ' '{}'.format(method))
+    f.write('\n');
+    f.write('samples = ' '{}'.format(numSamples))
+    f.write('\n');
+    f.write('seed = ' '{}'.format(seed))
     f.write('\n\n')
 
     # write out the variable data
@@ -113,7 +139,12 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     # write out the interface data
     f.write('interface,\n')
-    f.write('system # asynch evaluation_concurrency = 4\n')
+    runType = data["runType"];
+    if (runType == "local"):
+        numCPUs = 4
+        f.write("fork asynchronous evaluation_concurrency = %d\n" % numCPUs)
+    else:
+        f.write('fork asynchronous\n')
     f.write('analysis_driver = \'workflow_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
@@ -188,7 +219,7 @@ def parseFileForRV(fileName):
 
     print fileName
 
-    with open(fileName,'r') as data_file:    
+    with open(fileName,'r') as data_file:
         data = json.load(data_file)
         if data.get("randomVariables"):
             for k in data["randomVariables"]:

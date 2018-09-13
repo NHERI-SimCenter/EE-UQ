@@ -40,7 +40,6 @@ scriptDir = os.path.dirname(os.path.realpath(__file__))
 # subprocess.call(preProcessArgs)
 numRVs = preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile)
 
-
 #Create Template Directory and copy files
 templateDir = "templatedir"
 if os.path.exists(templateDir):

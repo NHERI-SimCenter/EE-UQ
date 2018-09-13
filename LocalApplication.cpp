@@ -101,6 +101,7 @@ LocalApplication::outputToJSON(QJsonObject &jsonObject)
     jsonObject["localAppDir"]=appDirName->text();
     jsonObject["remoteAppDir"]=appDirName->text();
     jsonObject["workingDir"]=workingDirName->text();
+    jsonObject["runType"]=QString("local");
 
     return true;
 }
