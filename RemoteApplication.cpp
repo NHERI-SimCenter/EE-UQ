@@ -125,7 +125,7 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
     layout->addWidget(appDirLabel1,7,0);
 
     remoteAppDirName = new QLineEdit();
-    remoteAppDirName->setText("/home/tg457427/SimCenter-EE-UQ");
+    remoteAppDirName->setText("/home1/00477/tg457427/EE-UQ");
     layout->addWidget(remoteAppDirName,7,1);
 
     pushButton = new QPushButton();
@@ -246,12 +246,12 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
     /************************************************************************
-for (int i = 0; i < files.size(); i++) {
-    QString copy = files.at(i);
-    QFile file(destinationDir + copy);
-    file.remove();
-}
-***********************************************************************/
+    for (int i = 0; i < files.size(); i++) {
+       QString copy = files.at(i);
+       QFile file(destinationDir + copy);
+       file.remove();
+     }
+     ***********************************************************************/
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
@@ -296,8 +296,6 @@ for (int i = 0; i < files.size(); i++) {
 void
 RemoteApplication::uploadDirReturn(bool result)
 {
-    qDebug() << "RemoteApp:: uploadDirReturned";
-
     if (result == true) {
 
       //
@@ -329,7 +327,7 @@ RemoteApplication::uploadDirReturn(bool result)
       parameters["inputFile"]="dakota.in";
       parameters["outputFile"]="dakota.out";
       parameters["errorFile"]="dakota.err";
-      parameters["driverFile"]="fem_driver";
+      parameters["driverFile"]="./workflow_driver";
       parameters["modules"]="petsc";
       job["parameters"]=parameters;
       
@@ -375,5 +373,5 @@ RemoteApplication::getHomeDirReturned(QString path){
 void
 RemoteApplication::startJobReturn(QString result) {
    pushButton->setEnabled(true);
-   this->hide();
+   emit successfullJobStart();
 }
