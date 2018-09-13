@@ -369,9 +369,9 @@ RemoteJobManager::downloadFilesReturn(bool result)
     //
 
     if (result == true) {
-      //  theMainWindow->loadFile(name1);
-      //  theMainWindow->processResults(name2, name3);
-        this->hide();
+      emit loadFile(name1);
+      emit processResults(name2, name3);
+      this->hide();
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
     }
