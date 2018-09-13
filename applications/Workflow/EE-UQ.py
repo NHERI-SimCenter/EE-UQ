@@ -267,8 +267,8 @@ def main(run_type, inputFile, applicationsRegistry):
         for key in eventAppData.keys():
             eventAppDataList.append('-' + key.encode('ascii', 'ignore'))
             value = eventAppData.get(key)
-            if (os.path.exists(value) and not os.path.isabs(value)):
-                value = os.path.abspath(value)
+            #if (os.path.exists(value) and not os.path.isabs(value)):
+            #    value = os.path.abspath(value)
             eventAppDataList.append(value.encode('ascii', 'ignore'))
             
             
@@ -369,18 +369,24 @@ def main(run_type, inputFile, applicationsRegistry):
         if (uqAppExe.endswith('.py')):
             uqAppDataList.insert(0, 'python')
 
-        #for key in uqAppData.keys():
-        #    uqAppDataList.append('-' + key.encode('ascii', 'ignore'))
-        #    uqAppDataList.append(simAppDataList.get(key).encode('ascii', 'ignore'))
+        uqAppDataList.append(run_type)
 
-        if run_type == 'run':
+        for key in uqAppData.keys():
+            uqAppDataList.append('-' + key.encode('ascii', 'ignore'))
+            value = uqAppData.get(key)
+            if type(value) == str:
+                uqAppDataList.append(value.encode('ascii', 'ignore'))
+            else:
+                uqAppDataList.append(str(value))
+
+        if run_type == 'run' or run_type == 'set_up':
             workflow_log('Running Simulation...')
             workflow_log(' '.join(uqAppDataList))
             command, result, returncode = runApplication(uqAppDataList)
             log_output.append([command, result, returncode])
             workflow_log('Simulation ended...')
         else:
-            workflow_log('Check run only. No simulation performed.')
+            workflow_log('Setup run only. No simulation performed.')
 
     except WorkFlowInputError as e:
         workflow_log('workflow error: %s' % e.value)

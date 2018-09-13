@@ -102,7 +102,6 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
 
 AgaveCurl::~AgaveCurl()
 {
-    qDebug() << "AgaveCurl - Destructor Called - START\n";
     //
     // clean up, remove temp files, delete QProcess and delete login
     //  - deleted login as never set the widgets parent window
@@ -144,7 +143,6 @@ AgaveCurl::~AgaveCurl()
     //
 
     curl_easy_cleanup(hnd);
-    qDebug() << "AgaveCurl - Destructor Called\n";
 }
 
 bool 
@@ -564,8 +562,8 @@ AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
       // open results file
       QFile file(uniqueFileName1);
       if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        emit errorMessage("ERROR: removeDirectory .. COULD NOT OPEN RESULT");
-	return false;
+          emit errorMessage("ERROR: removeDirectory .. COULD NOT OPEN RESULT");
+          return false;
       }
 
       // read results file & check for errors
@@ -997,7 +995,6 @@ AgaveCurl::getJobList(const QString &matchingName)
     QString val;
     val=file.readAll();
     file.close();
-    qDebug() << val;
 
     if ((val.contains("Missing Credentals")) || (val.contains("Invalid Credentals"))){
         emit errorMessage("ERROR: Trouble LOGGING IN .. try Logout and Login Again");
@@ -1025,6 +1022,7 @@ AgaveCurl::getJobDetailsCall(const QString &jobID)
   QJsonObject result = getJobDetails(jobID);
   emit getJobDetailsReturn(result);
 }
+
 
 QJsonObject
 AgaveCurl::getJobDetails(const QString &jobID)
@@ -1070,6 +1068,7 @@ AgaveCurl::getJobStatusCall(const QString &jobID){
   QString result = this->getJobStatus(jobID);
   emit getJobStatusReturn(result);
 }
+
 
 QString
 AgaveCurl::getJobStatus(const QString &jobID){
