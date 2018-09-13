@@ -6,7 +6,7 @@
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QJsonObject>
-#include <AgaveCurl.h>
+#include <RemoteService.h>
 
 //#include <JsonValidator.h>
 
@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
     
     public:
-  explicit MainWindow(AgaveCurl *theRemoteInterface, QWidget *parent = 0);
+  explicit MainWindow(RemoteService *theRemoteInterface, QWidget *parent = 0);
   ~MainWindow();
 
  signals:
@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow
     // for menu items
     void newFile();
     void open();
+    void openFile(QString filename);
     bool save();
     bool saveAs();
 
@@ -48,9 +49,11 @@ class MainWindow : public QMainWindow
     void attemptLoginReturn(bool);
     void logoutReturn(bool);
 
+    // for error messages
     void statusMessage(QString message);
     void errorMessage(QString message);
     void fatalMessage(QString message);
+
 
  private:
     void setCurrentFile(const QString &fileName);
@@ -80,7 +83,7 @@ class MainWindow : public QMainWindow
 
     QString currentFile;
     InputWidgetEE_UQ *inputWidget;
-    AgaveCurl *theRemoteInterface;
+    RemoteService *theRemoteInterface;
     //SimCenterWidget *currentWidget;
 
     QPushButton *loginButton;

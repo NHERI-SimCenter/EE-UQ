@@ -26,11 +26,11 @@
 #include <QPushButton>
 #include <QLineEdit>
 
-#include <AgaveCurl.h>
+#include <RemoteService.h>
 
 
-MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theInterface)
+MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
+  : QMainWindow(parent), theRemoteInterface(theService)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -74,7 +74,7 @@ MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
     header->appendLayout(layoutLogin);
 
 
-    inputWidget = new InputWidgetEE_UQ();
+    inputWidget = new InputWidgetEE_UQ(theRemoteInterface);
     layout->addWidget(inputWidget);
 
     // layout->addStretch();
@@ -105,7 +105,6 @@ MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
     QPushButton *exitButton = new QPushButton();
     exitButton->setText(tr("Exit"));
     pushButtonLayout->addWidget(exitButton);
-
 
     //
     // create login window for when loogged in clicked
@@ -147,11 +146,16 @@ MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
     connect(theRemoteInterface,SIGNAL(errorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(theRemoteInterface,SIGNAL(statusMessage(QString)),this,SLOT(statusMessage(QString)));
 
+    connect(inputWidget,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     // connect job manager
     connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     connect(runDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteRunButtonClicked()));
-    connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteButtonClicked()));
+    connect(getDesignSafeButton, SIGNAL(clicked(bool)),this,SLOT(onRemoteGetButtonClicked()));
     connect(exitButton, SIGNAL(clicked(bool)),this,SLOT(onExitButtonClicked()));
 
     /*
@@ -169,8 +173,6 @@ MainWindow::MainWindow(AgaveCurl *theInterface, QWidget *parent)
     //
     // add SimCenter footer
     //
-
-
 
     FooterWidget *footer = new FooterWidget();
     layout->addWidget(footer);
@@ -218,6 +220,13 @@ bool MainWindow::saveAs()
 void MainWindow::open()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
+    if (!fileName.isEmpty())
+        loadFile(fileName);
+}
+
+
+void MainWindow::openFile(QString fileName)
+{
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
@@ -526,6 +535,7 @@ void
 MainWindow::onRemoteRunButtonClicked(){
     inputWidget->onRemoteRunButtonClicked();
 }
+
 void
 MainWindow::onRemoteGetButtonClicked(){
     inputWidget->onRemoteGetButtonClicked();
@@ -536,6 +546,7 @@ void MainWindow::onExitButtonClicked(){
     inputWidget->onExitButtonClicked();
     QCoreApplication::exit(0);
 }
+
 
 void
 MainWindow::statusMessage(const QString msg){

@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     RemoteApplication.cpp \
     RunWidget.cpp \
     LocalApplication.cpp \
-    Application.cpp
+    Application.cpp \
+    RemoteJobManager.cpp \
+    RemoteService.cpp
 
 HEADERS  += MainWindow.h\
     InputWidgetEE_UQ.h\
@@ -63,7 +65,9 @@ HEADERS  += MainWindow.h\
     RemoteApplication.h \
     RunWidget.h \
     LocalApplication.h \
-    Application.h
+    Application.h \
+    RemoteJobManager.h \
+    RemoteService.h
 
 RESOURCES += \
     images.qrc \

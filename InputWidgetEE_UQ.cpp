@@ -65,9 +65,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 #include <DakotaResultsSampling.h>
 #include <LocalApplication.h>
+#include <RemoteApplication.h>
+#include <RemoteJobManager.h>
+
 #include <RunWidget.h>
 
-InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
+InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
+    : QWidget(parent), theRemoteService(theService)
 {
 
     //
@@ -83,7 +87,8 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
 
     theResults = new DakotaResultsSampling();
     localApp = new LocalApplication;
-    remoteApp = new LocalApplication;
+    remoteApp = new RemoteApplication(theService);
+    theJobManager = new RemoteJobManager(theService);
 
    // theRunLocalWidget = new RunLocalWidget(theUQ);
     SimCenterWidget *theWidgets[2];
@@ -92,7 +97,6 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     int numWidgets = 2;
     theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 2);
 
-
     //
     // connect signals and slots
     //
@@ -100,6 +104,10 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(QWidget *parent) : QWidget(parent)
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
     connect(localApp,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
+
+    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(theJobManager,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
+    connect(remoteApp,SIGNAL(successfullJobStart), theRunWidget, SLOT(hide()));
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
@@ -209,11 +217,11 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
         theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "EVT")
         theStackedWidget->setCurrentIndex(2);
-    //else if (selectedText == "ANA")
+    // else if (selectedText == "ANA")
     //    theStackedWidget->setCurrentIndex(3);
     else if (selectedText == "RVs")
         theStackedWidget->setCurrentIndex(3);
-    //else if (selectedText == "UQM")
+    // else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
         theStackedWidget->setCurrentIndex(4);
@@ -379,9 +387,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-    return true;//theRunLocalWidget->inputFromJSON(jsonObject);
-
-    //return true;
+    return true;
 }
 
 
@@ -392,12 +398,37 @@ InputWidgetEE_UQ::onRunButtonClicked() {
 
 void
 InputWidgetEE_UQ::onRemoteRunButtonClicked(){
-    theRunWidget->showRemoteApplication();
+    emit errorMessage("");
+
+    bool loggedIn = theRemoteService->isLoggedIn();
+
+    if (loggedIn == true) {
+
+        theRunWidget->hide();
+        theRunWidget->showRemoteApplication();
+
+    } else {
+        errorMessage("ERROR - You Need to Login");
+    }
 }
+
 void
 InputWidgetEE_UQ::onRemoteGetButtonClicked(){
 
-};
+    emit errorMessage("");
+
+    bool loggedIn = theRemoteService->isLoggedIn();
+
+    if (loggedIn == true) {
+
+        theJobManager->hide();
+        theJobManager->updateJobTable("");
+        theJobManager->show();
+
+    } else {
+        errorMessage("ERROR - You Need to Login");
+    }
+}
 
 void
 InputWidgetEE_UQ::onExitButtonClicked(){
@@ -405,124 +436,9 @@ InputWidgetEE_UQ::onExitButtonClicked(){
 }
 
 void
-InputWidgetEE_UQ::runLocal(QString &workingDir, QString &appDir) {
-
-    qDebug() << "EE_UQ - RUN LOCAL workigDir" << workingDir << " appDir: " << appDir;
-    //theRunLocalWidget->hide();
-
-   // errorMessage("");
-
-    //
-    // create temporary directory in working dir
-    // and copy all files needed to this directory by invoking copyFiles() on app widgets
-    //
-
-    QString tmpDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter"); // + QDir::separator() + QString("templatedir");
-    QDir destinationDirectory(tmpDirectory);
-
-    if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
-    } else
-      destinationDirectory.mkpath(tmpDirectory);
-
-    QString templateDirectory  = tmpDirectory + QDir::separator() + QString("templatedir");
-    destinationDirectory.mkpath(templateDirectory);
-
-    // copyPath(path, tmpDirectory, false);
-    theSIM->copyFiles(templateDirectory);
-    theEvent->copyFiles(templateDirectory);
-    theAnalysis->copyFiles(templateDirectory);
-    theUQ->copyFiles(templateDirectory);
-
-    //
-    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
-    // NOTE: we append object workingDir to this which points to template dir
-    //
-
-    QString inputFile = templateDirectory + QDir::separator() + tr("dakota.json");
-
-    QFile file(inputFile);
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        //errorMessage();
-        return;
-    }
-    QJsonObject json;
-    this->outputToJSON(json);
-
-    json["runDir"]=tmpDirectory;
-    json["WorkflowType"]="Building Simulation";
-
-
-    QJsonDocument doc(json);
-    file.write(doc.toJson());
-    file.close();
-
-    //
-    // now use the applications Workflow Application EE-UQ.py  to run dakota and produce output files:
-    //    dakota.in dakota.out dakotaTab.out dakota.err
-    //
-
-
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
-
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
-
-
-    QStringList files;
-    files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
-
-   /************************************************************************
-    for (int i = 0; i < files.size(); i++) {
-        QString copy = files.at(i);
-        QFile file(destinationDir + copy);
-        file.remove();
-    }
-    ***********************************************************************/
-
-    //
-    // now invoke dakota, done via a python script in tool app dircetory
-    //
-
-    QProcess *proc = new QProcess();
-
-#ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
-
-#else
-   QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
-     registryFile;
-
-    proc->execute("bash", QStringList() << "-c" <<  command);
-
-    qInfo() << command;
-
-#endif
-    proc->waitForStarted();
-
-    //
-    // process the results
-    //
-
-    QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
-    QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
-
-
-    qDebug() << "PROCESSED RESULTS";
-
-}
-
-void
 InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 
-qDebug() << "working dir: " << workingDir << " subDir : " << subDir;
-
-   // errorMessage("");
+    errorMessage("");
 
     //
     // create temporary directory in working dir
@@ -570,7 +486,57 @@ qDebug() << "working dir: " << workingDir << " subDir : " << subDir;
     file.close();
 
 
+    statusMessage("SetUp Done .. Now starting application");
+
     emit setUpForApplicationRunDone(tmpDirectory, inputFile);
-    qDebug() << "EE_UQ setupDone";
-    //return tmpDirectory;
+}
+
+void
+InputWidgetEE_UQ::loadFile(const QString fileName){
+
+    //
+    // open file
+    //
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        emit errorMessage(QString("Could Not Open File: ") + fileName);
+        return;
+    }
+
+    //
+    // place contents of file into json object
+    //
+
+    QString val;
+    val=file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+    QJsonObject jsonObj = doc.object();
+
+    // close file
+    file.close();
+
+    //
+    // clear current and input from new JSON
+    //
+
+    this->clear();
+    this->inputFromJSON(jsonObj);
+
+}
+
+
+void
+InputWidgetEE_UQ::statusMessage(const QString msg){
+    emit sendStatusMessage(msg);
+}
+
+void
+InputWidgetEE_UQ::errorMessage(const QString msg){
+    emit sendErrorMessage(msg);
+}
+
+void
+InputWidgetEE_UQ::fatalMessage(const QString msg){
+    emit sendFatalMessage(msg);
 }

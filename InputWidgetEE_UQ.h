@@ -63,13 +63,14 @@ class DakotaResults;
 class RunLocalWidget;
 class RunWidget;
 class Application;
-
+class RemoteService;
+class RemoteJobManager;
 
 class InputWidgetEE_UQ : public QWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEE_UQ(QWidget *parent = 0);
+    explicit InputWidgetEE_UQ(RemoteService *theService, QWidget *parent = 0);
     ~InputWidgetEE_UQ();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -81,17 +82,26 @@ public:
     void onRemoteRunButtonClicked();
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
-
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
+    void sendLoadFile(QString filename);
+
+    void sendStatusMessage(QString message);
+    void sendErrorMessage(QString message);
+    void sendFatalMessage(QString message);
 
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
     void setUpForApplicationRun(QString &, QString &);
-    void runLocal(QString &, QString &);
     void processResults(QString &dakotaOut, QString &dakotaTab);
+
+    void loadFile(QString filename);
+    void statusMessage(QString message);
+    void errorMessage(QString message);
+    void fatalMessage(QString message);
+
 
 private:
 
@@ -111,9 +121,12 @@ private:
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
    // RunLocalWidget *theRunLocalWidget;
+
+    RemoteService *theRemoteService;
     RunWidget *theRunWidget;
     Application *localApp;
     Application *remoteApp;
+    RemoteJobManager *theJobManager;
 
     QModelIndex infoItemIdx;
     SimCenterWidget  *currentWidget;
