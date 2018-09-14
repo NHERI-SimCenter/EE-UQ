@@ -30,9 +30,6 @@ driverFile = sys.argv[12]
 
 runDakota = sys.argv[13]
 
-
-numSamples = 5
-
 #Run Preprocess for Dakota
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 # preProcessArgs = ["python", "{}/preprocessJSON.py".format(scriptDir), bimName, evtName,\
@@ -46,7 +43,7 @@ templateDir = "templatedir"
 if os.path.exists(templateDir):
     shutil.rmtree(templateDir)
 
-os.mkdir(templateDir)
+#os.mkdir(templateDir)
 st = os.stat("workflow_driver")
 os.chmod("workflow_driver", st.st_mode | stat.S_IEXEC)
 shutil.copy("workflow_driver", templateDir)

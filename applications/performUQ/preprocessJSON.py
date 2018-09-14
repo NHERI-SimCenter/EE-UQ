@@ -13,7 +13,6 @@ discreteDesignSetStringName=[]
 discreteDesignSetStringValues =[]
 
 def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
-    numSamples = 5
 
     global numRandomVariables
     global numNormalUncertain
@@ -140,11 +139,14 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     # write out the interface data
     f.write('interface,\n')
     runType = data["runType"];
+    remoteDir = data["remoteAppDir"];
+
     if (runType == "local"):
         numCPUs = 4
         f.write("fork asynchronous evaluation_concurrency = %d\n" % numCPUs)
     else:
         f.write('fork asynchronous\n')
+
     f.write('analysis_driver = \'workflow_driver\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
@@ -197,7 +199,10 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             print(line)
 
     f.write('\n')
-    f.write(scriptDir + '/extractEDP ' + edpName + ' results.out \n')
+    if (runType == "local"):
+        f.write(scriptDir + '/extractEDP ' + edpName + ' results.out \n')
+    else:
+        f.write(remoteDir + '/applications/performUQ/extractEDP ' + edpName + ' results.out \n')
 
     # Run 
     #f.write('rm -f *.com *.done *.dat *.log *.sta *.msg')
