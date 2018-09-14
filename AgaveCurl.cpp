@@ -766,9 +766,7 @@ AgaveCurl::downloadFile(const QString &remoteFile, const QString &localFile)
     // if failure, go get message, emit signal and return false;
 
     message = QString("Failed to Download File: ") + remoteFile; // more descriptive message
-    // const char *str = curl_easy_strerror(ret);
-    //QString errorString(str);
-    qDebug() << "ERROR: " << message;
+
     emit errorMessage(message);
     return false;
 }

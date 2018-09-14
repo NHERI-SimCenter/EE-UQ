@@ -95,7 +95,7 @@ public slots:
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
     void setUpForApplicationRun(QString &, QString &);
-    void processResults(QString &dakotaOut, QString &dakotaTab);
+    void processResults(QString dakotaOut, QString dakotaTab);
 
     void loadFile(QString filename);
     void statusMessage(QString message);

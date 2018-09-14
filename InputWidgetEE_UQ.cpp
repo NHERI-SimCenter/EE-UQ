@@ -103,11 +103,14 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
+    connect(localApp,SIGNAL(processResults(QString, QString)), this, SLOT(processResults(QString, QString)));
 
     connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
-    connect(theJobManager,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
-    connect(remoteApp,SIGNAL(successfullJobStart), theRunWidget, SLOT(hide()));
+
+    connect(theJobManager,SIGNAL(processResults(QString , QString)), this, SLOT(processResults(QString, QString)));
+    connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
+
+    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
@@ -293,7 +296,8 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
  void
- InputWidgetEE_UQ::processResults(QString &dakotaOut, QString &dakotaTab){
+ InputWidgetEE_UQ::processResults(QString dakotaOut, QString dakotaTab){
+
       theResults->processResults(dakotaOut, dakotaTab);
       theRunWidget->hide();
       theStackedWidget->setCurrentIndex(4);

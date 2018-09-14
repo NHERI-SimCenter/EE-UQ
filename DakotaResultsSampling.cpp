@@ -92,8 +92,8 @@ DakotaResultsSampling::~DakotaResultsSampling()
 void DakotaResultsSampling::clear(void)
 {
     QWidget *res=tabWidget->widget(0);
-    QWidget *gen=tabWidget->widget(0);
-    QWidget *dat=tabWidget->widget(0);
+    QWidget *gen=tabWidget->widget(1);
+    QWidget *dat=tabWidget->widget(2);
 
     tabWidget->clear();
     delete dat;
@@ -332,6 +332,8 @@ static int mergesort(double *input, int size)
 }
 
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
+
+    this->clear();
 
     //
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into

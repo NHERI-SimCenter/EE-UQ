@@ -374,9 +374,7 @@ RemoteJobManager::downloadFilesReturn(bool result)
       this->hide();
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
-    }
-
-
+   }
 }
 
 void
@@ -398,6 +396,7 @@ RemoteJobManager::getJobData(void) {
         getJobDetailsRequest = 2;
         emit getJobDetails(jobIDRequest);
     }
+
     triggeredRow = -1;
 }
 
