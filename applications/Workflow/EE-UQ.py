@@ -312,7 +312,7 @@ def main(run_type, inputFile, applicationsRegistry):
 
 
         # get RV for EDP!
-        edpAppDataList = [edpAppExeLocal, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM', samFILE,
+        edpAppDataList = [edpAppExeRemote, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM', samFILE,
                           '-filenameEDP', edpFILE]
 
         if (edpAppExe.endswith('.py')):
