@@ -31,7 +31,7 @@
 #include <RemoteService.h>
 
 
-MainWindowWorkflowApp::MainWindowWorkflowApp(WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
+MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
   : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp)
 {
     //
@@ -55,7 +55,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(WorkflowAppWidget *theApp, RemoteSe
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("EE-UQ: Response of Building to Earthquake"));
+    header->setHeadingText(appName);
     layout->addWidget(header);
 
     // place a location for messages;

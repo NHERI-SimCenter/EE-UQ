@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   // create the main window
   //
   WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
-  MainWindowWorkflowApp w(theInputApp, theRemoteService);
+  MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
   //
   // move remote interface to a thread

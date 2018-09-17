@@ -22,7 +22,7 @@ class MainWindowWorkflowApp : public QMainWindow
   Q_OBJECT
     
     public:
-  explicit MainWindowWorkflowApp(WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
+  explicit MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
   ~MainWindowWorkflowApp();
 
  signals:
