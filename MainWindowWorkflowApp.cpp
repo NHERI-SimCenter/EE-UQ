@@ -6,7 +6,7 @@
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
 #include <QDebug>
-#include "MainWindow.h"
+#include "MainWindowWorkflowApp.h"
 #include <QHBoxLayout>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -17,7 +17,9 @@
 #include <QMenu>
 #include <QApplication>
 
-#include <InputWidgetEE_UQ.h>
+//#include <InputWidgetEE_UQ.h>
+#include <WorkflowAppWidget.h>
+
 #include "SimCenterTableWidget.h"
 #include <QDesktopWidget>
 #include <HeaderWidget.h>
@@ -29,8 +31,8 @@
 #include <RemoteService.h>
 
 
-MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService)
+MainWindowWorkflowApp::MainWindowWorkflowApp(WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -73,8 +75,6 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
     layoutLogin->setAlignment(Qt::AlignLeft);
     header->appendLayout(layoutLogin);
 
-
-    inputWidget = new InputWidgetEE_UQ(theRemoteInterface);
     layout->addWidget(inputWidget);
 
     // layout->addStretch();
@@ -183,16 +183,15 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
 
     inputWidget->setMainWindow(this);
 
-
 }
 
-MainWindow::~MainWindow()
+MainWindowWorkflowApp::~MainWindowWorkflowApp()
 {
 
 }
 
 
-bool MainWindow::save()
+bool MainWindowWorkflowApp::save()
 {
     if (currentFile.isEmpty()) {
         return saveAs();
@@ -201,7 +200,7 @@ bool MainWindow::save()
     }
 }
 
-bool MainWindow::saveAs()
+bool MainWindowWorkflowApp::saveAs()
 {
     //
     // get filename
@@ -217,7 +216,7 @@ bool MainWindow::saveAs()
     return saveFile(dialog.selectedFiles().first());
 }
 
-void MainWindow::open()
+void MainWindowWorkflowApp::open()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
     if (!fileName.isEmpty())
@@ -225,13 +224,13 @@ void MainWindow::open()
 }
 
 
-void MainWindow::openFile(QString fileName)
+void MainWindowWorkflowApp::openFile(QString fileName)
 {
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
 
-void MainWindow::newFile()
+void MainWindowWorkflowApp::newFile()
 {
     // clear old
     inputWidget->clear();
@@ -241,7 +240,7 @@ void MainWindow::newFile()
 }
 
 
-void MainWindow::setCurrentFile(const QString &fileName)
+void MainWindowWorkflowApp::setCurrentFile(const QString &fileName)
 {
     currentFile = fileName;
     //  setWindowModified(false);
@@ -253,7 +252,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
     setWindowFilePath(shownName);
 }
 
-bool MainWindow::saveFile(const QString &fileName)
+bool MainWindowWorkflowApp::saveFile(const QString &fileName)
 {
     //
     // open file
@@ -288,7 +287,7 @@ bool MainWindow::saveFile(const QString &fileName)
     return true;
 }
 
-void MainWindow::loadFile(const QString &fileName)
+void MainWindowWorkflowApp::loadFile(const QString &fileName)
 {
     //
     // open file
@@ -329,7 +328,7 @@ void MainWindow::loadFile(const QString &fileName)
 }
 
 
-void MainWindow::createActions() {
+void MainWindowWorkflowApp::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
 
@@ -341,14 +340,14 @@ void MainWindow::createActions() {
     QAction *newAction = new QAction(tr("&New"), this);
     newAction->setShortcuts(QKeySequence::New);
     newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
+    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
     fileMenu->addAction(newAction);
     //fileToolBar->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
     openAction->setStatusTip(tr("Open an existing file"));
-    connect(openAction, &QAction::triggered, this, &MainWindow::open);
+    connect(openAction, &QAction::triggered, this, &MainWindowWorkflowApp::open);
     fileMenu->addAction(openAction);
     //fileToolBar->addAction(openAction);
 
@@ -356,12 +355,12 @@ void MainWindow::createActions() {
     QAction *saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcuts(QKeySequence::Save);
     saveAction->setStatusTip(tr("Save the document to disk"));
-    connect(saveAction, &QAction::triggered, this, &MainWindow::save);
+    connect(saveAction, &QAction::triggered, this, &MainWindowWorkflowApp::save);
     fileMenu->addAction(saveAction);
 
     QAction *saveAsAction = new QAction(tr("&Save As"), this);
     saveAsAction->setStatusTip(tr("Save the document with new filename to disk"));
-    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(saveAsAction, &QAction::triggered, this, &MainWindowWorkflowApp::saveAs);
     fileMenu->addAction(saveAsAction);
 
     // strangely, this does not appear in menu (at least on a mac)!! ..
@@ -455,7 +454,7 @@ void MainWindow::createActions() {
 
 
 
-void MainWindow::onLoginButtonClicked() {
+void MainWindowWorkflowApp::onLoginButtonClicked() {
 
     if (loggedIn == false) {
         numTries = 0;
@@ -466,7 +465,7 @@ void MainWindow::onLoginButtonClicked() {
     }
 }
 
-void MainWindow::onLoginSubmitButtonClicked() {
+void MainWindowWorkflowApp::onLoginSubmitButtonClicked() {
 
     int maxNumTries = 3;
 
@@ -487,7 +486,7 @@ void MainWindow::onLoginSubmitButtonClicked() {
 
 
 void
-MainWindow::attemptLoginReturn(bool ok){
+MainWindowWorkflowApp::attemptLoginReturn(bool ok){
 
     int maxNumTries = 3;
 
@@ -515,7 +514,7 @@ MainWindow::attemptLoginReturn(bool ok){
 
 
 void
-MainWindow::logoutReturn(bool ok){
+MainWindowWorkflowApp::logoutReturn(bool ok){
 
     if (ok == true) {
         loggedIn = false;
@@ -527,21 +526,21 @@ MainWindow::logoutReturn(bool ok){
 }
 
 void
-MainWindow::onRunButtonClicked() {
+MainWindowWorkflowApp::onRunButtonClicked() {
     inputWidget->onRunButtonClicked();
 }
 
 void
-MainWindow::onRemoteRunButtonClicked(){
+MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     inputWidget->onRemoteRunButtonClicked();
 }
 
 void
-MainWindow::onRemoteGetButtonClicked(){
+MainWindowWorkflowApp::onRemoteGetButtonClicked(){
     inputWidget->onRemoteGetButtonClicked();
 };
 
-void MainWindow::onExitButtonClicked(){
+void MainWindowWorkflowApp::onExitButtonClicked(){
     //RandomVariableInputWidget *theParameters = uq->getParameters();
     inputWidget->onExitButtonClicked();
     QCoreApplication::exit(0);
@@ -549,19 +548,19 @@ void MainWindow::onExitButtonClicked(){
 
 
 void
-MainWindow::statusMessage(const QString msg){
+MainWindowWorkflowApp::statusMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "STATUS MESSAGE" << msg;
 }
 
 void
-MainWindow::errorMessage(const QString msg){
+MainWindowWorkflowApp::errorMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "ERROR MESSAGE" << msg;
 }
 
 void
-MainWindow::fatalMessage(const QString msg){
+MainWindowWorkflowApp::fatalMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "FATAL MESSAGE" << msg;
 }

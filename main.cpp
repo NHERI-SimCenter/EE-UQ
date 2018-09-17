@@ -2,13 +2,14 @@
 
 // Purpose: the typical Qt main for running a QMainWindow
 
-#include "MainWindow.h"
+#include <MainWindowWorkflowApp.h>
 #include <QApplication>
 #include <QFile>
 #include <QThread>
 #include <QObject>
 
 #include <AgaveCurl.h>
+#include <InputWidgetEE_UQ.h>
 
 int main(int argc, char *argv[])
 {
@@ -23,10 +24,12 @@ int main(int argc, char *argv[])
 
   AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage);
 
+
   //
   // create the main window
   //
-  MainWindow w(theRemoteService);
+  WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
+  MainWindowWorkflowApp w(theInputApp, theRemoteService);
 
   //
   // move remote interface to a thread

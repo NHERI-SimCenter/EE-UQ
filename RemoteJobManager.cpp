@@ -51,7 +51,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QJsonArray>
 #include <QTableWidget>
-#include <MainWindow.h>
 #include <QTemporaryFile>
 #include <QHeaderView>
 #include <QRect>
@@ -62,7 +61,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include  <QDebug>
 class RemoteService;
-#include <MainWindow.h>
 
 RemoteJobManager::RemoteJobManager(RemoteService *theRemoteInterface, QWidget *parent)
     : QWidget(parent), triggeredRow(-1)

@@ -1,5 +1,5 @@
-#ifndef INPUT_WIDGET_EE_UQ_H
-#define INPUT_WIDGET_EE_UQ_H
+#ifndef WORKFLOW_APP_WIDGET_H
+#define WORKFLOW_APP_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -41,48 +41,28 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QWidget>
 
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHBoxLayout>
 #include "MainWindow.h"
-#include <WorkflowAppWidget.h>
 
-class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
-class InputWidgetSampling;
-class EarthquakeLoadingInput;
-class InputWidgetOpenSeesAnalysis;
-class UQOptions;
-class ResultsWidget;
-class GeneralInformationWidget;
-class InputWidgetEarthquakeEvent;
-class QStackedWidget;
-class DakotaResults;
-
-class RunLocalWidget;
-class RunWidget;
-class Application;
+class MainWindowWorkflowApp;
 class RemoteService;
-class RemoteJobManager;
 
-class InputWidgetEE_UQ : public WorkflowAppWidget
+class WorkflowAppWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEE_UQ(RemoteService *theService, QWidget *parent = 0);
-    ~InputWidgetEE_UQ();
+    WorkflowAppWidget(RemoteService *theService, QWidget *parent = 0);
+    virtual ~WorkflowAppWidget();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    void clear(void);
+    void setMainWindow(MainWindowWorkflowApp* window);
 
-    //void setMainWindow(MainWindow* window);
-    void onRunButtonClicked();
-    void onRemoteRunButtonClicked();
-    void onRemoteGetButtonClicked();
-    void onExitButtonClicked();
+    virtual bool outputToJSON(QJsonObject &rvObject) =0;
+    virtual bool inputFromJSON(QJsonObject &rvObject) =0;
+    virtual void clear(void) =0;
+
+    virtual void onRunButtonClicked() =0;
+    virtual void onRemoteRunButtonClicked() =0;
+    virtual void onRemoteGetButtonClicked() =0;
+    virtual void onExitButtonClicked() =0;
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
@@ -93,48 +73,19 @@ signals:
     void sendFatalMessage(QString message);
 
 public slots:  
-    void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
+    //virtual void selectionChangedSlot(const QItemSelection &, const QItemSelection &) =0;
 
-    void setUpForApplicationRun(QString &, QString &);
-    void processResults(QString dakotaOut, QString dakotaTab);
+    virtual void setUpForApplicationRun(QString &, QString &) =0;
+    virtual void processResults(QString dakotaOut, QString dakotaTab) =0;
 
-    void loadFile(QString filename);
-    /*
-    void statusMessage(QString message);
-    void errorMessage(QString message);
-    void fatalMessage(QString message);
-*/
+    virtual void loadFile(QString filename) =0;
+    virtual void statusMessage(QString message);
+    virtual void errorMessage(QString message);
+    virtual void fatalMessage(QString message);
 
-private:
-
-    //MainWindow* window;
-
-    QHBoxLayout *horizontalLayout;
-    QTreeView *treeView;
-    QStandardItemModel *standardModel;
-
-    GeneralInformationWidget *theGI;
-    RandomVariableInputWidget *theRVs;
-
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
-    InputWidgetEarthquakeEvent *theEvent;
-    InputWidgetOpenSeesAnalysis *theAnalysis;
-    DakotaResults *theResults;
-   // RunLocalWidget *theRunLocalWidget;
-
-    // RemoteService *theRemoteService;
-    RunWidget *theRunWidget;
-    Application *localApp;
-    Application *remoteApp;
-    RemoteJobManager *theJobManager;
-
-    QModelIndex infoItemIdx;
-    SimCenterWidget  *currentWidget;
-    QJsonObject *jsonObjOrig;
-
-    QStackedWidget *theStackedWidget;
+protected:
+    MainWindowWorkflowApp *theMainWindow;
+    RemoteService *theRemoteService;
 };
 
-#endif // INPUT_WIDGET_EE_UQ_H
+#endif // WORKFLOW_APP_WIDGET_H

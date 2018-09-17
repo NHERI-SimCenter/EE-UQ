@@ -54,6 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RunLocalWidget.h>
 #include <QProcess>
 #include <QCoreApplication>
+#include <RemoteService.h>
 
 
 #include "GeneralInformationWidget.h"
@@ -71,7 +72,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RunWidget.h>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
-    : QWidget(parent), theRemoteService(theService)
+    : WorkflowAppWidget(theService, parent)
 {
 
     //
@@ -198,12 +199,6 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
 {
 
-}
-
-void InputWidgetEE_UQ::setMainWindow(MainWindow* main)
-{
-    window = main;
-    treeView->setCurrentIndex( infoItemIdx );
 }
 
 
@@ -337,6 +332,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     theEvent->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
+
     /*
     if (jsonObject.contains("Events")) {
         QJsonObject jsonObjEventInformation = jsonObject["Event"].toObject();
@@ -530,17 +526,3 @@ InputWidgetEE_UQ::loadFile(const QString fileName){
 }
 
 
-void
-InputWidgetEE_UQ::statusMessage(const QString msg){
-    emit sendStatusMessage(msg);
-}
-
-void
-InputWidgetEE_UQ::errorMessage(const QString msg){
-    emit sendErrorMessage(msg);
-}
-
-void
-InputWidgetEE_UQ::fatalMessage(const QString msg){
-    emit sendFatalMessage(msg);
-}

@@ -21,7 +21,7 @@ include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
 
 SOURCES += main.cpp\
-    MainWindow.cpp\
+    MainWindowWorkflowApp.cpp\
     InputWidgetEE_UQ.cpp\
     InputWidgetSampling.cpp \
     UniformMotionInput.cpp \
@@ -43,9 +43,10 @@ SOURCES += main.cpp\
     LocalApplication.cpp \
     Application.cpp \
     RemoteJobManager.cpp \
-    RemoteService.cpp
+    RemoteService.cpp \
+    WorkflowAppWidget.cpp
 
-HEADERS  += MainWindow.h\
+HEADERS  += MainWindowWorkflowApp.h\
     InputWidgetEE_UQ.h\
     InputWidgetSampling.h \
     UniformMotionInput.h \
@@ -67,7 +68,8 @@ HEADERS  += MainWindow.h\
     LocalApplication.h \
     Application.h \
     RemoteJobManager.h \
-    RemoteService.h
+    RemoteService.h \
+    WorkflowAppWidget.h
 
 RESOURCES += \
     images.qrc \
