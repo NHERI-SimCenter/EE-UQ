@@ -124,7 +124,11 @@ def createNGAWest2Event(rsn, scaleFactor, recordsFolder, eventFilePath):
     event["numSteps"] = len(h1)
     event["timeSeries"] = [seriesH1, seriesH2]
     event["pattern"] = [patternH1, patternH2]
-    
+    event["units"] = {
+        "length": "m",
+        "time": "sec"
+    }
+
     eventsDict = {}
     eventsDict["Events"] = [event]
     eventsDict["RandomVariables"] = []
