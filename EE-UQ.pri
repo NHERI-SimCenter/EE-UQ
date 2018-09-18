@@ -27,7 +27,8 @@ SOURCES += \
     $$PWD/RemoteApplication.cpp \
     $$PWD/RemoteService.cpp \
     $$PWD/RemoteJobManager.cpp \
-    $$PWD/WorkflowAppWidget.cpp
+    $$PWD/WorkflowAppWidget.cpp \
+    $$PWD/ExistingSimCenterEvents.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -49,7 +50,8 @@ HEADERS  += \
     $$PWD/Application.h \
     $$PWD/RemoteJobManager.h \
     $$PWD/RemoteService.h \
-    $$PWD/WorkflowAppWidget.h
+    $$PWD/WorkflowAppWidget.h \
+    $$PWD/ExistingSimCenterEvents.h
 
 RESOURCES += \
     images.qrc \
