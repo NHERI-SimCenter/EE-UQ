@@ -6,7 +6,6 @@ INCLUDEPATH += $$PWD
 
 INCLUDEPATH += "../EE-UQ"
 
-
 SOURCES += \
     $$PWD/MainWindowWorkflowApp.cpp \
     $$PWD/InputWidgetSampling.cpp \
@@ -28,7 +27,8 @@ SOURCES += \
     $$PWD/RemoteService.cpp \
     $$PWD/RemoteJobManager.cpp \
     $$PWD/WorkflowAppWidget.cpp \
-    $$PWD/ExistingSimCenterEvents.cpp
+    $$PWD/ExistingSimCenterEvents.cpp \
+    $$PWD/CustomizedItemModel.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -51,10 +51,12 @@ HEADERS  += \
     $$PWD/RemoteJobManager.h \
     $$PWD/RemoteService.h \
     $$PWD/WorkflowAppWidget.h \
-    $$PWD/ExistingSimCenterEvents.h
+    $$PWD/ExistingSimCenterEvents.h \
+    $$PWD/CustomizedItemModel.h
 
 RESOURCES += \
     images.qrc \
+    $$PWD/styles.qrc
 
 #FORMS    += mainwindow.ui
 

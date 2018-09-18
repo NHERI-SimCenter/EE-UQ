@@ -60,6 +60,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <InputWidgetEDP.h>
 
 #include <InputWidgetExistingEvent.h>
+#include <ExistingSimCenterEvents.h>
 #include <UniformMotionInput.h>
 #include "SHAMotionWidget.h"
 
@@ -77,6 +78,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
     eventSelection->addItem(tr("Existing"));
+    eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -95,7 +97,10 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     //
 
     theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    theExistingEvents = new ExistingSimCenterEvents(theRandomVariableInputWidget);
     theStackedWidget->addWidget(theExistingEventsWidget);
+    theStackedWidget->addWidget(theExistingEvents);
+
 
     //Adding SHA based ground motion widget
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
@@ -152,8 +157,10 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
     int index = 0;
     if (type == QString("SimCenterEvent")) {
        index = 0;
-    } else if (type == QString("Hazard BAsed Event")) {
-       index = 1;
+    } else if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
+        index = 1;
+    } else if (type == QString("Hazard Besed Event")) {
+       index = 2;
     } else {
         return false;
     }
@@ -180,8 +187,13 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = theExistingEventsWidget;
     }
 
-    else if(arg1 == "Hazard Based Event") {
+    else if(arg1 == "Multiple Existing") {
         theStackedWidget->setCurrentIndex(1);
+        theCurrentEvent = theExistingEvents;
+    }
+
+    else if(arg1 == "Hazard Based Event") {
+        theStackedWidget->setCurrentIndex(2);
         theCurrentEvent = theSHA_MotionWidget;
     }
 
