@@ -382,13 +382,15 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
     // create recorder foreach EDP
     // loop through EDPs and find corresponding EDP
 
+    char edpEventName[50];
+    
     for (int j=0; j<numEDPs; j++) {
       printf("EDP: %d\n",j);
 
       json_t *eventEDPs = json_array_get(edps, j);
-      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
-
-      if (strcmp(edpEventName, eventName) == 0) {
+      //      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
+      //      if (strcmp(edpEventName, eventName) == 0) {
+      sprintf(edpEventName,"%d",j);
 
 	json_t *eventEDP = json_object_get(eventEDPs,"responses");
 	int numResponses = json_array_size(eventEDP);
@@ -496,7 +498,7 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    delete [] dof;
 	  }
 	}
-      }
+	// removing requirement name be same
     }
 
     // create analysis
