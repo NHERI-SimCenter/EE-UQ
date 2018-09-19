@@ -5,6 +5,8 @@
 #include <sstream>
 #include <map>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 OpenSeesPreprocessor::OpenSeesPreprocessor()
   :rootBIM(0), rootSAM(0), rootEVENT(0), rootEDP(0), rootSIM(0), 
@@ -67,7 +69,11 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 				      const char *filenameTCL)
 {
 
+  json_error_t error;
   fileBIM = BIM;
+
+  //Loading Bim File
+  rootBIM = json_load_file(BIM, 0, &error);
 
   //
   // open tcl script
@@ -81,7 +87,6 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
   // load the SAM file
   //
 
-  json_error_t error;
   rootSAM = json_load_file(SAM, 0, &error);
 
   bool processedSAM = false;
@@ -553,10 +558,50 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 	json_t *data = json_object_get(timeSeries,"data");
 	s << "timeSeries Path " << numSeries << " -dt " << dt;
 	s << " -values \{ ";
+
+  //We need to check units for conversion
+  double unitConversionFactor = 1.0;
+
+  //First let's read units from bim
+  json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+  json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+  json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+  json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+
+  //Parsing BIM Units
+  Units::UnitSystem bimUnits;
+  bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+  bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+
+  json_t* evtUnitsJson = json_object_get(event, "units");
+  Units::UnitSystem eventUnits;
+
+  if(NULL != evtUnitsJson)
+  {
+      json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
+      if(NULL != evtLengthJson)
+          eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
+
+      json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
+      if(NULL != evtTimeJson)
+          eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
+
+      unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
+  }
+  else
+  {
+      std::cerr << "Warning! Event file has no units!, assuming acceleration is in g units" << std::endl;
+      eventUnits.lengthUnit = Units::LengthUnit::Meter;
+      eventUnits.timeUnit = Units::TimeUnit::Second;
+    
+      unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
+  }
+
 	json_t *dataV;
 	int dataIndex;
 	json_array_foreach(data, dataIndex, dataV) {
-	  s << json_real_value(dataV) << " " ;
+
+	  s << json_real_value(dataV) * unitConversionFactor << " " ;
 	}
 	s << " }\n";
 	
@@ -637,6 +682,179 @@ int main(int argc, char **argv)
     thePreprocessor.writeRV(argv[1], argv[2], argv[3], argv[4]);
   else 
     thePreprocessor.createInputFile(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
-    
+
   return 0;
+}
+
+
+namespace Units
+{
+
+double GetLengthFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitSystem)
+{
+    if(LengthUnit::Unknown == fromUnitSystem.lengthUnit)
+    {
+        std::cerr << "Unknown length unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(LengthUnit::Unknown == toUnitSystem.lengthUnit)
+    {
+        std::cerr << "Unknown length unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(fromUnitSystem.lengthUnit == toUnitSystem.lengthUnit)
+        return 1.0;
+
+
+    //Converting from fromUnitSystem to Millimeter
+    double toMillimeter = 1.0;
+
+    if(LengthUnit::Meter == fromUnitSystem.lengthUnit)
+        toMillimeter = 1000.0;
+
+    else if(LengthUnit::Centimeter == fromUnitSystem.lengthUnit)
+        toMillimeter = 10.0;
+
+    else if(LengthUnit::Millimeter == fromUnitSystem.lengthUnit)
+        toMillimeter = 1.0;
+
+    else if(LengthUnit::Inch == fromUnitSystem.lengthUnit)
+        toMillimeter = 25.4;
+
+    else if(LengthUnit::Foot == fromUnitSystem.lengthUnit)
+        toMillimeter = 304.8;
+
+    //Converting from Millimeter to toUnitSystem
+    double fromMillimeter = 1.0;
+
+    if(LengthUnit::Meter == toUnitSystem.lengthUnit)
+        fromMillimeter = 0.001;
+
+    else if(LengthUnit::Centimeter == toUnitSystem.lengthUnit)
+        fromMillimeter = 0.1;
+
+    else if(LengthUnit::Millimeter == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0;
+
+    else if(LengthUnit::Inch == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0/25.4;
+
+    else if(LengthUnit::Foot == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0/304.8;
+
+    return toMillimeter * fromMillimeter;
+}
+
+double GetTimeFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitsystem)
+{
+    if(TimeUnit::Unknown == fromUnitSystem.timeUnit)
+    {
+        std::cerr << "Unknown time unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(TimeUnit::Unknown == toUnitsystem.timeUnit)
+    {
+        std::cerr << "Unknown time unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(fromUnitSystem.timeUnit == toUnitsystem.timeUnit)
+        return 1.0;
+
+    //converting to second
+    double toSecond = 1.0;
+    if(TimeUnit::Hour == fromUnitSystem.timeUnit)
+        toSecond = 3600.0;
+
+    else if(TimeUnit::Minute == fromUnitSystem.timeUnit)
+        toSecond = 60.0;
+
+    //converting from second
+    double fromSecond = 1.0;
+    if(TimeUnit::Hour == toUnitsystem.timeUnit)
+        fromSecond = 1.0/3600.0;
+
+    else if(TimeUnit::Minute == toUnitsystem.timeUnit)
+        fromSecond = 1.0/60.0;
+
+    return toSecond * fromSecond;
+}
+
+double GetAccelerationFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitSystem)
+{
+    double timeFactor = GetTimeFactor(fromUnitSystem, toUnitSystem);
+    double lengthFactor = GetLengthFactor(fromUnitSystem, toUnitSystem);
+
+    return lengthFactor / std::pow(timeFactor, 2);
+}
+
+LengthUnit ParseLengthUnit(const char* lengthUnit)
+{
+    std::string lengthUnitString(lengthUnit);
+    std::transform(lengthUnitString.begin(), lengthUnitString.end(), lengthUnitString.begin(), ::tolower);
+
+    static std::map<std::string, LengthUnit> lengthUnitMap
+    {
+        {"m", LengthUnit::Meter},
+        {"meter", LengthUnit::Meter},
+        {"meters", LengthUnit::Meter},
+        {"cm", LengthUnit::Centimeter},
+
+        {"centimeter", LengthUnit::Centimeter},
+        {"centimeters", LengthUnit::Centimeter},
+
+        {"mm", LengthUnit::Millimeter},
+        {"millimeter", LengthUnit::Millimeter},
+        {"millimeters", LengthUnit::Millimeter},
+        
+        {"in", LengthUnit::Inch},
+        {"inch", LengthUnit::Inch},
+        {"inches", LengthUnit::Inch},
+        
+        {"ft", LengthUnit::Foot},
+        {"foot", LengthUnit::Foot},
+        {"feet", LengthUnit::Foot}
+    };
+
+    if(lengthUnitMap.end() != lengthUnitMap.find(lengthUnitString))
+        return lengthUnitMap[lengthUnitString];
+
+    std::cerr << "Failed to parse length unit: " << lengthUnitString  << "!!!" << std::endl;
+    return LengthUnit::Unknown;
+}
+
+TimeUnit ParseTimeUnit(const char* timeUnit)
+{
+    std::string timeUnitString(timeUnit);
+    std::transform(timeUnitString.begin(), timeUnitString.end(), timeUnitString.begin(), ::tolower);
+
+    static map<std::string, TimeUnit> timeUnitMap
+    {
+        {"s", TimeUnit::Second},
+        {"sec", TimeUnit::Second},
+        {"second", TimeUnit::Second},
+        {"seconds", TimeUnit::Second},
+
+        {"min", TimeUnit::Minute},
+        {"minute", TimeUnit::Minute},
+        {"minutes", TimeUnit::Minute},
+
+        {"hr", TimeUnit::Hour},
+        {"hour", TimeUnit::Hour},
+        {"hours", TimeUnit::Hour},
+
+    };
+
+    if(timeUnitMap.end() != timeUnitMap.find(timeUnitString))
+        return timeUnitMap[timeUnitString];
+
+    std::cerr << "Failed to parse time unit: " << timeUnitString  << "!!!" << std::endl;
+
+    return TimeUnit::Unknown;
+}
+
+
 }

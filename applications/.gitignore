@@ -38,18 +38,5 @@ moc*
 *.out
 *.app
 
-# QT
-*.pro.user
-qcustomplot.h
-qcustomplot.cpp
-*.stash
-
-# OTHER
-Makefile
-StandardEarthquakeEDP
-OpenSeesInput
-OpenSeesPostprocessor
-OpenSeesPreprocessor
-extractEDP
-MultipleSimCenterEvents
-*.pyc
+*.pdb
+*.ilk
