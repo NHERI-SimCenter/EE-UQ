@@ -12,6 +12,7 @@ moc*
 *.lo
 *.o
 *.obj
+*.pyc
 
 # Precompiled Headers
 *.gch
@@ -50,3 +51,4 @@ OpenSeesInput
 OpenSeesPostprocessor
 OpenSeesPreprocessor
 extractEDP
+MultipleSimCenterEvents

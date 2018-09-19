@@ -88,6 +88,10 @@ void
 ExistingEvent::chooseFileName(void) {
     QString fileName1=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
     file->setText(fileName1);
+    QFileInfo fileInfo(file->text());
+    QString baseName = fileInfo.baseName();
+    theName->setText(baseName);
+    theName->setReadOnly(false);
 }
 
 
