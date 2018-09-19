@@ -80,6 +80,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     # write out the variable data
     f.write('variables,\n')
+    f.write('active uncertain \n')
 
     if (numNormalUncertain > 0):
         f.write('normal_uncertain = ' '{}'.format(numNormalUncertain))
@@ -104,18 +105,11 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
         f.write('\n')
 
     if (numDiscreteDesignSetString > 0):
-        f.write('discrete_design_set\n')
+        f.write('discrete_uncertain_set\n')
         f.write('string ' '{}'.format(numDiscreteDesignSetString))
         f.write('\n')
-        f.write('descriptors = ')    
-        for i in xrange(numDiscreteDesignSetString):
-            f.write('\'')
-            f.write(discreteDesignSetStringName[i])
-            f.write('\' ')
 
-        f.write('\n')
-
-        f.write('elements_per_variable = ')    
+        f.write('num_set_values = ')    
         for i in xrange(numDiscreteDesignSetString):
             #f.write('\'')
             numElements = len(discreteDesignSetStringValues[i])
@@ -126,13 +120,21 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             #f.write('\' ')
 
         f.write('\n')
-        f.write('elements  ')    
+        f.write('set_values  ')    
         for i in xrange(numDiscreteDesignSetString):
             elements = discreteDesignSetStringValues[i]
             for j in elements:
                 f.write('\'' '{}'.format(j))
                 f.write('\' ')
             f.write('\n')
+
+        f.write('descriptors = ')    
+        for i in xrange(numDiscreteDesignSetString):
+            f.write('\'')
+            f.write(discreteDesignSetStringName[i])
+            f.write('\' ')
+
+        f.write('\n')
 
     f.write('\n\n')
 
