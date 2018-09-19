@@ -26,6 +26,12 @@
 	]
       },
       {
+        "Name": "ExistingSimCenterEvents",
+        "ExecutablePath": "applications/createEVENT/MultipleSimCenterEvents",
+        "ApplicationSpecificInputs": [
+	]
+      },
+      {
         "Name": "HazardBasedEvent",
         "ExecutablePath": "applications/createEVENT/HazardBasedEvent.py",
         "ApplicationSpecificInputs":[]
