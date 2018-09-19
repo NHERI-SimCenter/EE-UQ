@@ -87,14 +87,16 @@ OpenSeesPostprocessor::processEDPs(){
   json_t *edps = json_object_get(rootEDP,"EngineeringDemandParameters");  
   
   int numEvents = json_array_size(edps);
+  char edpEventName[50];
 
   for (int i=0; i<numEvents; i++) {
 
     // process event
     json_t *eventEDPs = json_array_get(edps,i);
     const char *eventName = json_string_value(json_object_get(eventEDPs,"name"));
-    const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
-      
+    //const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
+    sprintf(edpEventName,"%d",i);    
+
     json_t *eventEDP = json_object_get(eventEDPs,"responses");
     int numResponses = json_array_size(eventEDP);
     for (int k=0; k<numResponses; k++) {

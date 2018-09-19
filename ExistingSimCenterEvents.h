@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_EARTHQUAKE_EVENT_H
-#define INPUTWIDGET_EARTHQUAKE_EVENT_H
+#ifndef EXISTING_SIMCENTER_EVENTS_H
+#define EXISTING_SIMCENTER_EVENTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,45 +39,63 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
+
+class RandomVariableInputWidget;
+class InputWidgetExistingEvent;
+class QRadioButton;
+class QLineEdit;
 
 #include <QGroupBox>
 #include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UniformMotionInput;
+#include <QVBoxLayout>
 
-class RandomVariableInputWidget;
-
-class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
+class ExistingEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetEarthquakeEvent();
+    explicit ExistingEvent(QWidget *parent = 0);
+    ~ExistingEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
 
-signals:
+    QRadioButton *button; // used to mark if Event intended for deletion
+    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QLineEdit    *file;    // full path to file name
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
-
-private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
-
-   SimCenterAppWidget *theExistingEventsWidget;
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-
-
-   RandomVariableInputWidget *theRandomVariableInputWidget;
+    void chooseFileName(void);
 };
 
-#endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
+
+class ExistingSimCenterEvents : public SimCenterAppWidget
+{
+    Q_OBJECT
+public:
+    explicit ExistingSimCenterEvents(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+
+    ~ExistingSimCenterEvents();
+
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &dirName);
+
+public slots:
+   void errorMessage(QString message);
+   void addEvent(void);
+   void removeEvents(void);
+   void clear(void);
+
+private:
+    QVBoxLayout *verticalLayout;
+    QVBoxLayout *eventLayout;
+
+    QVector<ExistingEvent *>theEvents;
+    RandomVariableInputWidget *theRandVariableIW;
+};
+
+#endif // EXISTING_SIMCENTER_EVENTS_H

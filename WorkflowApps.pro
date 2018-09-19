@@ -1,0 +1,9 @@
+TEMPLATE = subdirs
+
+SUBDIRS =   applications/createEDP/StandardEarthquakeEDP.pro \
+            applications/createSAM/OpenSeesInput.pro \
+            applications/createEVENT/MultipleSimCenterEvents.pro \
+            applications/performSIMULATION/OpenSeesPreprocessor.pro \
+            applications/performSIMULATION/OpenSeesPostprocessor.pro \
+            applications/performUQ/extractEDP.pro \
+            applications/performUQ/postprocessDAKOTA.pro

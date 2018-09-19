@@ -80,6 +80,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     # write out the variable data
     f.write('variables,\n')
+    f.write('active uncertain \n')
 
     if (numNormalUncertain > 0):
         f.write('normal_uncertain = ' '{}'.format(numNormalUncertain))
@@ -104,18 +105,11 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
         f.write('\n')
 
     if (numDiscreteDesignSetString > 0):
-        f.write('discrete_design_set\n')
+        f.write('discrete_uncertain_set\n')
         f.write('string ' '{}'.format(numDiscreteDesignSetString))
         f.write('\n')
-        f.write('descriptors = ')    
-        for i in xrange(numDiscreteDesignSetString):
-            f.write('\'')
-            f.write(discreteDesignSetStringName[i])
-            f.write('\' ')
 
-        f.write('\n')
-
-        f.write('elements_per_variable = ')    
+        f.write('num_set_values = ')    
         for i in xrange(numDiscreteDesignSetString):
             #f.write('\'')
             numElements = len(discreteDesignSetStringValues[i])
@@ -126,13 +120,21 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             #f.write('\' ')
 
         f.write('\n')
-        f.write('elements  ')    
+        f.write('set_values  ')    
         for i in xrange(numDiscreteDesignSetString):
             elements = discreteDesignSetStringValues[i]
             for j in elements:
                 f.write('\'' '{}'.format(j))
                 f.write('\' ')
             f.write('\n')
+
+        f.write('descriptors = ')    
+        for i in xrange(numDiscreteDesignSetString):
+            f.write('\'')
+            f.write(discreteDesignSetStringName[i])
+            f.write('\' ')
+
+        f.write('\n')
 
     f.write('\n\n')
 
@@ -165,15 +167,31 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     numResponses=data["total_number_edp"]
 
+
     f.write('responses, \n')
     f.write('response_functions = ' '{}'.format(numResponses))
     f.write('\n')
     f.write('response_descriptors = ')    
-    #for i in xrange(numResponses):
-    for i in xrange(1, numResponses+1):
-        f.write('\'a')
-        f.write('{}'.format(i))
-        f.write('\' ')
+
+    
+    for event in data["EngineeringDemandParameters"]:
+        eventIndex = data["EngineeringDemandParameters"].index(event)
+        for edp in event["responses"]:
+            if(edp["type"] == "max_abs_acceleration"):
+                edpAcronym = "PFA"
+                floor = edp["floor"]
+
+            elif(edp["type"] == "max_drift"):
+                edpAcronym = "PID"
+                floor = edp["floor1"]
+
+            else:
+                edpAcronym = "UnknownEDP"
+
+            for dof in edp["dofs"]:
+                f.write("'{}-{}-{}-{}' ".format(eventIndex, edpAcronym, floor, dof))
+
+
     f.write('\n')
     f.write('no_gradients\n')
     f.write('no_hessians\n\n')
