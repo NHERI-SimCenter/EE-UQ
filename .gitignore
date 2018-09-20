@@ -52,4 +52,5 @@ OpenSeesPostprocessor
 OpenSeesPreprocessor
 extractEDP
 MultipleSimCenterEvents
+MultiplePEER_Events
 *.pyc

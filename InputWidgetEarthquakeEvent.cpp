@@ -62,6 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetExistingEvent.h>
 #include <ExistingSimCenterEvents.h>
 #include <UniformMotionInput.h>
+#include <ExistingPEER_Events.h>
 #include "SHAMotionWidget.h"
 
 InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
@@ -79,6 +80,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     eventSelection = new QComboBox();
     eventSelection->addItem(tr("Existing"));
     eventSelection->addItem(tr("Multiple Existing"));
+     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -101,6 +103,8 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     theStackedWidget->addWidget(theExistingEventsWidget);
     theStackedWidget->addWidget(theExistingEvents);
 
+     theExistingPeerEvents = new ExistingPEER_Events(theRandomVariableInputWidget);
+     theStackedWidget->addWidget(theExistingPeerEvents);
 
     //Adding SHA based ground motion widget
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
@@ -156,14 +160,17 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
     int index = 0;
     if (type == QString("SimCenterEvent")) {
-       index = 0;
+        index = 0;
     } else if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
         index = 1;
+    } else if ((type == QString("Existing PEER Events")) || (type == QString("ExistingPEER_Events"))) {
+        index = 2;
     } else if (type == QString("Hazard Besed Event")) {
-       index = 2;
+        index = 3;
     } else {
         return false;
     }
+
     eventSelection->setCurrentIndex(index);
 
     // if worked, just invoke method on new type
@@ -177,6 +184,7 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
 void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
 {
+    qDebug() << "INputWidgetEarthquake: " << arg1;
     //
     // switch stacked widgets depending on text
     // note type output in json and name in pull down are not the same and hence the ||
@@ -192,8 +200,13 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = theExistingEvents;
     }
 
-    else if(arg1 == "Hazard Based Event") {
+    else if(arg1 == "Multiple PEER") {
         theStackedWidget->setCurrentIndex(2);
+        theCurrentEvent = theExistingPeerEvents;
+    }
+
+    else if(arg1 == "Hazard Based Event") {
+        theStackedWidget->setCurrentIndex(3);
         theCurrentEvent = theSHA_MotionWidget;
     }
 

@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_EARTHQUAKE_EVENT_H
-#define INPUTWIDGET_EARTHQUAKE_EVENT_H
+#ifndef EXISTING_PEER_EVENTS_H
+#define EXISTING_PEER_EVENTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,46 +39,90 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
+
+class RandomVariableInputWidget;
+class InputWidgetExistingEvent;
+class QRadioButton;
+class QLineEdit;
+class QSpinBox;
 
 #include <QGroupBox>
 #include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UniformMotionInput;
+#include <QVBoxLayout>
 
-class RandomVariableInputWidget;
-
-class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
+class PeerRecord : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetEarthquakeEvent();
+    explicit PeerRecord(QWidget *parent = 0);
+    ~PeerRecord();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
 
-signals:
+    QRadioButton *button;  // used to mark if Event intended for deletion
+    QLineEdit    *file;    // full path to file name
+    QSpinBox      *dirn;
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
+    void chooseFileName(void);
+    void onRemoveRecord(bool);
 
-private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
-
-   SimCenterAppWidget *theExistingEventsWidget;
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-
-
-   RandomVariableInputWidget *theRandomVariableInputWidget;
+signals:
+    void removeRecord();
 };
 
-#endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
+// an event can hold multiple PeerRecord, different one for diff directions
+class PeerEvent : public SimCenterWidget
+{
+    Q_OBJECT
+public:
+    explicit PeerEvent(QWidget *parent = 0);
+    ~PeerEvent();
+
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+
+    QVBoxLayout *recordLayout;
+
+    QRadioButton *button; // used to mark if Event intended for deletion
+    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QVector<PeerRecord  *>theRecords;
+
+public slots:
+    void onRemoveRecord(bool);
+    void onAddRecord(bool);
+};
+
+
+class ExistingPEER_Events : public SimCenterAppWidget
+{
+    Q_OBJECT
+public:
+    explicit ExistingPEER_Events(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+
+    ~ExistingPEER_Events();
+
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &dirName);
+
+public slots:
+   void errorMessage(QString message);
+   void addEvent(void);
+   void removeEvents(void);
+   void clear(void);
+
+private:
+    QVBoxLayout *verticalLayout;
+    QVBoxLayout *eventLayout;
+
+    QVector<PeerEvent *>theEvents;
+    RandomVariableInputWidget *theRandVariableIW;
+};
+
+#endif // EXISTING_PEER_EVENTS_H

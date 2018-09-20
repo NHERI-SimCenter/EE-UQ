@@ -28,6 +28,7 @@ SOURCES += \
     $$PWD/RemoteJobManager.cpp \
     $$PWD/WorkflowAppWidget.cpp \
     $$PWD/ExistingSimCenterEvents.cpp \
+    $$PWD/ExistingPEER_Events.cpp \
     $$PWD/CustomizedItemModel.cpp
 
 HEADERS  += \
@@ -52,6 +53,7 @@ HEADERS  += \
     $$PWD/RemoteService.h \
     $$PWD/WorkflowAppWidget.h \
     $$PWD/ExistingSimCenterEvents.h \
+    $$PWD/ExistingPEER_Events.h \
     $$PWD/CustomizedItemModel.h
 
 RESOURCES += \
