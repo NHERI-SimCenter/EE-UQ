@@ -30,7 +30,6 @@ SOURCES += \
     $$PWD/ExistingSimCenterEvents.cpp \
     $$PWD/ExistingPEER_Events.cpp \
     $$PWD/CustomizedItemModel.cpp\
-    $$PWD/CustomizedItemModel.cpp\
     $$PWD/DakotaResults.cpp\
     $$PWD/DakotaResultsSampling.cpp
 
