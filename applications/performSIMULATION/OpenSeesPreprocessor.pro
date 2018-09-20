@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console c++11
 
 DESTDIR  = $$PWD
-SOURCES += OpenSeesPostprocessor.cpp
+SOURCES += OpenSeesPreprocessor.cpp
 
 macx{
     INCLUDEPATH+="/usr/local/jansson/include"

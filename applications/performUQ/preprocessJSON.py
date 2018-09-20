@@ -1,3 +1,11 @@
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+else:
+    from past.builtins import basestring
+
 import json
 import os
 import sys
@@ -86,19 +94,19 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
         f.write('normal_uncertain = ' '{}'.format(numNormalUncertain))
         f.write('\n')
         f.write('means = ')
-        for i in xrange(numNormalUncertain):
+        for i in range(numNormalUncertain):
             f.write('{}'.format(normalUncertainMean[i]))
             f.write(' ')
         f.write('\n')
 
         f.write('std_deviations = ')
-        for i in xrange(numNormalUncertain):
+        for i in range(numNormalUncertain):
             f.write('{}'.format(normalUncertainStdDev[i]))
             f.write(' ')
         f.write('\n')
 
         f.write('descriptors = ')    
-        for i in xrange(numNormalUncertain):
+        for i in range(numNormalUncertain):
             f.write('\'')
             f.write(normalUncertainName[i])
             f.write('\' ')
@@ -110,18 +118,18 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
         f.write('\n')
 
         f.write('num_set_values = ')    
-        for i in xrange(numDiscreteDesignSetString):
+        for i in range(numDiscreteDesignSetString):
             #f.write('\'')
             numElements = len(discreteDesignSetStringValues[i])
             f.write(' ' '{}'.format(numElements))
             #f.write(length(discreteDesignSetStringValues[i]))
-            print discreteDesignSetStringValues[i]
-            print numElements
+            print(discreteDesignSetStringValues[i])
+            print(numElements)
             #f.write('\' ')
 
         f.write('\n')
         f.write('set_values  ')    
-        for i in xrange(numDiscreteDesignSetString):
+        for i in range(numDiscreteDesignSetString):
             elements = discreteDesignSetStringValues[i]
             for j in elements:
                 f.write('\'' '{}'.format(j))
@@ -129,7 +137,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             f.write('\n')
 
         f.write('descriptors = ')    
-        for i in xrange(numDiscreteDesignSetString):
+        for i in range(numDiscreteDesignSetString):
             f.write('\'')
             f.write(discreteDesignSetStringName[i])
             f.write('\' ')
@@ -149,7 +157,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     else:
         f.write('fork asynchronous\n')
 
-    f.write('analysis_driver = \'workflow_driver\' \n')
+    f.write('analysis_driver = \'workflow_driver.bat\' \n')
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
@@ -201,13 +209,13 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     # Write the workflow driver
     #
 
-    f = open('workflow_driver', 'w')
+    f = open('workflow_driver.bat', 'w')
 
     # want to dprepro the files with the random variables
-    f.write('dpreproSimCenter $1 bim.j ' + bimName + '\n')
-    f.write('dpreproSimCenter $1 sam.j ' + samName + '\n')
-    f.write('dpreproSimCenter $1 evt.j ' + evtName + '\n')
-    f.write('dpreproSimCenter $1 edp.j ' + edpName + '\n')
+    f.write('perl dpreproSimCenter params.in bim.j ' + bimName + '\n')
+    f.write('perl dpreproSimCenter params.in sam.j ' + samName + '\n')
+    f.write('perl dpreproSimCenter params.in evt.j ' + evtName + '\n')
+    f.write('perl dpreproSimCenter params.in edp.j ' + edpName + '\n')
 
     scriptDir = os.path.dirname(os.path.realpath(__file__))
 
@@ -240,7 +248,7 @@ def parseFileForRV(fileName):
     global normalDiscreteDesignSetName
     global normalDiscreteSetValues
 
-    print fileName
+    print(fileName)
 
     with open(fileName,'r') as data_file:
         data = json.load(data_file)
@@ -254,14 +262,14 @@ def parseFileForRV(fileName):
                     numRandomVariables += 1
 
                 if (k["distribution"] == "discrete_design_set_string"):
-                    print k
+                    print(k)
                     discreteDesignSetStringName.append(k["name"])
                     elements =[];
                     for l in k["elements"]:
                         elements.append(l)
                     elements.sort()
                     discreteDesignSetStringValues.append(elements)
-                    print elements
+                    print(elements)
                     numDiscreteDesignSetString += 1
                     numRandomVariables += 1
 
