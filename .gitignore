@@ -54,3 +54,4 @@ extractEDP
 MultipleSimCenterEvents
 MultiplePEER_Events
 *.pyc
+*.autosave
