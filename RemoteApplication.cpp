@@ -260,7 +260,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningRemote");
+    QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningRemote");
     qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
@@ -289,6 +289,8 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     pushButton->setEnabled(false);
 
     emit uploadDirCall(tmpDirectory, remoteHomeDirPath);
+
+    return 0;
 }
 
 // this slot is invoked on return from uploadDirectory signal in pushButtonClicked slot

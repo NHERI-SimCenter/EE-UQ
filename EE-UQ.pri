@@ -30,6 +30,9 @@ SOURCES += \
     $$PWD/ExistingSimCenterEvents.cpp \
     $$PWD/ExistingPEER_Events.cpp \
     $$PWD/CustomizedItemModel.cpp
+    $$PWD/CustomizedItemModel.cpp\
+    $$PWD/DakotaResults.cpp\
+    $$PWD/DakotaResultsSampling.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -53,6 +56,9 @@ HEADERS  += \
     $$PWD/RemoteService.h \
     $$PWD/WorkflowAppWidget.h \
     $$PWD/ExistingSimCenterEvents.h \
+    $$PWD/CustomizedItemModel.h \
+    $$PWD/DakotaResults.h\
+    $$PWD/DakotaResultsSampling.h
     $$PWD/ExistingPEER_Events.h \
     $$PWD/CustomizedItemModel.h
 

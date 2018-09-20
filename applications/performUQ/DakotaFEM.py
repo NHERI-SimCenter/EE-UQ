@@ -1,4 +1,11 @@
+# import functions for Python 2.X support
+from __future__ import division, print_function
 import sys
+if sys.version.startswith('2'): 
+    range=xrange
+else:
+    from past.builtins import basestring
+
 import os
 import platform
 import shutil
@@ -10,7 +17,7 @@ from preprocessJSON import preProcessDakota
 home = os.path.expanduser('~')
 env = os.environ
 if os.getenv("PEGASUS_WF_UUID") is not None:
-    print "Pegasus job detected - Pegasus will set up the env"
+    print("Pegasus job detected - Pegasus will set up the env")
 elif platform.system() == 'Darwin':
     env["PATH"] = env["PATH"] + ':{}/bin'.format(home)
     env["PATH"] = env["PATH"] + ':{}/dakota/bin'.format(home)
@@ -18,7 +25,7 @@ elif platform.system() == 'Linux':
     env["PATH"] = env["PATH"] + ':{}/bin'.format(home)
     env["PATH"] = env["PATH"] + ':{}/dakota/dakota-6.5/bin'.format(home)
 else:
-    print "PLATFORM {} NOT RECOGNIZED".format(platform.system)
+    print("PLATFORM {} NOT RECOGNIZED".format(platform.system))
 
 #Reading input arguments
 bimName = sys.argv[2]
@@ -44,9 +51,9 @@ if os.path.exists(templateDir):
     shutil.rmtree(templateDir)
 
 #os.mkdir(templateDir)
-st = os.stat("workflow_driver")
-os.chmod("workflow_driver", st.st_mode | stat.S_IEXEC)
-shutil.copy("workflow_driver", templateDir)
+st = os.stat("workflow_driver.bat")
+os.chmod("workflow_driver.bat", st.st_mode | stat.S_IEXEC)
+shutil.copy("workflow_driver.bat", templateDir)
 shutil.copy("{}/dpreproSimCenter".format(scriptDir), os.getcwd())
 shutil.copy(bimName, "bim.j")
 shutil.copy(evtName, "evt.j")
@@ -58,10 +65,14 @@ os.chdir("../")
 
 if runDakota == "run":
 
+    #TODO: replace with parsed value
+    numSamples = 10
+
     dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
     subprocess.Popen(dakotaCommand, shell=True).wait()
 
     #Postprocess Dakota results
-    postprocessCommand = '{}/postprocessDAKOTA {} {} {} {} dakotaTab.out'.format(scriptDir, numRVs, numSamples, bimName, edpName)
+    #postprocessCommand = '{}/postprocessDAKOTA {} {} {} {} dakotaTab.out'.format(
+    #    scriptDir, numRVs, numSamples, bimName, edpName)
 
-    subprocess.Popen(postprocessCommand, shell=True).wait()
+    #subprocess.Popen(postprocessCommand, shell=True).wait()
