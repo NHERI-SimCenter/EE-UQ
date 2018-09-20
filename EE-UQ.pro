@@ -22,6 +22,7 @@ win32 {
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
+linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
 include(./EE-UQ.pri)
 include(../SimCenterCommon/Common/Common.pri)
@@ -31,14 +32,10 @@ include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
 
 SOURCES += main.cpp \
     InputWidgetEE_UQ.cpp \
-    DakotaResults.cpp \
-    DakotaResultsSampling.cpp \
     RunWidget.cpp
 
 HEADERS  += \
     InputWidgetEE_UQ.h\
-    DakotaResults.h \
-    DakotaREsultsSampling.h \
     RunWidget.h 
 
 RESOURCES += \

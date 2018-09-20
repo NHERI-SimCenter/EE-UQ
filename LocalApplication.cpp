@@ -57,7 +57,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDir>
 
 
-LocalApplication::LocalApplication(QWidget *parent)
+LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -93,6 +93,8 @@ LocalApplication::LocalApplication(QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+
+    this->workflowScript = workflowScriptName;
 }
 
 bool
@@ -162,8 +164,12 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
 
     QString appDir = appDirName->text();
 
+    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
+    //QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
+    //        QString("EE-UQ.py");
+    // control from the constructor
     QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+            workflowScript;
 
     QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
             QString("WorkflowApplications.json");
@@ -188,7 +194,8 @@ for (int i = 0; i < files.size(); i++) {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    //QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
@@ -213,4 +220,6 @@ for (int i = 0; i < files.size(); i++) {
 
     emit processResults(filenameOUT, filenameTAB);
     qDebug() << "PROCESSED RESULTS";
+
+    return 0;
 }
