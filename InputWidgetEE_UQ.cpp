@@ -90,7 +90,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theUQ = new InputWidgetSampling();
 
     theResults = new DakotaResultsSampling();
-    localApp = new LocalApplication;
+    localApp = new LocalApplication("EE-UQ.py");
     remoteApp = new RemoteApplication(theService);
     theJobManager = new RemoteJobManager(theService);
 
