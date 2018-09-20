@@ -11,6 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
+win32 {
+    RC_ICONS = icons/NHERI-EEUQ-Icon.ico
+} else {
+    mac {
+    ICON = icons/NHERI-EEUQ-Icon.icns
+    }
+}
+
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
