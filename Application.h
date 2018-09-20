@@ -56,7 +56,7 @@ public:
    virtual bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
 
 signals:
-    virtual void setupForRun(QString &, QString &);
+    void setupForRun(QString &, QString &);
 
 private:
     void submitJob(void);

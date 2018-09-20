@@ -16,6 +16,8 @@
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
+#include <QGuiApplication>
+#include <QScreen>
 
 //#include <InputWidgetEE_UQ.h>
 #include <WorkflowAppWidget.h>
@@ -43,12 +45,15 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
 
-    QRect rec = QApplication::desktop()->screenGeometry();
-
-    int height = 0.7*rec.height();
-    int width = 0.7*rec.width();
-
+    //
+    // resize to primary screen
+    //
+      
+    QRect rec = QGuiApplication::primaryScreen()->geometry();
+    int height = this->height()<int(0.85*rec.height())?int(0.85*rec.height()):this->height();
+    int width  = this->width()<int(0.85*rec.width())?int(0.85*rec.width()):this->width();
     this->resize(width, height);
+
 
     //
     // add SimCenter Header
