@@ -29,7 +29,7 @@ SOURCES += \
     $$PWD/WorkflowAppWidget.cpp \
     $$PWD/ExistingSimCenterEvents.cpp \
     $$PWD/ExistingPEER_Events.cpp \
-    $$PWD/CustomizedItemModel.cpp
+    $$PWD/CustomizedItemModel.cpp\
     $$PWD/CustomizedItemModel.cpp\
     $$PWD/DakotaResults.cpp\
     $$PWD/DakotaResultsSampling.cpp
@@ -58,7 +58,7 @@ HEADERS  += \
     $$PWD/ExistingSimCenterEvents.h \
     $$PWD/CustomizedItemModel.h \
     $$PWD/DakotaResults.h\
-    $$PWD/DakotaResultsSampling.h
+    $$PWD/DakotaResultsSampling.h\
     $$PWD/ExistingPEER_Events.h \
     $$PWD/CustomizedItemModel.h
 
@@ -70,6 +70,4 @@ RESOURCES += \
 
 #RESOURCES += \
 #    schema.qrc
-
-
 

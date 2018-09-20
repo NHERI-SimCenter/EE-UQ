@@ -9,6 +9,7 @@ else:
 import json
 import os
 import sys
+import platform
 
 numRandomVariables = 0
 numNormalUncertain = 0
@@ -58,6 +59,11 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     parseFileForRV(samName)
     parseFileForRV(simName)
     parseFileForRV(edpName)
+
+    #Setting Workflow Driver Name
+    workflowDriverName = 'workflow_driver'
+    if platform.system() == 'Windows':
+        workflowDriverName = 'workflow_driver.bat'
 
     #
     # Write the input file: dakota.in 
@@ -157,7 +163,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     else:
         f.write('fork asynchronous\n')
 
-    f.write('analysis_driver = \'workflow_driver.bat\' \n')
+    f.write("analysis_driver = '{}'\n".format(workflowDriverName))
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
@@ -197,7 +203,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
                 edpAcronym = "UnknownEDP"
 
             for dof in edp["dofs"]:
-                f.write("'{}-{}-{}-{}' ".format(eventIndex, edpAcronym, floor, dof))
+                f.write("'{}-{}-{}-{}' ".format(eventIndex + 1, edpAcronym, floor, dof))
 
 
     f.write('\n')
@@ -209,7 +215,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     # Write the workflow driver
     #
 
-    f = open('workflow_driver.bat', 'w')
+    f = open(workflowDriverName, 'w')
 
     # want to dprepro the files with the random variables
     f.write('perl dpreproSimCenter params.in bim.j ' + bimName + '\n')

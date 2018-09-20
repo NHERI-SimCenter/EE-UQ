@@ -57,7 +57,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDir>
 
 
-LocalApplication::LocalApplication(QWidget *parent)
+LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -93,6 +93,8 @@ LocalApplication::LocalApplication(QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+
+    this->workflowScript = workflowScriptName;
 }
 
 bool
@@ -167,7 +169,7 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
     //        QString("EE-UQ.py");
     // control from the constructor
     QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("PBE.py");
+            workflowScript;
 
     QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
             QString("WorkflowApplications.json");

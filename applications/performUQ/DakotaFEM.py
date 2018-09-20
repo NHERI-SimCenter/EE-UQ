@@ -44,6 +44,10 @@ scriptDir = os.path.dirname(os.path.realpath(__file__))
 # subprocess.call(preProcessArgs)
 numRVs = preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile)
 
+#Setting Workflow Driver Name
+workflowDriverName = 'workflow_driver'
+if platform.system() == 'Windows':
+    workflowDriverName = 'workflow_driver.bat'
 
 #Create Template Directory and copy files
 templateDir = "templatedir"
@@ -51,9 +55,9 @@ if os.path.exists(templateDir):
     shutil.rmtree(templateDir)
 
 #os.mkdir(templateDir)
-st = os.stat("workflow_driver.bat")
-os.chmod("workflow_driver.bat", st.st_mode | stat.S_IEXEC)
-shutil.copy("workflow_driver.bat", templateDir)
+st = os.stat(workflowDriverName)
+os.chmod(workflowDriverName, st.st_mode | stat.S_IEXEC)
+shutil.copy(workflowDriverName, templateDir)
 shutil.copy("{}/dpreproSimCenter".format(scriptDir), os.getcwd())
 shutil.copy(bimName, "bim.j")
 shutil.copy(evtName, "evt.j")
@@ -64,9 +68,6 @@ shutil.copy("dakota.in", "../")
 os.chdir("../")
 
 if runDakota == "run":
-
-    #TODO: replace with parsed value
-    numSamples = 10
 
     dakotaCommand = "dakota -input dakota.in -output dakota.out -error dakota.err"
     subprocess.Popen(dakotaCommand, shell=True).wait()

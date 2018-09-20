@@ -1,8 +1,15 @@
-# written: fmk
+# written: fmk, adamzs
+
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+else:
+    from past.builtins import basestring
 
 import json
 import os
-import sys
 import subprocess
 from time import gmtime, strftime
 
@@ -265,11 +272,11 @@ def main(run_type, inputFile, applicationsRegistry):
             eventAppDataList.insert(0, 'python')
 
         for key in eventAppData.keys():
-            eventAppDataList.append('-' + key.encode('ascii', 'ignore'))
+            eventAppDataList.append(u'-' + key)
             value = eventAppData.get(key)
             #if (os.path.exists(value) and not os.path.isabs(value)):
             #    value = os.path.abspath(value)
-            eventAppDataList.append(value.encode('ascii', 'ignore'))
+            eventAppDataList.append(u'' + value)
             
             
         for item in eventAppDataList:
@@ -293,8 +300,8 @@ def main(run_type, inputFile, applicationsRegistry):
             modelAppDataList.insert(0, 'python')
 
         for key in modelingAppData.keys():
-            modelAppDataList.append('-' + key.encode('ascii', 'ignore'))
-            modelAppDataList.append(modelingAppData.get(key).encode('ascii', 'ignore'))
+            modelAppDataList.append(u'-' + key)
+            modelAppDataList.append(u'' + modelingAppData.get(key))
 
         for item in modelAppDataList:
             driverFILE.write('%s ' % item)
@@ -319,8 +326,8 @@ def main(run_type, inputFile, applicationsRegistry):
             edpAppDataList.insert(0, 'python')
 
         for key in edpAppData.keys():
-            edpAppDataList.append('-' + key.encode('ascii', 'ignore'))
-            edpAppDataList.append(edpAppData.get(key).encode('ascii', 'ignore'))
+            edpAppDataList.append(u'-' + key)
+            edpAppDataList.append(u'' + edpAppData.get(key))
 
         for item in edpAppDataList:
             driverFILE.write('%s ' % item)
@@ -343,8 +350,8 @@ def main(run_type, inputFile, applicationsRegistry):
             simAppDataList.insert(0, 'python')
 
         for key in simAppData.keys():
-            simAppDataList.append('-' + key.encode('ascii', 'ignore'))
-            simAppDataList.append(simAppData.get(key).encode('ascii', 'ignore'))
+            simAppDataList.append(u'-' + key)
+            simAppDataList.append(u'' + simAppData.get(key))
 
         for item in simAppDataList:
             driverFILE.write('%s ' % item)
@@ -372,12 +379,12 @@ def main(run_type, inputFile, applicationsRegistry):
         uqAppDataList.append(run_type)
 
         for key in uqAppData.keys():
-            uqAppDataList.append('-' + key.encode('ascii', 'ignore'))
+            uqAppDataList.append(u'-' + key)
             value = uqAppData.get(key)
             if type(value) == str:
-                uqAppDataList.append(value.encode('ascii', 'ignore'))
+                uqAppDataList.append(u'' + value)
             else:
-                uqAppDataList.append(str(value))
+                uqAppDataList.append(u'' + str(value))
 
         if run_type == 'run' or run_type == 'set_up':
             workflow_log('Running Simulation...')
@@ -415,22 +422,23 @@ if __name__ == '__main__':
     main(run_type, inputFile, applicationsRegistry)
 
     workflow_log_file = 'workflow-log-%s.txt' % (strftime('%Y-%m-%d-%H-%M-%S-utc', gmtime()))
-    log_filehandle = open(workflow_log_file, 'wb')
+    log_filehandle = open(workflow_log_file, 'w')
 
-    print >>log_filehandle, divider
-    print >>log_filehandle, 'Start of Log'
-    print >>log_filehandle, divider
-    print >>log_filehandle, workflow_log_file
+    print(type(log_filehandle))
+    print(divider, file=log_filehandle)
+    print('Start of Log', file=log_filehandle)
+    print(divider, file=log_filehandle)
+    print(workflow_log_file, file=log_filehandle)
     # nb: log_output is a global variable, defined at the top of this script.
     for result in log_output:
-        print >>log_filehandle, divider
-        print >>log_filehandle, 'command line:\n%s\n' % result[0]
-        print >>log_filehandle, divider
-        print >>log_filehandle, 'output from process:\n%s\n' % result[1]
+        print(divider, file=log_filehandle)
+        print('command line:\n%s\n' % result[0], file=log_filehandle)
+        print(divider, file=log_filehandle)
+        print('output from process:\n%s\n' % result[1], file=log_filehandle)
 
-    print >>log_filehandle, divider
-    print >>log_filehandle, 'End of Log'
-    print >>log_filehandle, divider
+    print(divider, file=log_filehandle)
+    print('End of Log', file=log_filehandle)
+    print(divider, file=log_filehandle)
 
     workflow_log('Log file: %s' % workflow_log_file)
     workflow_log('End of run.')
