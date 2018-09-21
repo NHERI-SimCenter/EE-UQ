@@ -25,6 +25,10 @@ pwd
 ls -al
 env
 
+# unzip template dir
+unzip templatedir.zip
+rm templatedir.zip
+
 # make scripts executable in template dir and copy up the driver file
 cd templatedir
 chmod 'a+x' $DRIVERFILE
@@ -34,6 +38,20 @@ cd ..
 
 #run the exe
 ibrun dakota -in $INPUTFILE -out dakota.out -err dakota.err
+
+# clean up workdirs if present
+if [ -d ./workdir.1 ]
+then
+   # copy wordirs, compress & remove workdirs
+   mkdir ./workdir
+   mv workdir.* workdir
+   tar zcBf workdir.tar.gz workdir
+   rm -fr workdir
+fi
+
+# compress & remove template dir
+tar zcBf templatedir.tar.gz templatedir
+rm -fr templatedir
 
 cd ..
 

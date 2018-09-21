@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QDir>
 
+#include <ZipUtils.h>
 
 RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
 : Application(parent), theRemoteService(theService)
@@ -232,6 +233,9 @@ RemoteApplication::onRunButtonPressed(void)
 bool
 RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
+
+
+
     QString appDir = localAppDirName->text();
 
     QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
@@ -277,8 +281,22 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     proc->waitForStarted();
 
     //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QString templateDIR(tmpDirectory + QDir::separator() + QString("templatedir"));
+    QString zipFile(tmpDirectory + QDir::separator() + QString("templatedir.zip"));
+    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+    qDebug() << templateDIR;
+    qDebug() << zipFile;
+
+    QDir dirToRemove(templateDIR);
+    dirToRemove.removeRecursively();
+
+    //
     // now upload files to remote local
     //
+
     tempDirectory = tmpDirectory;
 
     QDir theDirectory(tmpDirectory);
