@@ -12,12 +12,35 @@ main(int argc, char **argv) {
 
   if (argc == 12) {
 
-    char *filenameBIM = argv[2];
+    char *filenameBIM = NULL;
     // NOT USED: char *filenameEVENT = argv[4]; 
-    char *filenameSAM = argv[6];
+    char *filenameSAM = NULL;
     // NOT USED: char *filePath = argv[8];
-    char *fileName = argv[10];
+    char *fileName = NULL;
     
+
+    int arg = 1;
+    while(arg < argc)
+    {
+        if (strcmp(argv[arg], "-filenameBIM") == 0)
+        {
+            arg++;
+            filenameBIM = argv[arg];
+        }
+        else if (strcmp(argv[arg], "-filenameSAM") == 0)
+        {
+            arg++;
+            filenameSAM = argv[arg];
+        }
+        else if (strcmp(argv[arg], "-fileName") == 0)
+        {
+            arg++;
+            fileName = argv[arg];
+        }
+        arg++;
+    }
+
+
     json_error_t error;
     json_t *rootBIM = json_object();
     json_t *rootSAM = json_object();
