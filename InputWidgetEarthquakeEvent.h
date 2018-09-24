@@ -72,7 +72,6 @@ private:
    QStackedWidget *theStackedWidget;
    SimCenterAppWidget *theCurrentEvent;
 
-   SimCenterAppWidget *theExistingEventsWidget;
    SimCenterAppWidget *theSHA_MotionWidget;
    SimCenterAppWidget *theExistingEvents;
    SimCenterAppWidget *theExistingPeerEvents;

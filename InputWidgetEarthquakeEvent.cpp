@@ -78,9 +78,9 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     QLabel *label = new QLabel();
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
-    eventSelection->addItem(tr("Existing"));
+    //    eventSelection->addItem(tr("Existing"));
     eventSelection->addItem(tr("Multiple Existing"));
-     eventSelection->addItem(tr("Multiple PEER"));
+    eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -98,13 +98,13 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     // create the individual load widgets & add to stacked widget
     //
 
-    theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    //theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    //theStackedWidget->addWidget(theExistingEventsWidget);
     theExistingEvents = new ExistingSimCenterEvents(theRandomVariableInputWidget);
-    theStackedWidget->addWidget(theExistingEventsWidget);
     theStackedWidget->addWidget(theExistingEvents);
 
-     theExistingPeerEvents = new ExistingPEER_Events(theRandomVariableInputWidget);
-     theStackedWidget->addWidget(theExistingPeerEvents);
+    theExistingPeerEvents = new ExistingPEER_Events(theRandomVariableInputWidget);
+    theStackedWidget->addWidget(theExistingPeerEvents);
 
     //Adding SHA based ground motion widget
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
@@ -112,7 +112,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEvent=theExistingEventsWidget;
+    theCurrentEvent=theExistingEvents;
 
     connect(eventSelection,SIGNAL(currentIndexChanged(QString)),this,SLOT(eventSelectionChanged(QString)));
 }
@@ -159,14 +159,12 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
 
     int index = 0;
-    if (type == QString("SimCenterEvent")) {
+    if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
         index = 0;
-    } else if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
-        index = 1;
     } else if ((type == QString("Existing PEER Events")) || (type == QString("ExistingPEER_Events"))) {
-        index = 2;
+        index = 1;
     } else if (type == QString("Hazard Besed Event")) {
-        index = 3;
+        index = 2;
     } else {
         return false;
     }
@@ -184,29 +182,23 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
 void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
 {
-    qDebug() << "INputWidgetEarthquake: " << arg1;
     //
     // switch stacked widgets depending on text
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
-    if (arg1 == "Existing" || arg1 == "SimCenterEvent") {
+    if (arg1 == "Multiple Existing") {
         theStackedWidget->setCurrentIndex(0);
-        theCurrentEvent = theExistingEventsWidget;
-    }
-
-    else if(arg1 == "Multiple Existing") {
-        theStackedWidget->setCurrentIndex(1);
         theCurrentEvent = theExistingEvents;
     }
 
     else if(arg1 == "Multiple PEER") {
-        theStackedWidget->setCurrentIndex(2);
+        theStackedWidget->setCurrentIndex(1);
         theCurrentEvent = theExistingPeerEvents;
     }
 
     else if(arg1 == "Hazard Based Event") {
-        theStackedWidget->setCurrentIndex(3);
+        theStackedWidget->setCurrentIndex(2);
         theCurrentEvent = theSHA_MotionWidget;
     }
 

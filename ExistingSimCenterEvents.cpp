@@ -128,8 +128,8 @@ ExistingEvent::outputToJSON(QJsonObject &jsonObject) {
     jsonObject["fileName"]= fileInfo.fileName();
     jsonObject["filePath"]=fileInfo.path();
     jsonObject["name"]=theName->text();
-    QString factorText = factor->text();
 
+    QString factorText = factor->text();
     bool ok;
     double factorDouble = factorText.QString::toDouble(&ok);
     if (ok == true)
@@ -188,7 +188,7 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("List of Events"));
+    title->setText(tr("List of SimCenter Events"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);

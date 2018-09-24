@@ -345,7 +345,7 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariableInputWidget *theRV_IW, QW
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("List of Events"));
+    title->setText(tr("List of PEER Events"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
