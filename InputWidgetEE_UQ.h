@@ -66,6 +66,8 @@ class RunWidget;
 class Application;
 class RemoteService;
 class RemoteJobManager;
+class QNetworkAccessManager;
+class QNetworkReply;
 
 class InputWidgetEE_UQ : public WorkflowAppWidget
 {
@@ -99,6 +101,8 @@ public slots:
     void processResults(QString dakotaOut, QString dakotaTab);
 
     void loadFile(QString filename);
+    void replyFinished(QNetworkReply*);
+
     /*
     void statusMessage(QString message);
     void errorMessage(QString message);
@@ -135,6 +139,8 @@ private:
     QJsonObject *jsonObjOrig;
 
     QStackedWidget *theStackedWidget;
+
+    QNetworkAccessManager *manager;
 };
 
 #endif // INPUT_WIDGET_EE_UQ_H
