@@ -38,6 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ExistingSimCenterEvents.h"
 #include <InputWidgetExistingEvent.h>
+#include <RandomVariableInputWidget.h>
 
 #include <QPushButton>
 #include <QScrollArea>
@@ -53,8 +54,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QScrollArea>
 
 
-ExistingEvent::ExistingEvent(QWidget *parent)
-    :SimCenterWidget(parent)
+ExistingEvent::ExistingEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+    :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
    button = new QRadioButton();
@@ -69,11 +70,18 @@ ExistingEvent::ExistingEvent(QWidget *parent)
    chooseFile->setText(tr("Choose"));
    connect(chooseFile,SIGNAL(clicked()),this,SLOT(chooseFileName()));
 
+   QLabel *labelFactor = new QLabel(tr("Factor"));
+   factor = new QLineEdit("1.0");
+   lastFactor = "";
+   connect(factor,SIGNAL(editingFinished()),this,SLOT(factorEditingFinished()));
+
    layout->addWidget(button);
    layout->addWidget(theName);
    layout->addWidget(label);
    layout->addWidget(file, 1.0);
    layout->addWidget(chooseFile);
+   layout->addWidget(labelFactor);
+   layout->addWidget(factor);
 
   // layout->addStretch();
    this->setLayout(layout);
@@ -82,6 +90,23 @@ ExistingEvent::ExistingEvent(QWidget *parent)
 ExistingEvent::~ExistingEvent()
 {
 
+}
+
+// need to check if a random variable
+void ExistingEvent::factorEditingFinished() {
+    QString text = factor->text();
+    bool ok;
+    double factorDouble = text.QString::toDouble(&ok);
+
+    if (ok == false) {
+        if (text != lastFactor) {
+            QStringList rvs;
+            rvs.append(text);
+            rvs.append("1.0");
+            theRandVariableIW->addConstantRVs(rvs);
+            lastFactor = text;
+        }
+    }
 }
 
 void
@@ -103,6 +128,15 @@ ExistingEvent::outputToJSON(QJsonObject &jsonObject) {
     jsonObject["fileName"]= fileInfo.fileName();
     jsonObject["filePath"]=fileInfo.path();
     jsonObject["name"]=theName->text();
+    QString factorText = factor->text();
+
+    bool ok;
+    double factorDouble = factorText.QString::toDouble(&ok);
+    if (ok == true)
+        jsonObject["factor"]=factorDouble;
+    else
+        jsonObject["factor"]= QString("RV.") + factor->text();
+
     return true;
 }
 
@@ -128,6 +162,17 @@ ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
     if (jsonObject.contains("name")) {
         QJsonValue theValue = jsonObject["name"];
         theName->setText(theValue.toString());
+    } else
+        return false;
+
+    if (jsonObject.contains("factor")) {
+        QJsonValue theValue = jsonObject["factor"];
+        if (theValue.isString()) {
+            QString text = theValue.toString();
+            text.remove(0,3); // remove RV.
+           factor->setText(text);
+       } else if (theValue.isDouble())
+            factor->setText(QString::number(theValue.toDouble()));
     } else
         return false;
 
@@ -179,7 +224,6 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     eventsWidget->setLayout(eventLayout);
     sa->setWidget(eventsWidget);
 
-
     verticalLayout->addLayout(titleLayout);
     verticalLayout->addWidget(sa);
     //verticalLayout->addStretch();
@@ -199,7 +243,7 @@ ExistingSimCenterEvents::~ExistingSimCenterEvents()
 void ExistingSimCenterEvents::addEvent(void)
 {
    InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
-   ExistingEvent *theEvent = new ExistingEvent(theExisting);
+   ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW, theExisting);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
    connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
@@ -286,7 +330,7 @@ ExistingSimCenterEvents::inputFromJSON(QJsonObject &rvObject)
           foreach (const QJsonValue &rvValue, rvArray) {
 
               QJsonObject rvObject = rvValue.toObject();
-              ExistingEvent *theEvent = new ExistingEvent();
+              ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW);
 
               if (theEvent->inputFromJSON(rvObject)) { // this method is where type is set
                   theEvents.append(theEvent);

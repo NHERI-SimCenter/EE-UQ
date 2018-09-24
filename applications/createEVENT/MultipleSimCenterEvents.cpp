@@ -10,6 +10,7 @@ using namespace std;
 
 #include <jansson.h>  // for Json
 
+void addEvent(const char *fileNameEvent, json_t *obj, double factor);
 void addEvent(const char *fileNameEvent, json_t *obj);
 
 int main(int argc, char **argv)
@@ -128,7 +129,7 @@ int main(int argc, char **argv)
     int numEDP = 0;
     
     json_array_foreach(eventsEventsArray, count, value) {
-      
+
       // check earthquake
       json_t *type = json_object_get(value,"type");  
       const char *eventType = json_string_value(type);
@@ -136,26 +137,42 @@ int main(int argc, char **argv)
       if (strcmp(eventType,"Seismic") == 0) {
 	json_t *subType = json_object_get(value,"subtype");  
 	if ((subType != NULL) && (strcmp("MultipleSimCenterEvent",json_string_value(subType)) ==0)) {
+
 	  json_t *index = json_object_get(value,"index"); 
-	  if (json_is_integer(index) == false) {
-	    const char *eventName = json_string_value(index);
-	    // we need to replace the EVENT with another event
-	    json_t *inputEvent = json_array_get(inputEventsArray,count);
-	    json_t *events = json_object_get(inputEvent,"Events");
-	    for (int i=0; i<json_array_size(events); i++) {
-	      json_t *theEvent = json_array_get(events, i);
-	      const char * name = json_string_value(json_object_get(theEvent,"name"));
-	      if (strcmp(eventName, name) == 0) {
-		std::cerr << "FOUND MATCH "<< name; 
-		const char *fileName = json_string_value(json_object_get(theEvent,"fileName"));
-		addEvent(fileName, value);
-		i = json_array_size(events);
+	  if (index != NULL) {
+	    if (json_is_integer(index) == false) {
+
+	      const char *eventName = json_string_value(index);
+	      
+	      // we need to replace the EVENT with another event
+	      json_t *inputEvent = json_array_get(inputEventsArray,count);
+	      json_t *events = json_object_get(inputEvent,"Events");
+	      for (int i=0; i<json_array_size(events); i++) {
+		json_t *theEvent = json_array_get(events, i);
+		const char * name = json_string_value(json_object_get(theEvent,"name"));
+		double factor  = json_real_value(json_object_get(theEvent,"factor"));
+		if (strcmp(eventName, name) == 0) {
+		  std::cerr << "FOUND MATCH "<< name; 
+		  const char *fileName = json_string_value(json_object_get(theEvent,"fileName"));
+		  addEvent(fileName, value, factor);
+		  i = json_array_size(events);
+		}
 	      }
+	    } else {
+	      json_t *inputEvent = json_array_get(inputEventsArray,count);
+	      json_t *events = json_object_get(inputEvent,"Events");
+	      json_t *theEvent = json_array_get(events, 0);
+	      double factor  = json_real_value(json_object_get(theEvent,"factor"));
+	      json_object_set(value,"factor",json_real(factor));
 	    }
+
+	    // add factor to event
+	    
+	    
+	  } else {
+	    ;
 	  }
-	  std::cerr << json_string_value(index);
-	  json_t *eventObj = json_object();
-	}	  
+	}
       }
     }
     // write rootEvent
@@ -178,6 +195,20 @@ void addEvent(const char *fileName, json_t *obj) {
   json_t *rootEVENT = json_load_file(fileName, 0, &error);
   json_t *eventsArray = json_object_get(rootEVENT,"Events");  
   json_t *eventToCopy = json_array_get(eventsArray,0);
+
+  // update the object
+  json_object_update(obj, eventToCopy); 
+}
+
+
+void addEvent(const char *fileName, json_t *obj, double factor) {
+
+  // open file and get the first event
+  json_error_t error;
+  json_t *rootEVENT = json_load_file(fileName, 0, &error);
+  json_t *eventsArray = json_object_get(rootEVENT,"Events");  
+  json_t *eventToCopy = json_array_get(eventsArray,0);
+  json_object_set(eventToCopy,"factor",json_real(factor));
 
   // update the object
   json_object_update(obj, eventToCopy); 

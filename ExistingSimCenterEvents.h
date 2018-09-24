@@ -55,7 +55,7 @@ class ExistingEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingEvent(QWidget *parent = 0);
+    explicit ExistingEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
     ~ExistingEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -64,9 +64,15 @@ public:
     QRadioButton *button; // used to mark if Event intended for deletion
     QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
     QLineEdit    *file;    // full path to file name
+    QLineEdit    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
+    void factorEditingFinished();
+
+private:
+     RandomVariableInputWidget *theRandVariableIW;
+     QString lastFactor;
 };
 
 
