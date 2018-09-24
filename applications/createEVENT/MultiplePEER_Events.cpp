@@ -72,7 +72,13 @@ int main(int argc, char **argv)
 	
 	json_t *existingEventsArray = json_object_get(value,"Events");
 	int numExisting = json_array_size(existingEventsArray);      
+
+	json_dump_file(existingEventsArray,"DEBUG-ONE",0);   
+
+	std::cerr << "NUM EVENTS: " << numExisting;
+
 	if (numExisting > 1) {
+
 	  json_t *randomVar = json_object();
 	  json_object_set(randomVar, "distribution",json_string("discrete_design_set_string"));
 	  json_object_set(randomVar, "name",json_string("MultipleEvent"));
@@ -90,9 +96,13 @@ int main(int argc, char **argv)
 	  json_object_set(eventObj, "index", json_string("RV.MultipleEvent"));
 	
 	} else {
-	  json_t *existingEvent = json_object_get(existingEventsArray,0);
+
+	  std::cerr << "SINGLE START: \n";
+	  json_t *existingEvent = json_array_get(existingEventsArray,0);
 	  createSimCenterEvent(existingEvent);	  
 	  json_object_set(eventObj, "index", json_integer(0));
+	  std::cerr << "SINGLE DONE\n";
+
 	}
 
 	//add first event to event
@@ -111,8 +121,11 @@ int main(int argc, char **argv)
     json_object_set(rootEvent,"randomVariables",rvArray);
     json_object_set(rootEvent,"Events",newEventArray);
     
+
     // dump the event file
+
     json_dump_file(rootEvent,filenameEVENT,0);   
+    //    json_dump_file(rootEvent,filenameEVENT,JSON_INDENT(1));   
 
   }  else { // if not -getRV we want to copy file to EVENT fileName
 
@@ -197,7 +210,7 @@ int addEvent(const char *fileName, json_t *obj) {
 //  - the SimCenter Event will be written to a file given by name value
 
 int createSimCenterEvent(json_t *peerEvent) {
-
+  std::cerr << "createEvent\n";
   //
   // get name and type 
   //
@@ -206,6 +219,7 @@ int createSimCenterEvent(json_t *peerEvent) {
   json_t *name = json_object_get(peerEvent,"name");  
   if (name == NULL) {
     cout << "ERROR (createSimEvent): Event does not have a name entry\n";
+    json_dump_file(peerEvent,"DEBUG",0);   
     return -1;
   }
   const char *eventName = json_string_value(name);
@@ -259,6 +273,8 @@ int createSimCenterEvent(json_t *peerEvent) {
       return -1;
     }
     const char *fileName = json_string_value(fileNameType);
+
+    json_t *factorObj = json_object_get(peerRecord,"factor");
 
     dT = 0.0;
     numPoints = 0;
@@ -342,6 +358,7 @@ int createSimCenterEvent(json_t *peerEvent) {
     json_object_set(timeseriesObj,"type",json_string("Value"));
     json_object_set(patternObj,"type",json_string("UniformAcceleration"));
     json_object_set(patternObj,"dof",json_integer(dirn));
+    json_object_set(patternObj,"factor",factorObj);
 
     json_object_set(timeseriesObj,"dT",json_real(dT));
     json_object_set(timeseriesObj,"numSteps",json_integer(numPoints));
@@ -386,6 +403,7 @@ int createSimCenterEvent(json_t *peerEvent) {
   // write a SimCenter Event file by dumping outputObj JSON to a file
   //
 
+  //  json_dump_file(outputObj, eventName, JSON_INDENT(1));
   json_dump_file(outputObj, eventName, JSON_COMPACT);
 
   //

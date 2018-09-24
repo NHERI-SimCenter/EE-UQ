@@ -632,6 +632,14 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     if (strcmp(subType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
       
+      double patternFactor = 1.0;
+      json_t *patternFactorObj = json_object_get(pattern,"factor");
+      if (patternFactorObj != NULL) {
+	if (json_is_real(patternFactorObj))
+	  patternFactor = json_real_value(patternFactorObj);
+      }
+
+      
       int series = 0;
       string name(json_string_value(json_object_get(pattern,"timeSeries")));
       printf("%s\n",name.c_str());
@@ -645,7 +653,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       
       int seriesTag = timeSeriesList[name];
       s << "pattern UniformExcitation " << numPattern << " " << dirn;
-      s << " -accel " << series << "\n";
+      s << " -accel " << series << " -factor " << patternFactor << "\n";
       numPattern++;
     }
   }

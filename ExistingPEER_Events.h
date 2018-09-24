@@ -56,7 +56,7 @@ class PeerRecord : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit PeerRecord(QWidget *parent = 0);
+    explicit PeerRecord(RandomVariableInputWidget *theRV, QWidget *parent = 0);
     ~PeerRecord();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -64,14 +64,20 @@ public:
 
     QRadioButton *button;  // used to mark if Event intended for deletion
     QLineEdit    *file;    // full path to file name
-    QSpinBox      *dirn;
+    QSpinBox     *dirn;
+    QLineEdit    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
     void onRemoveRecord(bool);
+    void factorEditingFinished();
 
 signals:
     void removeRecord();
+
+private:
+     RandomVariableInputWidget *theRandVariableIW;
+     QString lastFactor;
 };
 
 // an event can hold multiple PeerRecord, different one for diff directions
@@ -79,7 +85,7 @@ class PeerEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit PeerEvent(QWidget *parent = 0);
+    explicit PeerEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
     ~PeerEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -94,6 +100,9 @@ public:
 public slots:
     void onRemoveRecord(bool);
     void onAddRecord(bool);
+
+private:
+     RandomVariableInputWidget *theRandVariableIW;
 };
 
 

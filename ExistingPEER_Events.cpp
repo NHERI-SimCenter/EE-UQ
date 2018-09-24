@@ -38,6 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ExistingPEER_Events.h"
 #include <InputWidgetExistingEvent.h>
+#include <RandomVariableInputWidget.h>
 
 #include <QSpinBox>
 #include <QPushButton>
@@ -53,8 +54,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QScrollArea>
 
-PeerRecord::PeerRecord(QWidget *parent)
-    :SimCenterWidget(parent)
+PeerRecord::PeerRecord(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+:SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
    button = new QRadioButton();
@@ -73,13 +74,19 @@ PeerRecord::PeerRecord(QWidget *parent)
    chooseFile->setText(tr("Choose"));
    connect(chooseFile,SIGNAL(clicked()),this,SLOT(chooseFileName()));
 
+   QLabel *labelFactor = new QLabel(tr("Factor"));
+   factor = new QLineEdit("1.0");
+   lastFactor = "";
+   connect(factor,SIGNAL(editingFinished()),this,SLOT(factorEditingFinished()));
+
    layout->addWidget(button);
    layout->addWidget(labelFile);
    layout->addWidget(file, 1.0);
    layout->addWidget(chooseFile);
    layout->addWidget(labelDirn);
    layout->addWidget(dirn);
-
+   layout->addWidget(labelFactor);
+   layout->addWidget(factor);
 
   // layout->addStretch();
    this->setLayout(layout);
@@ -89,6 +96,23 @@ PeerRecord::PeerRecord(QWidget *parent)
 PeerRecord::~PeerRecord()
 {
 
+}
+
+// need to check if a random variable
+void PeerRecord::factorEditingFinished() {
+    QString text = factor->text();
+    bool ok;
+    double factorDouble = text.QString::toDouble(&ok);
+
+    if (ok == false) {
+        if (text != lastFactor) {
+            QStringList rvs;
+            rvs.append(text);
+            rvs.append("1.0");
+            theRandVariableIW->addConstantRVs(rvs);
+            lastFactor = text;
+        }
+    }
 }
 
 void
@@ -111,6 +135,15 @@ PeerRecord::outputToJSON(QJsonObject &jsonObject) {
     jsonObject["fileName"]= fileInfo.fileName();
     jsonObject["filePath"]=fileInfo.path();
     jsonObject["dirn"]=dirn->value();
+
+    QString factorText = factor->text();
+    bool ok;
+    double factorDouble = factorText.QString::toDouble(&ok);
+    if (ok == true)
+        jsonObject["factor"]=factorDouble;
+    else
+        jsonObject["factor"]= QString("RV.") + factor->text();
+
     return true;
 }
 
@@ -140,12 +173,24 @@ PeerRecord::inputFromJSON(QJsonObject &jsonObject) {
     } else
         return false;
 
+
+    if (jsonObject.contains("factor")) {
+        QJsonValue theValue = jsonObject["factor"];
+        if (theValue.isString()) {
+            QString text = theValue.toString();
+            text.remove(0,3); // remove RV.
+           factor->setText(text);
+       } else if (theValue.isDouble())
+            factor->setText(QString::number(theValue.toDouble()));
+    } else
+        return false;
+
     return true;
 }
 
 
-PeerEvent::PeerEvent(QWidget *parent)
-    :SimCenterWidget(parent)
+PeerEvent::PeerEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+    :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QGroupBox *boxWidget = new QGroupBox;
    QHBoxLayout *groupBoxLayout = new QHBoxLayout();
@@ -173,7 +218,7 @@ PeerEvent::PeerEvent(QWidget *parent)
     connect(remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveRecord(bool)));
 
 
-   PeerRecord *theRecord = new PeerRecord();
+   PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
    recordLayout->addWidget(theRecord);
    theRecords.append(theRecord);
   // connect(theRecord,SIGNAL(removeRecord()), this, SLOT(onRemoveRecord()));
@@ -254,7 +299,7 @@ PeerEvent::inputFromJSON(QJsonObject &jsonObject) {
                 // create Record, read it and add to widget and QVector
 
                 QJsonObject jsonObject = rvValue.toObject();
-                PeerRecord *theRecord = new PeerRecord();
+                PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
 
                 if (theRecord->inputFromJSON(jsonObject)) { // this method is where type is set
                     theRecords.append(theRecord);
@@ -270,7 +315,7 @@ PeerEvent::inputFromJSON(QJsonObject &jsonObject) {
 
 void
 PeerEvent::onAddRecord(bool) {
-    PeerRecord *theRecord = new PeerRecord();
+    PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
     recordLayout->addWidget(theRecord);
     theRecords.append(theRecord);
 }
@@ -356,7 +401,7 @@ ExistingPEER_Events::~ExistingPEER_Events()
 void ExistingPEER_Events::addEvent(void)
 {
    InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
-   PeerEvent *theEvent = new PeerEvent(theExisting);
+   PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
    connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
@@ -443,7 +488,7 @@ ExistingPEER_Events::inputFromJSON(QJsonObject &jsonObject)
           foreach (const QJsonValue &rvValue, rvArray) {
 
               QJsonObject jsonObject = rvValue.toObject();
-              PeerEvent *theEvent = new PeerEvent();
+              PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
 
               if (theEvent->inputFromJSON(jsonObject)) { // this method is where type is set
                   theEvents.append(theEvent);
