@@ -25,6 +25,12 @@ class MainWindowWorkflowApp : public QMainWindow
   explicit MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
   ~MainWindowWorkflowApp();
 
+ protected:
+  void setCopyright(QString &copyright);
+  void setVersion(QString &version);
+  void setAbout(QString &about);
+  void setFeedback(QString &feedback);
+    
  signals:
     void attemptLogin(QString, QString);
     void logout();
@@ -36,6 +42,11 @@ class MainWindowWorkflowApp : public QMainWindow
     void openFile(QString filename);
     bool save();
     bool saveAs();
+
+    void about();
+    void submitFeedback();
+    void version();
+    void copyright();
 
     // for main actions
     void onRunButtonClicked();
@@ -86,6 +97,11 @@ class MainWindowWorkflowApp : public QMainWindow
 
     QPushButton *loginButton;
     QLabel *errorLabel;
+
+    QString versionText;
+    QString aboutText;
+    QString copyrightText;
+    QString feedbackURL;
 };
 
 #endif // MAIN_WINDOW_WORKFLOW_APP_H
