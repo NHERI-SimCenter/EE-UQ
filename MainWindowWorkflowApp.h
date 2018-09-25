@@ -30,6 +30,7 @@ class MainWindowWorkflowApp : public QMainWindow
   void setVersion(QString &version);
   void setAbout(QString &about);
   void setFeedback(QString &feedback);
+  void setCite(QString &cite);
     
  signals:
     void attemptLogin(QString, QString);
@@ -47,6 +48,7 @@ class MainWindowWorkflowApp : public QMainWindow
     void submitFeedback();
     void version();
     void copyright();
+    void cite();
 
     // for main actions
     void onRunButtonClicked();
@@ -102,6 +104,7 @@ class MainWindowWorkflowApp : public QMainWindow
     QString aboutText;
     QString copyrightText;
     QString feedbackURL;
+    QString citeText;
 };
 
 #endif // MAIN_WINDOW_WORKFLOW_APP_H

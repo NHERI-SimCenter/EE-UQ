@@ -55,7 +55,6 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     int width  = this->width()<int(0.85*rec.width())?int(0.85*rec.width()):this->width();
     this->resize(width, height);
 
-
     //
     // add SimCenter Header
     //
@@ -195,6 +194,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
 
     feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
     versionText = QString(tr("Version 1.0.0"));
+    citeText = QString(tr(""));
     aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
     copyrightText = QString("\
                             <p>\
@@ -466,6 +466,7 @@ void MainWindowWorkflowApp::createActions() {
     //aboutAct->setStatusTip(tr("Show the application's About box"));
     QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *citeAct = helpMenu->addAction(tr("&How to cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
     //aboutAct->setStatusTip(tr("Show the application's About box"));
 
@@ -652,7 +653,22 @@ MainWindowWorkflowApp::fatalMessage(const QString msg){
 
 void MainWindowWorkflowApp::version()
 {
-  QMessageBox::about(this, tr("Version"),versionText);
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(versionText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::cite()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(citeText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
 }
 
 void MainWindowWorkflowApp::about()
