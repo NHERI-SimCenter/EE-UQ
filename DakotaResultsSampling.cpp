@@ -129,6 +129,7 @@ DakotaResultsSampling::outputToJSON(QJsonObject &jsonObject)
         resultsData.append(edpData);
     }
     jsonObject["summary"]=resultsData;
+    jsonObject["dataType"]=dataType;
 
 
     // add general data
@@ -186,6 +187,12 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     summary->setLayout(summaryLayout);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
+    QJsonValue type = jsonObject["dataType"];
+    if (!type.isNull()) {
+        dataType = type.toInt();
+    } else
+        dataType = 0;
+
     foreach (const QJsonValue &edpValue, edpArray) {
         QString name;
         double mean, stdDev;
@@ -199,7 +206,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
         QJsonValue theStdDevValue = edpObject["stdDev"];
         stdDev = theStdDevValue.toDouble();
 
-        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev);
+        QWidget *theWidget = this->createResultEDPWidget(name, mean, stdDev, dataType);
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
@@ -362,11 +369,14 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         return -1;
     }
 
-    // now ignore every line until Kurtosis found
+    // now ignore every line until Statistics found
 
-    const std::string needle = "Kurtosis";
+    const std::string needle = "Statistics";
     std::string haystack;
 
+    //
+    // parse till get to Statistics output
+    //
     while (std::getline(fileResults, haystack)) {
         if (haystack.find(needle) != std::string::npos) {
             break;
@@ -380,6 +390,23 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     dakotaText->append(haystack.c_str());
 
+    //
+    // get 2 lines to get to summary
+    //
+    std::getline(fileResults, haystack); dakotaText->append(haystack.c_str());
+    std::getline(fileResults, haystack); dakotaText->append(haystack.c_str());
+
+    //
+    // switch on summary (mean/stdDev or Min/Max
+    //
+
+    bool minAndMax = true;
+    const std::string nextNeedle = "Sample";
+    if (haystack.find(nextNeedle) != std::string::npos) {
+        minAndMax = false;
+        std::getline(fileResults, haystack); dakotaText->append(haystack.c_str());
+    }
+
     bool isSummaryDone = false;
 
     while (std::getline(fileResults, haystack)) {
@@ -389,9 +416,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
             if ( strlen(haystack.c_str()) == 0) {
                 isSummaryDone = true;
             } else {
-                //
-                // add sumary info
-                //
+
+
 
                 std::istringstream iss(haystack);
                 std::string subs;
@@ -399,16 +425,46 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
                 iss >> subs;
                 QString  nameString(QString::fromStdString(subs));
 
-                iss >> subs;
-                QString meanText(QString::fromStdString(subs));
-                double mean = meanText.toDouble();
+                if (minAndMax == false) {
 
-                iss >> subs;
-                QString stdDevText(QString::fromStdString(subs));
-                double stdDev = stdDevText.toDouble();
+                    //
+                    // add mean/stdDev
+                    //
 
-                QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev);
-                summaryLayout->addWidget(theWidget);
+                    iss >> subs;
+                    QString meanText(QString::fromStdString(subs));
+                    double mean = meanText.toDouble();
+
+                    iss >> subs;
+                    QString stdDevText(QString::fromStdString(subs));
+                    double stdDev = stdDevText.toDouble();
+
+                    QWidget *theWidget = this->createResultEDPWidget(nameString, mean, stdDev, 0);
+                    summaryLayout->addWidget(theWidget);
+
+                } else {
+
+                    //
+                    // add min/max
+                    //
+
+                    iss >> subs;
+                    iss >> subs;
+                    iss >> subs;
+                    QString minText(QString::fromStdString(subs));
+                    double min = minText.toDouble();
+
+                    iss >> subs;
+                    iss >> subs;
+                    iss >> subs;
+
+                    QString maxText(QString::fromStdString(subs));
+                    double max = maxText.toDouble();
+
+                    QWidget *theWidget = this->createResultEDPWidget(nameString, min, max, 1);
+                    summaryLayout->addWidget(theWidget);
+
+                }
             }
         }
     }
@@ -515,6 +571,32 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 }
 
 void
+DakotaResultsSampling::getColData(QVector<double> &data, int numRow, int col) {
+    bool ok;
+    double data0 = spreadsheet->item(0,col)->text().toDouble(&ok);
+    if (ok == true) {
+        for (int i=0; i<numRow; i++) {
+            QTableWidgetItem *item = spreadsheet->item(i,col);
+            data.append(item->text().toDouble());
+        }
+    } else { // it's a string create a map
+         QMap<QString, int> map;
+         int numDifferent = 1;
+         for (int i=0; i<numRow; i++) {
+             QTableWidgetItem *item = spreadsheet->item(i,col);
+             QString text = item->text();
+             if (map.contains(text))
+                 data.append(map.value(text));
+             else {
+                 data.append(numDifferent);
+                 map[text] = numDifferent++;
+             }
+         }
+    }
+    return;
+}
+
+void
 DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
     mLeft = spreadsheet->wasLeftKeyPressed();
@@ -545,6 +627,10 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     if (col1 != col2) {
         QScatterSeries *series = new QScatterSeries;
 
+        QVector<double> dataX;
+        QVector<double> dataY;
+        this->getColData(dataX, rowCount, col1);
+        this->getColData(dataY, rowCount, col2);
         for (int i=0; i<rowCount; i++) {
             QTableWidgetItem *itemX = spreadsheet->item(i,col1);
             QTableWidgetItem *itemY = spreadsheet->item(i,col2);
@@ -553,8 +639,9 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
             itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
 
-            series->append(itemX->text().toDouble(), itemY->text().toDouble());
+            series->append(dataX[i], dataY[i]);
         }
+
         chart->addSeries(series);
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
@@ -566,6 +653,8 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         chart->setAxisY(axisY, series);
 
     } else {
+        QVector<double> dataX;
+        this->getColData(dataX, rowCount, col1);
 
         QLineSeries *series= new QLineSeries;
 
@@ -582,7 +671,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             QTableWidgetItem *itemOld = spreadsheet->item(i,oldCol);
             itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
             itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
-            double value = itemX->text().toDouble();
+            double value = dataX[i];
             dataValues[i] =  value;
 
             if (i == 0) {
@@ -686,7 +775,10 @@ static QWidget *addLabeledLineEdit(QString theLabelName, QLineEdit **theLineEdit
 }
 
 QWidget *
-DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev) {
+DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double stdDev, int valueType) {
+
+    dataType = valueType;
+
     QWidget *edp = new QWidget;
     QHBoxLayout *edpLayout = new QHBoxLayout();
 
@@ -699,19 +791,29 @@ DakotaResultsSampling::createResultEDPWidget(QString &name, double mean, double 
     theNames.append(name);
     edpLayout->addWidget(nameWidget);
 
-    QLineEdit *meanLineEdit;
-    QWidget *meanWidget = addLabeledLineEdit(QString("Mean"), &meanLineEdit);
-    meanLineEdit->setText(QString::number(mean));
-    meanLineEdit->setDisabled(true);
-    theMeans.append(mean);
-    edpLayout->addWidget(meanWidget);
+    QLineEdit *firstLineEdit;
+    QWidget *firstWidget;
+    if (valueType == 0)
+       firstWidget = addLabeledLineEdit(QString("Mean"), &firstLineEdit);
+    else
+       firstWidget = addLabeledLineEdit(QString("Min"), &firstLineEdit);
 
-    QLineEdit *stdDevLineEdit;
-    QWidget *stdDevWidget = addLabeledLineEdit(QString("StdDev"), &stdDevLineEdit);
-    stdDevLineEdit->setText(QString::number(stdDev));
-    stdDevLineEdit->setDisabled(true);
+
+    firstLineEdit->setText(QString::number(mean));
+    firstLineEdit->setDisabled(true);
+    theMeans.append(mean);
+    edpLayout->addWidget(firstWidget);
+
+    QLineEdit *secondLineEdit;
+    QWidget *secondWidget ;
+    if (valueType == 0)
+        secondWidget = addLabeledLineEdit(QString("StdDev"), &secondLineEdit);
+    else
+     secondWidget = addLabeledLineEdit(QString("Max"), &secondLineEdit);
+    secondLineEdit->setText(QString::number(stdDev));
+    secondLineEdit->setDisabled(true);
     theStdDevs.append(stdDev);
-    edpLayout->addWidget(stdDevWidget);
+    edpLayout->addWidget(secondWidget);
 
     edpLayout->addStretch();
 
