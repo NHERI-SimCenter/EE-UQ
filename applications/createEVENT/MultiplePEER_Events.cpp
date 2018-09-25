@@ -358,7 +358,7 @@ int createSimCenterEvent(json_t *peerEvent) {
     json_object_set(timeseriesObj,"type",json_string("Value"));
     json_object_set(patternObj,"type",json_string("UniformAcceleration"));
     json_object_set(patternObj,"dof",json_integer(dirn));
-    json_object_set(patternObj,"factor",factorObj);
+    json_object_set(timeseriesObj,"factor",factorObj);
 
     json_object_set(timeseriesObj,"dT",json_real(dT));
     json_object_set(timeseriesObj,"numSteps",json_integer(numPoints));

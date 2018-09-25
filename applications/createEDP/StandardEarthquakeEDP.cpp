@@ -179,14 +179,25 @@ int main(int argc, char **argv)
 	int node = json_integer_value(json_object_get(value1,"node"));
 	
 	// floor abs acceleration
-	json_t *response = json_object();
-	json_object_set(response,"type",json_string("max_abs_acceleration"));      
-	json_object_set(response,"cline",json_string(cline));
-	json_object_set(response,"floor",json_string(floor));
-	json_object_set(response,"dofs",theDOFs);
-	json_t *dataArray = json_array(); 
-	json_object_set(response,"scalar_data",dataArray);
-	json_array_append(responsesArray,response);
+	json_t *responseA = json_object();
+	json_object_set(responseA,"type",json_string("max_abs_acceleration"));      
+	json_object_set(responseA,"cline",json_string(cline));
+	json_object_set(responseA,"floor",json_string(floor));
+	json_object_set(responseA,"dofs",theDOFs);
+	json_t *dataArrayA = json_array(); 
+	json_object_set(responseA,"scalar_data",dataArrayA);
+	json_array_append(responsesArray,responseA);
+	numEDP += numDOF;
+
+	// floor relative disp
+	json_t *responseD = json_object();
+	json_object_set(responseD,"type",json_string("max_rel_disp"));      
+	json_object_set(responseD,"cline",json_string(cline));
+	json_object_set(responseD,"floor",json_string(floor));
+	json_object_set(responseD,"dofs",theDOFs);
+	json_t *dataArrayD = json_array(); 
+	json_object_set(responseD,"scalar_data",dataArrayD);
+	json_array_append(responsesArray,responseD);
 	numEDP += numDOF;
 
 	// interstory drift

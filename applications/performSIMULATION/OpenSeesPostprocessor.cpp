@@ -145,6 +145,47 @@ OpenSeesPostprocessor::processEDPs(){
 	// set the response
 	json_object_set(response,"scalar_data",data);
 
+      } else if (strcmp(type,"max_rel_disp") == 0) {
+	const char * cline = json_string_value(json_object_get(response, "cline"));
+	const char * floor = json_string_value(json_object_get(response, "floor"));
+	json_t *dofs = json_object_get(response, "dofs");
+	int numDOFs = json_array_size(dofs);
+
+	string fileString;
+	ostringstream temp;  //temp as in temporary
+	temp << filenameBIM << edpEventName << "." << type << "." << cline << "." << floor << ".out";
+	fileString=temp.str(); 
+	
+	const char *fileName = fileString.c_str();
+	
+	//
+	// opencfile & process data into a json array called: data
+	//
+
+	json_t *data = json_array();
+
+	// open file
+	ifstream myfile;
+	myfile.open (fileName);
+	double tmp;
+
+	if (myfile.is_open()) {
+	  
+	  // read first 2 rows of useless data
+	  for (int ii=0; ii<2; ii++)
+	    for (int jj=0; jj<numDOFs; jj++) 
+	      myfile >> tmp;
+	  // read last row and add components to data
+	  for (int jj=0; jj<numDOFs; jj++) {
+	      myfile >> tmp;
+	      json_array_append(data, json_real(tmp));
+	  }
+	  myfile.close();
+	}
+	
+	// set the response
+	json_object_set(response,"scalar_data",data);
+
       } else if (strcmp(type,"max_drift") == 0) {
 	
 	const char *cline = json_string_value(json_object_get(response, "cline"));

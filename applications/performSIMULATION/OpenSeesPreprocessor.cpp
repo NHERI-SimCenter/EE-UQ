@@ -441,6 +441,41 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    delete [] dof;
 	  }
 
+	  else if (strcmp(type,"max_rel_disp") == 0) {
+
+	    const char *cline = json_string_value(json_object_get(response, "cline"));
+	    const char *floor = json_string_value(json_object_get(response, "floor"));
+
+	    int nodeTag = this->getNode(cline,floor);	    
+
+	    json_t *theDOFs = json_object_get(response, "dofs");
+	    int sizeDOFs = json_array_size(theDOFs);
+	    int *dof = new int[sizeDOFs];
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      dof[ii] = json_integer_value(json_array_get(theDOFs,ii));
+
+	    string fileString;
+	    ostringstream temp;  //temp as in temporary
+
+	    temp << fileBIM << edpEventName << "." << type << "." << cline << "." << floor << ".out";
+
+	    fileString=temp.str(); 
+
+	    const char *fileName = fileString.c_str();
+
+	    int startTimeSeries = 101;
+	    s << "recorder EnvelopeNode -file " << fileName;
+	    s << " -timeSeries ";
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      s << ii+startTimeSeries << " " ;
+	    s << " -node " << nodeTag << " -dof ";
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      s << dof[ii] << " " ;
+	    s << " disp\n";
+
+	    delete [] dof;
+	  }
+
 	  else if (strcmp(type,"max_drift") == 0) {
 	    const char * cline = json_string_value(json_object_get(response, "cline"));
 	    const char * floor1 = json_string_value(json_object_get(response, "floor1"));
@@ -561,9 +596,17 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     //    if (index < NDM) {
       const char *subType = json_string_value(json_object_get(timeSeries,"type"));        
       if (strcmp(subType,"Value")  == 0) {
+
+	double seriesFactor = 1.0;
+	json_t *seriesFactorObj = json_object_get(timeSeries,"factor");
+	if (seriesFactorObj != NULL) {
+	  if (json_is_real(seriesFactorObj))
+	    seriesFactor = json_real_value(seriesFactorObj);
+	}
+
 	double dt = json_real_value(json_object_get(timeSeries,"dT"));
 	json_t *data = json_object_get(timeSeries,"data");
-	s << "timeSeries Path " << numSeries << " -dt " << dt;
+	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
 	s << " -values \{ ";
 
 	//We need to check units for conversion
@@ -632,13 +675,6 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     if (strcmp(subType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
       
-      double patternFactor = 1.0;
-      json_t *patternFactorObj = json_object_get(pattern,"factor");
-      if (patternFactorObj != NULL) {
-	if (json_is_real(patternFactorObj))
-	  patternFactor = json_real_value(patternFactorObj);
-      }
-
       
       int series = 0;
       string name(json_string_value(json_object_get(pattern,"timeSeries")));
@@ -653,7 +689,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       
       int seriesTag = timeSeriesList[name];
       s << "pattern UniformExcitation " << numPattern << " " << dirn;
-      s << " -accel " << series << " -factor " << patternFactor << "\n";
+      s << " -accel " << series << "\n";
       numPattern++;
     }
   }

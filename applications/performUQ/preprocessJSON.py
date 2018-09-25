@@ -199,6 +199,10 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
                 edpAcronym = "PID"
                 floor = edp["floor1"]
 
+            elif(edp["type"] == "max_rel_disp"):
+                edpAcronym = "PFD"
+                floor = edp["floor"]
+
             else:
                 edpAcronym = "UnknownEDP"
 
