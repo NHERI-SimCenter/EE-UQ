@@ -126,6 +126,9 @@ RunLocalWidget::inputFromJSON(QJsonObject &dataObject) {
 void
 RunLocalWidget::onRunButtonPressed(void)
 {
+    // in case open and gets hidden, bring to front
+    this->hide();
+    this->show();
     int ok = 0;
     QString workingDir = workingDirName->text();
     QDir dir(workingDir);
