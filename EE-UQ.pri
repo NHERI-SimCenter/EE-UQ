@@ -31,7 +31,8 @@ SOURCES += \
     $$PWD/ExistingPEER_Events.cpp \
     $$PWD/CustomizedItemModel.cpp\
     $$PWD/DakotaResults.cpp\
-    $$PWD/DakotaResultsSampling.cpp
+    $$PWD/DakotaResultsSampling.cpp\
+    $$PWD/UserDefinedApplication.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -59,7 +60,8 @@ HEADERS  += \
     $$PWD/DakotaResults.h\
     $$PWD/DakotaResultsSampling.h\
     $$PWD/ExistingPEER_Events.h \
-    $$PWD/CustomizedItemModel.h
+    $$PWD/CustomizedItemModel.h \
+    $$PWD/UserDefinedApplication.h
 
 RESOURCES += \
     images.qrc \

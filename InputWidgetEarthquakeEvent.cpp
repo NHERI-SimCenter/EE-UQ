@@ -64,6 +64,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UniformMotionInput.h>
 #include <ExistingPEER_Events.h>
 #include "SHAMotionWidget.h"
+#include <UserDefinedApplication.h>
 
 InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)
@@ -82,6 +83,7 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Hazard Based Event"));
+    eventSelection->addItem(tr("User Application"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
@@ -109,6 +111,9 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     //Adding SHA based ground motion widget
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
     theStackedWidget->addWidget(theSHA_MotionWidget);
+
+    theUserDefinedApplication = new UserDefinedApplication(theRandomVariableInputWidget);
+    theStackedWidget->addWidget(theUserDefinedApplication);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
@@ -165,6 +170,8 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
         index = 1;
     } else if (type == QString("Hazard Besed Event")) {
         index = 2;
+    } else if ((type == QString("User Application")) || (type == QString("UserDefinedApplication"))) {
+        index = 3;
     } else {
         return false;
     }
@@ -200,6 +207,11 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
     else if(arg1 == "Hazard Based Event") {
         theStackedWidget->setCurrentIndex(2);
         theCurrentEvent = theSHA_MotionWidget;
+    }
+
+    else if(arg1 == "User Application") {
+        theStackedWidget->setCurrentIndex(3);
+        theCurrentEvent = theUserDefinedApplication;
     }
 
     else {
