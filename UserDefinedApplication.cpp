@@ -206,6 +206,6 @@ UserDefinedApplication::chooseFileName(void) {
  UserDefinedApplication::copyFiles(QString &dirName) {
 
    copyFilePath = dirName;
-
+   return true;
  }
 
