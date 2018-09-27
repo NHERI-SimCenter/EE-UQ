@@ -163,17 +163,30 @@ bool
 LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFile) {
 
     QString appDir = appDirName->text();
-
+qDebug() << "setupDOneRunApplication: appDir: " << appDir;
     //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
-    //QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-    //        QString("EE-UQ.py");
-    // control from the constructor
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            workflowScript;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QString pySCRIPT;
+
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        return false;
+    }
+
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         qDebug() << "NO REGISTRY FILE: " << registryFile;
+        return false;
+    }
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
 
     QStringList files;
@@ -197,6 +210,7 @@ for (int i = 0; i < files.size(); i++) {
     //QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningLocal");
     QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
+   // std::cerr << command.toStdString();
     proc->execute("cmd", QStringList() << "/C" << command);
     //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
@@ -206,7 +220,12 @@ for (int i = 0; i < files.size(); i++) {
 
     proc->execute("bash", QStringList() << "-c" <<  command);
 
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
+
     qInfo() << command;
+    qInfo() << "SCRIPT: " << pySCRIPT;
+    qInfo() << "REGISTRY: " << registryFile;
 
 #endif
     proc->waitForStarted();
