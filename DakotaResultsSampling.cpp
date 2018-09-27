@@ -512,7 +512,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
     // now until end of file, read lines and place data into spreadsheet
-
     int rowCount = 0;
     while (std::getline(tabResults, inputLine)) {
         std::istringstream is(inputLine);
@@ -531,6 +530,10 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     tabResults.close();
 
+    if (rowCount == 0) {
+      qDebug() << "Dakota FAILED to RUN";
+      return -2;
+    }
    // rowCount;
     spreadsheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
     connect(spreadsheet,SIGNAL(cellPressed(int,int)),this,SLOT(onSpreadsheetCellClicked(int,int)));
