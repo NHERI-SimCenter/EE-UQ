@@ -37,7 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-// Purpose: a widget for managing submiited jobs by uqFEM tool
+// Purpose: a widget for managing submiited jobs by WorkflowApp tool
 //  - allow for refresh of status, deletion of submitted jobs, and download of results from finished job
 
 #include "RemoteApplication.h"
@@ -201,8 +201,6 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 void
 RemoteApplication::onRunButtonPressed(void)
 {
-    qDebug() << "RemoteApplication::onRunButtonClicked()";
-
     int ok = 0;
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
@@ -238,13 +236,28 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QString appDir = localAppDirName->text();
 
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+    QString pySCRIPT;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        return false;
+    }
 
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         qDebug() << "NO REGISTRY FILE: " << registryFile;
+        return false;
+    }
+
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
@@ -266,8 +279,8 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningRemote");
     qDebug() << command;
+
     proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" set_up ") + inputFile + QString(" ") +
@@ -287,8 +300,6 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QString templateDIR(tmpDirectory + QDir::separator() + QString("templatedir"));
     QString zipFile(tmpDirectory + QDir::separator() + QString("templatedir.zip"));
     ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
-    qDebug() << templateDIR;
-    qDebug() << zipFile;
 
     QDir dirToRemove(templateDIR);
     dirToRemove.removeRecursively();
@@ -326,7 +337,7 @@ RemoteApplication::uploadDirReturn(bool result)
       
       pushButton->setDisabled(true);
       
-      job["name"]=QString("uqFEM:") + nameLineEdit->text();
+      job["name"]=QString("EE-UQ:") + nameLineEdit->text();
       int nodeCount = numCPU_LineEdit->text().toInt();
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;

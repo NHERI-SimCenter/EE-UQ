@@ -163,9 +163,8 @@ bool
 LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFile) {
 
     QString appDir = appDirName->text();
-qDebug() << "setupDOneRunApplication: appDir: " << appDir;
-    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
 
+    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
     QString pySCRIPT;
 
     QDir scriptDir(appDir);
@@ -207,25 +206,15 @@ for (int i = 0; i < files.size(); i++) {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    //QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningLocal");
     QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
-   // std::cerr << command.toStdString();
     proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
-
-    qDebug() << "SCRIPT: " << pySCRIPT;
-    qDebug() << "REGISTRY: " << registryFile;
-
-    qInfo() << command;
-    qInfo() << "SCRIPT: " << pySCRIPT;
-    qInfo() << "REGISTRY: " << registryFile;
 
 #endif
     proc->waitForStarted();
@@ -238,7 +227,6 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
     emit processResults(filenameOUT, filenameTAB);
-    qDebug() << "PROCESSED RESULTS";
 
     return 0;
 }
