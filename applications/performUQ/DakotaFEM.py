@@ -3,8 +3,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
-else:
-    from past.builtins import basestring
+
+#else:
+#    from past.builtins import basestring
 
 import os
 import platform
@@ -51,8 +52,8 @@ if platform.system() == 'Windows':
 
 #Create Template Directory and copy files
 templateDir = "templatedir"
-if os.path.exists(templateDir):
-    shutil.rmtree(templateDir)
+#if os.path.exists(templateDir):
+#    shutil.rmtree(templateDir)
 
 #os.mkdir(templateDir)
 st = os.stat(workflowDriverName)

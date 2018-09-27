@@ -5,8 +5,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
-else:
-    from past.builtins import basestring
+
+#else:
+#    from past.builtins import basestring
 
 import os
 import subprocess
@@ -19,6 +20,10 @@ class WorkFlowInputError(Exception):
     def __str__(self):
         return repr(self.value)
 
+try:
+    basestring
+except NameError:
+    basestring = str
 
 def workflow_log(msg):
     # ISO-8601 format, e.g. 2018-06-16T20:24:04Z
