@@ -206,14 +206,16 @@ for (int i = 0; i < files.size(); i++) {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << command;
+    QString command = QString("python ") + pySCRIPT + QString(" runLocal ") + inputFile  + QString(" ") + registryFile;
+    qDebug() << "PYTHON COMMAND: " << command;    
+
     proc->execute("cmd", QStringList() << "/C" << command);
 
 #else
-    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
+    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" runLocal ") + inputFile + QString(" ") +
             registryFile;
 
+    qDebug() << "PYTHON COMMAND: " << command;    
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif

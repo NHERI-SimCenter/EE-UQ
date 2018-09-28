@@ -275,7 +275,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + " set_up " + QString(" ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << command;
+    qDebug() << "PYTHON COMMAND: " << command;
 
     proc->execute("cmd", QStringList() << "/C" << command);
 

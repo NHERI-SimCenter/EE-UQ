@@ -274,6 +274,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     f.write('interface,\n')
     runType = data["runType"];
     remoteDir = data["remoteAppDir"];
+    localDir = data["localAppDir"];
 
     if (runType == "local"):
         numCPUs = 4
@@ -349,6 +350,9 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     with open(driverFile) as fp:
         for line in fp:
+            print(line)
+            print(localDir)
+            line = line.replace(localDir,remoteDir)
             f.write(line)
             print(line)
 
