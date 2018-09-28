@@ -105,6 +105,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     #Setting Workflow Driver Name
     workflowDriverName = 'workflow_driver'
+    remoteWorkflowDriverName = 'workflow_driver'
     if platform.system() == 'Windows':
         workflowDriverName = 'workflow_driver.bat'
 
@@ -278,10 +279,11 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     if (runType == "local"):
         numCPUs = 4
         f.write("fork asynchronous evaluation_concurrency = %d\n" % numCPUs)
+        f.write("analysis_driver = '{}'\n".format(workflowDriverName))
     else:
         f.write('fork asynchronous\n')
-
-    f.write("analysis_driver = '{}'\n".format(workflowDriverName))
+        f.write("analysis_driver = '{}'\n".format(remoteWorkflowDriverName))
+    
     f.write('parameters_file = \'params.in\' \n')
     f.write('results_file = \'results.out\' \n')
     f.write('work_directory directory_tag \n')
@@ -352,7 +354,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             f.write(line)
             print(line)
 
-    f.write('\n')
+    f.write('#comment to fix a bug\n')
     if (runType == "local"):
         f.write(scriptDir + '/extractEDP ' + edpName + ' results.out \n')
     else:
