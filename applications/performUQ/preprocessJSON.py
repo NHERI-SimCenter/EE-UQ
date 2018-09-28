@@ -11,6 +11,7 @@ import json
 import os
 import sys
 import platform
+import posixpath
 
 numRandomVariables = 0
 
@@ -358,7 +359,8 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     if (runType == "local"):
         f.write(scriptDir + '/extractEDP ' + edpName + ' results.out \n')
     else:
-        f.write(remoteDir + '/applications/performUQ/extractEDP ' + edpName + ' results.out \n')
+        extractEDPCommand = posixpath.join(remoteDir, 'applications/performUQ/extractEDP')
+        f.write(extractEDPCommand + ' ' + edpName + ' results.out \n')
 
     # Run 
     #f.write('rm -f *.com *.done *.dat *.log *.sta *.msg')
