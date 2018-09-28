@@ -126,7 +126,9 @@ def main(run_type, inputFile, applicationsRegistry):
                             if eventApplication in Applications['EventApplications'].keys():
                                 eventAppExe = Applications['EventApplications'].get(eventApplication)
                                 eventAppExeLocal = os.path.join(localAppDir,eventAppExe)
-                                eventAppExeRemote = os.path.join(remoteAppDir,eventAppExe)
+                                sep="/"
+                                eventAppExeRemote=sep.join([remoteAppDir,eventAppExe])
+                                #eventAppExeRemote = os.path.join(remoteAppDir,eventAppExe)
                             else:
                                 raise WorkFlowInputError('Event application %s not in registry' % eventApplication)
 
@@ -158,7 +160,9 @@ def main(run_type, inputFile, applicationsRegistry):
                 if modelingApplication in Applications['ModelingApplications'].keys():
                     modelingAppExe = Applications['ModelingApplications'].get(modelingApplication)
                     modelingAppExeLocal = os.path.join(localAppDir,modelingAppExe)
-                    modelingAppExeRemote = os.path.join(remoteAppDir,modelingAppExe)
+                    #modelingAppExeRemote = os.path.join(remoteAppDir,modelingAppExe)
+                    sep="/"
+                    modelingAppExeRemote=sep.join([remoteAppDir,modelingAppExe])
                 else:
                     raise WorkFlowInputError('Modeling application %s not in registry' % modelingApplication)
 
@@ -184,7 +188,9 @@ def main(run_type, inputFile, applicationsRegistry):
                 if edpApplication in Applications['EDPApplications'].keys():
                     edpAppExe = Applications['EDPApplications'].get(edpApplication)
                     edpAppExeLocal = os.path.join(localAppDir,edpAppExe)
-                    edpAppExeRemote = os.path.join(remoteAppDir,edpAppExe)
+                    #edpAppExeRemote = os.path.join(remoteAppDir,edpAppExe)
+                    sep="/"
+                    edpAppExeRemote=sep.join([remoteAppDir,edpAppExe])
                 else:
                     raise WorkFlowInputError('EDP application %s not in registry', edpApplication)
                 
@@ -209,7 +215,9 @@ def main(run_type, inputFile, applicationsRegistry):
                 if simulationApplication in Applications['SimulationApplications'].keys():
                     simAppExe = Applications['SimulationApplications'].get(simulationApplication)
                     simAppExeLocal = os.path.join(localAppDir,simAppExe)
-                    simAppExeRemote = os.path.join(remoteAppDir,simAppExe)
+                    #simAppExeRemote = os.path.join(remoteAppDir,simAppExe)
+                    sep="/"
+                    simAppExeRemote=sep.join([remoteAppDir,simAppExe])
                 else:
                     raise WorkFlowInputError('Simulation application %s not in registry', simulationApplication)
 
