@@ -85,7 +85,7 @@ InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *th
     name->setSpacing(10);
     name->setMargin(0);
 
-    bimSelection->addItem(tr("Spreadsheet"));
+    //    bimSelection->addItem(tr("Spreadsheet"));
     bimSelection->addItem(tr("OpenSees"));
 
     connect(bimSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(bimSelectionChanged(QString)));
@@ -96,7 +96,8 @@ InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *th
     this->setLayout(layout);
 
     // set Samlping as the default
-    this->bimSelectionChanged(tr("Spreadsheet"));
+    //    this->bimSelectionChanged(tr("Spreadsheet"));
+    this->bimSelectionChanged(tr("OpenSees"));
     layout->setMargin(0);
 }
 
@@ -154,9 +155,9 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 
     int index = 0;
     if (type == QString("SimCenterSIM")) {
-       index = 0;
-    } else if (type == QString("OpenSeesInput")) {
        index = 1;
+    } else if (type == QString("OpenSeesInput")) {
+       index = 0;
     } else {
         return false;
     }

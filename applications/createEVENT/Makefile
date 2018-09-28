@@ -5,11 +5,6 @@ CPPFLAGS= -I /usr/local/jansson/include -I ./nanoflann/include
 LDFLAGS= 
 LDLIBS=/usr/local/jansson/lib/libjansson.a
 
-SRCS=OpenSeesPreprocessor.cpp OpenSeesPostprocessor.cpp
-
-OBJS_PRE=OpenSeesPreprocessor.o
-OBJS_POST=OpenSeesPostprocessor.o
-
 
 debug: CPPFLAGS += -DDEBUG -g
 debug: all
@@ -17,14 +12,18 @@ debug: all
 MultipleEvents: MultipleSimCenterEvents.o
 	$(CXX) $(LDFLAGS) -o MultipleSimCenterEvents MultipleSimCenterEvents.o $(LDLIBS)
 
-all: MultipleEvents
+MultiplePeer: MultiplePEER_Events.o
+	$(CXX) $(LDFLAGS) -o MultiplePEER_Events MultiplePEER_Events.o $(LDLIBS)
+
+all: MultipleEvents MultiplePeer
 
 debug:
 
 clean:
-	$(RM) $(OBJS) *~ \#*
+	$(RM) $(OBJS) *~ \#* *.o
 
-distclean: clean MultipleSimCenterEvents
+distclean: clean 
+	$(RM) MultipleSimCenterEvents MultiplePEER_Events
 
 
 

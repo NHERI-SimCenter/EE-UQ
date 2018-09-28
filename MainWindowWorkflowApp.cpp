@@ -16,6 +16,9 @@
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QDesktopServices>
 
 //#include <InputWidgetEE_UQ.h>
 #include <WorkflowAppWidget.h>
@@ -43,11 +46,13 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
 
-    QRect rec = QApplication::desktop()->screenGeometry();
-
-    int height = 0.7*rec.height();
-    int width = 0.7*rec.width();
-
+    //
+    // resize to primary screen
+    //
+      
+    QRect rec = QGuiApplication::primaryScreen()->geometry();
+    int height = this->height()<int(0.85*rec.height())?int(0.85*rec.height()):this->height();
+    int width  = this->width()<int(0.85*rec.width())?int(0.85*rec.width()):this->width();
     this->resize(width, height);
 
     //
@@ -183,6 +188,69 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
 
     inputWidget->setMainWindow(this);
 
+    //
+    // strings needed in about menu, use set methods to override
+    //
+
+    feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
+    versionText = QString(tr("Version 1.0.0"));
+    citeText = QString(tr(""));
+    aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
+    copyrightText = QString("\
+                            <p>\
+                            The source code is licensed under a BSD 2-Clause License:<p>\
+                            \"Copyright (c) 2017-2018, The Regents of the University of California (Regents).\"\
+                            All rights reserved.<p>\
+                            <p>\
+                            Redistribution and use in source and binary forms, with or without \
+                            modification, are permitted provided that the following conditions are met:\
+                            <p>\
+                            1. Redistributions of source code must retain the above copyright notice, this\
+                            list of conditions and the following disclaimer.\
+                            \
+                            \
+                            2. Redistributions in binary form must reproduce the above copyright notice,\
+                            this list of conditions and the following disclaimer in the documentation\
+                            and/or other materials provided with the distribution.\
+                            <p>\
+                            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\
+                            ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\
+                            WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\
+                            DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR\
+                            ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\
+                            (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\
+                            LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\
+            ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\
+            (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\
+            SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\
+            <p>\
+            The views and conclusions contained in the software and documentation are those\
+            of the authors and should not be interpreted as representing official policies,\
+            either expressed or implied, of the FreeBSD Project.\
+            <p>\
+            REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, \
+            THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.\
+            THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS \
+            PROVIDED \"AS IS\". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,\
+            UPDATES, ENHANCEMENTS, OR MODIFICATIONS.\
+            <p>\
+            ------------------------------------------------------------------------------------\
+            <p>\
+            The compiled binary form of this application is licensed under a GPL Version 3 license.\
+            The licenses are as published by the Free Software Foundation and appearing in the LICENSE file\
+            included in the packaging of this application. \
+            <p>\
+            ------------------------------------------------------------------------------------\
+            <p>\
+            This software makes use of the QT packages (unmodified): core, gui, widgets and network\
+                                                                     <p>\
+                                                                     QT is copyright \"The Qt Company Ltd&quot; and licensed under the GNU Lesser General \
+                                                                     Public License (version 3) which references the GNU General Public License (version 3)\
+      <p>\
+      The licenses are as published by the Free Software Foundation and appearing in the LICENSE file\
+      included in the packaging of this application. \
+      <p>\
+      ");
 }
 
 MainWindowWorkflowApp::~MainWindowWorkflowApp()
@@ -392,6 +460,16 @@ void MainWindowWorkflowApp::createActions() {
     //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
     // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
 
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *citeAct = helpMenu->addAction(tr("&How to cite"), this, &MainWindowWorkflowApp::cite);
+    QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+
     /*
  cutAction = new QAction(tr("Cu&t"), this);
  cutAction->setIcon(QIcon(":/images/cut.png"));
@@ -449,6 +527,7 @@ void MainWindowWorkflowApp::createActions() {
  selectSubMenu->addAction(selectColumnAction);
  selectSubMenu->addAction(selectAllAction);
 */
+
 }
 
 
@@ -532,12 +611,18 @@ MainWindowWorkflowApp::onRunButtonClicked() {
 
 void
 MainWindowWorkflowApp::onRemoteRunButtonClicked(){
-    inputWidget->onRemoteRunButtonClicked();
+    if (loggedIn == true)
+        inputWidget->onRemoteRunButtonClicked();
+    else
+        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
 }
 
 void
 MainWindowWorkflowApp::onRemoteGetButtonClicked(){
-    inputWidget->onRemoteGetButtonClicked();
+    if (loggedIn == true)
+        inputWidget->onRemoteGetButtonClicked();
+    else
+        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){
@@ -564,3 +649,52 @@ MainWindowWorkflowApp::fatalMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "FATAL MESSAGE" << msg;
 }
+
+
+void MainWindowWorkflowApp::version()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(versionText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::cite()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(citeText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::about()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(aboutText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::submitFeedback()
+{
+    QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::copyright()
+{
+  QMessageBox msgBox;
+  QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  msgBox.setText(copyrightText);
+  QGridLayout *layout = (QGridLayout*)msgBox.layout();
+  layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+  msgBox.exec();
+
+}
+

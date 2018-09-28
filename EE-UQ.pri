@@ -28,7 +28,11 @@ SOURCES += \
     $$PWD/RemoteJobManager.cpp \
     $$PWD/WorkflowAppWidget.cpp \
     $$PWD/ExistingSimCenterEvents.cpp \
-    $$PWD/CustomizedItemModel.cpp
+    $$PWD/ExistingPEER_Events.cpp \
+    $$PWD/CustomizedItemModel.cpp\
+    $$PWD/DakotaResults.cpp\
+    $$PWD/DakotaResultsSampling.cpp\
+    $$PWD/UserDefinedApplication.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -52,7 +56,12 @@ HEADERS  += \
     $$PWD/RemoteService.h \
     $$PWD/WorkflowAppWidget.h \
     $$PWD/ExistingSimCenterEvents.h \
-    $$PWD/CustomizedItemModel.h
+    $$PWD/CustomizedItemModel.h \
+    $$PWD/DakotaResults.h\
+    $$PWD/DakotaResultsSampling.h\
+    $$PWD/ExistingPEER_Events.h \
+    $$PWD/CustomizedItemModel.h \
+    $$PWD/UserDefinedApplication.h
 
 RESOURCES += \
     images.qrc \
@@ -62,6 +71,4 @@ RESOURCES += \
 
 #RESOURCES += \
 #    schema.qrc
-
-
 

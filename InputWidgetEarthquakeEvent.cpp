@@ -62,7 +62,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetExistingEvent.h>
 #include <ExistingSimCenterEvents.h>
 #include <UniformMotionInput.h>
+#include <ExistingPEER_Events.h>
 #include "SHAMotionWidget.h"
+#include <UserDefinedApplication.h>
 
 InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)
@@ -77,9 +79,11 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     QLabel *label = new QLabel();
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
-    eventSelection->addItem(tr("Existing"));
+    //    eventSelection->addItem(tr("Existing"));
     eventSelection->addItem(tr("Multiple Existing"));
+    eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Hazard Based Event"));
+    eventSelection->addItem(tr("User Application"));
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
@@ -96,19 +100,24 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     // create the individual load widgets & add to stacked widget
     //
 
-    theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    //theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    //theStackedWidget->addWidget(theExistingEventsWidget);
     theExistingEvents = new ExistingSimCenterEvents(theRandomVariableInputWidget);
-    theStackedWidget->addWidget(theExistingEventsWidget);
     theStackedWidget->addWidget(theExistingEvents);
 
+    theExistingPeerEvents = new ExistingPEER_Events(theRandomVariableInputWidget);
+    theStackedWidget->addWidget(theExistingPeerEvents);
 
     //Adding SHA based ground motion widget
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
     theStackedWidget->addWidget(theSHA_MotionWidget);
 
+    theUserDefinedApplication = new UserDefinedApplication(theRandomVariableInputWidget);
+    theStackedWidget->addWidget(theUserDefinedApplication);
+
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEvent=theExistingEventsWidget;
+    theCurrentEvent=theExistingEvents;
 
     connect(eventSelection,SIGNAL(currentIndexChanged(QString)),this,SLOT(eventSelectionChanged(QString)));
 }
@@ -155,15 +164,18 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
 
 
     int index = 0;
-    if (type == QString("SimCenterEvent")) {
-       index = 0;
-    } else if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
+    if ((type == QString("Existing Events")) || (type == QString("ExistingSimCenterEvents"))) {
+        index = 0;
+    } else if ((type == QString("Existing PEER Events")) || (type == QString("ExistingPEER_Events"))) {
         index = 1;
     } else if (type == QString("Hazard Besed Event")) {
-       index = 2;
+        index = 2;
+    } else if ((type == QString("User Application")) || (type == QString("UserDefinedApplication"))) {
+        index = 3;
     } else {
         return false;
     }
+
     eventSelection->setCurrentIndex(index);
 
     // if worked, just invoke method on new type
@@ -182,19 +194,24 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
-    if (arg1 == "Existing" || arg1 == "SimCenterEvent") {
+    if (arg1 == "Multiple Existing") {
         theStackedWidget->setCurrentIndex(0);
-        theCurrentEvent = theExistingEventsWidget;
+        theCurrentEvent = theExistingEvents;
     }
 
-    else if(arg1 == "Multiple Existing") {
+    else if(arg1 == "Multiple PEER") {
         theStackedWidget->setCurrentIndex(1);
-        theCurrentEvent = theExistingEvents;
+        theCurrentEvent = theExistingPeerEvents;
     }
 
     else if(arg1 == "Hazard Based Event") {
         theStackedWidget->setCurrentIndex(2);
         theCurrentEvent = theSHA_MotionWidget;
+    }
+
+    else if(arg1 == "User Application") {
+        theStackedWidget->setCurrentIndex(3);
+        theCurrentEvent = theUserDefinedApplication;
     }
 
     else {

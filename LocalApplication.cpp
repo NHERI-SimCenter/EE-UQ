@@ -57,7 +57,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDir>
 
 
-LocalApplication::LocalApplication(QWidget *parent)
+LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -93,6 +93,8 @@ LocalApplication::LocalApplication(QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+
+    this->workflowScript = workflowScriptName;
 }
 
 bool
@@ -162,12 +164,28 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
 
     QString appDir = appDirName->text();
 
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
+    QString pySCRIPT;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        return false;
+    }
+
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         qDebug() << "NO REGISTRY FILE: " << registryFile;
+        return false;
+    }
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
 
     QStringList files;
@@ -188,18 +206,15 @@ for (int i = 0; i < files.size(); i++) {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
+    QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
     proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
-
-    qInfo() << command;
 
 #endif
     proc->waitForStarted();
@@ -212,5 +227,6 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
     emit processResults(filenameOUT, filenameTAB);
-    qDebug() << "PROCESSED RESULTS";
+
+    return 0;
 }

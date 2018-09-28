@@ -11,26 +11,32 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
+win32 {
+    RC_ICONS = icons/NHERI-EEUQ-Icon.ico
+} else {
+    mac {
+    ICON = icons/NHERI-EEUQ-Icon.icns
+    }
+}
+
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
+linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
 include(./EE-UQ.pri)
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
+include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp \
     InputWidgetEE_UQ.cpp \
-    DakotaResults.cpp \
-    DakotaResultsSampling.cpp \
     RunWidget.cpp
 
 HEADERS  += \
     InputWidgetEE_UQ.h\
-    DakotaResults.h \
-    DakotaREsultsSampling.h \
     RunWidget.h 
 
 RESOURCES += \

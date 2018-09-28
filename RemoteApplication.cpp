@@ -37,7 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-// Purpose: a widget for managing submiited jobs by uqFEM tool
+// Purpose: a widget for managing submiited jobs by WorkflowApp tool
 //  - allow for refresh of status, deletion of submitted jobs, and download of results from finished job
 
 #include "RemoteApplication.h"
@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QDir>
 
+#include <ZipUtils.h>
 
 RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
 : Application(parent), theRemoteService(theService)
@@ -200,8 +201,6 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 void
 RemoteApplication::onRunButtonPressed(void)
 {
-    qDebug() << "RemoteApplication::onRunButtonClicked()";
-
     int ok = 0;
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
@@ -234,13 +233,28 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QString appDir = localAppDirName->text();
 
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+    QString pySCRIPT;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        return false;
+    }
 
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         qDebug() << "NO REGISTRY FILE: " << registryFile;
+        return false;
+    }
+
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
@@ -260,10 +274,10 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningRemote");
+    QString command = QString("python ") + pySCRIPT + QString(" ") + " set_up " + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
+
     proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" set_up ") + inputFile + QString(" ") +
@@ -276,19 +290,54 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 #endif
     proc->waitForStarted();
 
+
+
+    //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QDir templateDir(tmpDirectory);
+    templateDir.cd("templatedir");
+    QString templateDIR = templateDir.absolutePath();
+
+
+#ifdef Q_OS_WIN
+    templateDir.rename("workflow_driver.bat","workflow_driver");
+#endif
+
+    QFileInfo check_workflow(templateDir.absoluteFilePath("workflow_driver"));
+    if (!check_workflow.exists() || !check_workflow.isFile()) {
+        qDebug() << "Local Failure Setting Up Dakota ";
+        return false;
+    }
+    templateDir.cdUp();
+
+    QString zipFile(templateDir.absoluteFilePath("templatedir.zip"));
+    qDebug() << "ZIP FILE: " << zipFile;
+    qDebug() << "DIR TO REMOVE: " << templateDIR;
+
+    //ZipUtils::ZipFolder(templateDir, zipFile);
+    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+
+    //QDir dirToRemove(templateDIR);
+    templateDir.cd("templatedir");
+    templateDir.removeRecursively();
+
     //
     // now upload files to remote local
     //
+
     tempDirectory = tmpDirectory;
 
     QDir theDirectory(tmpDirectory);
     QString dirName = theDirectory.dirName();
     
     QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
-    
     pushButton->setEnabled(false);
-
+    qDebug() << "EMIITING UPLOAD DIR";
     emit uploadDirCall(tmpDirectory, remoteHomeDirPath);
+
+    return 0;
 }
 
 // this slot is invoked on return from uploadDirectory signal in pushButtonClicked slot
@@ -306,7 +355,7 @@ RemoteApplication::uploadDirReturn(bool result)
       
       pushButton->setDisabled(true);
       
-      job["name"]=QString("uqFEM:") + nameLineEdit->text();
+      job["name"]=QString("EE-UQ:") + nameLineEdit->text();
       int nodeCount = numCPU_LineEdit->text().toInt();
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;

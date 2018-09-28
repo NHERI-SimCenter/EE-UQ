@@ -36,10 +36,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "ExistingSimCenterEvents.h"
+#include "ExistingPEER_Events.h"
 #include <InputWidgetExistingEvent.h>
 #include <RandomVariableInputWidget.h>
 
+#include <QSpinBox>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -53,18 +54,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QScrollArea>
 
-
-ExistingEvent::ExistingEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
-    :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
+PeerRecord::PeerRecord(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+:SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
    button = new QRadioButton();
-   theName = new QLineEdit();
-   theName->setReadOnly(true);
 
-   QLabel *label = new QLabel();
-   label->setText("File");
+   QLabel *labelFile = new QLabel();
+   labelFile->setText("File");
    file = new QLineEdit;
+
+   QLabel *labelDirn = new QLabel();
+   labelDirn->setText("DOF");
+   dirn = new QSpinBox();
+   dirn->setMaximum(3);
+   dirn->setMinimum(1);
 
    QPushButton *chooseFile = new QPushButton();
    chooseFile->setText(tr("Choose"));
@@ -76,24 +80,26 @@ ExistingEvent::ExistingEvent(RandomVariableInputWidget *theRV_IW, QWidget *paren
    connect(factor,SIGNAL(editingFinished()),this,SLOT(factorEditingFinished()));
 
    layout->addWidget(button);
-   layout->addWidget(theName);
-   layout->addWidget(label);
+   layout->addWidget(labelFile);
    layout->addWidget(file, 1.0);
    layout->addWidget(chooseFile);
+   layout->addWidget(labelDirn);
+   layout->addWidget(dirn);
    layout->addWidget(labelFactor);
    layout->addWidget(factor);
 
   // layout->addStretch();
    this->setLayout(layout);
+   connect(button,SIGNAL(clicked(bool)),this,SLOT(onRemoveRecord(bool)));
 }
 
-ExistingEvent::~ExistingEvent()
+PeerRecord::~PeerRecord()
 {
 
 }
 
 // need to check if a random variable
-void ExistingEvent::factorEditingFinished() {
+void PeerRecord::factorEditingFinished() {
     QString text = factor->text();
     bool ok;
     double factorDouble = text.QString::toDouble(&ok);
@@ -110,24 +116,25 @@ void ExistingEvent::factorEditingFinished() {
 }
 
 void
-ExistingEvent::chooseFileName(void) {
+PeerRecord::chooseFileName(void) {
     QString fileName1=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
     file->setText(fileName1);
     QFileInfo fileInfo(file->text());
-    QString baseName = fileInfo.baseName();
-    theName->setText(baseName);
-    theName->setReadOnly(false);
 }
 
+void
+PeerRecord::onRemoveRecord(bool value) {
+    if (value == true)
+        emit removeRecord();
+    return;
+}
 
 bool
-ExistingEvent::outputToJSON(QJsonObject &jsonObject) {
-    jsonObject["EventClassification"]="Earthquake";
-    jsonObject["type"] = "ExistingEvent";
+PeerRecord::outputToJSON(QJsonObject &jsonObject) {
     QFileInfo fileInfo(file->text());
     jsonObject["fileName"]= fileInfo.fileName();
     jsonObject["filePath"]=fileInfo.path();
-    jsonObject["name"]=theName->text();
+    jsonObject["dirn"]=dirn->value();
 
     QString factorText = factor->text();
     bool ok;
@@ -141,7 +148,8 @@ ExistingEvent::outputToJSON(QJsonObject &jsonObject) {
 }
 
 bool
-ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
+PeerRecord::inputFromJSON(QJsonObject &jsonObject) {
+
     QString fileName;
     QString filePath;
 
@@ -159,11 +167,12 @@ ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
 
     file->setText(QDir(filePath).filePath(fileName));
 
-    if (jsonObject.contains("name")) {
-        QJsonValue theValue = jsonObject["name"];
-        theName->setText(theValue.toString());
+    if (jsonObject.contains("dirn")) {
+        QJsonValue theValue = jsonObject["dirn"];
+        dirn->setValue(theValue.toInt());
     } else
         return false;
+
 
     if (jsonObject.contains("factor")) {
         QJsonValue theValue = jsonObject["factor"];
@@ -179,7 +188,155 @@ ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
     return true;
 }
 
-ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+
+PeerEvent::PeerEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+    :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
+{
+   QGroupBox *boxWidget = new QGroupBox;
+   QHBoxLayout *groupBoxLayout = new QHBoxLayout();
+
+   QHBoxLayout *layout = new QHBoxLayout();
+   button = new QRadioButton();
+   theName = new QLineEdit();
+   //theName->setReadOnly(true);
+
+   layout->addWidget(button);
+   layout->addWidget(theName);
+
+   // QVBox Holding Peer Records, could be multiple
+    recordLayout = new QVBoxLayout();
+
+   // QHBoxLayout *plusLayout = new QHBoxLayout();
+    QPushButton *plus = new QPushButton();
+    plus->setText("+");
+    QPushButton *remove = new QPushButton();
+    remove->setText("-");
+
+    layout->addWidget(plus);
+    layout->addWidget(remove);
+    connect(plus, SIGNAL(clicked(bool)), this, SLOT(onAddRecord(bool)));
+    connect(remove, SIGNAL(clicked(bool)), this, SLOT(onRemoveRecord(bool)));
+
+
+   PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
+   recordLayout->addWidget(theRecord);
+   theRecords.append(theRecord);
+  // connect(theRecord,SIGNAL(removeRecord()), this, SLOT(onRemoveRecord()));
+
+   layout->addLayout(recordLayout, 1.0);
+
+
+   //this->setLayout(layout)
+   boxWidget->setLayout(layout);
+   groupBoxLayout->addWidget(boxWidget);
+   this->setLayout(groupBoxLayout);
+}
+
+PeerEvent::~PeerEvent()
+{
+
+}
+
+bool
+PeerEvent::outputToJSON(QJsonObject &jsonObject) {
+    jsonObject["EventClassification"]="Earthquake";
+    jsonObject["type"] = "PeerEvent";
+    jsonObject["name"]=theName->text();
+
+    bool result = true;
+    QJsonArray theArray;
+    for (int i = 0; i <theRecords.size(); ++i) {
+        QJsonObject theObj;
+        if (theRecords.at(i)->outputToJSON(theObj)) {
+            theArray.append(theObj);
+
+        } else {
+            qDebug() << "OUTPUT PEER EVENT FAILED" << this->theName->text();
+            result = false;
+        }
+    }
+    jsonObject["Records"]=theArray;
+    return result;
+    return true;
+}
+
+bool
+PeerEvent::inputFromJSON(QJsonObject &jsonObject) {
+
+    if (jsonObject.contains("name")) {
+        QJsonValue theValue = jsonObject["name"];
+        theName->setText(theValue.toString());
+    } else
+        return false;
+
+    // clear out current list of Records
+    for (int i = 0; i <theRecords.size(); ++i) {
+      PeerRecord *theRecord = theRecords.at(i);
+      recordLayout->removeWidget(theRecord);
+      delete theRecord;
+    }
+    theRecords.clear();
+
+    //
+    // go get InputWidgetExistingEvents array from the JSON object
+    // for each object in array:
+    //    1)get it'is type,
+    //    2)instantiate one
+    //    4) get it to input itself
+    //    5) finally add it to layout
+    //
+
+    // get array
+
+    if (jsonObject.contains("Records"))
+        if (jsonObject["Records"].isArray()) {
+
+            QJsonArray rvArray = jsonObject["Records"].toArray();
+
+            // foreach object in array
+            foreach (const QJsonValue &rvValue, rvArray) {
+
+                // create Record, read it and add to widget and QVector
+
+                QJsonObject jsonObject = rvValue.toObject();
+                PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
+
+                if (theRecord->inputFromJSON(jsonObject)) { // this method is where type is set
+                    theRecords.append(theRecord);
+                    recordLayout->addWidget(theRecord);
+                } else {
+                    return false;
+                }
+            }
+        }
+
+    return true;
+}
+
+void
+PeerEvent::onAddRecord(bool) {
+    PeerRecord *theRecord = new PeerRecord(theRandVariableIW);
+    recordLayout->addWidget(theRecord);
+    theRecords.append(theRecord);
+}
+
+void
+PeerEvent::onRemoveRecord(bool) {
+    // find the ones selected & remove them
+    int numRecords = theRecords.size();
+    for (int i = theRecords.size()-1; i >= 0; i--) {
+      PeerRecord *theRecord = theRecords.at(i);
+      if (theRecord->button->isChecked()) {
+          theRecord->close();
+          recordLayout->removeWidget(theRecord);
+          theRecords.remove(i);
+          theRecord->setParent(0);
+          delete theRecord;
+      }
+    }
+}
+
+ExistingPEER_Events::ExistingPEER_Events(RandomVariableInputWidget *theRV_IW, QWidget *parent)
     : SimCenterAppWidget(parent), theRandVariableIW(theRV_IW)
 {
     verticalLayout = new QVBoxLayout();
@@ -188,7 +345,7 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     QHBoxLayout *titleLayout = new QHBoxLayout();
 
     SectionTitle *title=new SectionTitle();
-    title->setText(tr("List of SimCenter Events"));
+    title->setText(tr("List of PEER Events"));
     title->setMinimumWidth(250);
     QSpacerItem *spacer1 = new QSpacerItem(50,10);
     QSpacerItem *spacer2 = new QSpacerItem(20,10);
@@ -197,13 +354,13 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     addEvent->setMinimumWidth(75);
     addEvent->setMaximumWidth(75);
     addEvent->setText(tr("Add"));
-    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetExistingEvent()));
+    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetPeerEvent()));
 
     QPushButton *removeEvent = new QPushButton();
     removeEvent->setMinimumWidth(75);
     removeEvent->setMaximumWidth(75);
     removeEvent->setText(tr("Remove"));
-    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
+    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -224,6 +381,7 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     eventsWidget->setLayout(eventLayout);
     sa->setWidget(eventsWidget);
 
+
     verticalLayout->addLayout(titleLayout);
     verticalLayout->addWidget(sa);
     //verticalLayout->addStretch();
@@ -234,28 +392,28 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
 }
 
 
-ExistingSimCenterEvents::~ExistingSimCenterEvents()
+ExistingPEER_Events::~ExistingPEER_Events()
 {
 
 }
 
 
-void ExistingSimCenterEvents::addEvent(void)
+void ExistingPEER_Events::addEvent(void)
 {
    InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
-   ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW, theExisting);
+   PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
    connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
 
-void ExistingSimCenterEvents::removeEvents(void)
+void ExistingPEER_Events::removeEvents(void)
 {
     // find the ones selected & remove them
     int numInputWidgetExistingEvents = theEvents.size();
     for (int i = numInputWidgetExistingEvents-1; i >= 0; i--) {
-      ExistingEvent *theEvent = theEvents.at(i);
+      PeerEvent *theEvent = theEvents.at(i);
       if (theEvent->button->isChecked()) {
           theEvent->close();
           eventLayout->removeWidget(theEvent);
@@ -268,11 +426,11 @@ void ExistingSimCenterEvents::removeEvents(void)
 
 
 void
-ExistingSimCenterEvents::clear(void)
+ExistingPEER_Events::clear(void)
 {
   // loop over random variables, removing from layout & deleting
   for (int i = 0; i <theEvents.size(); ++i) {
-    ExistingEvent *theEvent = theEvents.at(i);
+    PeerEvent *theEvent = theEvents.at(i);
     eventLayout->removeWidget(theEvent);
     delete theEvent;
   }
@@ -281,10 +439,10 @@ ExistingSimCenterEvents::clear(void)
 
 
 bool
-ExistingSimCenterEvents::outputToJSON(QJsonObject &jsonObject)
+ExistingPEER_Events::outputToJSON(QJsonObject &jsonObject)
 {
     jsonObject["EventClassification"]="Earthquake";
-    jsonObject["type"] = "ExistingSimCenterEvents";
+    jsonObject["type"] = "ExistingPEER_Events";
 
     bool result = true;
     QJsonArray theArray;
@@ -294,7 +452,7 @@ ExistingSimCenterEvents::outputToJSON(QJsonObject &jsonObject)
             theArray.append(rv);
 
         } else {
-            qDebug() << "OUTPUT FAILED" << theEvents.at(i)->file->text();
+            qDebug() << "OUTPUT FAILED" << theEvents.at(i)->theName->text();
             result = false;
         }
     }
@@ -303,7 +461,7 @@ ExistingSimCenterEvents::outputToJSON(QJsonObject &jsonObject)
 }
 
 bool
-ExistingSimCenterEvents::inputFromJSON(QJsonObject &rvObject)
+ExistingPEER_Events::inputFromJSON(QJsonObject &jsonObject)
 {
   bool result = true;
 
@@ -321,18 +479,18 @@ ExistingSimCenterEvents::inputFromJSON(QJsonObject &rvObject)
 
   // get array
 
-  if (rvObject.contains("Events"))
-      if (rvObject["Events"].isArray()) {
+  if (jsonObject.contains("Events"))
+      if (jsonObject["Events"].isArray()) {
 
-          QJsonArray rvArray = rvObject["Events"].toArray();
+          QJsonArray rvArray = jsonObject["Events"].toArray();
 
           // foreach object in array
           foreach (const QJsonValue &rvValue, rvArray) {
 
-              QJsonObject rvObject = rvValue.toObject();
-              ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW);
+              QJsonObject jsonObject = rvValue.toObject();
+              PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
 
-              if (theEvent->inputFromJSON(rvObject)) { // this method is where type is set
+              if (theEvent->inputFromJSON(jsonObject)) { // this method is where type is set
                   theEvents.append(theEvent);
                   eventLayout->insertWidget(eventLayout->count()-1, theEvent);
               } else {
@@ -347,7 +505,7 @@ ExistingSimCenterEvents::inputFromJSON(QJsonObject &rvObject)
 
 
 bool
-ExistingSimCenterEvents::outputAppDataToJSON(QJsonObject &jsonObject) {
+ExistingPEER_Events::outputAppDataToJSON(QJsonObject &jsonObject) {
 
     //
     // per API, need to add name of application to be called in AppLication
@@ -355,31 +513,35 @@ ExistingSimCenterEvents::outputAppDataToJSON(QJsonObject &jsonObject) {
     //
 
     jsonObject["EventClassification"]="Earthquake";
-    jsonObject["Application"] = "ExistingSimCenterEvents";
+    jsonObject["Application"] = "ExistingPEER_Events";
     QJsonObject dataObj;
     jsonObject["ApplicationData"] = dataObj;
     return true;
 }
 
 bool
-ExistingSimCenterEvents::inputAppDataFromJSON(QJsonObject &jsonObject) {
+ExistingPEER_Events::inputAppDataFromJSON(QJsonObject &jsonObject) {
     return true;
 }
 
 bool 
-ExistingSimCenterEvents::copyFiles(QString &dirName) {
-    for (int i = 0; i <theEvents.size(); ++i) {
-        QString fileName = theEvents.at(i)->file->text();
-        if (this->copyFile(fileName, dirName) ==  false) {
-            emit errorMessage(QString("ERROR: copyFiles: failed to copy") + theEvents.at(i)->theName->text());
-            return false;
+ExistingPEER_Events::copyFiles(QString &dirName) {
+
+    for (int i=0; i<theEvents.size(); i++) {
+        PeerEvent *theEvent = theEvents.at(i);
+        for (int j=0; j<theEvent->theRecords.size(); j++) {
+            QString fileName = theEvents.at(i)->theRecords.at(j)->file->text();
+            if (this->copyFile(fileName, dirName) ==  false) {
+                emit errorMessage(QString("ERROR: copyFiles: failed to copy") + theEvents.at(i)->theRecords.at(j)->file->text());
+                return false;
+            }
         }
     }
     return true;
 }
 
 void
-ExistingSimCenterEvents::errorMessage(QString message){
+ExistingPEER_Events::errorMessage(QString message){
     emit sendErrorMessage(message);
 }
 

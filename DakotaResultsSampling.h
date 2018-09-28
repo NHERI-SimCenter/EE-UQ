@@ -59,7 +59,7 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
-    QWidget *createResultEDPWidget(QString &name, double mean, double stdDev);
+    QWidget *createResultEDPWidget(QString &name, double first, double second, int type);
 
 signals:
 
@@ -68,6 +68,8 @@ public slots:
    void onSpreadsheetCellClicked(int, int);
 
 private:
+   void getColData(QVector<double> &data, int numRow, int col);
+
    QTabWidget *tabWidget;
    QTextEdit  *dakotaText;
    MyTableWidget *spreadsheet;
@@ -80,6 +82,7 @@ private:
    QVector<QString>theNames;
    QVector<double>theMeans;
    QVector<double>theStdDevs;
+   int dataType; // min/max or mean/stdDev
 };
 
 #endif // DAKOTA_RESULTS_SAMPLING_H

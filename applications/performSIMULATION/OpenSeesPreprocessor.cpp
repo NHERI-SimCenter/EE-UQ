@@ -441,6 +441,41 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    delete [] dof;
 	  }
 
+	  else if (strcmp(type,"max_rel_disp") == 0) {
+
+	    const char *cline = json_string_value(json_object_get(response, "cline"));
+	    const char *floor = json_string_value(json_object_get(response, "floor"));
+
+	    int nodeTag = this->getNode(cline,floor);	    
+
+	    json_t *theDOFs = json_object_get(response, "dofs");
+	    int sizeDOFs = json_array_size(theDOFs);
+	    int *dof = new int[sizeDOFs];
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      dof[ii] = json_integer_value(json_array_get(theDOFs,ii));
+
+	    string fileString;
+	    ostringstream temp;  //temp as in temporary
+
+	    temp << fileBIM << edpEventName << "." << type << "." << cline << "." << floor << ".out";
+
+	    fileString=temp.str(); 
+
+	    const char *fileName = fileString.c_str();
+
+	    int startTimeSeries = 101;
+	    s << "recorder EnvelopeNode -file " << fileName;
+	    s << " -timeSeries ";
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      s << ii+startTimeSeries << " " ;
+	    s << " -node " << nodeTag << " -dof ";
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      s << dof[ii] << " " ;
+	    s << " disp\n";
+
+	    delete [] dof;
+	  }
+
 	  else if (strcmp(type,"max_drift") == 0) {
 	    const char * cline = json_string_value(json_object_get(response, "cline"));
 	    const char * floor1 = json_string_value(json_object_get(response, "floor1"));
@@ -543,6 +578,13 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
   std::map <string,int> timeSeriesList;
   std::map <string,int>::iterator it;
 
+  double eventFactor = 1.0;
+  json_t *eventFactorObj = json_object_get(event,"factor");
+  if (eventFactorObj != NULL) {
+    if (json_is_real(eventFactorObj))
+      eventFactor = json_real_value(eventFactorObj);
+  }
+
   int index = 0;
   json_t *timeSeriesArray = json_object_get(event,"timeSeries");
   int numSeriesArray = json_array_size(timeSeriesArray);
@@ -554,64 +596,71 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     //    if (index < NDM) {
       const char *subType = json_string_value(json_object_get(timeSeries,"type"));        
       if (strcmp(subType,"Value")  == 0) {
+
+	double seriesFactor = 1.0;
+	json_t *seriesFactorObj = json_object_get(timeSeries,"factor");
+	if (seriesFactorObj != NULL) {
+	  if (json_is_real(seriesFactorObj))
+	    seriesFactor = json_real_value(seriesFactorObj);
+	}
+
 	double dt = json_real_value(json_object_get(timeSeries,"dT"));
 	json_t *data = json_object_get(timeSeries,"data");
-	s << "timeSeries Path " << numSeries << " -dt " << dt;
+	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
 	s << " -values \{ ";
 
-  //We need to check units for conversion
-  double unitConversionFactor = 1.0;
-
-  //First let's read units from bim
-  json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
-  json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
-  json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
-  json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
-
-  //Parsing BIM Units
-  Units::UnitSystem bimUnits;
-  bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
-  bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
-
-  json_t* evtUnitsJson = json_object_get(event, "units");
-  Units::UnitSystem eventUnits;
-
-  if(NULL != evtUnitsJson)
-  {
-      json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
-      if(NULL != evtLengthJson)
-          eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
-
-      json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
-      if(NULL != evtTimeJson)
-          eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
-
-      unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
-  }
-  else
-  {
-      std::cerr << "Warning! Event file has no units!, assuming acceleration is in g units" << std::endl;
-      eventUnits.lengthUnit = Units::LengthUnit::Meter;
-      eventUnits.timeUnit = Units::TimeUnit::Second;
-    
-      unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
-  }
-
+	//We need to check units for conversion
+	double unitConversionFactor = 1.0;
+	
+	//First let's read units from bim
+	json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+	json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+	json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+	json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+	
+	//Parsing BIM Units
+	Units::UnitSystem bimUnits;
+	bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+	bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+	
+	json_t* evtUnitsJson = json_object_get(event, "units");
+	Units::UnitSystem eventUnits;
+	
+	if(NULL != evtUnitsJson)
+	  {
+	    json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
+	    if(NULL != evtLengthJson)
+	      eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
+	    
+	    json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
+	    if(NULL != evtTimeJson)
+	      eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
+	    
+	    unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
+	  }
+	else
+	  {
+	    std::cerr << "Warning! Event file has no units!, assuming acceleration is in g units" << std::endl;
+	    eventUnits.lengthUnit = Units::LengthUnit::Meter;
+	    eventUnits.timeUnit = Units::TimeUnit::Second;
+	    
+	    unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
+	  }
+	
 	json_t *dataV;
 	int dataIndex;
 	json_array_foreach(data, dataIndex, dataV) {
 
-	  s << json_real_value(dataV) * unitConversionFactor << " " ;
+	  s << json_real_value(dataV) * unitConversionFactor * eventFactor << " " ;
 	}
 	s << " }\n";
 	
 	string name(json_string_value(json_object_get(timeSeries,"name")));
 	printf("TIMESERIES: %s\n",name.c_str());
-
+	
 	timeSeriesList[name]=numSeries;
 	numSeries++;
       }
-      //    }
   }    
 
   json_t *patternArray = json_object_get(event,"pattern");
@@ -625,6 +674,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     const char *subType = json_string_value(json_object_get(pattern,"type"));        
     if (strcmp(subType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
+      
       
       int series = 0;
       string name(json_string_value(json_object_get(pattern,"timeSeries")));

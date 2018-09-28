@@ -55,6 +55,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QProcess>
 #include <QCoreApplication>
 #include <RemoteService.h>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QHostInfo>
+#include <QUuid>
 
 
 #include "GeneralInformationWidget.h"
@@ -68,15 +73,37 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <LocalApplication.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
-
 #include <RunWidget.h>
+
+
+
+
 
 #include "CustomizedItemModel.h"
 
+#include <QSettings>
+#include <QUuid>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QHostInfo>
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     : WorkflowAppWidget(theService, parent)
 {
+
+    //
+    // user settings
+    //
+
+    QSettings settings("SimCenter", "uqFEM");
+    QVariant savedValue = settings.value("uuid");
+    QUuid uuid;
+    if (savedValue.isNull()) {
+        uuid = QUuid::createUuid();
+        settings.setValue("uuid",uuid);
+    } else
+        uuid =savedValue.toUuid();
 
     //
     // create the various widgets
@@ -90,7 +117,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theUQ = new InputWidgetSampling();
 
     theResults = new DakotaResultsSampling();
-    localApp = new LocalApplication;
+    localApp = new LocalApplication("EE-UQ.py");
     remoteApp = new RemoteApplication(theService);
     theJobManager = new RemoteJobManager(theService);
 
@@ -98,7 +125,6 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     SimCenterWidget *theWidgets[2];
     theWidgets[0] = theAnalysis;
     theWidgets[1] = theUQ;
-    int numWidgets = 2;
     theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 2);
 
     //
@@ -214,6 +240,44 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     // set current selection to GI
     treeView->setCurrentIndex( infoItemIdx );
 
+    // access a web page which will increment the usage count for this tool
+    manager = new QNetworkAccessManager(this);
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyFinished(QNetworkReply*)));
+
+    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
+
+    // access a web page which will increment the usage count for this tool
+    manager = new QNetworkAccessManager(this);
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyFinished(QNetworkReply*)));
+
+    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/bfm/use.php")));
+    //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
+
+
+    QNetworkRequest request;
+    QUrl host("http://www.google-analytics.com/collect");
+    request.setUrl(host);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,
+                      "application/x-www-form-urlencoded");
+
+    // setup parameters of request
+    QString requestParams;
+    QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
+    requestParams += "v=1"; // version of protocol
+    requestParams += "&tid=UA-126303135-1-1"; // Google Analytics account
+    requestParams += "&cid=" + uuid.toString(); // unique user identifier
+    requestParams += "&t=event";  // hit type = event others pageview, exception
+    requestParams += "&an=EEUQ";   // app name
+    requestParams += "&av=1.0.0"; // app version
+    requestParams += "&ec=EEUQ";   // event category
+    requestParams += "&ea=start"; // event action
+
+    // send request via post method
+    manager->post(request, requestParams.toStdString().c_str());
 }
 
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
@@ -221,6 +285,10 @@ InputWidgetEE_UQ::~InputWidgetEE_UQ()
 
 }
 
+void InputWidgetEE_UQ::replyFinished(QNetworkReply *pReply)
+{
+    return;
+}
 
 void
 InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
@@ -465,7 +533,10 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    QString tmpDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter"); // + QDir::separator() + QString("templatedir");
+    QString tmpDirName = QString("tmp.SimCenter");
+    QDir workDir(workingDir);
+
+    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
@@ -473,7 +544,7 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     } else
       destinationDirectory.mkpath(tmpDirectory);
 
-    QString templateDirectory  = tmpDirectory + QDir::separator() + subDir;
+    QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
 
     // copyPath(path, tmpDirectory, false);

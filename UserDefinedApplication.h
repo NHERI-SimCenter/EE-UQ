@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_EARTHQUAKE_EVENT_H
-#define INPUTWIDGET_EARTHQUAKE_EVENT_H
+#ifndef USER_DEFINED_APPLICATION_H
+#define USER_DEFINED_APPLICATION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -41,44 +41,37 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterAppWidget.h>
 
-#include <QGroupBox>
-#include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
-
 class RandomVariableInputWidget;
+class QLineEdit;
 
-class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
+class UserDefinedApplication : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetEarthquakeEvent();
+    explicit UserDefinedApplication(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    ~UserDefinedApplication();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
+    bool copyFiles(QString &dirName);
 
 signals:
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
+   void clear(void);
+   void chooseFileName(void);
 
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
+   QString fileName;         // filename
+   QString applicationName;  // application name
+   QString copyFilePath;     // path to copy files
 
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
-
+   QLineEdit *file;
+   QLineEdit *application;
 
    RandomVariableInputWidget *theRandomVariableInputWidget;
 };
 
-#endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
+#endif // USER_DEFINED_APPLICATION_H

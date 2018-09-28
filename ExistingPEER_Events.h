@@ -1,5 +1,5 @@
-#ifndef EXISTING_SIMCENTER_EVENTS_H
-#define EXISTING_SIMCENTER_EVENTS_H
+#ifndef EXISTING_PEER_EVENTS_H
+#define EXISTING_PEER_EVENTS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -46,43 +46,73 @@ class RandomVariableInputWidget;
 class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
+class QSpinBox;
 
 #include <QGroupBox>
 #include <QVector>
 #include <QVBoxLayout>
 
-class ExistingEvent : public SimCenterWidget
+class PeerRecord : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
-    ~ExistingEvent();
+    explicit PeerRecord(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    ~PeerRecord();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    QRadioButton *button; // used to mark if Event intended for deletion
-    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QRadioButton *button;  // used to mark if Event intended for deletion
     QLineEdit    *file;    // full path to file name
+    QSpinBox     *dirn;
     QLineEdit    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
+    void onRemoveRecord(bool);
     void factorEditingFinished();
+
+signals:
+    void removeRecord();
 
 private:
      RandomVariableInputWidget *theRandVariableIW;
      QString lastFactor;
 };
 
-
-class ExistingSimCenterEvents : public SimCenterAppWidget
+// an event can hold multiple PeerRecord, different one for diff directions
+class PeerEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingSimCenterEvents(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit PeerEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    ~PeerEvent();
 
-    ~ExistingSimCenterEvents();
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+
+    QVBoxLayout *recordLayout;
+
+    QRadioButton *button; // used to mark if Event intended for deletion
+    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QVector<PeerRecord  *>theRecords;
+
+public slots:
+    void onRemoveRecord(bool);
+    void onAddRecord(bool);
+
+private:
+     RandomVariableInputWidget *theRandVariableIW;
+};
+
+
+class ExistingPEER_Events : public SimCenterAppWidget
+{
+    Q_OBJECT
+public:
+    explicit ExistingPEER_Events(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+
+    ~ExistingPEER_Events();
 
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputToJSON(QJsonObject &rvObject);
@@ -100,8 +130,8 @@ private:
     QVBoxLayout *verticalLayout;
     QVBoxLayout *eventLayout;
 
-    QVector<ExistingEvent *>theEvents;
+    QVector<PeerEvent *>theEvents;
     RandomVariableInputWidget *theRandVariableIW;
 };
 
-#endif // EXISTING_SIMCENTER_EVENTS_H
+#endif // EXISTING_PEER_EVENTS_H

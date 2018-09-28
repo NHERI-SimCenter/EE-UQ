@@ -1,3 +1,14 @@
+# written: fmk, adamzs
+
+# import functions for Python 2.X support
+from __future__ import division, print_function
+import sys
+if sys.version.startswith('2'): 
+    range=xrange
+
+#else:
+#    from past.builtins import basestring
+
 import os
 import subprocess
 from time import gmtime, strftime
@@ -9,10 +20,14 @@ class WorkFlowInputError(Exception):
     def __str__(self):
         return repr(self.value)
 
+try:
+    basestring
+except NameError:
+    basestring = str
 
 def workflow_log(msg):
     # ISO-8601 format, e.g. 2018-06-16T20:24:04Z
-    print '%s %s' % (strftime('%Y-%m-%dT%H:%M:%SZ', gmtime()), msg)
+    print('%s %s' % (strftime('%Y-%m-%dT%H:%M:%SZ', gmtime()), msg))
 
 
 # function to return result of invoking an application
