@@ -231,9 +231,6 @@ RemoteApplication::onRunButtonPressed(void)
 bool
 RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
-
-
-
     QString appDir = localAppDirName->text();
 
     QString pySCRIPT;
@@ -277,7 +274,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + "tDirectory" + QString(" ") + tmpDirectory  + QString(" runningRemote");
+    QString command = QString("python ") + pySCRIPT + QString(" ") + " set_up " + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << command;
 
     proc->execute("cmd", QStringList() << "/C" << command);
@@ -293,16 +290,38 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 #endif
     proc->waitForStarted();
 
+
+
     //
     // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
     //
 
-    QString templateDIR(tmpDirectory + QDir::separator() + QString("templatedir"));
-    QString zipFile(tmpDirectory + QDir::separator() + QString("templatedir.zip"));
+    QDir templateDir(tmpDirectory);
+    templateDir.cd("templatedir");
+    QString templateDIR = templateDir.absolutePath();
+
+
+#ifdef Q_OS_WIN
+    templateDir.rename("workflow_driver.bat","workflow_driver");
+#endif
+
+    QFileInfo check_workflow(templateDir.absoluteFilePath("workflow_driver"));
+    if (!check_workflow.exists() || !check_workflow.isFile()) {
+        qDebug() << "Local Failure Setting Up Dakota ";
+        return false;
+    }
+    templateDir.cdUp();
+
+    QString zipFile(templateDir.absoluteFilePath("templatedir.zip"));
+    qDebug() << "ZIP FILE: " << zipFile;
+    qDebug() << "DIR TO REMOVE: " << templateDIR;
+
+    //ZipUtils::ZipFolder(templateDir, zipFile);
     ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
 
-    QDir dirToRemove(templateDIR);
-    dirToRemove.removeRecursively();
+    //QDir dirToRemove(templateDIR);
+    templateDir.cd("templatedir");
+    templateDir.removeRecursively();
 
     //
     // now upload files to remote local
@@ -314,9 +333,8 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QString dirName = theDirectory.dirName();
     
     QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
-    
     pushButton->setEnabled(false);
-
+    qDebug() << "EMIITING UPLOAD DIR";
     emit uploadDirCall(tmpDirectory, remoteHomeDirPath);
 
     return 0;
