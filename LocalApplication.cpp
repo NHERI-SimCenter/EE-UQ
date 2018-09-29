@@ -197,7 +197,7 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
     qDebug() << "Running Simulations";
-     emit sendStatusMessage("Running the Simulations");
+    emit sendStatusMessage("Running the Simulations");
 
     /************************************************************************
 for (int i = 0; i < files.size(); i++) {
@@ -239,6 +239,10 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
     emit processResults(filenameOUT, filenameTAB);
+
+    // remove the tmp directory
+    QDir tmpDIR(tmpDirectory);
+    tmpDIR.removeRecursively();
 
     return 0;
 }

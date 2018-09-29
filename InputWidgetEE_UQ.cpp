@@ -562,7 +562,8 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    QString tmpDirName = QString("tmp.SimCenter");
+    QString tmpDirName = QString("tmp.SimCenter.EE-UQ.%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+    qDebug() << "TMP_DIR: " << tmpDirName;
     QDir workDir(workingDir);
 
     QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);

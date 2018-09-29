@@ -414,7 +414,7 @@ RemoteApplication::uploadDirReturn(bool result)
       emit startJobCall(job);
       
       // now remove the tmp directory
-      //theDirectory.removeRecursively();
+      theDirectory.removeRecursively();
     }
 }
 
