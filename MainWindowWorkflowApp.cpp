@@ -155,6 +155,10 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
+    connect(theApp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(theApp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(theApp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
 
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     // connect job manager
@@ -636,12 +640,14 @@ void
 MainWindowWorkflowApp::statusMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "STATUS MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void
 MainWindowWorkflowApp::errorMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "ERROR MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void

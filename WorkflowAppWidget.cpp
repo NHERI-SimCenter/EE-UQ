@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <RemoteService.h>
 
+#include <QDebug>
 
 WorkflowAppWidget::WorkflowAppWidget(RemoteService *theService, QWidget *parent)
   :QWidget(parent), theRemoteService(theService)
@@ -23,12 +24,15 @@ WorkflowAppWidget::setMainWindow(MainWindowWorkflowApp* window) {
 
 void
 WorkflowAppWidget::statusMessage(const QString msg){
+     qDebug() << "WorkflowAppWidget::statusMessage" << msg;
     emit sendStatusMessage(msg);
 }
 
 
 void
 WorkflowAppWidget::errorMessage(const QString msg){
+    qDebug() << "WorkflowAppWidget::errorMessage" << msg;
+
     emit sendErrorMessage(msg);
 }
 

@@ -90,10 +90,6 @@ signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
     void sendLoadFile(QString filename);
 
-    void sendStatusMessage(QString message);
-    void sendErrorMessage(QString message);
-    void sendFatalMessage(QString message);
-
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
@@ -102,12 +98,6 @@ public slots:
 
     void loadFile(QString filename);
     void replyFinished(QNetworkReply*);
-
-    /*
-    void statusMessage(QString message);
-    void errorMessage(QString message);
-    void fatalMessage(QString message);
-*/
 
 private:
 

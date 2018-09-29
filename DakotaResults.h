@@ -45,6 +45,7 @@ class QVBoxLayout;
 class DakotaResults : public SimCenterWidget
 {
     Q_OBJECT
+
 public:
     explicit DakotaResults(QWidget *parent = 0);
     virtual ~DakotaResults();
