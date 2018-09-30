@@ -50,6 +50,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class RandomVariableInputWidget;
 class InputWidgetBIM;
+class InputWidgetUQ;
+
 class SIM_Selection;
 class InputWidgetSampling;
 class EarthquakeLoadingInput;
@@ -112,16 +114,15 @@ private:
 
     // the AppWidgets .. not all displayed in main UI
     SIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
+    InputWidgetSampling *theUQ_Method;
     InputWidgetEarthquakeEvent *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
 
     // other widgets appearing in UI
-      InputWidgetBIM *theBIM; // contains GI and SIM
-   // RunLocalWidget *theRunLocalWidget;
+    InputWidgetBIM *theBIM; // contains GI and SIM
+    InputWidgetUQ *theUQ;
 
-    // RemoteService *theRemoteService;
     RunWidget *theRunWidget;
     Application *localApp;
     Application *remoteApp;

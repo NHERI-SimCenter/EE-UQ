@@ -36,30 +36,29 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetBIM.h"
+#include "InputWidgetUQ.h"
 #include <QTabWidget>
-#include <SIM_Selection.h>
-#include <GeneralInformationWidget.h>
+#include <RandomVariableInputWidget.h>
+#include <InputWidgetSampling.h>
 
 
-
-InputWidgetBIM::InputWidgetBIM(GeneralInformationWidget *GI, SIM_Selection *SIM, QWidget *parent)
-    :QWidget(parent),theSIM(SIM),theGI(GI)
+InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariableInputWidget *RV, QWidget *parent)
+    :QWidget(parent),theRVs(RV),theUQ(UQ)
 {
     QHBoxLayout *layout = new QHBoxLayout();
     theTab = new QTabWidget();
-    theTab->addTab(theGI,"GIM");
-    theTab->addTab(theSIM,"SIM");
+    theTab->addTab(theUQ,"Sampling Methods");
+    theTab->addTab(theRVs,"Random Variables");
     theTab->setCurrentIndex(1);
 
     layout->addWidget(theTab);
-    layout->addStretch();
+    //layout->addStretch();
     layout->setMargin(0);
 
     this->setLayout(layout);
 }
 
-InputWidgetBIM::~InputWidgetBIM()
+InputWidgetUQ::~InputWidgetUQ()
 {
 
 }

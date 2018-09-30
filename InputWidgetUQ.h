@@ -1,3 +1,6 @@
+#ifndef 	INPUT_WIDGET_UQ_H
+#define 	INPUT_WIDGET_UQ_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -36,32 +39,36 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetBIM.h"
-#include <QTabWidget>
-#include <SIM_Selection.h>
-#include <GeneralInformationWidget.h>
+#include <QWidget>
+
+class QTabWidget;
+class RandomVariableInputWidget;
+class InputWidgetSampling;
+
+// this class is just a tabbed widget for GI and SIM widgets
+//
 
 
-
-InputWidgetBIM::InputWidgetBIM(GeneralInformationWidget *GI, SIM_Selection *SIM, QWidget *parent)
-    :QWidget(parent),theSIM(SIM),theGI(GI)
+class InputWidgetUQ : public QWidget
 {
-    QHBoxLayout *layout = new QHBoxLayout();
-    theTab = new QTabWidget();
-    theTab->addTab(theGI,"GIM");
-    theTab->addTab(theSIM,"SIM");
-    theTab->setCurrentIndex(1);
+    Q_OBJECT
+public:
+  explicit InputWidgetUQ(InputWidgetSampling *, RandomVariableInputWidget *, QWidget *parent = 0);
+    ~InputWidgetUQ();
 
-    layout->addWidget(theTab);
-    layout->addStretch();
-    layout->setMargin(0);
+signals:
 
-    this->setLayout(layout);
-}
+public slots:
 
-InputWidgetBIM::~InputWidgetBIM()
-{
 
-}
+signals:
+
+private:
+    QTabWidget *theTab;
+    RandomVariableInputWidget *theRVs;
+    InputWidgetSampling *theUQ;
+} ; 
+
+#endif
 
 

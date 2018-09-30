@@ -33,7 +33,8 @@ SOURCES += \
     $$PWD/DakotaResultsSampling.cpp\
     $$PWD/UserDefinedApplication.cpp \
     $$PWD/SIM_Selection.cpp \
-    $$PWD/InputWidgetBIM.cpp
+    $$PWD/InputWidgetBIM.cpp \
+    $$PWD/InputWidgetUQ.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -63,7 +64,8 @@ HEADERS  += \
     $$PWD/CustomizedItemModel.h \
     $$PWD/UserDefinedApplication.h \
     $$PWD/SIM_Selection.h \
-    $$PWD/InputWidgetBIM.h
+    $$PWD/InputWidgetBIM.h \
+    $$PWD/InputWidgetUQ.h
 
 RESOURCES += \
     images.qrc \

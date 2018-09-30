@@ -74,6 +74,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 #include <InputWidgetBIM.h>
+#include <InputWidgetUQ.h>
 
 
 
@@ -112,18 +113,18 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theSIM = new SIM_Selection(theRVs);
     theEvent = new InputWidgetEarthquakeEvent(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
-    theUQ = new InputWidgetSampling();
+    theUQ_Method = new InputWidgetSampling();
 
     theResults = new DakotaResultsSampling();
     localApp = new LocalApplication("EE-UQ.py");
     remoteApp = new RemoteApplication(theService);
     theJobManager = new RemoteJobManager(theService);
 
-   // theRunLocalWidget = new RunLocalWidget(theUQ);
-    SimCenterWidget *theWidgets[2];
+   // theRunLocalWidget = new RunLocalWidget(theUQ_Method);
+    SimCenterWidget *theWidgets[1];
     theWidgets[0] = theAnalysis;
-    theWidgets[1] = theUQ;
-    theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 2);
+    //theWidgets[1] = theUQ_Method;
+    theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 1);
 
     //
     // connect signals and slots
@@ -177,6 +178,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     theBIM = new InputWidgetBIM(theGI, theSIM);
+    theUQ = new InputWidgetUQ(theUQ_Method,theRVs);
 
     //
     //
@@ -206,7 +208,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     QStandardItem *bimItem = new QStandardItem("BIM");
     QStandardItem *evtItem = new QStandardItem("EVT");
-    QStandardItem *rvItem   = new QStandardItem("RVs");
+    QStandardItem *uqItem   = new QStandardItem("UQ");
    // QStandardItem *anaItem = new QStandardItem("ANA");
     //QStandardItem *uqItem = new QStandardItem("UQM");
     QStandardItem *resultsItem = new QStandardItem("RES");
@@ -215,7 +217,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     rootNode->appendRow(bimItem);
     rootNode->appendRow(evtItem);
    // rootNode->appendRow(anaItem);
-    rootNode->appendRow(rvItem);
+    rootNode->appendRow(uqItem);
     //rootNode->appendRow(uqItem);
     rootNode->appendRow(resultsItem);
 
@@ -264,8 +266,8 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theStackedWidget->addWidget(theBIM);
     theStackedWidget->addWidget(theEvent);
    // theStackedWidget->addWidget(theAnalysis);
-    theStackedWidget->addWidget(theRVs);
-    // theStackedWidget->addWidget(theUQ);
+    theStackedWidget->addWidget(theUQ);
+    // theStackedWidget->addWidget(theUQ_Method);
     theStackedWidget->addWidget(theResults);
 
     // add stacked widget to layout
@@ -337,7 +339,7 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
         theStackedWidget->setCurrentIndex(1);
     // else if (selectedText == "ANA")
     //    theStackedWidget->setCurrentIndex(3);
-    else if (selectedText == "RVs")
+    else if (selectedText == "UQ")
         theStackedWidget->setCurrentIndex(2);
     // else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
@@ -378,11 +380,11 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     apps["EDP"] = appsEDP;
 
     QJsonObject jsonObjectUQ;
-    theUQ->outputToJSON(jsonObjectUQ);
+    theUQ_Method->outputToJSON(jsonObjectUQ);
     jsonObjectTop["UQ_Method"] = jsonObjectUQ;
 
     QJsonObject appsUQ;
-    theUQ->outputAppDataToJSON(appsUQ);
+    theUQ_Method->outputAppDataToJSON(appsUQ);
     apps["UQ"]=appsUQ;
 
     QJsonObject jsonObjectAna;
@@ -493,7 +495,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         if (theApplicationObject.contains("UQ")) {
             QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            theUQ->inputAppDataFromJSON(theObject);
+            theUQ_Method->inputAppDataFromJSON(theObject);
         } else
             return false;
 
@@ -584,7 +586,7 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     theSIM->copyFiles(templateDirectory);
     theEvent->copyFiles(templateDirectory);
     theAnalysis->copyFiles(templateDirectory);
-    theUQ->copyFiles(templateDirectory);
+    theUQ_Method->copyFiles(templateDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
