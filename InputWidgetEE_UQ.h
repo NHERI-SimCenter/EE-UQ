@@ -49,8 +49,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <WorkflowAppWidget.h>
 
 class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
+class InputWidgetBIM;
+class SIM_Selection;
 class InputWidgetSampling;
 class EarthquakeLoadingInput;
 class InputWidgetOpenSeesAnalysis;
@@ -110,12 +110,15 @@ private:
     GeneralInformationWidget *theGI;
     RandomVariableInputWidget *theRVs;
 
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
+    // the AppWidgets .. not all displayed in main UI
+    SIM_Selection *theSIM;
     InputWidgetSampling *theUQ;
     InputWidgetEarthquakeEvent *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
+
+    // other widgets appearing in UI
+      InputWidgetBIM *theBIM; // contains GI and SIM
    // RunLocalWidget *theRunLocalWidget;
 
     // RemoteService *theRemoteService;

@@ -61,9 +61,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHostInfo>
 #include <QUuid>
 
-
 #include "GeneralInformationWidget.h"
-#include <InputWidgetBIM_Selection.h>
+#include <SIM_Selection.h>
 #include <RandomVariableInputWidget.h>
 #include <InputWidgetSampling.h>
 #include <InputWidgetOpenSeesAnalysis.h>
@@ -74,9 +73,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
-
-
-
+#include <InputWidgetBIM.h>
 
 
 
@@ -112,7 +109,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     theRVs = new RandomVariableInputWidget();
     theGI = new GeneralInformationWidget();
-    theSIM = new InputWidgetBIM_Selection(theRVs);
+    theSIM = new SIM_Selection(theRVs);
     theEvent = new InputWidgetEarthquakeEvent(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
     theUQ = new InputWidgetSampling();
@@ -174,6 +171,14 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
+
+    //
+    // some of above widgets are inside some tabbed widgets
+    //
+
+    theBIM = new InputWidgetBIM(theGI, theSIM);
+
+    //
     //
     //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
     //  and we will use a QStacked widget for displaying the widget. Which of widgets displayed in StackedView depends on
@@ -196,16 +201,17 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     QStandardItem *rootNode = standardModel->invisibleRootItem();
 
     //defining bunch of items for inclusion in model
-    QStandardItem *giItem    = new QStandardItem("GEN");
-    QStandardItem *rvItem   = new QStandardItem("RVs");
-    QStandardItem *bimItem = new QStandardItem("SIM");
+    //QStandardItem *giItem    = new QStandardItem("GEN");
+    //
+
+    QStandardItem *bimItem = new QStandardItem("BIM");
     QStandardItem *evtItem = new QStandardItem("EVT");
+    QStandardItem *rvItem   = new QStandardItem("RVs");
    // QStandardItem *anaItem = new QStandardItem("ANA");
     //QStandardItem *uqItem = new QStandardItem("UQM");
     QStandardItem *resultsItem = new QStandardItem("RES");
 
     //building up the hierarchy of the model
-    rootNode->appendRow(giItem);
     rootNode->appendRow(bimItem);
     rootNode->appendRow(evtItem);
    // rootNode->appendRow(anaItem);
@@ -255,8 +261,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     theStackedWidget = new QStackedWidget();
-    theStackedWidget->addWidget(theGI);
-    theStackedWidget->addWidget(theSIM);
+    theStackedWidget->addWidget(theBIM);
     theStackedWidget->addWidget(theEvent);
    // theStackedWidget->addWidget(theAnalysis);
     theStackedWidget->addWidget(theRVs);
@@ -326,20 +331,18 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
     const QModelIndex index = treeView->selectionModel()->currentIndex();
     QString selectedText = index.data(Qt::DisplayRole).toString();
 
-    if (selectedText == "GEN")
+    if (selectedText == "BIM")
         theStackedWidget->setCurrentIndex(0);
-    else if (selectedText == "SIM")
-        theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "EVT")
-        theStackedWidget->setCurrentIndex(2);
+        theStackedWidget->setCurrentIndex(1);
     // else if (selectedText == "ANA")
     //    theStackedWidget->setCurrentIndex(3);
     else if (selectedText == "RVs")
-        theStackedWidget->setCurrentIndex(3);
+        theStackedWidget->setCurrentIndex(2);
     // else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(4);
+        theStackedWidget->setCurrentIndex(3);
 }
 
 

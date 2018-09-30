@@ -1,7 +1,3 @@
-#ifndef 	INPUT_WIDGET_BIM_SELECTION_H
-#define 	INPUT_WIDGET_BIM_SELECTION_H
-
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -40,57 +36,31 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
-//#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
+#include "InputWidgetBIM.h"
+#include <QTabWidget>
+#include <SIM_Selection.h>
+#include <GeneralInformationWidget.h>
 
-class RandomVariableInputWidget;
 
-class InputWidgetBIM_Selection : public SimCenterAppWidget
+
+InputWidgetBIM::InputWidgetBIM(GeneralInformationWidget *GI, SIM_Selection *SIM, QWidget *parent)
+    :QWidget(parent),theSIM(SIM),theGI(GI)
 {
-    Q_OBJECT
-public:
-    explicit InputWidgetBIM_Selection(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetBIM_Selection();
+    QVBoxLayout *layout = new QVBoxLayout();
+    theTab = new QTabWidget();
+    theTab->addTab(theGI,"GIM");
+    theTab->addTab(theSIM,"SIM");
+    theTab->setCurrentIndex(1);
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destDir);
+    layout->addWidget(theTab);
+    layout->setMargin(0);
 
-signals:
+    this->setLayout(layout);
+}
 
-public slots:
-   void clear(void);
-   void bimSelectionChanged(const QString &arg1);
-   void errorMessage(QString message);
+InputWidgetBIM::~InputWidgetBIM()
+{
 
-signals:
-    void bimWidgetChanged(void);
- //  void uqMethodChanged(const QString &arg1);
+}
 
 
-private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    //    QComboBox   *samplingMethod;
-    //    QLineEdit   *numSamples;
-    //    QLineEdit   *randomSeed;
-    //    QPushButton *run;
-
-    QComboBox   *bimSelection;
-
-    //    SimCenterWidget *uqType;
-    SimCenterAppWidget *bimInput;
-    bool selectionChangeOK;
-
-    RandomVariableInputWidget *theRandomVariableInputWidget;
-
-};
-
-#endif // 	INPUT_WIDGET_BIM_SELECTION_H
