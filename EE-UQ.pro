@@ -24,6 +24,9 @@ win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
 linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
+win32:INCLUDEPATH += "..\jansson\build\include"
+win32:LIBS += "..\jansson\build\lib\release\jansson.lib"
+
 include(./EE-UQ.pri)
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
