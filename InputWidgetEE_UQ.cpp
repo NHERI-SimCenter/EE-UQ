@@ -571,7 +571,12 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    QString tmpDirName = QString("tmp.SimCenter.EE-UQ.%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+    //    QString tmpDirName = QString("tmp.SimCenter.EE-UQ.%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
+    // designsafe will need a unique name
+    QUuid uniqueName = QUuid::createUuid();
+    QString strUnique = uniqueName.toString();
+    strUnique = strUnique.mid(1,36);
+    QString tmpDirName = QString("tmp.SimCenter") + strUnique;
     qDebug() << "TMP_DIR: " << tmpDirName;
     QDir workDir(workingDir);
 
