@@ -43,6 +43,9 @@ moc*
 qcustomplot.h
 qcustomplot.cpp
 *.stash
+qrc_images.cpp
+qrc_images1.cpp
+qrc_styles.cpp
 
 # OTHER
 Makefile

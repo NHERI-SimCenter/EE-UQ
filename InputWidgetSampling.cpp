@@ -144,6 +144,11 @@ void InputWidgetSampling::clear(void)
 
 }
 
+int
+InputWidgetSampling::getNumParallelTasks(void){
+  return numSamples->text().toInt();
+}
+
 bool
 InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 {

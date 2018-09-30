@@ -1,5 +1,6 @@
-#ifndef DAKOTA_RESULTS_H
-#define DAKOTA_RESULTS_H
+#ifndef 	SIM_SELECTION_H
+#define 	SIM_SELECTION_H
+
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,31 +40,57 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-class QVBoxLayout;
+#include <SimCenterAppWidget.h>
+//#include "EDP.h"
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
 
-class DakotaResults : public SimCenterWidget
+class RandomVariableInputWidget;
+
+class SIM_Selection : public SimCenterAppWidget
 {
     Q_OBJECT
-
 public:
-    explicit DakotaResults(QWidget *parent = 0);
-    virtual ~DakotaResults();
+    explicit SIM_Selection(RandomVariableInputWidget *, QWidget *parent = 0);
+    ~SIM_Selection();
 
-    virtual bool outputToJSON(QJsonObject &rvObject);
-    virtual bool inputFromJSON(QJsonObject &rvObject);
-
-    virtual int processResults(QString &filenameResults, QString &filenameTab);
-
-    void setResultWidget(DakotaResults *result);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &destDir);
 
 signals:
 
 public slots:
+   void clear(void);
+   void bimSelectionChanged(const QString &arg1);
+   void errorMessage(QString message);
 
-protected:
-    DakotaResults *resultWidget;
+signals:
+    void bimWidgetChanged(void);
+ //  void uqMethodChanged(const QString &arg1);
+
+
+private:
     QVBoxLayout *layout;
+    QWidget     *methodSpecific;
+    //    QComboBox   *samplingMethod;
+    //    QLineEdit   *numSamples;
+    //    QLineEdit   *randomSeed;
+    //    QPushButton *run;
+
+    QComboBox   *bimSelection;
+
+    //    SimCenterWidget *uqType;
+    SimCenterAppWidget *bimInput;
+    bool selectionChangeOK;
+
+    RandomVariableInputWidget *theRandomVariableInputWidget;
+
 };
 
-#endif // DAKOTA_RESULTS_SAMPLING_H
+#endif // 	SIM_SELECTION_H

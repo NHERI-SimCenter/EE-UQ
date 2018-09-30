@@ -79,9 +79,9 @@ public slots:
     virtual void processResults(QString dakotaOut, QString dakotaTab) =0;
 
     virtual void loadFile(QString filename) =0;
-    virtual void statusMessage(QString message);
-    virtual void errorMessage(QString message);
-    virtual void fatalMessage(QString message);
+    void statusMessage(QString message);
+    void errorMessage(QString message);
+    void fatalMessage(QString message);
 
 protected:
     MainWindowWorkflowApp *theMainWindow;

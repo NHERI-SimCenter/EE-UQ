@@ -19,6 +19,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QDesktopServices>
+#include <sectiontitle.h>
 
 //#include <InputWidgetEE_UQ.h>
 #include <WorkflowAppWidget.h>
@@ -117,20 +118,24 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
 
     loginWindow = new QWidget();
     QGridLayout *loginLayout = new QGridLayout();
+    SectionTitle *info=new SectionTitle();
+    info->setText(tr("DesignSafe User Account Info:"));
+
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText("username:");
+    nameLabel->setText("Username:");
     QLabel *passwordLabel = new QLabel();
-    passwordLabel->setText("password:");
+    passwordLabel->setText("Password:");
     nameLineEdit = new QLineEdit();
     passwordLineEdit = new QLineEdit();
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     loginSubmitButton = new QPushButton();
     loginSubmitButton->setText("Login");
-    loginLayout->addWidget(nameLabel,0,0);
-    loginLayout->addWidget(nameLineEdit,0,1);
-    loginLayout->addWidget(passwordLabel,1,0);
-    loginLayout->addWidget(passwordLineEdit,1,1);
-    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginLayout->addWidget(info,0,0,2,2,Qt::AlignBottom);
+    loginLayout->addWidget(nameLabel,2,0);
+    loginLayout->addWidget(nameLineEdit,2,1);
+    loginLayout->addWidget(passwordLabel,3,0);
+    loginLayout->addWidget(passwordLineEdit,3,1);
+    loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
     //
@@ -154,6 +159,10 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     connect(inputWidget,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(theApp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(theApp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(theApp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
 
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
@@ -405,12 +414,11 @@ void MainWindowWorkflowApp::createActions() {
 
     //QToolBar *fileToolBar = addToolBar(tr("File"));
 
-    QAction *newAction = new QAction(tr("&New"), this);
-    newAction->setShortcuts(QKeySequence::New);
-    newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
-    fileMenu->addAction(newAction);
-    //fileToolBar->addAction(newAction);
+    //    QAction *newAction = new QAction(tr("&New"), this);
+    //    newAction->setShortcuts(QKeySequence::New);
+    //    newAction->setStatusTip(tr("Create a new file"));
+    //    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
+    //    fileMenu->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
@@ -439,26 +447,6 @@ void MainWindowWorkflowApp::createActions() {
     // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
-
-    // the Model Menu cotains is a check list of which model type is currently being edited
-    // to get the current value check each menu item
-    // only one menu item should be selected at a time, the dafault on startup is BIM
-    QMenu *modelMenu = menuBar()->addMenu(tr("&Model"));
-
-    QAction *bimAction = new QAction(tr("&BIM"), this);
-    bimAction->setCheckable(true);
-    bimAction->setChecked(true);
-    bimAction->setStatusTip(tr("Create a Building Information Model"));
-    modelMenu->addAction(bimAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
-
-    QAction *samAction = new QAction(tr("&SAM"), this);
-    samAction->setCheckable(true);
-    samAction->setStatusTip(tr("Create a Structure Information Model"));
-    modelMenu->addAction(samAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
@@ -636,12 +624,14 @@ void
 MainWindowWorkflowApp::statusMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "STATUS MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void
 MainWindowWorkflowApp::errorMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "ERROR MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void

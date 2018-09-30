@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetBIM_Selection.h"
+#include "SIM_Selection.h"
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetOpenSees.h>
 
 
-InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
+SIM_Selection::SIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), bimInput(0), theRandomVariableInputWidget(theRandomVariableIW)
 {
     layout = new QVBoxLayout();
@@ -101,13 +101,13 @@ InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *th
     layout->setMargin(0);
 }
 
-InputWidgetBIM_Selection::~InputWidgetBIM_Selection()
+SIM_Selection::~SIM_Selection()
 {
 
 }
 
 
-void InputWidgetBIM_Selection::clear(void)
+void SIM_Selection::clear(void)
 {
 
 }
@@ -116,7 +116,7 @@ void InputWidgetBIM_Selection::clear(void)
 
 
 bool
-InputWidgetBIM_Selection::outputToJSON(QJsonObject &jsonObject)
+SIM_Selection::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -137,7 +137,7 @@ InputWidgetBIM_Selection::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
+SIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = false;
     this->clear();
@@ -175,7 +175,7 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
+SIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
 {
     bool result = false;
 
@@ -188,7 +188,7 @@ InputWidgetBIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
+SIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -201,7 +201,7 @@ InputWidgetBIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::copyFiles(QString &destDir) {
+SIM_Selection::copyFiles(QString &destDir) {
 
     if (bimInput != 0) {
         return  bimInput->copyFiles(destDir);
@@ -210,7 +210,7 @@ InputWidgetBIM_Selection::copyFiles(QString &destDir) {
     return false;
 }
 
-void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)
+void SIM_Selection::bimSelectionChanged(const QString &arg1)
 {
     selectionChangeOK = true;
 
@@ -246,7 +246,7 @@ void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)
 
 
 void
-InputWidgetBIM_Selection::errorMessage(QString message){
+SIM_Selection::errorMessage(QString message){
   emit sendErrorMessage(message);
 }
 

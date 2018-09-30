@@ -1,5 +1,5 @@
-#ifndef DAKOTA_RESULTS_H
-#define DAKOTA_RESULTS_H
+#ifndef 	INPUT_WIDGET_BIM_H
+#define 	INPUT_WIDGET_BIM_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,31 +39,36 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-class QVBoxLayout;
+#include <QWidget>
 
-class DakotaResults : public SimCenterWidget
+class QTabWidget;
+class SIM_Selection;
+class GeneralInformationWidget;
+
+// this class is just a tabbed widget for GI and SIM widgets
+//
+
+
+class InputWidgetBIM : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit DakotaResults(QWidget *parent = 0);
-    virtual ~DakotaResults();
-
-    virtual bool outputToJSON(QJsonObject &rvObject);
-    virtual bool inputFromJSON(QJsonObject &rvObject);
-
-    virtual int processResults(QString &filenameResults, QString &filenameTab);
-
-    void setResultWidget(DakotaResults *result);
+  explicit InputWidgetBIM(GeneralInformationWidget *, SIM_Selection *, QWidget *parent = 0);
+    ~InputWidgetBIM();
 
 signals:
 
 public slots:
 
-protected:
-    DakotaResults *resultWidget;
-    QVBoxLayout *layout;
-};
 
-#endif // DAKOTA_RESULTS_SAMPLING_H
+signals:
+
+private:
+    QTabWidget *theTab;
+    SIM_Selection *theSIM;
+    GeneralInformationWidget *theGI;
+} ; 
+
+#endif
+
+
