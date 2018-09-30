@@ -409,12 +409,11 @@ void MainWindowWorkflowApp::createActions() {
 
     //QToolBar *fileToolBar = addToolBar(tr("File"));
 
-    QAction *newAction = new QAction(tr("&New"), this);
-    newAction->setShortcuts(QKeySequence::New);
-    newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
-    fileMenu->addAction(newAction);
-    //fileToolBar->addAction(newAction);
+    //    QAction *newAction = new QAction(tr("&New"), this);
+    //    newAction->setShortcuts(QKeySequence::New);
+    //    newAction->setStatusTip(tr("Create a new file"));
+    //    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
+    //    fileMenu->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
@@ -443,26 +442,6 @@ void MainWindowWorkflowApp::createActions() {
     // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
-
-    // the Model Menu cotains is a check list of which model type is currently being edited
-    // to get the current value check each menu item
-    // only one menu item should be selected at a time, the dafault on startup is BIM
-    QMenu *modelMenu = menuBar()->addMenu(tr("&Model"));
-
-    QAction *bimAction = new QAction(tr("&BIM"), this);
-    bimAction->setCheckable(true);
-    bimAction->setChecked(true);
-    bimAction->setStatusTip(tr("Create a Building Information Model"));
-    modelMenu->addAction(bimAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
-
-    QAction *samAction = new QAction(tr("&SAM"), this);
-    samAction->setCheckable(true);
-    samAction->setStatusTip(tr("Create a Structure Information Model"));
-    modelMenu->addAction(samAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);

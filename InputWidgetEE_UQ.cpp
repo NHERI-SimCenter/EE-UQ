@@ -151,6 +151,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     connect(theRunWidget,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(theRunWidget,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
 
+
     connect(localApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(localApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(localApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
@@ -515,6 +516,8 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 void
 InputWidgetEE_UQ::onRunButtonClicked() {
+    theRunWidget->hide();
+    theRunWidget->setMinimumWidth(this->width()*0.5);
     theRunWidget->showLocalApplication();
 }
 
@@ -527,6 +530,7 @@ InputWidgetEE_UQ::onRemoteRunButtonClicked(){
     if (loggedIn == true) {
 
         theRunWidget->hide();
+        theRunWidget->setMinimumWidth(this->width()*0.5);
         theRunWidget->showRemoteApplication();
 
     } else {
