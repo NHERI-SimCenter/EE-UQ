@@ -543,12 +543,26 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 
     // create analysis
     if (analysisType == 1) {
+      std::cerr << "START";
       s << "\n# Perform the analysis\n";
-      s << "numberer RCM\n";
-      s << "system BandGen\n";
-      s << "integrator Newmark 0.5 0.25\n";
-      s << "analysis Transient\n";
-      s << "analyze " << numSteps << " " << dT << "\n";      
+      json_t *fileScript = json_object_get(rootSIM,"fileName");
+      if (fileScript != NULL) {
+	s << "source " << json_string_value(fileScript);
+      } else {
+	s << "numberer RCM\n";
+	s << "system Umfpack\n";
+      std::cerr    << "1";
+	double tol = json_real_value(json_object_get(rootSIM,"tolerance"));
+      std::cerr    << "2";
+	s << "integrator " << json_string_value(json_object_get(rootSIM,"integration")) << "\n";
+      std::cerr    << "3";
+      s << "test " << json_string_value(json_object_get(rootSIM,"convergenceTest")) << " " << tol << " 20 \n";
+      std::cerr    << "4";
+	s << "algorithm " << json_string_value(json_object_get(rootSIM,"algorithm")) << "\n";
+      std::cerr    << "5";
+	s << "analysis Transient\n";
+	s << "analyze " << numSteps << " " << dT << "\n";      
+      }
     }
   }
   return 0;
