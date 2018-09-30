@@ -466,8 +466,6 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    int startTimeSeries = 101;
 	    s << "recorder EnvelopeNode -file " << fileName;
 	    s << " -timeSeries ";
-	    for (int ii=0; ii<sizeDOFs; ii++)
-	      s << ii+startTimeSeries << " " ;
 	    s << " -node " << nodeTag << " -dof ";
 	    for (int ii=0; ii<sizeDOFs; ii++)
 	      s << dof[ii] << " " ;
