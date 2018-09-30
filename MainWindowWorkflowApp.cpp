@@ -19,6 +19,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QDesktopServices>
+#include <sectiontitle.h>
 
 //#include <InputWidgetEE_UQ.h>
 #include <WorkflowAppWidget.h>
@@ -117,20 +118,24 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
 
     loginWindow = new QWidget();
     QGridLayout *loginLayout = new QGridLayout();
+    SectionTitle *info=new SectionTitle();
+    info->setText(tr("DesignSafe User Account Info:"));
+
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText("username:");
+    nameLabel->setText("Username:");
     QLabel *passwordLabel = new QLabel();
-    passwordLabel->setText("password:");
+    passwordLabel->setText("Password:");
     nameLineEdit = new QLineEdit();
     passwordLineEdit = new QLineEdit();
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     loginSubmitButton = new QPushButton();
     loginSubmitButton->setText("Login");
-    loginLayout->addWidget(nameLabel,0,0);
-    loginLayout->addWidget(nameLineEdit,0,1);
-    loginLayout->addWidget(passwordLabel,1,0);
-    loginLayout->addWidget(passwordLineEdit,1,1);
-    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginLayout->addWidget(info,0,0,2,2,Qt::AlignBottom);
+    loginLayout->addWidget(nameLabel,2,0);
+    loginLayout->addWidget(nameLineEdit,2,1);
+    loginLayout->addWidget(passwordLabel,3,0);
+    loginLayout->addWidget(passwordLineEdit,3,1);
+    loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
     //
