@@ -85,12 +85,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-#include <QHostInfo>
+#include <QHostInfo>                     "
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     : WorkflowAppWidget(theService, parent)
 {
-
     //
     // user settings
     //
@@ -239,7 +238,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     treeView->setIndentation(0);
     QFile file(":/styles/stylesheet.qss");
     if(file.open(QFile::ReadOnly)) {
-        this->setStyleSheet(file.readAll());
+        treeView->setStyleSheet(file.readAll());
         file.close();
     }
     else
