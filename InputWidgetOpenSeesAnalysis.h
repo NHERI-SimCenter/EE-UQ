@@ -55,11 +55,14 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &dirName);
 
 signals:
 
 public slots:
    void clear(void);
+   void chooseFileName(void);
+
 
 private:
     QLineEdit   *theTolerance;
@@ -68,6 +71,7 @@ private:
     QLineEdit   *theIntegration;
     QLineEdit   *dampingRatio;
 
+    QLineEdit *file;
     RandomVariableInputWidget *theRandomVariableInputWidget;
 };
 
