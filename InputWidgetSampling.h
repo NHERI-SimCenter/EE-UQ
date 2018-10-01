@@ -67,6 +67,7 @@ public:
     bool inputAppDataFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int getNumParallelTasks(void);
 
    // DakotaResults *getResults(void);
     //RandomVariableInputWidget  *getParameters();

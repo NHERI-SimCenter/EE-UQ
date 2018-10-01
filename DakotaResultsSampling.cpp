@@ -356,7 +356,6 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     dakotaText = new QTextEdit();
     dakotaText->setReadOnly(true); // make it so user cannot edit the contents
-
     dakotaText->setText("\n");
 
     //
@@ -365,7 +364,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
-        qDebug() << "Could not open file: " << filenameResults;
+        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file in jobs archive in Data Depot"));
         return -1;
     }
 
@@ -377,10 +376,19 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     //
     // parse till get to Statistics output
     //
+    int statisticsFound = 0;
     while (std::getline(fileResults, haystack)) {
-        if (haystack.find(needle) != std::string::npos) {
+      if (haystack.find(needle) != std::string::npos) {
+	  statisticsFound = 1;
             break;
         }
+    }
+    
+    if (statisticsFound == 0) {
+      emit sendErrorMessage(tr("ERROR: Dakota Failed to finish SUCCESFULLY. Go look at your job archive on DesignSafe"));
+      return -1;
+    } else {
+      emit sendErrorMessage(tr("UQ Sampling Results"));
     }
 
     //

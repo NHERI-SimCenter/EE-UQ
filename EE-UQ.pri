@@ -11,7 +11,6 @@ SOURCES += \
     $$PWD/InputWidgetSampling.cpp \
     $$PWD/UniformMotionInput.cpp \
     $$PWD/InputWidgetEarthquakeEvent.cpp \
-    $$PWD/InputWidgetBIM_Selection.cpp \
     $$PWD/InputWidgetOpenSees.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
     $$PWD/InputWidgetExistingEvent.cpp \
@@ -32,14 +31,16 @@ SOURCES += \
     $$PWD/CustomizedItemModel.cpp\
     $$PWD/DakotaResults.cpp\
     $$PWD/DakotaResultsSampling.cpp\
-    $$PWD/UserDefinedApplication.cpp
+    $$PWD/UserDefinedApplication.cpp \
+    $$PWD/SIM_Selection.cpp \
+    $$PWD/InputWidgetBIM.cpp \
+    $$PWD/InputWidgetUQ.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
     $$PWD/InputWidgetSampling.h \
     $$PWD/UniformMotionInput.h \
     $$PWD/InputWidgetEarthquakeEvent.h \
-    $$PWD/InputWidgetBIM_Selection.h \
     $$PWD/InputWidgetOpenSees.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
     $$PWD/InputWidgetExistingEvent.h \
@@ -61,7 +62,10 @@ HEADERS  += \
     $$PWD/DakotaResultsSampling.h\
     $$PWD/ExistingPEER_Events.h \
     $$PWD/CustomizedItemModel.h \
-    $$PWD/UserDefinedApplication.h
+    $$PWD/UserDefinedApplication.h \
+    $$PWD/SIM_Selection.h \
+    $$PWD/InputWidgetBIM.h \
+    $$PWD/InputWidgetUQ.h
 
 RESOURCES += \
     images.qrc \

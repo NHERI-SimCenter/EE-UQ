@@ -21,17 +21,17 @@ class MainWindowWorkflowApp : public QMainWindow
 {
   Q_OBJECT
     
-    public:
-  explicit MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
-  ~MainWindowWorkflowApp();
+public:
+    explicit MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
+    ~MainWindowWorkflowApp();
+    void setCopyright(QString &copyright);
+    void setVersion(QString &version);
+    void setAbout(QString &about);
+    void setFeedback(QString &feedback);
+    void setCite(QString &cite);
 
  protected:
-  void setCopyright(QString &copyright);
-  void setVersion(QString &version);
-  void setAbout(QString &about);
-  void setFeedback(QString &feedback);
-  void setCite(QString &cite);
-    
+
  signals:
     void attemptLogin(QString, QString);
     void logout();

@@ -1,6 +1,3 @@
-#ifndef DAKOTA_RESULTS_H
-#define DAKOTA_RESULTS_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -39,31 +36,31 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-class QVBoxLayout;
+#include "InputWidgetUQ.h"
+#include <QTabWidget>
+#include <RandomVariableInputWidget.h>
+#include <InputWidgetSampling.h>
 
-class DakotaResults : public SimCenterWidget
+
+InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariableInputWidget *RV, QWidget *parent)
+    :QWidget(parent),theRVs(RV),theUQ(UQ)
 {
-    Q_OBJECT
+    QHBoxLayout *layout = new QHBoxLayout();
+    theTab = new QTabWidget();
+    theTab->addTab(theUQ,"Sampling Methods");
+    theTab->addTab(theRVs,"Random Variables");
+    theTab->setCurrentIndex(1);
 
-public:
-    explicit DakotaResults(QWidget *parent = 0);
-    virtual ~DakotaResults();
+    layout->addWidget(theTab);
+    //layout->addStretch();
+    layout->setMargin(0);
 
-    virtual bool outputToJSON(QJsonObject &rvObject);
-    virtual bool inputFromJSON(QJsonObject &rvObject);
+    this->setLayout(layout);
+}
 
-    virtual int processResults(QString &filenameResults, QString &filenameTab);
+InputWidgetUQ::~InputWidgetUQ()
+{
 
-    void setResultWidget(DakotaResults *result);
+}
 
-signals:
 
-public slots:
-
-protected:
-    DakotaResults *resultWidget;
-    QVBoxLayout *layout;
-};
-
-#endif // DAKOTA_RESULTS_SAMPLING_H

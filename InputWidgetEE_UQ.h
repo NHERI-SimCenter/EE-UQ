@@ -49,8 +49,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <WorkflowAppWidget.h>
 
 class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
+class InputWidgetBIM;
+class InputWidgetUQ;
+
+class SIM_Selection;
 class InputWidgetSampling;
 class EarthquakeLoadingInput;
 class InputWidgetOpenSeesAnalysis;
@@ -90,10 +92,6 @@ signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
     void sendLoadFile(QString filename);
 
-    void sendStatusMessage(QString message);
-    void sendErrorMessage(QString message);
-    void sendFatalMessage(QString message);
-
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
@@ -102,12 +100,6 @@ public slots:
 
     void loadFile(QString filename);
     void replyFinished(QNetworkReply*);
-
-    /*
-    void statusMessage(QString message);
-    void errorMessage(QString message);
-    void fatalMessage(QString message);
-*/
 
 private:
 
@@ -120,15 +112,17 @@ private:
     GeneralInformationWidget *theGI;
     RandomVariableInputWidget *theRVs;
 
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
+    // the AppWidgets .. not all displayed in main UI
+    SIM_Selection *theSIM;
+    InputWidgetSampling *theUQ_Method;
     InputWidgetEarthquakeEvent *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
-   // RunLocalWidget *theRunLocalWidget;
 
-    // RemoteService *theRemoteService;
+    // other widgets appearing in UI
+    InputWidgetBIM *theBIM; // contains GI and SIM
+    InputWidgetUQ *theUQ;
+
     RunWidget *theRunWidget;
     Application *localApp;
     Application *remoteApp;

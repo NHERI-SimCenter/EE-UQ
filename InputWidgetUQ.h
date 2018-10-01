@@ -1,6 +1,5 @@
-#ifndef 	INPUT_WIDGET_BIM_SELECTION_H
-#define 	INPUT_WIDGET_BIM_SELECTION_H
-
+#ifndef 	INPUT_WIDGET_UQ_H
+#define 	INPUT_WIDGET_UQ_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -40,57 +39,36 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
-//#include "EDP.h"
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QPushButton>
+#include <QWidget>
 
+class QTabWidget;
 class RandomVariableInputWidget;
+class InputWidgetSampling;
 
-class InputWidgetBIM_Selection : public SimCenterAppWidget
+// this class is just a tabbed widget for GI and SIM widgets
+//
+
+
+class InputWidgetUQ : public QWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetBIM_Selection(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetBIM_Selection();
-
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destDir);
+  explicit InputWidgetUQ(InputWidgetSampling *, RandomVariableInputWidget *, QWidget *parent = 0);
+    ~InputWidgetUQ();
 
 signals:
 
 public slots:
-   void clear(void);
-   void bimSelectionChanged(const QString &arg1);
-   void errorMessage(QString message);
+
 
 signals:
-    void bimWidgetChanged(void);
- //  void uqMethodChanged(const QString &arg1);
-
 
 private:
-    QVBoxLayout *layout;
-    QWidget     *methodSpecific;
-    //    QComboBox   *samplingMethod;
-    //    QLineEdit   *numSamples;
-    //    QLineEdit   *randomSeed;
-    //    QPushButton *run;
+    QTabWidget *theTab;
+    RandomVariableInputWidget *theRVs;
+    InputWidgetSampling *theUQ;
+} ; 
 
-    QComboBox   *bimSelection;
+#endif
 
-    //    SimCenterWidget *uqType;
-    SimCenterAppWidget *bimInput;
-    bool selectionChangeOK;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
-
-};
-
-#endif // 	INPUT_WIDGET_BIM_SELECTION_H

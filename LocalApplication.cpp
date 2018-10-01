@@ -65,10 +65,12 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     QLabel *workingDirLabel = new QLabel();
     workingDirLabel->setText(QString("Working Dir Location:"));
+
     runLayout->addWidget(workingDirLabel,1,0);
 
     workingDirName = new QLineEdit();
     workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
     QLabel *appDirLabel = new QLabel();
@@ -77,10 +79,12 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     appDirName = new QLineEdit();
     appDirName->setText(QCoreApplication::applicationDirPath());
+    appDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
     runLayout->addWidget(appDirName,2,1);
 
     QPushButton *pushButton = new QPushButton();
     pushButton->setText("Submit");
+    pushButton->setToolTip(tr("Press to launch job on local machine"));
     runLayout->addWidget(pushButton,3,1);
 
    // layout->addWidget(theUQ);
@@ -150,6 +154,7 @@ LocalApplication::onRunButtonPressed(void)
 
     QString templateDir("templatedir");
 
+    emit sendStatusMessage("Gathering Files to local workdir");
     emit setupForRun(workingDir, templateDir);
 }
 
@@ -174,22 +179,25 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
     QFileInfo check_script(pySCRIPT);
     // check if file exists and if yes: Is it really a file and no directory?
     if (!check_script.exists() || !check_script.isFile()) {
-        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        emit sendErrorMessage(QString("NO SCRIPT FILE: ") + pySCRIPT);
         return false;
     }
 
     QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
     QFileInfo check_registry(registryFile);
     if (!check_registry.exists() || !check_registry.isFile()) {
-         qDebug() << "NO REGISTRY FILE: " << registryFile;
+         emit sendErrorMessage(QString("NO REGISTRY FILE: ") + registryFile);
         return false;
     }
+
     qDebug() << "SCRIPT: " << pySCRIPT;
     qDebug() << "REGISTRY: " << registryFile;
 
-
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+    qDebug() << "Running Simulations";
+    emit sendStatusMessage("Running the Simulations");
 
     /************************************************************************
 for (int i = 0; i < files.size(); i++) {
@@ -199,6 +207,8 @@ for (int i = 0; i < files.size(); i++) {
 }
 ***********************************************************************/
 
+    emit sendStatusMessage("Running Dakota .. either run remotely or patience!");
+
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
@@ -206,14 +216,16 @@ for (int i = 0; i < files.size(); i++) {
     QProcess *proc = new QProcess();
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + "run" + QString(" ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << command;
+    QString command = QString("python ") + pySCRIPT + QString(" run ") + inputFile  + QString(" ") + registryFile;
+    qDebug() << "PYTHON COMMAND: " << command;    
+
     proc->execute("cmd", QStringList() << "/C" << command);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
+    qDebug() << "PYTHON COMMAND: " << command;    
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
@@ -227,6 +239,10 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
     emit processResults(filenameOUT, filenameTAB);
+
+    // remove the tmp directory
+    QDir tmpDIR(tmpDirectory);
+    tmpDIR.removeRecursively();
 
     return 0;
 }

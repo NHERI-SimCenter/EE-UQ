@@ -47,6 +47,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QDebug>
 #include <QGridLayout>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QFile>
 
 
 InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
@@ -67,6 +70,7 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     layout->addWidget(label1, 0, 0);
     theAlgorithm = new QLineEdit();
     theAlgorithm->setText("Newton");
+    theAlgorithm->setToolTip(tr("Nonlinear Solution Algorithm"));
     layout->addWidget(theAlgorithm, 0, 1);
 
     QLabel *label2 = new QLabel();
@@ -74,6 +78,7 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     layout->addWidget(label2, 1, 0);
     theIntegration = new QLineEdit();
     theIntegration->setText("Newmark 0.5 0.25");
+    theIntegration->setToolTip(tr("Command specifying integration scheme"));
     layout->addWidget(theIntegration, 1, 1);
 
     QLabel *label3 = new QLabel();
@@ -81,12 +86,14 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     layout->addWidget(label3, 2, 0);
     theConvergenceTest = new QLineEdit();
     theConvergenceTest->setText("NormUnbalance");
+    theConvergenceTest->setToolTip(tr("Convergence test used in script, NormUnbalance, NormDispIncr, NormEnergy are options"));
     layout->addWidget(theConvergenceTest, 2, 1);
 
     QLabel *label4 = new QLabel();
     label4->setText(QString("Tolerance: "));
     layout->addWidget(label4, 3, 0);
     theTolerance = new QLineEdit();
+    theTolerance->setToolTip(tr("2Norm on the unbalance used in convergence check"));
     theTolerance->setText("0.01");
     layout->addWidget(theTolerance, 3, 1);
 
@@ -95,11 +102,26 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
     layout->addWidget(label5, 4, 0);
     dampingRatio = new QLineEdit();
     dampingRatio->setText("0.02");
+    dampingRatio->setToolTip(tr("Damp ratio, 0.02 = 2% damping"));
     layout->addWidget(dampingRatio, 4, 1);
 
+    QLabel *labelFile = new QLabel();
+    labelFile->setText("Analysis Script: ");
+    file = new QLineEdit;
+    file->setToolTip(tr("User provided analysis script, replaces OpenSees default"));
+    layout->addWidget(labelFile, 5, 0);
+    layout->addWidget(file, 5, 1);
+
+    QPushButton *chooseFile = new QPushButton();
+    chooseFile->setText(tr("Choose"));
+    connect(chooseFile,SIGNAL(clicked()),this,SLOT(chooseFileName()));
+    layout->addWidget(chooseFile, 5, 2);
+
+    connect(chooseFile, SLOT(click()), this, SLOT(chooseFileName()));
+
     QWidget *dummy = new QWidget();
-    layout->addWidget(dummy,5,0);
-    layout->setRowStretch(5,1);
+    layout->addWidget(dummy,6,0);
+    layout->setRowStretch(6,1);
 
     // set the widgets layout
     this->setLayout(layout);
@@ -119,6 +141,7 @@ void InputWidgetOpenSeesAnalysis::clear(void) {
     theConvergenceTest->setText("NormUnbalance");
     theTolerance->setText("0.01");
     dampingRatio->setText("0.02");
+    file->setText("");
 }
 
 bool
@@ -143,6 +166,12 @@ InputWidgetOpenSeesAnalysis::outputToJSON(QJsonObject &jsonObject)
     else
         jsonObject["dampingRatio"]=dampingRatio->text();
 
+    if (!file->text().isEmpty() && !file->text().isNull()) {
+        QFileInfo fileInfo(file->text());
+        jsonObject["fileName"]= fileInfo.fileName();
+        jsonObject["filePath"]=fileInfo.path();
+    }
+
     return result;
 }
 
@@ -166,9 +195,18 @@ InputWidgetOpenSeesAnalysis::inputFromJSON(QJsonObject &jsonObject)
         return false;
     }
 
+    if (jsonObject.contains("fileName")) {
+        QJsonValue theName = jsonObject["fileName"];
+        QString fileName = theName.toString();
+        if (jsonObject.contains("filePath")) {
+            QJsonValue theName = jsonObject["filePath"];
+            QString filePath = theName.toString();
+            file->setText(QDir(filePath).filePath(fileName));
+        } else
+            return false;
+    }
 
-    // should never get here .. if do my logic is screwy and need to return a false
-    emit sendErrorMessage("ERROR - faulty logic - contact code developers");
+
     return result;
 }
 
@@ -192,3 +230,19 @@ InputWidgetOpenSeesAnalysis::inputAppDataFromJSON(QJsonObject &jsonObject)
 }
 
 
+void
+InputWidgetOpenSeesAnalysis::chooseFileName(void) {
+    QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
+    file->setText(fileName);
+}
+
+bool
+InputWidgetOpenSeesAnalysis::copyFiles(QString &dirName) {
+    if (file->text().isNull() || file->text().isEmpty()) {
+        return true;
+    }
+    if  (this->copyFile(file->text(), dirName) ==  false) {
+        emit sendErrorMessage(QString("ERROR: OpenSees Analysis copyFiles: failed to copy file: ") +file->text());
+        return false;
+    }
+}

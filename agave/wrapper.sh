@@ -19,6 +19,8 @@ echo "driver is ${driverFile}"
 DRIVERFILE='${driverFile}'
 DRIVERFILE="${DRIVERFILE##*/}"
 
+module load dakota
+
 # Run the script with the runtime values passed in from the job request
 cd "${inputDirectory}"
 pwd
@@ -48,6 +50,9 @@ then
    tar zcBf workdir.tar.gz workdir
    rm -fr workdir
 fi
+
+# copy dakota.json one directory up
+cp templatedir/dakota.json ./
 
 # compress & remove template dir
 tar zcBf templatedir.tar.gz templatedir
