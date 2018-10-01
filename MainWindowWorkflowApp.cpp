@@ -671,6 +671,10 @@ void MainWindowWorkflowApp::about()
     msgBox.exec();
 }
 
+void MainWindowWorkflowApp::setAbout(QString &newAbout) {
+    aboutText = newAbout;
+}
+
 void MainWindowWorkflowApp::submitFeedback()
 {
     QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
