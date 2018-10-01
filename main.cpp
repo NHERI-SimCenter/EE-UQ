@@ -144,9 +144,8 @@ int main(int argc, char *argv[])
     a.setStyleSheet(styleSheet);
   }
 
-  w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
-  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
-
+//  w.setStyleSheet("QLineEdit {background: #FFFFFF;}");
+//  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
 
   int res = a.exec();
 
