@@ -20,19 +20,19 @@ node  4    $width $height
 fix   1     1    1    1
 fix   2     1    1    1
 
-# Define materials for nonlinear columns
-# ------------------------------------------
-# CONCRETE                  tag   f'c        ec0   f'cu        ecu
+pset fc 6.0
 # Core concrete (confined)
-uniaxialMaterial Concrete01  1  -6.0  -0.004   -5.0     -0.014
+uniaxialMaterial Concrete01  1  -$fc  -0.004   -5.0     -0.014
 
 # Cover concrete (unconfined)
 uniaxialMaterial Concrete01  2  -5.0   -0.002   0.0     -0.006
 
 # STEEL
 # Reinforcing steel 
-set fy 60.0;      # Yield stress
-set E 30000.0;    # Young's modulus
+
+pset fy 60.0;      # Yield stress
+pset E 30000.0;    # Young's modulus
+
 #                        tag  fy E0    b
 uniaxialMaterial Steel01  3  $fy $E 0.01
 
