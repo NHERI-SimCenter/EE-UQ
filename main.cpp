@@ -144,13 +144,16 @@ int main(int argc, char *argv[])
     a.setStyleSheet(styleSheet);
   }
 
-  w.setStyleSheet("QComboBox {background: #FFFFFF;} \
+
+  theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
 QLineEdit {background-color: #FFFFFF;background-radius: 5px; border: 2px solid darkgray;} \
-QTabWidget::pane {background-color: #F4F4F4;}");
+QTabWidget::pane {background-color: #F4F4F4; border: 1px solid rgb(239, 239, 239);}");
 
-//QTabWidget::pane {background-color: #ECECEC;}");
 
-//  w.setStyleSheet("QComboBox {background: #FFFFFF;} QLineEdit {background: #FFFFFF}");
+//QTQTabWidget::pane{
+//                             border: 1px solid rgb(239, 239, 239);
+//                             background: rgb(239, 239, 239);
+//                         }abWidget::pane {background-color: #ECECEC;}");
 
   int res = a.exec();
 
