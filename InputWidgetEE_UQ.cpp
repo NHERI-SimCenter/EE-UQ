@@ -85,14 +85,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-#include <QHostInfo>                     "
+#include <QHostInfo>
 
-// a sttaic pointer
+// static pointer for global procedure set in constructor
 static InputWidgetEE_UQ *theApp = 0;
 
 // global procedure
 int getNumParallelTasks() {
-    theApp->getMaxNumParallelTasks();
+    return theApp->getMaxNumParallelTasks();
 }
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
