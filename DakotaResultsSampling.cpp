@@ -91,14 +91,29 @@ DakotaResultsSampling::~DakotaResultsSampling()
 
 void DakotaResultsSampling::clear(void)
 {
+  //
+  // get the tab widgets and delete them
+  //
+
     QWidget *res=tabWidget->widget(0);
     QWidget *gen=tabWidget->widget(1);
     QWidget *dat=tabWidget->widget(2);
 
-    tabWidget->clear();
     delete dat;
     delete gen;
     delete res;
+
+    tabWidget->clear();
+
+    //
+    // clear any data we have stored
+    // 
+
+    theHeadings.clear();
+    theNames.clear();
+    theMeans.clear();
+    theStdDevs.clear();
+    
 }
 
 
@@ -364,7 +379,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
-        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file in jobs archive in Data Depot"));
+        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file dakota.err in local directory or at DesignSafe"));
         return -1;
     }
 
@@ -385,7 +400,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     
     if (statisticsFound == 0) {
-      emit sendErrorMessage(tr("ERROR: Dakota Failed to finish SUCCESFULLY. Go look at your job archive on DesignSafe"));
+      emit sendErrorMessage(tr("ERROR: Dakota Failed to finish. Look in  dakota.err locally or at job archive on DesignSafe"));
       return -1;
     } else {
       emit sendErrorMessage(tr("UQ Sampling Results"));
@@ -515,6 +530,8 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         colCount++;
     } while (iss);
 
+    qDebug() << "SETTINGS: " << theHeadings;
+
     colCount = colCount-2;
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
@@ -539,7 +556,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabResults.close();
 
     if (rowCount == 0) {
-      qDebug() << "Dakota FAILED to RUN";
+      emit sendErrorMessage("Dakota FAILED to RUN Correctly");
       return -2;
     }
    // rowCount;
