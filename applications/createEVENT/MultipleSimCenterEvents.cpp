@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 	    } else {
 
 	      //
-	      // we need to go get factor from input file and add to pattern in existing object
+	      // we need to go get factor from input file  and set it in the event
 	      //
 
 	      json_t *inputEvent = json_array_get(inputEventsArray,count);
@@ -170,13 +170,16 @@ int main(int argc, char **argv)
 	      json_t *theEvent = json_array_get(events, 0);
 	      double factor  = json_number_value(json_object_get(theEvent,"factor"));
 
-	      // add factor to pattern
-	      json_t *patternsArray = json_object_get(value,"pattern");
-	      int countPattern = 0;
-	      json_t *patternValue;
-	      json_array_foreach(patternsArray, count, patternValue) {	      
-		json_object_set(patternValue,"factor",json_real(factor));
+	      /* ********************************************* KEEPING AROUND JUST IN CASE
+	      // add factor to timSeries
+	      json_t *seriesArray = json_object_get(value,"timeSeries");
+	      int countSeries = 0;
+	      json_t *seriesValue;
+	      json_array_foreach(seriesArray, count, seriesValue) {	      
+		json_object_set(seriesValue,"factor",json_real(factor));
 	      }
+	      ***************************************************************************/
+	      json_object_set(value,"factor",json_real(factor));	      
 	    }
 	    
 	  } else {
@@ -213,7 +216,6 @@ void addEvent(const char *fileName, json_t *obj) {
 
 void addEvent(const char *fileName, json_t *obj, double factor) {
 
-  std::cerr << "factor: " << factor;
   // open file and get the first event
   json_error_t error;
   json_t *rootEVENT = json_load_file(fileName, 0, &error);

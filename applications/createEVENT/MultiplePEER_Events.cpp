@@ -75,8 +75,6 @@ int main(int argc, char **argv)
 
 	json_dump_file(existingEventsArray,"DEBUG-ONE",0);   
 
-	std::cerr << "NUM EVENTS: " << numExisting;
-
 	if (numExisting > 1) {
 
 	  json_t *randomVar = json_object();
@@ -97,11 +95,9 @@ int main(int argc, char **argv)
 	
 	} else {
 
-	  std::cerr << "SINGLE START: \n";
 	  json_t *existingEvent = json_array_get(existingEventsArray,0);
 	  createSimCenterEvent(existingEvent);	  
 	  json_object_set(eventObj, "index", json_integer(0));
-	  std::cerr << "SINGLE DONE\n";
 
 	}
 
@@ -167,14 +163,12 @@ int main(int argc, char **argv)
 	      json_t *theEvent = json_array_get(events, i);
 	      const char * name = json_string_value(json_object_get(theEvent,"name"));
 	      if (strcmp(eventName, name) == 0) {
-		std::cerr << "FOUND MATCH "<< name; 
 		const char *fileName = json_string_value(json_object_get(theEvent,"fileName"));
 		addEvent(fileName, value);
 		i = json_array_size(events);
 	      }
 	    }
 	  }
-	  std::cerr << json_string_value(index);
 	  json_t *eventObj = json_object();
 	}	  
       }
@@ -210,7 +204,7 @@ int addEvent(const char *fileName, json_t *obj) {
 //  - the SimCenter Event will be written to a file given by name value
 
 int createSimCenterEvent(json_t *peerEvent) {
-  std::cerr << "createEvent\n";
+
   //
   // get name and type 
   //

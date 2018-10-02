@@ -108,7 +108,7 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 	json_t *rvName = json_object_get(theRV,"name");
 	json_t *rvValue = json_object_get(theRV,"value");
 	const char *name = json_string_value(rvName);      
-	double value = json_real_value(rvValue);      
+	double value = json_number_value(rvValue);      
 	
 	tclFile << "pset " << name << " " << value << "\n";
       }
@@ -122,7 +122,6 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
       if (NDM == 1) NDF = 1;
       if (NDM == 2) NDF = 2;
       if (NDM == 3) NDF = 3;
-      printf("NDM: %d\n",NDM);
       processedSAM = true;
     }
   }
@@ -173,16 +172,16 @@ OpenSeesPreprocessor::processMaterials(ofstream &s){
     
     if (strcmp(type,"shear") == 0) {
       int tag = json_integer_value(json_object_get(material,"name"));
-      double K0 = json_real_value(json_object_get(material,"K0"));
-      double Sy = json_real_value(json_object_get(material,"Sy"));
-      double eta = json_real_value(json_object_get(material,"eta"));
-      double C = json_real_value(json_object_get(material,"C"));
-      double gamma = json_real_value(json_object_get(material,"gamma"));
-      double alpha = json_real_value(json_object_get(material,"alpha"));
-      double beta = json_real_value(json_object_get(material,"beta"));
-      double omega = json_real_value(json_object_get(material,"omega"));
-      double eta_soft = json_real_value(json_object_get(material,"eta_soft"));
-      double a_k = json_real_value(json_object_get(material,"a_k"));
+      double K0 = json_number_value(json_object_get(material,"K0"));
+      double Sy = json_number_value(json_object_get(material,"Sy"));
+      double eta = json_number_value(json_object_get(material,"eta"));
+      double C = json_number_value(json_object_get(material,"C"));
+      double gamma = json_number_value(json_object_get(material,"gamma"));
+      double alpha = json_number_value(json_object_get(material,"alpha"));
+      double beta = json_number_value(json_object_get(material,"beta"));
+      double omega = json_number_value(json_object_get(material,"omega"));
+      double eta_soft = json_number_value(json_object_get(material,"eta_soft"));
+      double a_k = json_number_value(json_object_get(material,"a_k"));
       //s << "uniaxialMaterial Elastic " << tag << " " << K0 << "\n";
       if (K0==0)
           K0=1.0e-6;
@@ -248,13 +247,13 @@ OpenSeesPreprocessor::processNodes(ofstream &s){
     json_t *crd;
     int crdIndex;
     json_array_foreach(crds, crdIndex, crd) {
-      s << json_real_value(crd) << " " ;
+      s << json_number_value(crd) << " " ;
     }
 
     json_t *mass = json_object_get(node,"mass");
     if (mass != NULL) {
       s << "-mass ";
-      double massV = json_real_value(mass);
+      double massV = json_number_value(mass);
       for (int i=0; i<NDF; i++)
 	s << massV << " " ;
     }
@@ -314,7 +313,7 @@ OpenSeesPreprocessor::processElements(ofstream &s){
 
 int
 OpenSeesPreprocessor::processDamping(ofstream &s){
-    double damping = json_real_value(json_object_get(rootSIM,"dampingRatio"));
+    double damping = json_number_value(json_object_get(rootSIM,"dampingRatio"));
     s << "set xDamp " << damping << ";\n"
       << "set MpropSwitch 1.0;\n"
       << "set KcurrSwitch 0.0;\n"
@@ -390,7 +389,7 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
     char edpEventName[50];
     
     for (int j=0; j<numEDPs; j++) {
-      printf("EDP: %d\n",j);
+      // printf("EDP: %d\n",j);
 
       json_t *eventEDPs = json_array_get(edps, j);
       //      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
@@ -540,7 +539,6 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 
     // create analysis
     if (analysisType == 1) {
-      std::cerr << "START";
       s << "\n# Perform the analysis\n";
       json_t *fileScript = json_object_get(rootSIM,"fileName");
       if (fileScript != NULL) {
@@ -548,16 +546,11 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
       } else {
 	s << "numberer RCM\n";
 	s << "system Umfpack\n";
-      std::cerr    << "1";
-	double tol = json_real_value(json_object_get(rootSIM,"tolerance"));
-      std::cerr    << "2";
+	double tol = json_number_value(json_object_get(rootSIM,"tolerance"));
 	s << "integrator " << json_string_value(json_object_get(rootSIM,"integration")) << "\n";
-      std::cerr    << "3";
       s << "test " << json_string_value(json_object_get(rootSIM,"convergenceTest")) << " " << tol << " 20 \n";
-      std::cerr    << "4";
 	s << "algorithm " << json_string_value(json_object_get(rootSIM,"algorithm")) << "\n";
-      std::cerr    << "5";
-	s << "analysis Transient\n";
+	s << "analysis Transient -numSubLevels 2 -numSubSteps 10 \n";
 	s << "analyze " << numSteps << " " << dT << "\n";      
       }
     }
@@ -577,12 +570,12 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 
   const char *eventType = json_string_value(json_object_get(event,"type"));
 
-  std::cerr << "Processing Event type: " << eventType << "\n";
+  //  std::cerr << "Processing Event type: " << eventType << "\n";
 
   if (strcmp(eventType,"Seismic") == 0) {
     analysisType = 1;
     numSteps = json_integer_value(json_object_get(event,"numSteps"));
-    dT = json_real_value(json_object_get(event,"dT"));
+    dT = json_number_value(json_object_get(event,"dT"));
   } else
     return -1;
 
@@ -593,13 +586,13 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
   json_t *eventFactorObj = json_object_get(event,"factor");
   if (eventFactorObj != NULL) {
     if (json_is_real(eventFactorObj))
-      eventFactor = json_real_value(eventFactorObj);
+      eventFactor = json_number_value(eventFactorObj);
   }
 
   int index = 0;
   json_t *timeSeriesArray = json_object_get(event,"timeSeries");
   int numSeriesArray = json_array_size(timeSeriesArray);
-  printf("NUM SERIES: %d\n",numSeriesArray);
+  //  printf("NUM SERIES: %d\n",numSeriesArray);
   //  json_array_foreach(timeSeriesArray, index, timeSeries) {
   for (int i=0; i<numSeriesArray; i++) {
     timeSeries = json_array_get(timeSeriesArray, i);
@@ -612,10 +605,10 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 	json_t *seriesFactorObj = json_object_get(timeSeries,"factor");
 	if (seriesFactorObj != NULL) {
 	  if (json_is_real(seriesFactorObj))
-	    seriesFactor = json_real_value(seriesFactorObj);
+	    seriesFactor = json_number_value(seriesFactorObj);
 	}
 
-	double dt = json_real_value(json_object_get(timeSeries,"dT"));
+	double dt = json_number_value(json_object_get(timeSeries,"dT"));
 	json_t *data = json_object_get(timeSeries,"data");
 	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
 	s << " -values \{ ";
@@ -660,14 +653,19 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 	
 	json_t *dataV;
 	int dataIndex;
-	json_array_foreach(data, dataIndex, dataV) {
 
-	  s << json_real_value(dataV) * unitConversionFactor * eventFactor << " " ;
+	//
+	// write data to file, multiply it by conversion fcator and eventFactor
+	//
+
+	json_array_foreach(data, dataIndex, dataV) {
+	  s << json_number_value(dataV) * unitConversionFactor * eventFactor << " " ;
 	}
+
 	s << " }\n";
 	
 	string name(json_string_value(json_object_get(timeSeries,"name")));
-	printf("TIMESERIES: %s\n",name.c_str());
+	//printf("TIMESERIES: %s\n",name.c_str());
 	
 	timeSeriesList[name]=numSeries;
 	numSeries++;
@@ -677,7 +675,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
   json_t *patternArray = json_object_get(event,"pattern");
   int numPatternArray = json_array_size(patternArray);
 
-  printf("NUM SERIES: %d\n",numSeriesArray);
+  //  printf("NUM SERIES: %d\n",numSeriesArray);
   //    json_array_foreach(patternArray, index, pattern) {
   for (int i=0; i<numPatternArray; i++) {
     pattern = json_array_get(patternArray, i);
@@ -685,8 +683,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     const char *subType = json_string_value(json_object_get(pattern,"type"));        
     if (strcmp(subType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
-      
-      
+            
       int series = 0;
       string name(json_string_value(json_object_get(pattern,"timeSeries")));
       printf("%s\n",name.c_str());
@@ -722,7 +719,7 @@ OpenSeesPreprocessor:: getNode(const char * cline,const char * floor){
       const char * f = json_string_value(json_object_get(mapObject,"floor"));
       if (strcmp(f,floor) == 0) {
 	int node = json_integer_value(json_object_get(mapObject,"node"));
-	printf("cline : %s floor %s node %d\n",cline, floor, node);
+	//	printf("cline : %s floor %s node %d\n",cline, floor, node);
 	return json_integer_value(json_object_get(mapObject,"node"));
       }
     }

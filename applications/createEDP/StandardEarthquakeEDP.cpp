@@ -113,7 +113,7 @@ int main(int argc, char **argv)
       json_t *type = json_object_get(value,"type");  
       const char *eventType = json_string_value(type);
       
-      fprintf(stderr, "EventType: %s\n", eventType);
+      //      fprintf(stderr, "EventType: %s\n", eventType);
 
       if (strcmp(eventType,"Seismic") != 0) {
 	json_object_clear(rootEVENT);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
       const char *eventName = json_string_value(name);
       json_object_set(eventObj,"name",json_string(eventName));
 
-      fprintf(stderr, "EventName: %s\n", eventName);
+      // fprintf(stderr, "EventName: %s\n", eventName);
 
       //
       // create a json_array of ints indicating what dof the event patterns apply to
