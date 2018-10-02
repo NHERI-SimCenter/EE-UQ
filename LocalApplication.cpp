@@ -238,11 +238,12 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
-    emit processResults(filenameOUT, filenameTAB);
 
-    // remove the tmp directory
-    QDir tmpDIR(tmpDirectory);
-    tmpDIR.removeRecursively();
+    emit processResults(filenameOUT, filenameTAB);
+    
+    // will leave the tmp.SimCenter directory
+    //QDir tmpDIR(tmpDirectory);
+    //tmpDIR.removeRecursively();
 
     return 0;
 }
