@@ -109,6 +109,7 @@ private:
     QHBoxLayout *horizontalLayout;
     QTreeView *treeView;
     QStandardItemModel *standardModel;
+    QStandardItem *rootNode;
 
     GeneralInformationWidget *theGI;
     RandomVariableInputWidget *theRVs;
@@ -134,7 +135,6 @@ private:
     QJsonObject *jsonObjOrig;
 
     QStackedWidget *theStackedWidget;
-
     QNetworkAccessManager *manager;
 };
 

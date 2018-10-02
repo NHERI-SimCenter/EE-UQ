@@ -287,6 +287,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     // set current selection to GI
     treeView->setCurrentIndex( infoItemIdx );
+    infoItemIdx = resultsItem->index();
 
     // access a web page which will increment the usage count for this tool
     manager = new QNetworkAccessManager(this);
@@ -430,6 +431,7 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
       theResults->processResults(dakotaOut, dakotaTab);
       theRunWidget->hide();
+      treeView->setCurrentIndex(infoItemIdx);
       theStackedWidget->setCurrentIndex(4);
  }
 
