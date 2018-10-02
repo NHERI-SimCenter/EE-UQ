@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 	if ((subType != NULL) && (strcmp("MultipleSimCenterEvent",json_string_value(subType)) ==0)) {
 
 	  json_t *index = json_object_get(value,"index"); 
+
 	  if (index != NULL) {
 	    if (json_is_integer(index) == false) {
 
@@ -150,24 +151,33 @@ int main(int argc, char **argv)
 	      for (int i=0; i<json_array_size(events); i++) {
 		json_t *theEvent = json_array_get(events, i);
 		const char * name = json_string_value(json_object_get(theEvent,"name"));
-		double factor  = json_real_value(json_object_get(theEvent,"factor"));
+		json_t *factorValue = json_object_get(theEvent,"factor");
+		double factor  = json_number_value(json_object_get(theEvent,"factor"));
 		if (strcmp(eventName, name) == 0) {
-		  std::cerr << "FOUND MATCH "<< name; 
 		  const char *fileName = json_string_value(json_object_get(theEvent,"fileName"));
 		  addEvent(fileName, value, factor);
 		  i = json_array_size(events);
 		}
 	      }
 	    } else {
+
+	      //
+	      // we need to go get factor from input file and add to pattern in existing object
+	      //
+
 	      json_t *inputEvent = json_array_get(inputEventsArray,count);
 	      json_t *events = json_object_get(inputEvent,"Events");
 	      json_t *theEvent = json_array_get(events, 0);
-	      double factor  = json_real_value(json_object_get(theEvent,"factor"));
-	      json_object_set(value,"factor",json_real(factor));
-	    }
+	      double factor  = json_number_value(json_object_get(theEvent,"factor"));
 
-	    // add factor to event
-	    
+	      // add factor to pattern
+	      json_t *patternsArray = json_object_get(value,"pattern");
+	      int countPattern = 0;
+	      json_t *patternValue;
+	      json_array_foreach(patternsArray, count, patternValue) {	      
+		json_object_set(patternValue,"factor",json_real(factor));
+	      }
+	    }
 	    
 	  } else {
 	    ;
@@ -203,6 +213,7 @@ void addEvent(const char *fileName, json_t *obj) {
 
 void addEvent(const char *fileName, json_t *obj, double factor) {
 
+  std::cerr << "factor: " << factor;
   // open file and get the first event
   json_error_t error;
   json_t *rootEVENT = json_load_file(fileName, 0, &error);
