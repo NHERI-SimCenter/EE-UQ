@@ -59,6 +59,7 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
+    void setNumTasks(int numTasks);
 
 signals:
    void processResults(QString &, QString &);

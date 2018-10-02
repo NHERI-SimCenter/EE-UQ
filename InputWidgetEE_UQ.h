@@ -87,6 +87,7 @@ public:
     void onRemoteRunButtonClicked();
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
+    int getMaxNumParallelTasks();
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);

@@ -87,13 +87,25 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>                     "
 
+// a sttaic pointer
+static InputWidgetEE_UQ *theApp = 0;
+
+// global procedure
+int getNumParallelTasks() {
+    theApp->getMaxNumParallelTasks();
+}
+
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     : WorkflowAppWidget(theService, parent)
 {
+    // set static pointer for global procedure
+    theApp = this;
+
     //
     // user settings
     //
 
+    /* remove user uuid saving .. goes against what google permits
     QSettings settings("SimCenter", "uqFEM");
     QVariant savedValue = settings.value("uuid");
     QUuid uuid;
@@ -102,7 +114,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
         settings.setValue("uuid",uuid);
     } else
         uuid =savedValue.toUuid();
-
+     */
     //
     // create the various widgets
     //
@@ -302,6 +314,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     // setup parameters of request
     QString requestParams;
+    QUuid uuid = QUuid::createUuid();
     QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
     requestParams += "v=1"; // version of protocol
     requestParams += "&tid=UA-126303135-1-1"; // Google Analytics account
@@ -570,12 +583,16 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    //    QString tmpDirName = QString("tmp.SimCenter.EE-UQ.%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
     // designsafe will need a unique name
+    /* *********************************************
+    will let ParallelApplication rename dir
     QUuid uniqueName = QUuid::createUuid();
     QString strUnique = uniqueName.toString();
     strUnique = strUnique.mid(1,36);
     QString tmpDirName = QString("tmp.SimCenter") + strUnique;
+    *********************************************** */
+
+    QString tmpDirName = QString("tmp.SimCenter");
     qDebug() << "TMP_DIR: " << tmpDirName;
     QDir workDir(workingDir);
 
@@ -658,4 +675,7 @@ InputWidgetEE_UQ::loadFile(const QString fileName){
     this->inputFromJSON(jsonObj);
 }
 
-
+int
+InputWidgetEE_UQ::getMaxNumParallelTasks() {
+    return theUQ_Method->getNumParallelTasks();
+}

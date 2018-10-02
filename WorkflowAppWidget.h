@@ -46,6 +46,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class MainWindowWorkflowApp;
 class RemoteService;
 
+
 class WorkflowAppWidget : public QWidget
 {
     Q_OBJECT
@@ -63,6 +64,7 @@ public:
     virtual void onRemoteRunButtonClicked() =0;
     virtual void onRemoteGetButtonClicked() =0;
     virtual void onExitButtonClicked() =0;
+    virtual int getMaxNumParallelTasks() =0;
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);

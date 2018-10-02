@@ -52,7 +52,8 @@ class Application : public SimCenterWidget
     Q_OBJECT
 public:
     explicit Application(QWidget *parent = nullptr);
-    
+
+   virtual void setNumTasks(int numTasks);
    virtual bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
 
 signals:

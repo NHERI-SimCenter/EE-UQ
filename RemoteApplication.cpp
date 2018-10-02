@@ -57,6 +57,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
+#include <QUuid>
 
 #include <ZipUtils.h>
 
@@ -339,15 +340,27 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     // now upload files to remote local
     //
 
-    tempDirectory = tmpDirectory;
+    // rename dir so unique at DesignSafe
+    QUuid uniqueName = QUuid::createUuid();
+    QString strUnique = uniqueName.toString();
+    strUnique = strUnique.mid(1,36);
+    QString newName = QString("tmp.SimCenter") + strUnique;
 
     QDir theDirectory(tmpDirectory);
+    theDirectory.cdUp();
+    theDirectory.rename("tmp.SimCenter",newName);
+
+    tempDirectory = theDirectory.absoluteFilePath(newName);
+
+    qDebug() << "NEW TMP DIR FOR REMOTE APPLICATION: " << tempDirectory;
+
+    theDirectory.cd(newName);
     QString dirName = theDirectory.dirName();
     
     QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
     pushButton->setEnabled(false);
-    qDebug() << "EMIITING UPLOAD DIR";
-    emit uploadDirCall(tmpDirectory, remoteHomeDirPath);
+
+    emit uploadDirCall(tempDirectory, remoteHomeDirPath);
 
     return 0;
 }
@@ -414,7 +427,7 @@ RemoteApplication::uploadDirReturn(bool result)
       emit startJobCall(job);
       
       // now remove the tmp directory
-      theDirectory.removeRecursively();
+     //theDirectory.removeRecursively();
     }
 }
 
@@ -436,3 +449,10 @@ RemoteApplication::startJobReturn(QString result) {
    pushButton->setEnabled(true);
    emit successfullJobStart();
 }
+
+void
+RemoteApplication::setNumTasks(int numTasks) {
+    if (numTasks < 32)
+        numProcessorsLineEdit->setText(QString::number(numTasks));
+}
+
