@@ -322,7 +322,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
     requestParams += "&t=event";  // hit type = event others pageview, exception
     requestParams += "&an=EEUQ";   // app name
-    requestParams += "&av=1.0.0"; // app version
+    requestParams += "&av=1.0.1"; // app version
     requestParams += "&ec=EEUQ";   // event category
     requestParams += "&ea=start"; // event action
 

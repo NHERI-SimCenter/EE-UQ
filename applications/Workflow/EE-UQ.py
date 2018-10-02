@@ -126,8 +126,11 @@ def main(run_type, inputFile, applicationsRegistry):
 
                             if eventApplication in Applications['EventApplications'].keys():
                                 eventAppExe = Applications['EventApplications'].get(eventApplication)
+                                workflow_log(remoteAppDir)
+                                workflow_log(eventAppExe)
                                 eventAppExeLocal = os.path.join(localAppDir,eventAppExe)
                                 eventAppExeRemote = posixpath.join(remoteAppDir,eventAppExe)
+                                workflow_log(eventAppExeRemote)
                             else:
                                 raise WorkFlowInputError('Event application %s not in registry' % eventApplication)
 
