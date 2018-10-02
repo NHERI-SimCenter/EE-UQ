@@ -313,7 +313,6 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     templateDir.cd("templatedir");
     QString templateDIR = templateDir.absolutePath();
 
-
 #ifdef Q_OS_WIN
     templateDir.rename("workflow_driver.bat","workflow_driver");
 #endif
@@ -427,7 +426,7 @@ RemoteApplication::uploadDirReturn(bool result)
       emit startJobCall(job);
       
       // now remove the tmp directory
-     //theDirectory.removeRecursively();
+      theDirectory.removeRecursively();
     }
 }
 
