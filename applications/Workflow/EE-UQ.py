@@ -44,7 +44,8 @@ def main(run_type, inputFile, applicationsRegistry):
         with open(applicationsRegistry, 'r') as data_file:
             registryData = json.load(data_file)
             # convert all relative paths to full paths
-            relative2fullpath(registryData)
+			#This is no longer needed if we are specify the applications folder and joining the paths
+            #relative2fullpath(registryData) 
 
         A = 'Applications'
         Applications = dict()
