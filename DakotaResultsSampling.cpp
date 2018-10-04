@@ -356,6 +356,9 @@ static int mergesort(double *input, int size)
 int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
 
     this->clear();
+    mLeft = true;
+    col1 = 0;
+    col2 = 0;
 
     //
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
@@ -522,17 +525,18 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     {
         std::string subs;
         iss >> subs;
+        qDebug() << QString(subs.c_str());
         if (colCount > 1) {
-            if (subs != " ") {
+            if (subs != "" && subs != " ") {
                 theHeadings << subs.c_str();
             }
         }
         colCount++;
     } while (iss);
 
-    qDebug() << "SETTINGS: " << theHeadings;
+    qDebug() << "SETTINGS: " << theHeadings << " " << theHeadings.count();
 
-    colCount = colCount-2;
+    colCount = theHeadings.count();
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
@@ -542,6 +546,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         std::istringstream is(inputLine);
         int col=0;
         spreadsheet->insertRow(rowCount);
+        qDebug() << "RowCOUNT: " << rowCount;
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
@@ -627,6 +632,7 @@ DakotaResultsSampling::getColData(QVector<double> &data, int numRow, int col) {
 void
 DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
+    qDebug() << "onSPreadSheetCellClicked() :" << row << " " << col;
     mLeft = spreadsheet->wasLeftKeyPressed();
 
     // create a new series
@@ -642,7 +648,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
     // QScatterSeries *series;//= new QScatterSeries;
 
-    int oldCol;
+    int oldCol = 0;
     if (mLeft == true) {
         oldCol= col2;
         col2 = col;
