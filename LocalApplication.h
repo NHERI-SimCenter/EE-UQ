@@ -58,7 +58,7 @@ public:
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
 
 signals:
-    void processResults(QString , QString);
+    void processResults(QString , QString, QString);
 
 public slots:
    void onRunButtonPressed(void);

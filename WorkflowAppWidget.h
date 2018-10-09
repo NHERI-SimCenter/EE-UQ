@@ -78,7 +78,7 @@ public slots:
     //virtual void selectionChangedSlot(const QItemSelection &, const QItemSelection &) =0;
 
     virtual void setUpForApplicationRun(QString &, QString &) =0;
-    virtual void processResults(QString dakotaOut, QString dakotaTab) =0;
+    virtual void processResults(QString dakotaOut, QString dakotaTab, QString inputFile) =0;
 
     virtual void loadFile(QString filename) =0;
     void statusMessage(QString message);
