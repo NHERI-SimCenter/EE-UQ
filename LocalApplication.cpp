@@ -165,7 +165,7 @@ LocalApplication::onRunButtonPressed(void)
 //
 
 bool
-LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFile) {
+LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
     QString appDir = appDirName->text();
 
@@ -232,6 +232,13 @@ for (int i = 0; i < files.size(); i++) {
     proc->waitForStarted();
 
     //
+    // copy input file to main directory
+    // 
+
+   QString filenameIN = tmpDirectory + QDir::separator() +  QString("dakota.json");
+   QFile::copy(inputFile, filenameIN);
+
+    //
     // process the results
     //
 
@@ -239,7 +246,7 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
 
-    emit processResults(filenameOUT, filenameTAB);
+    emit processResults(filenameOUT, filenameTAB, inputFile);
     
     // will leave the tmp.SimCenter directory
     //QDir tmpDIR(tmpDirectory);

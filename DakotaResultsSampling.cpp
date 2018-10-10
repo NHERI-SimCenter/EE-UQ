@@ -353,7 +353,7 @@ static int mergesort(double *input, int size)
     }
 }
 
-int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
+int DakotaResultsSampling::processResults(QString filenameResults, QString filenameTab, QString inputFile) {
 
     this->clear();
     mLeft = true;
