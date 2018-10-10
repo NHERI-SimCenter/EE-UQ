@@ -61,7 +61,7 @@ public:
     virtual void clear(void) =0;
 
     virtual void onRunButtonClicked() =0;
-xc    virtual void onRemoteRunButtonClicked() =0;
+    virtual void onRemoteRunButtonClicked() =0;
     virtual void onRemoteGetButtonClicked() =0;
     virtual void onExitButtonClicked() =0;
     virtual int getMaxNumParallelTasks() =0;
