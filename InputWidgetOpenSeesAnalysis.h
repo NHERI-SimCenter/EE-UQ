@@ -62,6 +62,8 @@ signals:
 public slots:
    void clear(void);
    void chooseFileName(void);
+   void dampingEditingFinished();
+   void toleranceEditingFinished();
 
 
 private:
@@ -73,6 +75,9 @@ private:
 
     QLineEdit *file;
     RandomVariableInputWidget *theRandomVariableInputWidget;
+
+    QString lastDampingRatio;
+    QString lastTolerance;
 };
 
 #endif // INPUTWIDGET_OPENSEES_ANALYSIS_H
