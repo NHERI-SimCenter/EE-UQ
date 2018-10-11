@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 
   theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
 QGroupBox {font-weight: bold;}\
-QLineEdit {background-color: #FFFFFF;background-radius: 5px; border: 2px solid darkgray;} \
+QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
 QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
 
 
