@@ -61,7 +61,7 @@ public:
     virtual void clear(void) =0;
 
     virtual void onRunButtonClicked() =0;
-    virtual void onRemoteRunButtonClicked() =0;
+xc    virtual void onRemoteRunButtonClicked() =0;
     virtual void onRemoteGetButtonClicked() =0;
     virtual void onExitButtonClicked() =0;
     virtual int getMaxNumParallelTasks() =0;
@@ -78,7 +78,7 @@ public slots:
     //virtual void selectionChangedSlot(const QItemSelection &, const QItemSelection &) =0;
 
     virtual void setUpForApplicationRun(QString &, QString &) =0;
-    virtual void processResults(QString dakotaOut, QString dakotaTab) =0;
+    virtual void processResults(QString dakotaOut, QString dakotaTab, QString inputFile) =0;
 
     virtual void loadFile(QString filename) =0;
     void statusMessage(QString message);

@@ -246,6 +246,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QString appDir = localAppDirName->text();
 
+    qDebug() << "REMOTEAPP: setupDone " << tmpDirectory << " " << inputFile << " " << appDir;
     QString pySCRIPT;
 
     QDir scriptDir(appDir);
@@ -297,8 +298,8 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
             registryFile;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
+    qDebug() << "PYTHON COMMAND: " << command;
 
-    qInfo() << command;
 
 #endif
     proc->waitForStarted();
@@ -326,12 +327,13 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QString zipFile(templateDir.absoluteFilePath("templatedir.zip"));
     qDebug() << "ZIP FILE: " << zipFile;
-    qDebug() << "DIR TO REMOVE: " << templateDIR;
+    qDebug() << "DIR TO ZIP: " << templateDIR;
+    QDir tmpDir(templateDIR);
 
-    //ZipUtils::ZipFolder(templateDir, zipFile);
-    ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+    ZipUtils::ZipFolder(tmpDir, zipFile);
+    //ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
 
-    //QDir dirToRemove(templateDIR);
+    QDir dirToRemove(templateDIR);
     templateDir.cd("templatedir");
     templateDir.removeRecursively();
 
@@ -350,8 +352,6 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     theDirectory.rename("tmp.SimCenter",newName);
 
     tempDirectory = theDirectory.absoluteFilePath(newName);
-
-    qDebug() << "NEW TMP DIR FOR REMOTE APPLICATION: " << tempDirectory;
 
     theDirectory.cd(newName);
     QString dirName = theDirectory.dirName();

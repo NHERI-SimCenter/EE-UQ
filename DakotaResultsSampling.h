@@ -58,7 +58,7 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    int processResults(QString &filenameResults, QString &filenameTab);
+    int processResults(QString filenameResults, QString filenameTab, QString filenameInput);
     QWidget *createResultEDPWidget(QString &name, double first, double second, int type);
 
 signals:

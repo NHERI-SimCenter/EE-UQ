@@ -110,10 +110,10 @@ DakotaResults::inputFromJSON(QJsonObject &jsonObject)
 }
 
 int 
-DakotaResults::processResults(QString &filenameResults, QString &filenameTab) {
+DakotaResults::processResults(QString filenameResults, QString filenameTab, QString filenameInput) {
 
     if (resultWidget != 0)
-        return resultWidget->processResults(filenameResults, filenameTab);
+      return resultWidget->processResults(filenameResults, filenameTab, filenameInput);
     else {
         QMessageBox::warning(this, tr("Application"),
                              tr("BUG - No Results Set!"));
