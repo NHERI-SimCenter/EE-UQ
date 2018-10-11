@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QScrollArea>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -197,9 +198,20 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
-    QWidget *summary = new QWidget();
+    
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+
+
+
+
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+    summaryWidget->setLayout(summaryLayout);
+
+    summary->setWidget(summaryWidget);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     QJsonValue type = jsonObject["dataType"];
