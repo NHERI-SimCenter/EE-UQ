@@ -198,20 +198,9 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
-    
-    QScrollArea *summary = new QScrollArea;
-    summary->setWidgetResizable(true);
-    summary->setLineWidth(0);
-    summary->setFrameShape(QFrame::NoFrame);
-
-
-
-
     QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summaryWidget->setLayout(summaryLayout);
 
-    summary->setWidget(summaryWidget);
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     QJsonValue type = jsonObject["dataType"];
@@ -237,6 +226,17 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
+    summaryWidget->setLayout(summaryLayout);
+
+    //
+    // place widget in scrollable area
+    //
+
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
 
     //
     // into a QTextEdit place more detailed Dakota text
@@ -376,9 +376,9 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
     //
 
-    QWidget *summary = new QWidget();
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+    summaryWidget->setLayout(summaryLayout);
 
     //
     // into a QTextEdit we will place contents of Dakota more detailed output
@@ -507,6 +507,12 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
         }
     }
     summaryLayout->addStretch();
+
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
 
     // close input file
     fileResults.close();
