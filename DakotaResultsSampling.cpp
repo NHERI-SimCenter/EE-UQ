@@ -676,8 +676,12 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     }
 
     int rowCount = spreadsheet->rowCount();
+
+
     if (col1 != col2) {
+
         QScatterSeries *series = new QScatterSeries;
+        double minX, minY, maxX, maxY;
 
         QVector<double> dataX;
         QVector<double> dataY;
@@ -690,13 +694,34 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
             itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
             itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+	    
+	    double valX = dataX[i];
+	    double valY = dataY[i];
+	    if (i == 0) {
+	      minX = valX; maxX = valX; minY = valY; maxY = valY;
+	    } else {
+	      if (valX < minX) {
+		minX = valX;
+	      } else if (valX > maxX) {
+		maxX = valX;
+	      }
+	      if (valY < minY) {
+		minY = valY;
+	      } else if (valY > maxY) {
+		maxY = valY;
+	      }
+	    }
 
-            series->append(dataX[i], dataY[i]);
+            series->append(valX, valY);
         }
 
         chart->addSeries(series);
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+	axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
 
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
@@ -705,6 +730,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         chart->setAxisY(axisY, series);
 
     } else {
+
         QVector<double> dataX;
         this->getColData(dataX, rowCount, col1);
 
