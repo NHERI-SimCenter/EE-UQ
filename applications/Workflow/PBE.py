@@ -5,6 +5,8 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
+else:
+    from past.builtins import basestring
 
 import json
 import os
