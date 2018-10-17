@@ -202,7 +202,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
 
     feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
-    versionText = QString(tr("Version 1.0.1"));
+    versionText = QString(tr("Version 1.0.2"));
     citeText = QString(tr(""));
     aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
     copyrightText = QString("\

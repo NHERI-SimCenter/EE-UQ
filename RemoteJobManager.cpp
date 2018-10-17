@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDesktopWidget>
 
 #include <QMenu>
+#include <QDir>
 
 #include  <QDebug>
 class RemoteService;
@@ -333,6 +334,10 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         name1="dakota.json";
         name2="dakota.out";
         name3="dakotaTab.out";
+
+	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
+	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
+	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
 
         QStringList localFiles;
         localFiles.append(name1);

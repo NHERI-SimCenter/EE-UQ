@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QScrollArea>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -197,9 +198,9 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
-    QWidget *summary = new QWidget();
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     QJsonValue type = jsonObject["dataType"];
@@ -225,6 +226,17 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
+    summaryWidget->setLayout(summaryLayout);
+
+    //
+    // place widget in scrollable area
+    //
+
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
 
     //
     // into a QTextEdit place more detailed Dakota text
@@ -364,9 +376,9 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
     //
 
-    QWidget *summary = new QWidget();
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+    summaryWidget->setLayout(summaryLayout);
 
     //
     // into a QTextEdit we will place contents of Dakota more detailed output
@@ -495,6 +507,12 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
         }
     }
     summaryLayout->addStretch();
+
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
 
     // close input file
     fileResults.close();
@@ -658,8 +676,12 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     }
 
     int rowCount = spreadsheet->rowCount();
+
+
     if (col1 != col2) {
+
         QScatterSeries *series = new QScatterSeries;
+        double minX, minY, maxX, maxY;
 
         QVector<double> dataX;
         QVector<double> dataY;
@@ -672,13 +694,34 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
             itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
             itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+	    
+	    double valX = dataX[i];
+	    double valY = dataY[i];
+	    if (i == 0) {
+	      minX = valX; maxX = valX; minY = valY; maxY = valY;
+	    } else {
+	      if (valX < minX) {
+		minX = valX;
+	      } else if (valX > maxX) {
+		maxX = valX;
+	      }
+	      if (valY < minY) {
+		minY = valY;
+	      } else if (valY > maxY) {
+		maxY = valY;
+	      }
+	    }
 
-            series->append(dataX[i], dataY[i]);
+            series->append(valX, valY);
         }
 
         chart->addSeries(series);
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+	axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
 
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
@@ -687,6 +730,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         chart->setAxisY(axisY, series);
 
     } else {
+
         QVector<double> dataX;
         this->getColData(dataX, rowCount, col1);
 
