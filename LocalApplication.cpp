@@ -51,6 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QStringList>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -214,7 +215,10 @@ for (int i = 0; i < files.size(); i++) {
     //
 
     QProcess *proc = new QProcess();
+    QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    proc->execute("python",args);
 
+    /*
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" run ") + inputFile  + QString(" ") + registryFile;
     qDebug() << "PYTHON COMMAND: " << command;    
@@ -229,6 +233,7 @@ for (int i = 0; i < files.size(); i++) {
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
+    */
     proc->waitForStarted();
 
     //
