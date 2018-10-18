@@ -286,7 +286,10 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     //
 
     QProcess *proc = new QProcess();
+    QStringList args{pySCRIPT, "set_up",inputFile,registryFile};
+    proc->execute("python",args);
 
+    /*
 #ifdef Q_OS_WIN
     QString command = QString("python ") + pySCRIPT + QString(" ") + " set_up " + QString(" ") + inputFile  + QString(" ") + registryFile;
     qDebug() << "PYTHON COMMAND: " << command;
@@ -300,8 +303,8 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     proc->execute("bash", QStringList() << "-c" <<  command);
     qDebug() << "PYTHON COMMAND: " << command;
 
-
 #endif
+    */
     proc->waitForStarted();
 
 
