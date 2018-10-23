@@ -119,6 +119,8 @@ int main(int argc, char *argv[])
 
      w.setAbout(textAboutEE_UQ);
 
+     QString version("1.0.2");
+     w.setVersion(version);
 
   //
   // move remote interface to a thread

@@ -680,6 +680,10 @@ void MainWindowWorkflowApp::setAbout(QString &newAbout) {
     aboutText = newAbout;
 }
 
+void MainWindowWorkflowApp::setVersion(QString &newVersion) {
+    versionText = newVersion;
+}
+
 void MainWindowWorkflowApp::submitFeedback()
 {
     QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
