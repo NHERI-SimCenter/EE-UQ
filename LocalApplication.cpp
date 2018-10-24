@@ -98,7 +98,10 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
-
+    this->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
     this->workflowScript = workflowScriptName;
 }
 
@@ -214,18 +217,19 @@ for (int i = 0; i < files.size(); i++) {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+
     QProcess *proc = new QProcess();
+    // QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    // proc->execute("python",args);
+
+
+#ifdef Q_OS_WIN
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
     proc->execute("python",args);
 
-    /*
-#ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" run ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << "PYTHON COMMAND: " << command;    
-
-    proc->execute("cmd", QStringList() << "/C" << command);
-
 #else
+    // note the above not working under linux because basrc not being called so no env variables!!
+
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
@@ -233,7 +237,7 @@ for (int i = 0; i < files.size(); i++) {
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
-    */
+
     proc->waitForStarted();
 
     //

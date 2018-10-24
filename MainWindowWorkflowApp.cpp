@@ -36,7 +36,7 @@
 
 
 MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -137,6 +137,11 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     loginLayout->addWidget(passwordLineEdit,3,1);
     loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
+
+    loginWindow->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
 
     //
     // connect some signals and slots
@@ -673,6 +678,10 @@ void MainWindowWorkflowApp::about()
 
 void MainWindowWorkflowApp::setAbout(QString &newAbout) {
     aboutText = newAbout;
+}
+
+void MainWindowWorkflowApp::setVersion(QString &newVersion) {
+    versionText = newVersion;
 }
 
 void MainWindowWorkflowApp::submitFeedback()
