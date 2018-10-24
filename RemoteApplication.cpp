@@ -61,9 +61,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <ZipUtils.h>
 
-RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
+RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QWidget *parent)
 : Application(parent), theRemoteService(theService)
 {
+    workflowScriptName = name;
+    shortDirName = name.chopped(3); // remove .py
+
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
 
@@ -242,7 +245,7 @@ RemoteApplication::onRunButtonPressed(void)
 
 
 //
-// now use the applications Workflow Application EE-UQ.py  to run dakota and produce output files:
+// now use the applications Workflow Application script to run dakota and produce output files:
 //    dakota.in dakota.out dakotaTab.out dakota.err
 //
 
@@ -257,7 +260,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     QDir scriptDir(appDir);
     scriptDir.cd("applications");
     scriptDir.cd("Workflow");
-    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    pySCRIPT = scriptDir.absoluteFilePath(workflowScriptName);
     QFileInfo check_script(pySCRIPT);
     // check if file exists and if yes: Is it really a file and no directory?
     if (!check_script.exists() || !check_script.isFile()) {
@@ -387,7 +390,7 @@ RemoteApplication::uploadDirReturn(bool result)
       
       pushButton->setDisabled(true);
       
-      job["name"]=QString("EE-UQ:") + nameLineEdit->text();
+      job["name"]=shortDirName + nameLineEdit->text();
       int nodeCount = numCPU_LineEdit->text().toInt();
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;
