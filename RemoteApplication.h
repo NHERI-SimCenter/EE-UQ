@@ -54,8 +54,8 @@ class QLineEdit;
 class RemoteApplication : public Application
 {
     Q_OBJECT
-public:
-    explicit RemoteApplication(RemoteService *theRemoteService, QWidget *parent = nullptr);
+public:  
+    explicit RemoteApplication(QString name, RemoteService *theRemoteService, QWidget *parent = nullptr);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
@@ -96,6 +96,8 @@ private:
     QPushButton *pushButton;
 
     RemoteService *theRemoteService;
+    QString workflowScriptName;
+    QString shortDirName;
 };
 
 #endif // REMOTE_APPLICATION_H

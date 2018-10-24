@@ -141,9 +141,11 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 
   // process damping
   rootSIM = json_load_file(SIM, 0, &error);
-  processDamping(tclFile);
+  // do not prescribe damping for custom analysis scripts
+  json_t *fileScript = json_object_get(rootSIM,"fileName");
+  if (fileScript == NULL) processDamping(tclFile);
 
-  //
+  // 
   // process events
   //   - creates events and does analysis
   //

@@ -179,7 +179,8 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputF
     QDir scriptDir(appDir);
     scriptDir.cd("applications");
     scriptDir.cd("Workflow");
-    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    pySCRIPT = scriptDir.absoluteFilePath(workflowScript);
+   // pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
     QFileInfo check_script(pySCRIPT);
     // check if file exists and if yes: Is it really a file and no directory?
     if (!check_script.exists() || !check_script.isFile()) {
@@ -217,18 +218,19 @@ for (int i = 0; i < files.size(); i++) {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+
     QProcess *proc = new QProcess();
+    // QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    // proc->execute("python",args);
+
+
+#ifdef Q_OS_WIN
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
     proc->execute("python",args);
 
-    /*
-#ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" run ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << "PYTHON COMMAND: " << command;    
-
-    proc->execute("cmd", QStringList() << "/C" << command);
-
 #else
+    // note the above not working under linux because basrc not being called so no env variables!!
+
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
@@ -236,7 +238,7 @@ for (int i = 0; i < files.size(); i++) {
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
-    */
+
     proc->waitForStarted();
 
     //

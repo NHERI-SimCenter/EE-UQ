@@ -669,7 +669,7 @@ void MainWindowWorkflowApp::cite()
 void MainWindowWorkflowApp::about()
 {
     QMessageBox msgBox;
-    QSpacerItem *theSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(aboutText);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
@@ -678,6 +678,10 @@ void MainWindowWorkflowApp::about()
 
 void MainWindowWorkflowApp::setAbout(QString &newAbout) {
     aboutText = newAbout;
+}
+
+void MainWindowWorkflowApp::setVersion(QString &newVersion) {
+    versionText = newVersion;
 }
 
 void MainWindowWorkflowApp::submitFeedback()

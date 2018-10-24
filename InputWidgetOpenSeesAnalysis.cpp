@@ -114,7 +114,6 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
 
     QPushButton *chooseFile = new QPushButton();
     chooseFile->setText(tr("Choose"));
-    connect(chooseFile,SIGNAL(clicked()),this,SLOT(chooseFileName()));
     layout->addWidget(chooseFile, 5, 2);
 
     connect(dampingRatio,SIGNAL(editingFinished()), this, SLOT(dampingEditingFinished()));

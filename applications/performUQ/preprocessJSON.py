@@ -441,7 +441,6 @@ def parseFileForRV(fileName):
                     numRandomVariables += 1
 
                 elif (k["distribution"] == "Lognormal"):
-                    numUncertain += 1
                     lognormalUncertainName.append(k["name"])
                     lognormalUncertainMean.append(k["mean"])
                     lognormalUncertainStdDev.append(k["stdDev"])
