@@ -197,13 +197,13 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     addEvent->setMinimumWidth(75);
     addEvent->setMaximumWidth(75);
     addEvent->setText(tr("Add"));
-    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetExistingEvent()));
+    //   connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetExistingEvent()));
 
     QPushButton *removeEvent = new QPushButton();
     removeEvent->setMinimumWidth(75);
     removeEvent->setMaximumWidth(75);
     removeEvent->setText(tr("Remove"));
-    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
+    //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -246,7 +246,8 @@ void ExistingSimCenterEvents::addEvent(void)
    ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW, theExisting);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
-   connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
+
+ //  connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
 
