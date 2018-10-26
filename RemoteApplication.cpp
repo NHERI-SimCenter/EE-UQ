@@ -65,7 +65,9 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
 : Application(parent), theRemoteService(theService)
 {
     workflowScriptName = name;
-    shortDirName = name.chopped(3); // remove .py
+    shortDirName = workflowScriptName;
+    //shortDirName = name.chopped(3); // remove .py
+    shortDirName.chop(3);
 
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
