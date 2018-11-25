@@ -65,7 +65,9 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
 : Application(parent), theRemoteService(theService)
 {
     workflowScriptName = name;
-    shortDirName = name.chopped(3); // remove .py
+    shortDirName = workflowScriptName;
+    //shortDirName = name.chopped(3); // remove .py
+    shortDirName.chop(3);
 
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
@@ -331,6 +333,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QFileInfo check_workflow(templateDir.absoluteFilePath("workflow_driver"));
     if (!check_workflow.exists() || !check_workflow.isFile()) {
+        emit sendErrorMessage(("Local Falure Setting up Dakota"));
         qDebug() << "Local Failure Setting Up Dakota ";
         return false;
     }
@@ -360,8 +363,12 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QDir theDirectory(tmpDirectory);
     theDirectory.cdUp();
-    theDirectory.rename("tmp.SimCenter",newName);
+    if (theDirectory.rename("tmp.SimCenter",newName) != true) {
+        emit sendErrorMessage(QString("Could not rename directory to ") + newName);
+        return false;
+    }
 
+    qDebug() << "newName: " << newName;
     tempDirectory = theDirectory.absoluteFilePath(newName);
 
     theDirectory.cd(newName);

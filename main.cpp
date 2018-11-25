@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
   qInstallMessageHandler(customMessageOutput);
 
   // window scaling for mac
- //  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   QApplication a(argc, argv);
 

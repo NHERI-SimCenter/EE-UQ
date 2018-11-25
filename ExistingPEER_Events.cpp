@@ -354,13 +354,13 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariableInputWidget *theRV_IW, QW
     addEvent->setMinimumWidth(75);
     addEvent->setMaximumWidth(75);
     addEvent->setText(tr("Add"));
-    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetPeerEvent()));
+    //    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetPeerEvent()));
 
     QPushButton *removeEvent = new QPushButton();
     removeEvent->setMinimumWidth(75);
     removeEvent->setMaximumWidth(75);
     removeEvent->setText(tr("Remove"));
-    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
+    //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -404,7 +404,7 @@ void ExistingPEER_Events::addEvent(void)
    PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
-   connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
+   //connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
 
