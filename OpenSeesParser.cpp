@@ -71,7 +71,7 @@ OpenSeesParser::getVariables(QString inFilename)
   ifstream inFile(inFilename.toStdString());
 
   // read lines of input searching for pset using regular expression 
-  regex pset("pset[ ]+[A-Za-z0-9]+[ ]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
+  regex pset("(?!#)pset[ ]+[A-Z_a-z0-9]+[ ]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
   string line;
   while (getline(inFile, line)) {
 
@@ -108,7 +108,7 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
     ofstream outFile(outFilename.toStdString());
 
     // read lines of input searching for pset using regular expression
-    regex pset("pset[ ]+[A-Za-z0-9]+[ ]+");
+    regex pset("pset[ ]+[A-Z_a-z0-9]+[ ]+");
     string line;
     while (getline(inFile, line)) {
 
