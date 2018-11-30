@@ -612,8 +612,10 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 
 	double dt = json_number_value(json_object_get(timeSeries,"dT"));
 	json_t *data = json_object_get(timeSeries,"data");
+
 	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
 	s << " -values \{ ";
+	
 
 	//We need to check units for conversion
 	double unitConversionFactor = 1.0;
@@ -660,6 +662,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 	// write data to file, multiply it by conversion fcator and eventFactor
 	//
 
+
 	json_array_foreach(data, dataIndex, dataV) {
 	  s << json_number_value(dataV) * unitConversionFactor * eventFactor << " " ;
 	}
@@ -700,6 +703,10 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       int seriesTag = timeSeriesList[name];
       s << "pattern UniformExcitation " << numPattern << " " << dirn;
       s << " -accel " << series << "\n";
+
+      s << "set numStep " << numSteps << "\n";
+      s << "set dt " << dT << "\n";
+
       numPattern++;
     }
   }

@@ -1,3 +1,4 @@
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -71,25 +72,37 @@ OpenSeesParser::getVariables(QString inFilename)
   ifstream inFile(inFilename.toStdString());
 
   // read lines of input searching for pset using regular expression 
-  regex pset("pset[ ]+[A-Za-z0-9]+[ ]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
+  regex pset("pset[ ]+[A-Z_a-z0-9]+[ ]+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?");
   string line;
   while (getline(inFile, line)) {
 
     if (regex_search(line, pset)) {
 
-      // if found break into cmd, varName and value (ignore the rest) 
-      istringstream iss(line);
-      string cmd, varName, value;
-      iss >> cmd >> varName >> value;
+      // if comment ignore .. c++ regex cannot deal with lookahead .. ugly code results for now
+      bool commented = false;
+      std::string comment("#");
+      std::size_t foundC = line.find(comment);
+      if (foundC != std::string::npos) {
+	std::string p("pset");
+	std::size_t foundP = line.find(p);
+	if (foundC < foundP)
+	  commented = true;	    
+      }
 
-      // strip possible ; from end of value (possible if comment) line
-      regex delim(";");
-      value = regex_replace(value,delim,"");
-      
-      // add varName and value to results   
-      result.append(QString::fromStdString(varName));
-      result.append(QString::fromStdString(value));
+      if (commented == false) {
+	// if found break into cmd, varName and value (ignore the rest) 
+	istringstream iss(line);
+	string cmd, varName, value;
+	iss >> cmd >> varName >> value;
+
+	// strip possible ; from end of value (possible if comment) line
+	regex delim(";");
+	value = regex_replace(value,delim,"");
 	
+	// add varName and value to results   
+	result.append(QString::fromStdString(varName));
+	result.append(QString::fromStdString(value));
+      }	
     }
   } 
 
@@ -108,11 +121,24 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
     ofstream outFile(outFilename.toStdString());
 
     // read lines of input searching for pset using regular expression
-    regex pset("pset[ ]+[A-Za-z0-9]+[ ]+");
+    regex pset("pset[ ]+[A-Z_a-z0-9]+[ ]+");
     string line;
     while (getline(inFile, line)) {
 
         if (regex_search(line, pset)) {
+
+	  // if comment ignore .. c++ regex cannot deal with lookahead .. ugly code results for now
+	  bool commented = false;
+	  std::string comment("#");
+	  std::size_t foundC = line.find(comment);
+	  if (foundC != std::string::npos) {
+	    std::string p("pset");
+	    std::size_t foundP = line.find(p);
+	    if (foundC < foundP)
+	      commented = true;	    
+	  }
+	  
+	  if (commented == false) {
 
             // if found break into cmd, varName and value (ignore the rest)
             istringstream iss(line);
@@ -139,9 +165,10 @@ OpenSeesParser::writeFile(QString inFilename, QString outFilename, QStringList v
                 // not there, write current line
                 outFile << line << "\n";
             }
+	  }
         } else
-            // just copy line to output
-            outFile << line << "\n";
+	  // just copy line to output
+	  outFile << line << "\n";
     }
 
     // close file
