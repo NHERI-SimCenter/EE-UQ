@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_EARTHQUAKE_EVENT_H
-#define INPUTWIDGET_EARTHQUAKE_EVENT_H
+#ifndef EARTHQUAKE_EVENT_SELECTION_H
+#define EARTHQUAKE_EVENT_SELECTION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -49,12 +49,12 @@ class UserDefinedApplication;
 
 class RandomVariableInputWidget;
 
-class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
+class EarthquakeEventSelection : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetEarthquakeEvent();
+    explicit EarthquakeEventSelection(RandomVariableInputWidget *, QWidget *parent = 0);
+    ~EarthquakeEventSelection();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -81,4 +81,4 @@ private:
    RandomVariableInputWidget *theRandomVariableInputWidget;
 };
 
-#endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
+#endif // EARTHQUAKE_EVENT_SELECTION_H

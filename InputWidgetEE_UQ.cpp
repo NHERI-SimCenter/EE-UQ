@@ -50,7 +50,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QStackedWidget>
-#include <InputWidgetEarthquakeEvent.h>
+#include <EarthquakeEventSelection.h>
 #include <RunLocalWidget.h>
 #include <QProcess>
 #include <QCoreApplication>
@@ -122,7 +122,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theRVs = new RandomVariableInputWidget();
     theGI = new GeneralInformationWidget();
     theSIM = new SIM_Selection(theRVs);
-    theEvent = new InputWidgetEarthquakeEvent(theRVs);
+    theEvent = new EarthquakeEventSelection(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
     theUQ_Method = new InputWidgetSampling();
 

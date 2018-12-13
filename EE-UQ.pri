@@ -10,7 +10,7 @@ SOURCES += \
     $$PWD/MainWindowWorkflowApp.cpp \
     $$PWD/InputWidgetSampling.cpp \
     $$PWD/UniformMotionInput.cpp \
-    $$PWD/InputWidgetEarthquakeEvent.cpp \
+    $$PWD/EarthquakeEventSelection.cpp \
     $$PWD/InputWidgetOpenSees.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
     $$PWD/InputWidgetExistingEvent.cpp \
@@ -40,7 +40,7 @@ HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
     $$PWD/InputWidgetSampling.h \
     $$PWD/UniformMotionInput.h \
-    $$PWD/InputWidgetEarthquakeEvent.h \
+    $$PWD/EarthquakeEventSelection.h \
     $$PWD/InputWidgetOpenSees.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
     $$PWD/InputWidgetExistingEvent.h \

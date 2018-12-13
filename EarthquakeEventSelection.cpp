@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetEarthquakeEvent.h"
+#include "EarthquakeEventSelection.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -66,7 +66,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "SHAMotionWidget.h"
 #include <UserDefinedApplication.h>
 
-InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
+EarthquakeEventSelection::EarthquakeEventSelection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -122,14 +122,14 @@ InputWidgetEarthquakeEvent::InputWidgetEarthquakeEvent(RandomVariableInputWidget
     connect(eventSelection,SIGNAL(currentIndexChanged(QString)),this,SLOT(eventSelectionChanged(QString)));
 }
 
-InputWidgetEarthquakeEvent::~InputWidgetEarthquakeEvent()
+EarthquakeEventSelection::~EarthquakeEventSelection()
 {
 
 }
 
 
 bool
-InputWidgetEarthquakeEvent::outputToJSON(QJsonObject &jsonObject)
+EarthquakeEventSelection::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonArray eventArray;
     QJsonObject singleEventData;
@@ -142,7 +142,7 @@ InputWidgetEarthquakeEvent::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
+EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
 
     QString type;
     QJsonObject theEvent;
@@ -187,7 +187,7 @@ InputWidgetEarthquakeEvent::inputFromJSON(QJsonObject &jsonObject) {
     return false;
 }
 
-void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
+void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
 {
     //
     // switch stacked widgets depending on text
@@ -215,12 +215,12 @@ void InputWidgetEarthquakeEvent::eventSelectionChanged(const QString &arg1)
     }
 
     else {
-        qDebug() << "ERROR .. InputWidgetEarthquakeEvent selection .. type unknown: " << arg1;
+        qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;
     }
 }
 
 bool
-InputWidgetEarthquakeEvent::outputAppDataToJSON(QJsonObject &jsonObject)
+EarthquakeEventSelection::outputAppDataToJSON(QJsonObject &jsonObject)
 {
     QJsonArray eventArray;
     QJsonObject singleEventData;
@@ -233,7 +233,7 @@ InputWidgetEarthquakeEvent::outputAppDataToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetEarthquakeEvent::inputAppDataFromJSON(QJsonObject &jsonObject)
+EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
 
     QJsonObject theEvent;
@@ -257,7 +257,7 @@ InputWidgetEarthquakeEvent::inputAppDataFromJSON(QJsonObject &jsonObject)
 }
 
 bool
-InputWidgetEarthquakeEvent::copyFiles(QString &destDir) {
+EarthquakeEventSelection::copyFiles(QString &destDir) {
 
     if (theCurrentEvent != 0) {
         return  theCurrentEvent->copyFiles(destDir);
