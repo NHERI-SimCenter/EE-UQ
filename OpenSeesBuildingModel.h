@@ -1,5 +1,5 @@
-#ifndef INPUT_WIDGET_OPENSEES_H
-#define INPUT_WIDGET_OPENSEES_H
+#ifndef OPENSEES_BUILDING_MODEL_H
+#define OPENSEES_BUILDING_MODEL_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -49,12 +49,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class InputWidgetParameters;
 class RandomVariableInputWidget;
 
-class InputWidgetOpenSees : public SimCenterAppWidget
+class OpenSeesBuildingModel : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetOpenSees(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
-    ~InputWidgetOpenSees();
+    explicit OpenSeesBuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    ~OpenSeesBuildingModel();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -89,4 +89,4 @@ private:
     QStringList varNamesAndValues;
 };
 
-#endif // INPUT_WIDGET_OPENSEES_H
+#endif // OPENSEES_BUILDING_MODEL_H

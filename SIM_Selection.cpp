@@ -51,7 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 #include <InputWidgetSheetSIM.h>
-#include <InputWidgetOpenSees.h>
+#include <OpenSeesBuildingModel.h>
 
 
 SIM_Selection::SIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
@@ -229,7 +229,7 @@ void SIM_Selection::bimSelectionChanged(const QString &arg1)
 
     } else if (arg1 == QString("OpenSees") || (arg1 == QString("OpenSeesInput"))) {
         delete bimInput;
-        bimInput = new InputWidgetOpenSees(theRandomVariableInputWidget);
+        bimInput = new OpenSeesBuildingModel(theRandomVariableInputWidget);
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: BIM Input - no valid Method provided .. keeping old");

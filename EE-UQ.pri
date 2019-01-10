@@ -11,7 +11,7 @@ SOURCES += \
     $$PWD/InputWidgetSampling.cpp \
     $$PWD/UniformMotionInput.cpp \
     $$PWD/EarthquakeEventSelection.cpp \
-    $$PWD/InputWidgetOpenSees.cpp \
+    $$PWD/OpenSeesBuildingModel.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
     $$PWD/InputWidgetExistingEvent.cpp \
     $$PWD/SHAMotionWidget.cpp \
@@ -41,7 +41,7 @@ HEADERS  += \
     $$PWD/InputWidgetSampling.h \
     $$PWD/UniformMotionInput.h \
     $$PWD/EarthquakeEventSelection.h \
-    $$PWD/InputWidgetOpenSees.h \
+    $$PWD/OpenSeesBuildingModel.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
     $$PWD/InputWidgetExistingEvent.h \
     $$PWD/SHAMotionWidget.h \
