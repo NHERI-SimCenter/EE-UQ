@@ -141,125 +141,89 @@ bool StochasticMotionInput::outputToJSON(QJsonObject& jsonObject) {
 }
 
 bool StochasticMotionInput::inputFromJSON(QJsonObject& jsonObject) {
-  return true;
+  bool result = true;
+  
+  if (jsonObject.value("type").toString() == "StochasticMotion") {
+    auto app_data = jsonObject;
+    if (app_data["modelName"].toString() == "Vlachos et al. (2018)") {
+      model_selection_->setCurrentText(app_data["modelName"].toString());
+      // Delete previous entries
+      while (model_inputs_->rowCount() > 0) {
+        model_inputs_->removeRow(0);
+      }
+      QDoubleSpinBox* moment_mag = new QDoubleSpinBox();
+      QDoubleSpinBox* rupt_dist = new QDoubleSpinBox();
+      QDoubleSpinBox* vs30 = new QDoubleSpinBox();
+      QSpinBox* num_events = new QSpinBox();
+      moment_mag->setRange(0.0, std::numeric_limits<double>::infinity());
+      rupt_dist->setRange(0.0, std::numeric_limits<double>::infinity());
+      vs30->setRange(0.0, std::numeric_limits<double>::infinity());
+      num_events->setRange(1, 900000);
+
+      moment_mag->setValue(app_data["momentMagnitude"].toDouble());
+      rupt_dist->setValue(app_data["ruptureDist"].toDouble());
+      vs30->setValue(app_data["vs30"].toDouble());
+      num_events->setValue(app_data["numberOfEvents"].toInt());
+
+      model_inputs_->addRow(new QLabel(tr("Moment Magnitude")), moment_mag);
+      model_inputs_->addRow(
+          new QLabel(tr("Closest-to-Site Rupture Distance [km]")), rupt_dist);
+      model_inputs_->addRow(
+          new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
+          vs30);
+      model_inputs_->addRow(new QLabel(tr("Number of events to generate")),
+                            num_events);
+    }
+  } else {
+    result = false;
+  }
+
+  return result;
 }
 
 bool StochasticMotionInput::outputAppDataToJSON(QJsonObject& jsonObject) {
   bool result = true;
-  jsonObject["EventClassification"] = "Earthquake";
-  jsonObject["type"] = "StochasticMotion";
-  jsonObject["modelName"] = model_selection_->currentText();
+
+  jsonObject["Application"] = "StochasticGroundMotion";
+  QJsonObject app_data;
 
   if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-    jsonObject["momentMagnitude"] =
+    app_data.insert("modelName", "vlachos2018");
+    app_data.insert(
+        "momentMagnitude",
         static_cast<QDoubleSpinBox*>(
             (model_inputs_->itemAt(0, QFormLayout::FieldRole))->widget())
-            ->value();
-    jsonObject["ruptureDist"] =
+            ->value());
+    app_data.insert(
+        "ruptureDist",
         static_cast<QDoubleSpinBox*>(
             (model_inputs_->itemAt(1, QFormLayout::FieldRole))->widget())
-            ->value();
-    jsonObject["vs30"] =
+            ->value());
+    app_data.insert(
+        "vs30",
         static_cast<QDoubleSpinBox*>(
             (model_inputs_->itemAt(2, QFormLayout::FieldRole))->widget())
-            ->value();
-    jsonObject["numberOfEvents"] =
+            ->value());
+    app_data.insert(
+        "numberOfEvents",
         static_cast<QSpinBox*>(
             (model_inputs_->itemAt(3, QFormLayout::FieldRole))->widget())
-            ->value();
+            ->value());
+    jsonObject["ApplicationData"] = app_data;
+    jsonObject["EventClassification"] = "Earthquake";
   } else {
     result = false;
   }
 
   return result;
-  
-  //
-  // per API, need to add name of application to be called in AppLication
-  // and all data to be used in ApplicationDate
-  //
-
-  // jsonObject["EventClassification"] = "Earthquake";
-  // jsonObject["Application"] = "ExistingPEER_Events";
-  // QJsonObject dataObj;
-  // jsonObject["ApplicationData"] = dataObj;
-  // return true;
 }
 
 bool StochasticMotionInput::inputAppDataFromJSON(QJsonObject& jsonObject) {
-  bool result = true;
-
-  if (jsonObject.contains("Events")) {
-    if (jsonObject["Events"].isArray()) {
-      for (auto const& val : jsonObject["Events"].toArray()) {
-	if (val.toObject.contains())
-
-	  // CONTINUE HERE
-      }
-    }
-  }
-
-  
-  auto model_data = jsonObject["Events"].toArray();
-  model_selection_->setCurrentText(model_data["modelName"].toString());
-  
-  if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-    model_description_->setText(tr(
-        "This model implements the method described in Vlachos et\nal. (2018) "
-        "- \"Predictive model for site specific simulation of\nground motions "
-        "based on earthquake scenarions\""));
-
-    // Delete previous entries
-    while (model_inputs_->rowCount() > 0) {
-      model_inputs_->removeRow(0);
-    }
-
-    QDoubleSpinBox* moment_mag = new QDoubleSpinBox();
-    QDoubleSpinBox * rupt_dist = new QDoubleSpinBox();
-    QDoubleSpinBox * vs30 = new QDoubleSpinBox();
-    QSpinBox * num_events = new QSpinBox();
-    moment_mag->setRange(0.0, std::numeric_limits<double>::infinity());
-    rupt_dist->setRange(0.0, std::numeric_limits<double>::infinity());
-    vs30->setRange(0.0, std::numeric_limits<double>::infinity());
-    num_events->setRange(1, 900000);
-    
-    moment_mag->setValue(model_data["momentMagnitude"].toDouble());
-    rupt_dist->setValue(model_data["ruptureDist"].toDouble());    
-    vs30->setValue(model_data["vs30"].toDouble());    
-    num_events->setValue(model_data["numberOfEvents"].toInt());    
-
-    model_inputs_->addRow(new QLabel(tr("Moment Magnitude")), moment_mag);
-    model_inputs_->addRow(
-        new QLabel(tr("Closest-to-Site Rupture Distance [km]")), rupt_dist);
-    model_inputs_->addRow(
-        new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
-        vs30);
-    model_inputs_->addRow(new QLabel(tr("Number of events to generate")), num_events);
-  } else {
-    result = false;
-  }
-
-  return result;
-}
-
-bool StochasticMotionInput::copyFiles(QString& dirName) {
-
-  // for (int i = 0; i < theEvents.size(); i++) {
-  //   PeerEvent* theEvent = theEvents.at(i);
-  //   for (int j = 0; j < theEvent->theRecords.size(); j++) {
-  //     QString fileName = theEvents.at(i)->theRecords.at(j)->file->text();
-  //     if (this->copyFile(fileName, dirName) == false) {
-  //       emit errorMessage(QString("ERROR: copyFiles: failed to copy") +
-  //                         theEvents.at(i)->theRecords.at(j)->file->text());
-  //       return false;
-  //     }
-  //   }
-  // }
   return true;
 }
 
 void StochasticMotionInput::modelSelectionChanged(const QString& model) {
   // Switch the model description and form layout based on model selection
-
   if (model == "Vlachos et al. (2018)") {
     model_description_->setText(tr(
         "This model implements the method described in Vlachos et\nal. (2018) "

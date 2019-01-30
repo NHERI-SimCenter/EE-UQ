@@ -180,7 +180,8 @@ EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
     } else if ((type == QString("User Application")) ||
                (type == QString("UserDefinedApplication"))) {
       index = 3;
-    } else if (type == QString("Stochastic Ground Motion Model")) {
+    } else if (type == QString("Stochastic Ground Motion Model") ||
+	       type == QString("StochasticMotion")) {
       index = 4;
     } else {
       return false;

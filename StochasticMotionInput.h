@@ -94,14 +94,6 @@ class StochasticMotionInput : public SimCenterAppWidget {
    */
   bool outputAppDataToJSON(QJsonObject& rvObject) override;
 
-  /**
-   * Copy all files application generating stochastic time histories
-   * will need to run directory
-   * @param[in] dirName Directory to copy files to
-   * @return Returns true if successful, false otherwise
-   */
-  bool copyFiles(QString& dirName) override;
-
  signals:
   void sendErrorMessage(QString message);
 

@@ -59,3 +59,4 @@ MultipleSimCenterEvents
 MultiplePEER_Events
 *.pyc
 *.autosave
+debug.log
