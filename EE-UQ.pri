@@ -34,7 +34,8 @@ SOURCES += \
     $$PWD/UserDefinedApplication.cpp \
     $$PWD/SIM_Selection.cpp \
     $$PWD/InputWidgetBIM.cpp \
-    $$PWD/InputWidgetUQ.cpp
+    $$PWD/InputWidgetUQ.cpp \
+    $$PWD/StochasticMotionInput.cpp    
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -65,7 +66,8 @@ HEADERS  += \
     $$PWD/UserDefinedApplication.h \
     $$PWD/SIM_Selection.h \
     $$PWD/InputWidgetBIM.h \
-    $$PWD/InputWidgetUQ.h
+    $$PWD/InputWidgetUQ.h \
+    $$PWD/StochasticMotionInput.h    
 
 RESOURCES += \
     images.qrc \
