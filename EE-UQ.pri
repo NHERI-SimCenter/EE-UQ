@@ -12,6 +12,7 @@ SOURCES += \
     $$PWD/UniformMotionInput.cpp \
     $$PWD/EarthquakeEventSelection.cpp \
     $$PWD/OpenSeesBuildingModel.cpp \
+    $$PWD/MDOF_BuildingModel.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
     $$PWD/InputWidgetExistingEvent.cpp \
     $$PWD/SHAMotionWidget.cpp \
@@ -34,7 +35,9 @@ SOURCES += \
     $$PWD/UserDefinedApplication.cpp \
     $$PWD/SIM_Selection.cpp \
     $$PWD/InputWidgetBIM.cpp \
-    $$PWD/InputWidgetUQ.cpp
+    $$PWD/InputWidgetUQ.cpp \
+    $$PWD/Controller2D.cpp \
+    $$PWD/GlWidget2D.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -42,6 +45,7 @@ HEADERS  += \
     $$PWD/UniformMotionInput.h \
     $$PWD/EarthquakeEventSelection.h \
     $$PWD/OpenSeesBuildingModel.h \
+    $$PWD/MDOF_BuildingModel.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
     $$PWD/InputWidgetExistingEvent.h \
     $$PWD/SHAMotionWidget.h \
@@ -65,7 +69,10 @@ HEADERS  += \
     $$PWD/UserDefinedApplication.h \
     $$PWD/SIM_Selection.h \
     $$PWD/InputWidgetBIM.h \
-    $$PWD/InputWidgetUQ.h
+    $$PWD/InputWidgetUQ.h \
+    $$PWD/Controller2D.h \
+    $$PWD/GlWidget2D.h
+
 
 RESOURCES += \
     images.qrc \

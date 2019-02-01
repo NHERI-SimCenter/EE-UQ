@@ -209,6 +209,16 @@ OpenSeesPreprocessor::processMaterials(ofstream &s){
         << " " << -beta*(alpha*Sy) << " " << e3n
         << " " << gamma
         << " " << gamma << " " << 0.0 << " " << 0.0 << " " << a_k << "\n";
+
+    } else if (strcmp(type,"bilinear") == 0) {
+
+      int tag = json_integer_value(json_object_get(material,"name"));
+      double K = json_number_value(json_object_get(material,"K"));
+      double Fy = json_number_value(json_object_get(material,"Fy"));
+      double beta = json_number_value(json_object_get(material,"beta"));
+
+      s << "uniaxialMaterial Steel01 " << tag << " " << Fy << " " << K
+        << " " << beta << "\n";
     }
   }
   return 0;
@@ -305,8 +315,24 @@ OpenSeesPreprocessor::processElements(ofstream &s){
 	s << json_integer_value(nodeTag) << " " ;
       }
 
-      int matTag = json_integer_value(json_object_get(element,"uniaxial_material"));
-      s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+      json_t *matObject = json_object_get(element,"uniaxial_material");
+	int sizeMat = json_array_size(matObject);
+	if (sizeMat == 0) {
+	  int matTag = json_integer_value(matObject);
+	  s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+	} else if (sizeMat == 1) {
+	  int matTag = json_integer_value(json_array_get(matObject,0));	  
+	  s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+	} else if (sizeMat == 2) {
+	  int matTag1 = json_integer_value(json_array_get(matObject,0));	  
+	  int matTag2 = json_integer_value(json_array_get(matObject,1));	  
+	  s << "-mat " << matTag1 << " " << matTag2 << " -dir 1 2\n";
+	} else if (sizeMat == 3) {
+	  int matTag1 = json_integer_value(json_array_get(matObject,0));	  
+	  int matTag2 = json_integer_value(json_array_get(matObject,1));	  
+	  int matTag3 = json_integer_value(json_array_get(matObject,2));	  
+	  s << "-mat " << matTag1 << " " << matTag2 << " " << matTag3 << " -dir 1 2 3\n";
+	}
     }
   }
   return 0;
