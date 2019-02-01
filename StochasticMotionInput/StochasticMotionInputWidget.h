@@ -1,5 +1,5 @@
-#ifndef _STOCHASTIC_MOTION_INPUT_H
-#define _STOCHASTIC_MOTION_INPUT_H
+#ifndef _STOCHASTIC_MOTION_INPUT_WIDGET_H
+#define _STOCHASTIC_MOTION_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -47,6 +47,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Forward declarations
 class QComboBox;
 class QTextEdit;
+class RandomVariableInputWidget;
 
 /**
  * Widget for inputting parameters for stochastic earthquake time history
@@ -57,14 +58,16 @@ class StochasticMotionInput : public SimCenterAppWidget {
  public:
   /**
    * @constructor Construct new stochastic motion input widget
-   * @param[in] parent Pointer to parent widget. Defaults to nullptr.
+   * @param[in, out] random_variables Widget to store random variables to
+   * @param[in, out] parent Pointer to parent widget. Defaults to nullptr.
    */
-  explicit StochasticMotionInput(QWidget* parent = nullptr);
+  explicit StochasticMotionInput(RandomVariableInputWidget* random_variables,
+                                 QWidget* parent = nullptr);
 
   /**
    * @destructor Virtual desctructor for stochastic input widget
    */
-  ~StochasticMotionInput();
+  virtual ~StochasticMotionInput();
 
   /**
    * Instantiate stochastice motion input widger from input JSON object
@@ -111,10 +114,11 @@ class StochasticMotionInput : public SimCenterAppWidget {
   void modelSelectionChanged(const QString& model);
 
  private:
+  RandomVariableInputWidget* rv_input_widget; /**< Widget for inputting random
+                                                 variables */
   QComboBox* model_selection_; /**< Selection of ground motion model inputs */
-  QLabel* model_description_;  /**< Area for describing selected ground motion
-                                    model */
-  QFormLayout* model_inputs_; /**< Form to input stochastic model inputs */
+  StochasticMotionWidget* stochastic_model_; /**< Widget for inputting currently
+                                                selected model parameters */
 };
 
-#endif  // _STOCHASTIC_MOTION_INPUT_H
+#endif  // _STOCHASTIC_MOTION_INPUT_WIDGET_H

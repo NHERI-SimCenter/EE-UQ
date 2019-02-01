@@ -65,7 +65,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <ExistingPEER_Events.h>
 #include "SHAMotionWidget.h"
 #include <UserDefinedApplication.h>
-#include "StochasticMotionInput.h"
+#include "StochasticMotionInputWidget.h"
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)

@@ -50,9 +50,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "StochasticMotionInput.h"
 
-StochasticMotionInput::StochasticMotionInput(QWidget *parent)
-    : SimCenterAppWidget(parent)
-{
+StochasticMotionInput::StochasticMotionInput(
+    RandomVariableInputWidget* random_variables, QWidget* parent)
+    : SimCenterAppWidget(parent),
+      rv_input_widget(random_variables) {
   // Construct required layouts
   QVBoxLayout* layout = new QVBoxLayout();
   QHBoxLayout* selection_layout = new QHBoxLayout();
