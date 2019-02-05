@@ -12,7 +12,8 @@ SOURCES += \
     $$PWD/InputWidgetSampling.cpp \
     $$PWD/UniformMotionInput.cpp \
     $$PWD/EarthquakeEventSelection.cpp \
-    $$PWD/InputWidgetOpenSees.cpp \
+    $$PWD/OpenSeesBuildingModel.cpp \
+    $$PWD/MDOF_BuildingModel.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
     $$PWD/InputWidgetExistingEvent.cpp \
     $$PWD/SHAMotionWidget.cpp \
@@ -38,14 +39,17 @@ SOURCES += \
     $$PWD/InputWidgetUQ.cpp \
     $$PWD/StochasticMotionInput/StochasticMotionInputWidget.cpp \
     $$PWD/StochasticMotionInput/StochasticModelWidget.cpp \
-    $$PWD/StochasticMotionInput/VlachosEtAlModel.cpp
+    $$PWD/StochasticMotionInput/VlachosEtAlModel.cpp \
+    $$PWD/Controller2D.cpp \
+    $$PWD/GlWidget2D.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
     $$PWD/InputWidgetSampling.h \
     $$PWD/UniformMotionInput.h \
     $$PWD/EarthquakeEventSelection.h \
-    $$PWD/InputWidgetOpenSees.h \
+    $$PWD/OpenSeesBuildingModel.h \
+    $$PWD/MDOF_BuildingModel.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
     $$PWD/InputWidgetExistingEvent.h \
     $$PWD/SHAMotionWidget.h \
@@ -72,7 +76,9 @@ HEADERS  += \
     $$PWD/InputWidgetUQ.h \
     $$PWD/StochasticMotionInput/StochasticMotionInputWidget.h \
     $$PWD/StochasticMotionInput/StochasticModelWidget.h \    
-    $$PWD/StochasticMotionInput/VlachosEtAlModel.h    
+    $$PWD/StochasticMotionInput/VlachosEtAlModel.h \
+    $$PWD/Controller2D.h \
+    $$PWD/GlWidget2D.h
 
 RESOURCES += \
     images.qrc \

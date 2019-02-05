@@ -5,17 +5,20 @@ CPPFLAGS= -I /usr/local/jansson/include -I ./nanoflann/include
 LDFLAGS= 
 LDLIBS=/usr/local/jansson/lib/libjansson.a
 
-SRCS=OpenSeesInput.cpp
-OBJS=OpenSeesInput.o
+SRCS=OpenSeesInput.c MDOF_BuildingModelToSAM.cpp
+OBJS=OpenSeesInput.o MDOF_BuildingModelToSAM.o
 
-all: OpenSeesInput
+all: OpenSeesInput MDOF
 
 debug: CPPFLAGS += -DDEBUG -g
 debug: all
 
 
-OpenSeesINput: $(OBJS)
-	$(CXX) $(LDFLAGS) -o OpenSeesInput $(OBJS) $(LDLIBS)
+OpenSeesInput: $(OBJS)
+	$(CXX) $(LDFLAGS) -o OpenSeesInput  OpenSeesInput.o $(LDLIBS)
+
+MDOF: $(OBJS)
+	$(CXX) $(LDFLAGS) -o MDOF_BuildingModelToSAM MDOF_BuildingModelToSAM.o $(LDLIBS)
 
 clean:
 	$(RM) *~ \#* *.o *.out

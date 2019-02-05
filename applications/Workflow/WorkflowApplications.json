@@ -84,6 +84,11 @@
         "Name": "OpenSeesInput",
         "ExecutablePath": "applications/createSAM/OpenSeesInput",
         "ApplicationSpecificInputs": []
+      },
+      {
+        "Name": "MDOF_BuildingModel",
+        "ExecutablePath": "applications/createSAM/MDOF_BuildingModel",
+        "ApplicationSpecificInputs": []
       }
     ]
   },

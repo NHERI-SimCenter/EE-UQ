@@ -1,5 +1,5 @@
-#ifndef INPUT_WIDGET_OPENSEES_H
-#define INPUT_WIDGET_OPENSEES_H
+#ifndef MDOF_BUILDING_MODEL_H
+#define MDOF_BUILDING_MODEL_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -43,18 +43,22 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QGroupBox>
 #include <QVector>
-#include <QGridLayout>
-#include <QComboBox>
+#include <Controller2D.h>
+#include <QMap>
 
+//class QVBoxLayout;
+class QLineEdit;
 class InputWidgetParameters;
 class RandomVariableInputWidget;
+class QTableWidget;
 
-class InputWidgetOpenSees : public SimCenterAppWidget
+
+class MDOF_BuildingModel : public SimCenterAppWidget, public Controller2D
 {
     Q_OBJECT
 public:
-    explicit InputWidgetOpenSees(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
-    ~InputWidgetOpenSees();
+    explicit MDOF_BuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    ~MDOF_BuildingModel();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -62,31 +66,95 @@ public:
     bool inputAppDataFromJSON(QJsonObject &rvObject);
     bool copyFiles(QString &dirName);
 
-    QString getMainInput();
-
-     // copy main file to new filename ONLY if varNamesAndValues not empy
-    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int setFilename1(QString filnema1);
+    void draw(GlWidget2D *);
+    void getBoundary(float &height, float &width);
+    void setSelectionBoundary(float y1, float y2);
 
 signals:
 
 public slots:
    void clear(void);
-   void chooseFileName1(void);
+
+   void on_inFloors_editingFinished();
+   void on_inWeight_editingFinished();
+   void on_inHeight_editingFinished();
+   void on_inKx_editingFinished();
+   void on_inKy_editingFinished();
+   void on_inDamping_editingFinished();
+
+   // for selected floor edits
+   void on_inFloorWeight_editingFinished();
+
+   // for selected story edits
+   void on_inStoryHeight_editingFinished();
+   void on_inStoryKx_editingFinished();
+   void on_inStoryFyx_editingFinished();
+   void on_inStoryBx_editingFinished();
+   void on_inStoryKy_editingFinished();
+   void on_inStoryFyy_editingFinished();
+   void on_inStoryBy_editingFinished();
+
+   // for table editing
+   void on_theSpreadsheet_cellChanged(int row, int column);
+   void on_theSpreadsheet_cellClicked(int row, int column);
 
 private:
+    //void updateSpreadsheet();
 
-    QGridLayout *layout;
-    QWidget     *femSpecific;
+    // QVBoxLayout *inputLayout;
+    void addRandomVariable(QString &text, int numReferences = 1);
+    void removeRandmVariable(QString &text, int numReferences=1);
 
-    QString fileName1;
-    QLineEdit *file1;
-    QLineEdit *nodes;
-    QLineEdit *elements;
-    QLineEdit *ndm;
+    QLineEdit *inFloors;
+    QLineEdit *inWeight;
+    QLineEdit *inHeight;
+    QLineEdit *inKx;
+    QLineEdit *inKy;
+    QLineEdit *inDamping;
+
+    // selected values for selectedfloors and stories
+    QGroupBox *floorMassFrame;
+    QGroupBox *storyPropertiesFrame;
+    QLineEdit *inFloorWeight;
+    QLineEdit *inStoryHeight;
+    QLineEdit *inStoryKx;
+    QLineEdit *inStoryFyx;
+    QLineEdit *inStoryBx;
+    QLineEdit *inStoryKy;
+    QLineEdit *inStoryFyy;
+    QLineEdit *inStoryBy;
+
+    QString cellText;
+    bool updatingPropertiesTable;
+
+
+    QList<int> dataTypes;
+    //SpreadsheetWidget *theSpreadsheet;
+    QTableWidget *theSpreadsheet;
 
     RandomVariableInputWidget *theRandomVariableInputWidget;
     QStringList varNamesAndValues;
+
+    QMap<QString, int>randomVariables;
+
+    int    numStories;
+    double buildingH;
+
+    // possible random variables
+    QString storyH;
+    QString floorW;
+    QString Kx;
+    QString Fyx;
+    QString bx;
+    QString Ky;
+    QString Fyy;
+    QString by;
+    QString dampingRatio;
+
+    double *floorHeights;
+    double *storyHeights;
+
+    int fMinSelected, fMaxSelected, sMinSelected,sMaxSelected,floorSelected, storySelected;
 };
 
-#endif // INPUT_WIDGET_OPENSEES_H
+#endif // MDOF_BUILDING_MODEL_H
