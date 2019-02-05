@@ -89,7 +89,7 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
   seed_layout->addWidget(use_seed_);
   seed_layout->addWidget(seed_);
   seed_layout->addStretch();
-  parameters_layout->addWidget(parameters_);
+  parameters_layout->addLayout(parameters_);
   parameters_layout->addStretch();
   layout->addWidget(model_description_);
   layout->addLayout(parameters_layout);
@@ -98,11 +98,16 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
   this->setLayout(layout);
 
   // Connect slots
-  connect(moment_magnitude_, &QLineEdit::editingFinished, this, &VlachosEtAlModel::updateMoment);
-  connect(rupture_dist_, &QLineEdit::editingFinished, this, &VlachosEtAlModel::updateRuptDist);
-  connect(vs30_, &QLineEdit::editingFinished, this, &VlachosEtAlModel::updateVs30);
-  connect(use_seed_, &QRadioButton::toggled, this, &VlachosEtAlModel::provideSeed);
-  connect(seed_, &QSpinBox::valueChanged, this, &VlachosEtAlModel::updateSeed);
+  connect(moment_magnitude_, &QLineEdit::editingFinished, this,
+          &VlachosEtAlModel::updateMoment);
+  connect(rupture_dist_, &QLineEdit::editingFinished, this,
+          &VlachosEtAlModel::updateRuptDist);
+  connect(vs30_, &QLineEdit::editingFinished, this,
+          &VlachosEtAlModel::updateVs30);
+  connect(use_seed_, &QRadioButton::toggled, this,
+          &VlachosEtAlModel::provideSeed);
+  connect(seed_, QOverload<int>::of(&QSpinBox::valueChanged), this,
+          &VlachosEtAlModel::updateSeed);
 }
 
 bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
@@ -176,45 +181,51 @@ bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   return result;
 }
 
-void VlachosEtAlModel::modelSelectionChanged(const QString& model) {
-  // Switch the model description and form layout based on model selection
-  if (model == "Vlachos et al. (2018)") {
-    model_description_->setText(tr(
-        "This model implements the method described in Vlachos et\nal. (2018) "
-        "- \"Predictive model for site specific simulation of\nground motions "
-        "based on earthquake scenarions\""));
+void VlachosEtAlModel::updateMoment(const QString& moment) {
+  bool conversion_check;
+  double moment_mag = moment.toDouble(&conversion_check);
+  moment_magnitude_->setText(moment);
 
-    // Delete previous entries
-    while (model_inputs_->rowCount() > 0) {
-      model_inputs_->removeRow(0);
-    }
-
-    QDoubleSpinBox * moment_mag = new QDoubleSpinBox();
-    QDoubleSpinBox * rupt_dist = new QDoubleSpinBox();
-    QDoubleSpinBox * vs30 = new QDoubleSpinBox();
-    QSpinBox * num_events = new QSpinBox();
-    moment_mag->setRange(0.0, std::numeric_limits<double>::infinity());
-    rupt_dist->setRange(0.0, std::numeric_limits<double>::infinity());
-    vs30->setRange(0.0, std::numeric_limits<double>::infinity());
-    num_events->setRange(1, 900000);
-
-    model_inputs_->addRow(new QLabel(tr("Moment Magnitude")), moment_mag);
-    model_inputs_->addRow(
-        new QLabel(tr("Closest-to-Site Rupture Distance [km]")), rupt_dist);
-    model_inputs_->addRow(
-        new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
-        vs30);
-    model_inputs_->addRow(new QLabel(tr("Number of events to generate")), num_events);    
-  } else if (model == "Testing") {
-    model_description_->setText(tr("This is a test"));
-    
-    // Delete previous entries
-    while (model_inputs_->rowCount() > 0) {
-      model_inputs_->removeRow(0);
-    }    
-  } else {
-    qDebug() << "ERROR: In VlachosEtAlModel::modelSelectionChanged: "
-                "Unknown selection: "
-             << model << "\n";
+  // Check if moment magnitude is a random variable
+  if (!conversion_check) {
+    QStringList random_var{moment, "7.0"};
+    rv_input_widget_->addConstantRVs(random_var);    
   }
+}
+
+void VlachosEtAlModel::updateRuptDist(const QString& rupt_dist) {
+  bool conversion_check;
+  double rupture_dist = rupt_dist.toDouble(&conversion_check);
+  rupture_dist_->setText(rupt_dist);
+
+  // Check if moment magnitude is a random variable
+  if (!conversion_check) {
+    QStringList random_var{rupt_dist, "200.0"};
+    rv_input_widget_->addConstantRVs(random_var);    
+  }  
+}
+
+void VlachosEtAlModel::updateVs30(const QString& vs30) {
+  bool conversion_check;
+  double vs30_value = vs30.toDouble(&conversion_check);
+  vs30_->setText(vs30);
+
+  // Check if moment magnitude is a random variable
+  if (!conversion_check) {
+    QStringList random_var{vs30, "500.0"};
+    rv_input_widget_->addConstantRVs(random_var);    
+  }
+}
+
+void VlachosEtAlModel::provideSeed(const bool& checked) {
+  if (checked) {
+    seed_->setEnabled(true);
+  } else {
+    seed_->setEnabled(false);
+    seed_->setValue(500);
+  }
+}
+
+void VlachosEtAlModel::updateSeed(int seed_val) {
+  seed_->setValue(seed_val);
 }

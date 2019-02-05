@@ -2,7 +2,8 @@
 #message($$_PRO_FILE_PWD_)
 #message($$PWD)
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD \
+    $$PWD/StochasticMotionInput
 
 INCLUDEPATH += "../EE-UQ"
 
@@ -35,7 +36,9 @@ SOURCES += \
     $$PWD/SIM_Selection.cpp \
     $$PWD/InputWidgetBIM.cpp \
     $$PWD/InputWidgetUQ.cpp \
-    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.cpp    
+    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.cpp \
+    $$PWD/StochasticMotionInput/StochasticModelWidget.cpp \
+    $$PWD/StochasticMotionInput/VlachosEtAlModel.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -67,7 +70,9 @@ HEADERS  += \
     $$PWD/SIM_Selection.h \
     $$PWD/InputWidgetBIM.h \
     $$PWD/InputWidgetUQ.h \
-    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.h    
+    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.h \
+    $$PWD/StochasticMotionInput/StochasticModelWidget.h \    
+    $$PWD/StochasticMotionInput/VlachosEtAlModel.h    
 
 RESOURCES += \
     images.qrc \

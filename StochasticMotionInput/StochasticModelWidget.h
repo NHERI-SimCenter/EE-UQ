@@ -62,13 +62,13 @@ class StochasticModelWidget : public SimCenterWidget {
    * @param[in, out] random_variables Widget to store random variables to
    * @param[in, out] parent Pointer to parent widget. Defaults to nullptr.
    */
-  explicit StochasticMotionInput(RandomVariableInputWidget* random_variables,
+  explicit StochasticModelWidget(RandomVariableInputWidget* random_variables,
                                  QWidget* parent = nullptr);
 
   /**
    * @destructor Virtual desctructor for stochastic model input widget
    */
-  virtual ~StochasticMotionInput() {};
+  virtual ~StochasticModelWidget() {};
 
   /**
    * Instantiate stochastic motion input widget from input JSON object

@@ -42,6 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
+#include <QRadioButton>
 #include <QSpinBox>
 #include <QString>
 #include <QWidget>
@@ -54,6 +55,7 @@ class QFormLayout;
 class QJsonObject;
 class QLabel;
 class QLineEdit;
+class QRadioButton;
 class QSpinBox;
 class QString;
 class QWidget;
@@ -117,7 +119,7 @@ class VlachosEtAlModel : public StochasticModelWidget {
    * line edit value has changed
    * @param[in] vs30 Current value for Vs30 in line edit
    */
-  void updateVs30(const QString& magnitude);
+  void updateVs30(const QString& vs30);
 
   /**
    * Update ability to provide seed based on changed status of radio button
@@ -129,7 +131,7 @@ class VlachosEtAlModel : public StochasticModelWidget {
    * Update value of seed when new value entered
    * @param[in] seed_val Current value for seed
    */
-  void updateSeed(const int& seed_val);
+  void updateSeed(int seed_val);
     
  protected:
   QLabel* model_description_; /**< Brief description of model indicating relevant

@@ -41,12 +41,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RandomVariableInputWidget.h>
 #include "StochasticModelWidget.h"
 
-StochasticMotionInput::StochasticMotionInput(
+StochasticModelWidget::StochasticModelWidget(
     RandomVariableInputWidget* random_variables, QWidget* parent)
-    : SimCenterAppWidget(parent),
-      rv_input_widget(random_variables)
+    : SimCenterWidget(parent),
+      rv_input_widget_(random_variables)
 {}
 
-void StochasticMotionInput::errorMessage(QString message) {
+void StochasticModelWidget::errorMessage(QString message) {
   emit sendErrorMessage(message);
 }

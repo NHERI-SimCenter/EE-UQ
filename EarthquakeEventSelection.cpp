@@ -118,14 +118,15 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariableInputWidget *th
     theStackedWidget->addWidget(theUserDefinedApplication);
 
     // Adding stochastic ground motion model widget
-    theStochasticMotionWidget = new StochasticMotionInput();
+    theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariableInputWidget);
     theStackedWidget->addWidget(theStochasticMotionWidget);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
     theCurrentEvent=theExistingEvents;
 
-    connect(eventSelection,SIGNAL(currentIndexChanged(QString)),this,SLOT(eventSelectionChanged(QString)));
+    connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this,
+            SLOT(eventSelectionChanged(QString)));
 }
 
 EarthquakeEventSelection::~EarthquakeEventSelection()
