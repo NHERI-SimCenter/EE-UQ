@@ -189,7 +189,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     // some of above widgets are inside some tabbed widgets
     //
 
-    theBIM = new InputWidgetBIM(theGI, theSIM);
+   // theBIM = new InputWidgetBIM(theGI, theSIM);
     theUQ = new InputWidgetUQ(theUQ_Method,theRVs);
 
     //
@@ -218,6 +218,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //QStandardItem *giItem    = new QStandardItem("GEN");
     //
 
+     QStandardItem *giItem = new QStandardItem("GI");
     QStandardItem *bimItem = new QStandardItem("BIM");
     QStandardItem *evtItem = new QStandardItem("EVT");
     QStandardItem *uqItem   = new QStandardItem("UQ");
@@ -226,6 +227,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     QStandardItem *resultsItem = new QStandardItem("RES");
 
     //building up the hierarchy of the model
+    rootNode->appendRow(giItem);
     rootNode->appendRow(bimItem);
     rootNode->appendRow(evtItem);
     rootNode->appendRow(femItem);
@@ -275,7 +277,8 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     theStackedWidget = new QStackedWidget();
-    theStackedWidget->addWidget(theBIM);
+    theStackedWidget->addWidget(theGI);
+    theStackedWidget->addWidget(theSIM);
     theStackedWidget->addWidget(theEvent);
     theStackedWidget->addWidget(theAnalysis);
     theStackedWidget->addWidget(theUQ);
@@ -347,18 +350,20 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
     const QModelIndex index = treeView->selectionModel()->currentIndex();
     QString selectedText = index.data(Qt::DisplayRole).toString();
 
-    if (selectedText == "BIM")
+    if (selectedText == "GI")
         theStackedWidget->setCurrentIndex(0);
-    else if (selectedText == "EVT")
+    if (selectedText == "BIM")
         theStackedWidget->setCurrentIndex(1);
-    else if (selectedText == "FEM")
+    else if (selectedText == "EVT")
         theStackedWidget->setCurrentIndex(2);
-    else if (selectedText == "UQ")
+    else if (selectedText == "FEM")
         theStackedWidget->setCurrentIndex(3);
+    else if (selectedText == "UQ")
+        theStackedWidget->setCurrentIndex(4);
     // else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(4);
+        theStackedWidget->setCurrentIndex(5);
 }
 
 
