@@ -62,6 +62,7 @@ using namespace std;
 #include <SpreadsheetWidget.h>
 #include <GlWidget2D.h>
 #include <QHeaderView>
+#include <RandomVariable.h>
 
 #include <math.h>
 
@@ -151,6 +152,7 @@ createTextEntry(QString text,
                 QString toolTip,
                 QGridLayout *theLayout,
                 int row,
+                int col =0,
                 int minL=100,
                 int maxL=100,
                 QString *unitText =0,
@@ -166,9 +168,8 @@ createTextEntry(QString text,
     res->setMaximumWidth(maxL);
     //res->setValidator(new QDoubleValidator);
 
-    theLayout->addWidget(entryLabel,row,0);
-    theLayout->addWidget(res,row,1);
-
+    theLayout->addWidget(entryLabel,row,col);
+    theLayout->addWidget(res,row,col+1);
 
     if (unitText != 0) {
         QLabel *unitLabel = new QLabel();
@@ -176,7 +177,7 @@ createTextEntry(QString text,
         unitLabel->setMinimumWidth(40);
         unitLabel->setMaximumWidth(50);
         //entryLayout->addWidget(unitLabel);
-        theLayout->addWidget(unitLabel, row,2);
+        theLayout->addWidget(unitLabel, row,col+2);
     }
 
     if (!toolTip.isEmpty()) {
@@ -195,8 +196,8 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVaria
     floorSelected(-1),storySelected(-1)
 {
     numStories = 0; // originally set to 0, so that when setnumStories text later no seg fault
-    buildingW = "144";
-    buildingH = 120;
+    floorW = "144";
+    storyH = "144";
     Kx = "100.0";
     Fyx = "10.0";
     bx = "0.1";
@@ -229,24 +230,24 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVaria
     //Building information
     QGroupBox* mainProperties = new QGroupBox("Building Information");
     QGridLayout *mainPropertiesLayout = new QGridLayout();
-    inFloors = createTextEntry(tr("Number Floors"), tr("number of floors or stories in building"),mainPropertiesLayout, 0, 100, 100, &blank);
-    inWeight = createTextEntry(tr("Building Weight"), tr("total building weight, each floor will have a weight given by weight/ number of floors"), mainPropertiesLayout, 1, 100, 100, &kips);
-    inHeight = createTextEntry(tr("Building Height"), tr("total height of building in inches, each floor will have a height given by total height / number of floors"),mainPropertiesLayout, 2, 100, 100, &inch);
-    inKx = createTextEntry(tr("Story Stiffness X dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 100, 100, &kipsInch);
-    inKy = createTextEntry(tr("Story Stiffness Y dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 4, 100, 100, &kipsInch);
-    inDamping = createTextEntry(tr("Damping Ratio"),tr("for each mode of vibraation a number that specifies how quickly the structure stops vibrating in that mode"), mainPropertiesLayout, 5, 100, 100, &percent);
+    inFloors = createTextEntry(tr("Number Floors"), tr("number of floors or stories in building"),mainPropertiesLayout, 0, 0, 100, 100, &blank);
+    inWeight = createTextEntry(tr("Floor Weights"), tr("total building weight, each floor will have a weight given by weight/ number of floors"), mainPropertiesLayout, 1, 0, 100, 100, &kips);
+    inHeight = createTextEntry(tr("Story Heights"), tr("total height of building in inches, each floor will have a height given by total height / number of floors"),mainPropertiesLayout, 2, 0, 100, 100, &inch);
+    inKx = createTextEntry(tr("Story Stiffness X dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 0, 100, 100, &kipsInch);
+    inKy = createTextEntry(tr("Story Stiffness Y dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 4, 100, 100, &kipsInch);
+    inDamping = createTextEntry(tr("Damping Ratio"),tr("for each mode of vibraation a number that specifies how quickly the structure stops vibrating in that mode"), mainPropertiesLayout, 4, 0, 100, 100, &percent);
 
     inFloors->setValidator(new QIntValidator);
     //inWeight->setValidator(new QDoubleValidator);
-    inHeight->setValidator(new QDoubleValidator);
+    //inHeight->setValidator(new QDoubleValidator);
 
     //inKx->setValidator(new QDoubleValidator);
     //inKy->setValidator(new QDoubleValidator);
     //inDamping->setValidator(new QDoubleValidator);
 
     inFloors->setText(QString::number(1));
-    inWeight->setText(buildingW);
-    inHeight->setText(QString::number(buildingH));
+    inWeight->setText(floorW);
+    inHeight->setText(storyH);
     inKx->setText(Kx);
     inKy->setText(Ky);
     inDamping->setText(dampingRatio);
@@ -267,7 +268,7 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVaria
 
     floorMassFrame = new QGroupBox("Selected Floor Weights");
     QGridLayout *floorMassFrameLayout = new QGridLayout();
-    inFloorWeight = createTextEntry(tr("Floor Weight"), tr("individual floor weight, will change total weight if edit"),floorMassFrameLayout,0,100, 100, &kips);
+    inFloorWeight = createTextEntry(tr("Floor Weight"), tr("individual floor weight, will change total weight if edit"),floorMassFrameLayout,0,0, 100, 100, &kips);
     floorMassFrame->setLayout(floorMassFrameLayout);
     inputLayout->addWidget(floorMassFrame);
     floorMassFrame->setVisible(false);
@@ -281,13 +282,13 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVaria
     storyPropertiesFrame = new QGroupBox("Selected Story Properties");
     storyPropertiesFrame->setObjectName(QString::fromUtf8("storyPropertiesFrame"));
     QGridLayout *storyPropertiesFrameLayout = new QGridLayout();
-    inStoryHeight = createTextEntry(tr("Story Height"), tr("for stories selected sets story height, effects overall height if edited"), storyPropertiesFrameLayout,0,100,100,&inch);
-    inStoryKx = createTextEntry(tr("Stiffness X dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,100,100,&kipsInch);
-    inStoryFyx = createTextEntry(tr("Yield Strength X dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,100,100,&kips);
-    inStoryBx = createTextEntry(tr("Hardening Ratio X dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3);
-    inStoryKy = createTextEntry(tr("Stiffness Y dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,4,100,100,&kipsInch);
-    inStoryFyy = createTextEntry(tr("Yield Strength Y dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,5,100,100,&kips);
-    inStoryBy = createTextEntry(tr("Hardening Ratio Y dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,6);
+    inStoryHeight = createTextEntry(tr("Story Height"), tr("for stories selected sets story height, effects overall height if edited"), storyPropertiesFrameLayout,0,0,100,100,&inch);
+    inStoryKx = createTextEntry(tr("Stiffness X dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,0, 100,100,&kipsInch);
+    inStoryFyx = createTextEntry(tr("Yield Strength X dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,0, 100,100,&kips);
+    inStoryBx = createTextEntry(tr("Hardening Ratio X dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3, 0);
+    inStoryKy = createTextEntry(tr("Stiffness Y dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,3, 100,100,&kipsInch);
+    inStoryFyy = createTextEntry(tr("Yield Strength Y dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,3, 100,100,&kips);
+    inStoryBy = createTextEntry(tr("Hardening Ratio Y dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3, 3);
 
     storyPropertiesFrame->setLayout(storyPropertiesFrameLayout);
     storyPropertiesFrame->setLayout(storyPropertiesFrameLayout);
@@ -342,7 +343,6 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVaria
     layout->addStretch();
     this->setLayout(layout);
 
-    qDebug() << "calling inFloorEditing";
     this->on_inFloors_editingFinished();
 
 }
@@ -386,6 +386,15 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
         floorHeights = new double[numStories+1];
         storyHeights = new double[numStories];
 
+        // remove random variables
+        QMap<QString, int>::iterator i;
+        QStringList rvs;
+        for (i = randomVariables.begin(); i != randomVariables.end(); ++i)
+            rvs << i.key();
+        theRandomVariableInputWidget->removeRandomVariables(rvs);
+
+        randomVariables.clear();
+
         //this->updateSpreadsheet();
         theSpreadsheet->clear();
         theSpreadsheet->setColumnCount(9);
@@ -396,18 +405,14 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
 
         QStringList headings;
         headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("zeta");
-        theSpreadsheet->setHorizontalHeaderLabels(headings);
 
-        // determine floor weights (only if building weight not RV)
-        QString floorWeightText = "";
-        buildingW = inWeight->text();
+        // determine floor weights (only if building weight not RV);
+        floorW = inWeight->text();
         bool ok;
-        double textToDoubleW = buildingW.toDouble(&ok);
-        if (ok == true) {
-            double buildingWeight = textToDoubleW;
-            double floorW = buildingWeight/(numStories);
-            floorWeightText = QString::number(floorW);
-        }
+        double storyHeightToDouble = storyH.toDouble(&ok);
+        if (ok == false)
+            storyHeightToDouble = 1.0;
+        buildingH = storyHeightToDouble * numStories;
 
         // determine floor and story heights
         for (int i=0; i<numStories; i++) {
@@ -420,12 +425,13 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
         //
         // create spreadsheet entries
         //
+
+        double value = 0.;
         updatingPropertiesTable = true;
         for (int i=0; i<numStories; i++) {
 
             QTableWidgetItem *item;
-            item = new QTableWidgetItem("3");
-            qDebug() << "4.1.1 " << floorWeightText << " " << item->text();
+            item = new QTableWidgetItem(floorW);
             item->setToolTip(QString("weight of floor " + QString::number(i+1)));
             theSpreadsheet->setItem(i,0, item);
 
@@ -460,11 +466,19 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
             item = new QTableWidgetItem(dampingRatio);
             item->setToolTip(QString("damping ratio of mode " + QString::number(i+1)));
             theSpreadsheet->setItem(i,8, item);
-
         }
 
-        theSpreadsheet->resizeRowsToContents();
-        theSpreadsheet->resizeColumnsToContents();
+        value = Kx.toDouble(&ok);
+        if (!ok) {
+             this->addRandomVariable(Kx,numStories);
+         }
+
+       // theSpreadsheet->resizeRowsToContents();
+       // theSpreadsheet->resizeColumnsToContents();
+        theSpreadsheet->setHorizontalHeaderLabels(headings);
+        theSpreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+        theSpreadsheet->verticalHeader()->setVisible(false);
 
         updatingPropertiesTable = false;
 
@@ -473,7 +487,6 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
     }
 
     if (theView != 0) {
-        qDebug() << "UPDATING VIEW";
         this->draw(theView);
         theView->update();
     }
@@ -484,20 +497,41 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
 void
 MDOF_BuildingModel::on_inWeight_editingFinished()
 {
-    buildingW =  inWeight->text();
-    bool ok;
-    double textToDoubleW = buildingW.toDouble(&ok);
+    QString text =  inWeight->text();
 
-    // determine floor weights (only if building weight not RV aka is an actual number)
-    QString floorWeightText = "";
-    if (ok == true) {
-        double floorW = textToDoubleW/(1*numStories);
-        floorWeightText = QString::number(floorW);
+    // if null, use old
+    if (text.isNull()) {
+        inWeight->setText(floorW);
+        return;
     }
+
+    // set new Kx value
+    floorW = text;
+
+    //
+    // update spreadsheet column with new value
+    //
+
+    bool ok;
     updatingPropertiesTable = true;
     for (int i=0; i<numStories; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,0);
-        item->setText(floorWeightText);
+
+        QString oldText = item->text();
+        if (oldText != text) {
+             // if old text not double, it was a random variable need to remove it
+            double value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add as RV
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            // set new text
+            item->setText(text);
+        }
     }
     updatingPropertiesTable = false;
 }
@@ -505,21 +539,46 @@ MDOF_BuildingModel::on_inWeight_editingFinished()
 void
 MDOF_BuildingModel::on_inHeight_editingFinished()
 {
-    QString textH =  inHeight->text();
-    if (textH.isNull())
+    QString text =  inHeight->text();
+    qDebug() << "inHeight: " << text;
+
+    if (text.isNull()) {
+        inHeight->setText(storyH);
         return;
-
-    double textToDoubleH = textH.toDouble();
-    if (textToDoubleH != buildingH) {
-        buildingH = textToDoubleH;
-
-        for (int i=0; i<numStories; i++) {
-            floorHeights[i] = i*buildingH/(1.*numStories);
-            storyHeights[i] = buildingH/(1.*numStories);
-        }
-        floorHeights[numStories] = buildingH;
     }
-    //this->updateSpreadsheet();
+
+    storyH = text;
+
+    bool ok;
+    double storyHeight = text.toDouble(&ok);
+    if (ok != true)
+        storyHeight = 100.0;
+    updatingPropertiesTable = true;
+    buildingH = numStories * storyHeight;
+    for (int i=0; i<numStories; i++) {
+        QTableWidgetItem *item = theSpreadsheet->item(i,1);
+        QString oldText=item->text();
+        bool okOld;
+        double value = oldText.toDouble(&okOld);
+        if (okOld != true) {
+            this->removeRandmVariable(oldText);
+        }
+        if (ok != true) {
+            this->addRandomVariable(text);
+        }
+        item->setText(text);
+        floorHeights[i] = i*storyHeight;
+        storyHeights[i] = storyHeight;
+    }
+    floorHeights[numStories] = buildingH;
+
+
+    if (theView != 0) {
+        this->draw(theView);
+        theView->update();
+    }
+
+    updatingPropertiesTable = false;
 }
 
 
@@ -527,13 +586,42 @@ void
 MDOF_BuildingModel::on_inKx_editingFinished()
 {
     QString text =  inKx->text();
-    if (text.isNull())
+
+    // if null, use old
+    if (text.isNull()) {
+        inKx->setText(Kx);
         return;
+    }
+
+    // set new Kx value
+    Kx = text;
+
+    //
+    // update spreadsheet column with new value
+    //
+
+    bool ok;
     updatingPropertiesTable = true;
     for (int i=0; i<numStories; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,2);
-        item->setText(text);
+
+        QString oldText = item->text();
+        if (oldText != text) {
+             // if old text not double, it was a random variable need to remove it
+            double value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add as RV
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            // set new text
+            item->setText(text);
+        }
     }
+
     updatingPropertiesTable = false;
 }
 
@@ -541,12 +629,40 @@ void
 MDOF_BuildingModel::on_inKy_editingFinished()
 {
     QString text =  inKy->text();
-    if (text.isNull())
+
+    // if null, use old
+    if (text.isNull()) {
+        inKy->setText(Ky);
         return;
+    }
+
+    // set new Kx value
+    Ky = text;
+
+    //
+    // update spreadsheet column with new value
+    //
+
+    bool ok;
     updatingPropertiesTable = true;
     for (int i=0; i<numStories; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,5);
-        item->setText(text);
+
+        QString oldText = item->text();
+        if (oldText != text) {
+             // if old text not double, it was a random variable need to remove it
+            double value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add as RV
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            // set new text
+            item->setText(text);
+        }
     }
     updatingPropertiesTable = false;
 }
@@ -555,13 +671,40 @@ void
 MDOF_BuildingModel::on_inDamping_editingFinished()
 {
     QString text =  inDamping->text();
-    if (text.isNull())
-        return;
 
+    // if null, use old
+    if (text.isNull()) {
+        inDamping->setText(dampingRatio);
+        return;
+    }
+
+    // set new Kx value
+    dampingRatio = text;
+
+    //
+    // update spreadsheet column with new value
+    //
+
+    bool ok;
     updatingPropertiesTable = true;
     for (int i=0; i<numStories; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,8);
-        item->setText(text);
+
+        QString oldText = item->text();
+        if (oldText != text) {
+             // if old text not double, it was a random variable need to remove it
+            double value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add as RV
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            // set new text
+            item->setText(text);
+        }
     }
     updatingPropertiesTable = false;
 }
@@ -592,6 +735,7 @@ void MDOF_BuildingModel::on_inFloorWeight_editingFinished()
 
 void MDOF_BuildingModel::on_inStoryHeight_editingFinished()
 {
+
     if (updatingPropertiesTable == true)
         return;
 
@@ -641,119 +785,252 @@ void MDOF_BuildingModel::on_inStoryHeight_editingFinished()
 
 void MDOF_BuildingModel::on_inStoryKx_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryKx->text();
+
     if (text.isNull())
         return;
 
-    double textToDouble = text.toDouble();
-    bool needReset = false;
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,2);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
+
     updatingPropertiesTable = false;
 }
 
 void MDOF_BuildingModel::on_inStoryFyx_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryFyx->text();
+
     if (text.isNull())
         return;
+
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
-    double textToDouble = text.toDouble();
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,3);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
+
     updatingPropertiesTable = false;
 }
 
 void MDOF_BuildingModel::on_inStoryBx_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryBx->text();
+
     if (text.isNull())
         return;
+
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
-    double textToDouble = text.toDouble();
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,4);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
+
     updatingPropertiesTable = false;
 }
 
 void MDOF_BuildingModel::on_inStoryKy_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryKy->text();
+
     if (text.isNull())
         return;
+
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
-    double textToDouble = text.toDouble();
-    bool needReset = false;
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,5);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
+
     updatingPropertiesTable = false;
-    //inStoryFy->setFocus();
-    // if (needReset == true)
-    //    this->updateSpreadsheet();
 }
 
 void MDOF_BuildingModel::on_inStoryFyy_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryFyy->text();
+
     if (text.isNull())
         return;
+
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,6);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
-    updatingPropertiesTable = false;
 }
 
 void MDOF_BuildingModel::on_inStoryBy_editingFinished()
 {
-    if (updatingPropertiesTable == true)
+    if (sMinSelected == -1 || sMaxSelected == -1)
         return;
 
     QString text =  inStoryBy->text();
+
     if (text.isNull())
         return;
+
+    //
+    // loop over selected entries, changing values in spreadsheet and adding/removing random variables as needed
+    //
+
+    bool ok;
+    double value;
     updatingPropertiesTable = true;
-    double textToDouble = text.toDouble();
+
     for (int i=sMinSelected; i<=sMaxSelected; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,7);
-        item->setText(text);
+        QString oldText = item->text();
+
+        if (oldText != text) {
+            // if old text not double, remove random Variable
+            value = oldText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(oldText);
+            }
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
+            item->setText(text);
+        }
     }
-    updatingPropertiesTable = false;
 }
 
 
 
 void MDOF_BuildingModel::on_theSpreadsheet_cellClicked(int row, int column)
 {
+    QTableWidgetItem *item = theSpreadsheet->item(row,column);
+    cellText = item->text();
+
     if (column == 0) {
         floorSelected = row+1;
         storySelected = -1;
     }
+
     else if (column > 0 && column < 8) {
         storySelected = row;
         floorSelected = -1;
@@ -761,6 +1038,7 @@ void MDOF_BuildingModel::on_theSpreadsheet_cellClicked(int row, int column)
         storySelected = -1;
         floorSelected = -1;
     }
+
     fMinSelected = -1;
     fMaxSelected = -1;
     sMinSelected = -1;
@@ -770,127 +1048,34 @@ void MDOF_BuildingModel::on_theSpreadsheet_cellClicked(int row, int column)
     theView->update();
 }
 
-/*
-void
-MDOF_BuildingModel::updateSpreadsheet() {
-
-    if (theSpreadsheet == 0)
-        return;
-
-    //
-    // mark spreadsheet as being updated so a chane to cells do not cause recursive calls
-    //
-
-    updatingPropertiesTable = true;
-
-    qDebug() << "updateSpreadsheet: numStories: " << numStories;
-
-    theSpreadsheet->clear();
-    theSpreadsheet->setColumnCount(9);
-    theSpreadsheet->setRowCount(numStories);
-
-    // theSpreadsheet->horizontalHeader()->setStretchLastSection(true);// horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    //theSpreadsheet->setFixedWidth(344);
-
-    QStringList headings;
-    headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("zeta");
-    theSpreadsheet->setHorizontalHeaderLabels(headings);
-
-    for (int i=0; i<numStories; i++) {
-
-        QTableWidgetItem *item;
-
-
-        QTableWidgetItem *item1 = new QTableWidgetItem(QString().setNum(weights[i]));
-        item1->setToolTip(QString("weight of floor " + QString::number(i+1)));
-        theSpreadsheet->setItem(i,0, item1);
-
-        item = new QTableWidgetItem(QString().setNum(storyHeights[i]));
-        item->setToolTip(QString("height of story " + QString::number(i+1)));
-        theSpreadsheet->setItem(i,1,item);
-
-        item = new QTableWidgetItem(QString().setNum(kx[i]));
-        item->setToolTip(QString("initial stiffness of story " + QString::number(i+1) + " in x dirn"));
-        theSpreadsheet->setItem(i,2,item);
-
-        item = new QTableWidgetItem(QString().setNum(fyx[i]));
-        item->setToolTip(QString("yield strength of story " + QString::number(i+1) + " in x dirn"));
-        theSpreadsheet->setItem(i,3,item);
-
-        item = new QTableWidgetItem(QString().setNum(bx[i]));
-        item->setToolTip(QString("hardening ratio of story " + QString::number(i+1) + " in x dirn"));
-        theSpreadsheet->setItem(i,4, item);
-
-        item = new QTableWidgetItem(QString().setNum(ky[i]));
-        item->setToolTip(QString("initial stiffness of story " + QString::number(i+1)) + " in y dirn");
-        theSpreadsheet->setItem(i,5,item);
-
-        item = new QTableWidgetItem(QString().setNum(fyy[i]));
-        item->setToolTip(QString("yield strength of story " + QString::number(i+1) + " in y dirn"));
-        theSpreadsheet->setItem(i,6,item);
-
-        item = new QTableWidgetItem(QString().setNum(by[i]));
-        item->setToolTip(QString("hardening ratio of story " + QString::number(i+1) + " in y dirn"));
-        theSpreadsheet->setItem(i,7, item);
-
-        item = new QTableWidgetItem(QString().setNum(zeta[i]));
-        item->setToolTip(QString("damping ratio of mode " + QString::number(i+1)));
-        theSpreadsheet->setItem(i,8, item);
-
-    }
-
-    theSpreadsheet->resizeRowsToContents();
-    theSpreadsheet->resizeColumnsToContents();
-
-    updatingPropertiesTable = false;
-
-    floorSelected = -1;
-    storySelected = -1;
-}
-*/
 
 void MDOF_BuildingModel::on_theSpreadsheet_cellChanged(int row, int column)
 {
     if (updatingPropertiesTable == false) {
 
-        QString text = theSpreadsheet->item(row,column)->text();
+        QTableWidgetItem *item = theSpreadsheet->item(row,column);
+        QString text = item->text();
+
         bool ok;
         double textToDouble = text.toDouble(&ok);
         double buildingWeight = 0;
-        if (column == 0) {
 
-            // if a double value, set buildingWeight if all entries in column 0 are doubles
-            if (ok == true) {
-                for (int i=0; i<numStories; i++) {
-                    QTableWidgetItem *floorI = theSpreadsheet->item(i,0);
-                    QString text = floorI->text();
-                    textToDouble = text.toDouble(&ok);
-                    if (ok == false) {
-                        i = numStories;
-                    } else {
-                        buildingWeight += textToDouble;
-                    }
-                }
+        if (cellText != text) {
+            bool ok;
+            // if old text not double, remove random Variable
+            double value = cellText.toDouble(&ok);
+            if (!ok) {
+                this->removeRandmVariable(cellText);
             }
-            // if still 0, all are
-            if (ok == true)
-                inWeight->setText(QString::number(buildingWeight));
-
-        } else if (column  == 1) {
-            if (storyHeights[row] == textToDouble)
-                return;
-
-            storyHeights[row] = textToDouble;
-            for (int i=row; i<numStories; i++)
-                floorHeights[i+1] = floorHeights[i]+storyHeights[i];
-            buildingH = floorHeights[numStories];
-            inHeight->setText(QString::number(buildingH));
+            // if new text not double, add random variable
+            value = text.toDouble(&ok);
+            if (!ok) {
+                this->addRandomVariable(text);
+            }
         }
-
-        // this->updateSpreadsheet();
     }
-    updatingPropertiesTable = true;
 }
+
 
 void MDOF_BuildingModel::clear(void)
 {
@@ -983,13 +1168,10 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
         storyHeights = new double[numStories];
     }
 
-
    readLineEditRV(jsonObject,"weight", inWeight);
    readLineEditRV(jsonObject,"height", inHeight);
    readLineEditRV(jsonObject,"Kx", inKx);
    readLineEditRV(jsonObject,"Ky", inKy);
-
-
 
    theSpreadsheet->clear();
    theSpreadsheet->setColumnCount(9);
@@ -1086,12 +1268,10 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
     updatingPropertiesTable = false;
 
     if (theView != 0) {
-        qDebug() << "UPDATING VIEW";
         this->draw(theView);
         theView->update();
     }
-    this->draw(theView);
-    theView->update();
+
 
     return true;
 }
@@ -1216,7 +1396,6 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
          sMinSelected = -1;
          sMaxSelected = -1;
 
-
      } else if (fMinSelected == fMaxSelected && fMinSelected != -1) {
 
          floorMassFrame->setVisible(true);
@@ -1255,4 +1434,33 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
      theView->update();
      return;
  }
- \
+
+ void
+ MDOF_BuildingModel::addRandomVariable(QString &text, int numReferences) {
+     if (randomVariables.contains(text)) {
+         randomVariables[text] = randomVariables[text]+numReferences;
+         qDebug() << "adding RV: " << text << " number" << randomVariables[text];
+     } else {
+         randomVariables[text] = numReferences;
+         RandomVariable *theRV = new RandomVariable(QString("Uncertain"), text);
+         theRandomVariableInputWidget->addRandomVariable(theRV);
+         qDebug() << "ADDING RV: " << text << " number" << randomVariables[text];
+     }
+ }
+
+ void
+ MDOF_BuildingModel::removeRandmVariable(QString &text, int numReferences) {
+     if (randomVariables.contains(text)) {
+         randomVariables[text] = randomVariables[text]-numReferences;
+         qDebug() << "removing RV: " << text << " number" << randomVariables[text];
+         if (randomVariables[text] < 1) {
+             QStringList rvsToRemove; rvsToRemove << text;
+             theRandomVariableInputWidget->removeRandomVariables(rvsToRemove);
+             qDebug() << "REMOVING RV: " << text << " number" << randomVariables[text];
+             randomVariables.remove(text);
+         }
+     } else {
+         qDebug() << "MDOF_BuildingModel - reomveRandomVariable:: no random variable with name " << text;
+     }
+
+ }

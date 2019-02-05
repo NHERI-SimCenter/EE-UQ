@@ -44,6 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QGroupBox>
 #include <QVector>
 #include <Controller2D.h>
+#include <QMap>
 
 //class QVBoxLayout;
 class QLineEdit;
@@ -100,7 +101,10 @@ public slots:
 private:
     //void updateSpreadsheet();
 
-  //  QVBoxLayout *inputLayout;
+    // QVBoxLayout *inputLayout;
+    void addRandomVariable(QString &text, int numReferences = 1);
+    void removeRandmVariable(QString &text, int numReferences=1);
+
     QLineEdit *inFloors;
     QLineEdit *inWeight;
     QLineEdit *inHeight;
@@ -120,6 +124,7 @@ private:
     QLineEdit *inStoryFyy;
     QLineEdit *inStoryBy;
 
+    QString cellText;
     bool updatingPropertiesTable;
 
 
@@ -130,11 +135,14 @@ private:
     RandomVariableInputWidget *theRandomVariableInputWidget;
     QStringList varNamesAndValues;
 
+    QMap<QString, int>randomVariables;
+
     int    numStories;
     double buildingH;
 
     // possible random variables
-    QString buildingW;
+    QString storyH;
+    QString floorW;
     QString Kx;
     QString Fyx;
     QString bx;
