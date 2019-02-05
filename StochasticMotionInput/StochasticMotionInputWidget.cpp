@@ -59,18 +59,22 @@ StochasticMotionInputWidget::StochasticMotionInputWidget(
       rv_input_widget_(random_variables) {
   // Construct required layouts
   QVBoxLayout* layout = new QVBoxLayout();
-
+  QHBoxLayout* model_layout = new QHBoxLayout();
+  QHBoxLayout* parameters_layout = new QHBoxLayout();
+  
   // Create label and add items to combo box for model selection 
   QLabel* selection_label = new QLabel(tr("Stochastic Loading Model"));
   model_selection_ = new QComboBox();
   model_selection_->addItem(tr("Vlachos et al. (2018)"));
-  model_selection_->addItem(tr("Testing"));
-
   stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
   
   // Add widgets to layouts and layouts to this
-  layout->addWidget(model_selection_);
-  layout->addWidget(stochastic_model_);
+  model_layout->addWidget(model_selection_);
+  model_layout->addStretch();
+  parameters_layout->addWidget(stochastic_model_);
+  parameters_layout->addStretch();
+  layout->addLayout(model_layout);
+  layout->addLayout(parameters_layout);
   layout->addStretch();
   this->setLayout(layout);
 
@@ -78,9 +82,6 @@ StochasticMotionInputWidget::StochasticMotionInputWidget(
   connect(model_selection_,
           QOverload<const QString&>::of(&QComboBox::currentIndexChanged), this,
           &StochasticMotionInputWidget::modelSelectionChanged);
-
-  // connect(model_selection_, SIGNAL(currentIndexChanged(QString)), this,
-  //         SLOT(modelSelectionChanged(QString)));
 }
 
 
@@ -203,8 +204,6 @@ void StochasticMotionInputWidget::modelSelectionChanged(const QString& model) {
   // Switch the model description and form layout based on model selection
   if (model == "Vlachos et al. (2018)") {
     stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
-  } else if (model == "Testing") {
-    stochastic_model_->sendErrorMessage("\nTHIS WOULD BE CALLED TO CREATE NEW MOTION INPUT");
   } else {
     qDebug() << "ERROR: In StochasticMotionInputWidget::modelSelectionChanged: "
                 "Unknown selection: "

@@ -62,9 +62,12 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
   rupture_dist_ = new QLineEdit();
   vs30_ = new QLineEdit();
   seed_ = new QSpinBox();
+  seed_->setMinimum(1);
+  seed_->setMaximum(2147483647);
+  seed_->setValue(500);  
   seed_->setEnabled(false);
   use_seed_ = new QRadioButton("Provide seed value");
-  use_seed_->setEnabled(false);
+  use_seed_->setChecked(false);
   parameters_ = new QFormLayout();
   parameters_->addRow(new QLabel(tr("Moment Magnitude")), moment_magnitude_);
   parameters_->addRow(new QLabel(tr("Closest-to-Site Rupture Distance [km]")),
@@ -106,8 +109,8 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
           &VlachosEtAlModel::updateVs30);
   connect(use_seed_, &QRadioButton::toggled, this,
           &VlachosEtAlModel::provideSeed);
-  connect(seed_, QOverload<int>::of(&QSpinBox::valueChanged), this,
-          &VlachosEtAlModel::updateSeed);
+  // connect(seed_, QOverload<int>::of(&QSpinBox::valueChanged), this,
+  //         &VlachosEtAlModel::updateSeed);
 }
 
 bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
@@ -181,38 +184,35 @@ bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   return result;
 }
 
-void VlachosEtAlModel::updateMoment(const QString& moment) {
+void VlachosEtAlModel::updateMoment() {
   bool conversion_check;
-  double moment_mag = moment.toDouble(&conversion_check);
-  moment_magnitude_->setText(moment);
+  double moment_mag = moment_magnitude_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
-    QStringList random_var{moment, "7.0"};
-    rv_input_widget_->addConstantRVs(random_var);    
+    QStringList random_var{moment_magnitude_->text(), "7.0"};
+    rv_input_widget_->addConstantRVs(random_var);
   }
 }
 
-void VlachosEtAlModel::updateRuptDist(const QString& rupt_dist) {
+void VlachosEtAlModel::updateRuptDist() {
   bool conversion_check;
-  double rupture_dist = rupt_dist.toDouble(&conversion_check);
-  rupture_dist_->setText(rupt_dist);
+  double rupture_dist = rupture_dist_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
-    QStringList random_var{rupt_dist, "200.0"};
+    QStringList random_var{rupture_dist_->text(), "200.0"};
     rv_input_widget_->addConstantRVs(random_var);    
   }  
 }
 
-void VlachosEtAlModel::updateVs30(const QString& vs30) {
+void VlachosEtAlModel::updateVs30() {
   bool conversion_check;
-  double vs30_value = vs30.toDouble(&conversion_check);
-  vs30_->setText(vs30);
+  double vs30_value = vs30_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
-    QStringList random_var{vs30, "500.0"};
+    QStringList random_var{vs30_->text(), "500.0"};
     rv_input_widget_->addConstantRVs(random_var);    
   }
 }
@@ -226,6 +226,6 @@ void VlachosEtAlModel::provideSeed(const bool& checked) {
   }
 }
 
-void VlachosEtAlModel::updateSeed(int seed_val) {
-  seed_->setValue(seed_val);
-}
+// void VlachosEtAlModel::updateSeed(int seed_val) {
+//   seed_->setValue(seed_val);
+// }

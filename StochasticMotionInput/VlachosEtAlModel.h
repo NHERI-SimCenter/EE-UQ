@@ -97,29 +97,23 @@ class VlachosEtAlModel : public StochasticModelWidget {
 
  public slots:
   /**
-   * Emit error message displaing input message
-   * @param[in] message String containg error message to emit
-   */
-  virtual void errorMessage(QString message);
-
-  /**
    * Update moment magnitude when line edit value has changed
    * @param[in] magnitude Current value for moment magnitude in line edit
    */
-  void updateMoment(const QString& magnitude);
+  void updateMoment();
 
   /**
    * Update rupture distance when line edit value has changed
    * @param[in] rupt_dist Current value for rupture distance in line edit
    */
-  void updateRuptDist(const QString& rupt_dist);
+  void updateRuptDist();
 
   /**
    * Update average shear-wave velocity for the upper 30-m depth (Vs30) when
    * line edit value has changed
    * @param[in] vs30 Current value for Vs30 in line edit
    */
-  void updateVs30(const QString& vs30);
+  void updateVs30();
 
   /**
    * Update ability to provide seed based on changed status of radio button
@@ -127,11 +121,11 @@ class VlachosEtAlModel : public StochasticModelWidget {
    */
   void provideSeed(const bool& checked);
 
-  /**
-   * Update value of seed when new value entered
-   * @param[in] seed_val Current value for seed
-   */
-  void updateSeed(int seed_val);
+  /* /\** */
+  /*  * Update value of seed when new value entered */
+  /*  * @param[in] seed_val Current value for seed */
+  /*  *\/ */
+  /* void updateSeed(int seed_val); */
     
  protected:
   QLabel* model_description_; /**< Brief description of model indicating relevant
