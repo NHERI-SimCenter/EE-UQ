@@ -1,5 +1,5 @@
-#ifndef INPUTWIDGET_EARTHQUAKE_EVENT_H
-#define INPUTWIDGET_EARTHQUAKE_EVENT_H
+#ifndef OPENSEES_BUILDING_MODEL_H
+#define OPENSEES_BUILDING_MODEL_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -43,42 +43,50 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QGroupBox>
 #include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
+#include <QGridLayout>
+#include <QComboBox>
 
-class RandomVariableInputWidget;
+class InputWidgetParameters;
+class RandomVariablesContainer;
 
-class InputWidgetEarthquakeEvent : public  SimCenterAppWidget
+class OpenSeesBuildingModel : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetEarthquakeEvent(RandomVariableInputWidget *, QWidget *parent = 0);
-    ~InputWidgetEarthquakeEvent();
+    explicit OpenSeesBuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
+    ~OpenSeesBuildingModel();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
+    bool copyFiles(QString &dirName);
+
+    QString getMainInput();
+
+     // copy main file to new filename ONLY if varNamesAndValues not empy
+    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
+    int setFilename1(QString filnema1);
 
 signals:
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
+   void clear(void);
+   void chooseFileName1(void);
 
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
 
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
+    QGridLayout *layout;
+    QWidget     *femSpecific;
 
+    QString fileName1;
+    QLineEdit *file1;
+    QLineEdit *nodes;
+    QLineEdit *elements;
+    QLineEdit *ndm;
 
-   RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
+    QStringList varNamesAndValues;
 };
 
-#endif // INPUTWIDGET_EARTHQUAKE_EVENT_H
+#endif // OPENSEES_BUILDING_MODEL_H

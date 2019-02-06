@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ExistingPEER_Events.h"
 #include <InputWidgetExistingEvent.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 #include <QSpinBox>
 #include <QPushButton>
@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QScrollArea>
 
-PeerRecord::PeerRecord(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+PeerRecord::PeerRecord(RandomVariablesContainer *theRV_IW, QWidget *parent)
 :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
@@ -189,7 +189,7 @@ PeerRecord::inputFromJSON(QJsonObject &jsonObject) {
 }
 
 
-PeerEvent::PeerEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+PeerEvent::PeerEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
     :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QGroupBox *boxWidget = new QGroupBox;
@@ -336,7 +336,7 @@ PeerEvent::onRemoveRecord(bool) {
     }
 }
 
-ExistingPEER_Events::ExistingPEER_Events(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+ExistingPEER_Events::ExistingPEER_Events(RandomVariablesContainer *theRV_IW, QWidget *parent)
     : SimCenterAppWidget(parent), theRandVariableIW(theRV_IW)
 {
     verticalLayout = new QVBoxLayout();
@@ -354,13 +354,13 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariableInputWidget *theRV_IW, QW
     addEvent->setMinimumWidth(75);
     addEvent->setMaximumWidth(75);
     addEvent->setText(tr("Add"));
-    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetPeerEvent()));
+    //    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetPeerEvent()));
 
     QPushButton *removeEvent = new QPushButton();
     removeEvent->setMinimumWidth(75);
     removeEvent->setMaximumWidth(75);
     removeEvent->setText(tr("Remove"));
-    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
+    //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -404,7 +404,7 @@ void ExistingPEER_Events::addEvent(void)
    PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
-   connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
+   //connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
 

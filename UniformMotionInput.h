@@ -7,14 +7,14 @@ class QComboBox;
 class QPushButton;
 class EarthquakeRecord;
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class UniformMotionInput : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
 
-    explicit UniformMotionInput(RandomVariableInputWidget *, SimCenterWidget *parent = nullptr);
+    explicit UniformMotionInput(RandomVariablesContainer *, SimCenterWidget *parent = nullptr);
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputToJSON(QJsonObject &rvObject);
     QString getApplicationName(void);
@@ -32,7 +32,7 @@ signals:
 public slots:
 
 private:
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
 
 };
 

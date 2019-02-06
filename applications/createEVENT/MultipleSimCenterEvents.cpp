@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 	if ((subType != NULL) && (strcmp("MultipleSimCenterEvent",json_string_value(subType)) ==0)) {
 
 	  json_t *index = json_object_get(value,"index"); 
+
 	  if (index != NULL) {
 	    if (json_is_integer(index) == false) {
 
@@ -150,24 +151,36 @@ int main(int argc, char **argv)
 	      for (int i=0; i<json_array_size(events); i++) {
 		json_t *theEvent = json_array_get(events, i);
 		const char * name = json_string_value(json_object_get(theEvent,"name"));
-		double factor  = json_real_value(json_object_get(theEvent,"factor"));
+		json_t *factorValue = json_object_get(theEvent,"factor");
+		double factor  = json_number_value(json_object_get(theEvent,"factor"));
 		if (strcmp(eventName, name) == 0) {
-		  std::cerr << "FOUND MATCH "<< name; 
 		  const char *fileName = json_string_value(json_object_get(theEvent,"fileName"));
 		  addEvent(fileName, value, factor);
 		  i = json_array_size(events);
 		}
 	      }
 	    } else {
+
+	      //
+	      // we need to go get factor from input file  and set it in the event
+	      //
+
 	      json_t *inputEvent = json_array_get(inputEventsArray,count);
 	      json_t *events = json_object_get(inputEvent,"Events");
 	      json_t *theEvent = json_array_get(events, 0);
-	      double factor  = json_real_value(json_object_get(theEvent,"factor"));
-	      json_object_set(value,"factor",json_real(factor));
-	    }
+	      double factor  = json_number_value(json_object_get(theEvent,"factor"));
 
-	    // add factor to event
-	    
+	      /* ********************************************* KEEPING AROUND JUST IN CASE
+	      // add factor to timSeries
+	      json_t *seriesArray = json_object_get(value,"timeSeries");
+	      int countSeries = 0;
+	      json_t *seriesValue;
+	      json_array_foreach(seriesArray, count, seriesValue) {	      
+		json_object_set(seriesValue,"factor",json_real(factor));
+	      }
+	      ***************************************************************************/
+	      json_object_set(value,"factor",json_real(factor));	      
+	    }
 	    
 	  } else {
 	    ;

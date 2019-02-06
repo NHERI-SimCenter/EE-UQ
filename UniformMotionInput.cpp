@@ -15,8 +15,8 @@
 
 #include "EarthquakeRecord.h"
 
-UniformMotionInput::UniformMotionInput(RandomVariableInputWidget *theRandomVariableIW, SimCenterWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+UniformMotionInput::UniformMotionInput(RandomVariablesContainer *theRandomVariableIW, SimCenterWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     QGridLayout *inputMotionLayout = new QGridLayout();
     QLabel *entryLabel = new QLabel();

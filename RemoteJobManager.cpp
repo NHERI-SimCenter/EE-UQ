@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDesktopWidget>
 
 #include <QMenu>
+#include <QDir>
 
 #include  <QDebug>
 class RemoteService;
@@ -334,6 +335,10 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         name2="dakota.out";
         name3="dakotaTab.out";
 
+	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
+	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
+	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
+
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
@@ -368,7 +373,7 @@ RemoteJobManager::downloadFilesReturn(bool result)
 
     if (result == true) {
       emit loadFile(name1);
-      emit processResults(name2, name3);
+      emit processResults(name2, name3, name1);
       this->hide();
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");

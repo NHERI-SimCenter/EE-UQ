@@ -58,6 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QScrollArea>
 
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
@@ -91,14 +92,29 @@ DakotaResultsSampling::~DakotaResultsSampling()
 
 void DakotaResultsSampling::clear(void)
 {
+  //
+  // get the tab widgets and delete them
+  //
+
     QWidget *res=tabWidget->widget(0);
     QWidget *gen=tabWidget->widget(1);
     QWidget *dat=tabWidget->widget(2);
 
-    tabWidget->clear();
     delete dat;
     delete gen;
     delete res;
+
+    tabWidget->clear();
+
+    //
+    // clear any data we have stored
+    // 
+
+    theHeadings.clear();
+    theNames.clear();
+    theMeans.clear();
+    theStdDevs.clear();
+    
 }
 
 
@@ -182,9 +198,9 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // create a summary widget in which place basic output (name, mean, stdDev)
     //
 
-    QWidget *summary = new QWidget();
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+
 
     QJsonArray edpArray = jsonObject["summary"].toArray();
     QJsonValue type = jsonObject["dataType"];
@@ -210,6 +226,17 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
         summaryLayout->addWidget(theWidget);
     }
     summaryLayout->addStretch();
+    summaryWidget->setLayout(summaryLayout);
+
+    //
+    // place widget in scrollable area
+    //
+
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
 
     //
     // into a QTextEdit place more detailed Dakota text
@@ -338,17 +365,20 @@ static int mergesort(double *input, int size)
     }
 }
 
-int DakotaResultsSampling::processResults(QString &filenameResults, QString &filenameTab) {
+int DakotaResultsSampling::processResults(QString filenameResults, QString filenameTab, QString inputFile) {
 
     this->clear();
+    mLeft = true;
+    col1 = 0;
+    col2 = 0;
 
     //
     // get a Qwidget ready to place summary data, the EDP name, mean, stdDev into
     //
 
-    QWidget *summary = new QWidget();
+    QWidget *summaryWidget = new QWidget();
     QVBoxLayout *summaryLayout = new QVBoxLayout();
-    summary->setLayout(summaryLayout);
+    summaryWidget->setLayout(summaryLayout);
 
     //
     // into a QTextEdit we will place contents of Dakota more detailed output
@@ -364,7 +394,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
 
     std::ifstream fileResults(filenameResults.toStdString().c_str());
     if (!fileResults.is_open()) {
-        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file in jobs archive in Data Depot"));
+        emit sendErrorMessage( QString("Could not open file: ") + filenameResults + QString(" Dakota did not start. Check error file dakota.err in local directory or at DesignSafe"));
         return -1;
     }
 
@@ -385,7 +415,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     
     if (statisticsFound == 0) {
-      emit sendErrorMessage(tr("ERROR: Dakota Failed to finish SUCCESFULLY. Go look at your job archive on DesignSafe"));
+      emit sendErrorMessage(tr("ERROR: Dakota Failed to finish. Look in  dakota.err locally or at job archive on DesignSafe"));
       return -1;
     } else {
       emit sendErrorMessage(tr("UQ Sampling Results"));
@@ -478,6 +508,12 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     }
     summaryLayout->addStretch();
 
+    QScrollArea *summary = new QScrollArea;
+    summary->setWidgetResizable(true);
+    summary->setLineWidth(0);
+    summary->setFrameShape(QFrame::NoFrame);
+    summary->setWidget(summaryWidget);
+
     // close input file
     fileResults.close();
 
@@ -507,15 +543,18 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     {
         std::string subs;
         iss >> subs;
+        qDebug() << QString(subs.c_str());
         if (colCount > 1) {
-            if (subs != " ") {
+            if (subs != "" && subs != " ") {
                 theHeadings << subs.c_str();
             }
         }
         colCount++;
     } while (iss);
 
-    colCount = colCount-2;
+    qDebug() << "SETTINGS: " << theHeadings << " " << theHeadings.count();
+
+    colCount = theHeadings.count();
     spreadsheet->setColumnCount(colCount);
     spreadsheet->setHorizontalHeaderLabels(theHeadings);
 
@@ -525,6 +564,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
         std::istringstream is(inputLine);
         int col=0;
         spreadsheet->insertRow(rowCount);
+        qDebug() << "RowCOUNT: " << rowCount;
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
@@ -539,7 +579,7 @@ int DakotaResultsSampling::processResults(QString &filenameResults, QString &fil
     tabResults.close();
 
     if (rowCount == 0) {
-      qDebug() << "Dakota FAILED to RUN";
+      emit sendErrorMessage("Dakota FAILED to RUN Correctly");
       return -2;
     }
    // rowCount;
@@ -610,6 +650,7 @@ DakotaResultsSampling::getColData(QVector<double> &data, int numRow, int col) {
 void
 DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 {
+    qDebug() << "onSPreadSheetCellClicked() :" << row << " " << col;
     mLeft = spreadsheet->wasLeftKeyPressed();
 
     // create a new series
@@ -625,7 +666,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
 
     // QScatterSeries *series;//= new QScatterSeries;
 
-    int oldCol;
+    int oldCol = 0;
     if (mLeft == true) {
         oldCol= col2;
         col2 = col;
@@ -635,8 +676,12 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
     }
 
     int rowCount = spreadsheet->rowCount();
+
+
     if (col1 != col2) {
+
         QScatterSeries *series = new QScatterSeries;
+        double minX, minY, maxX, maxY;
 
         QVector<double> dataX;
         QVector<double> dataY;
@@ -649,13 +694,34 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
             itemOld->setData(Qt::BackgroundRole, QColor(Qt::white));
             itemX->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
             itemY->setData(Qt::BackgroundRole, QColor(Qt::lightGray));
+	    
+	    double valX = dataX[i];
+	    double valY = dataY[i];
+	    if (i == 0) {
+	      minX = valX; maxX = valX; minY = valY; maxY = valY;
+	    } else {
+	      if (valX < minX) {
+		minX = valX;
+	      } else if (valX > maxX) {
+		maxX = valX;
+	      }
+	      if (valY < minY) {
+		minY = valY;
+	      } else if (valY > maxY) {
+		maxY = valY;
+	      }
+	    }
 
-            series->append(dataX[i], dataY[i]);
+            series->append(valX, valY);
         }
 
         chart->addSeries(series);
         QValueAxis *axisX = new QValueAxis();
         QValueAxis *axisY = new QValueAxis();
+        double xRange=maxX-minX;
+        double yRange=maxY-minY;
+	axisX->setRange(minX - 0.01*xRange, maxX + 0.1*xRange);
+        axisY->setRange(minY - 0.1*yRange, maxY + 0.1*yRange);
 
         axisX->setTitleText(theHeadings.at(col1));
         axisY->setTitleText(theHeadings.at(col2));
@@ -664,6 +730,7 @@ DakotaResultsSampling::onSpreadsheetCellClicked(int row, int col)
         chart->setAxisY(axisY, series);
 
     } else {
+
         QVector<double> dataX;
         this->getColData(dataX, rowCount, col1);
 

@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ExistingSimCenterEvents.h"
 #include <InputWidgetExistingEvent.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 #include <QPushButton>
 #include <QScrollArea>
@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QScrollArea>
 
 
-ExistingEvent::ExistingEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+ExistingEvent::ExistingEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
     :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
@@ -179,7 +179,7 @@ ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
     return true;
 }
 
-ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariablesContainer *theRV_IW, QWidget *parent)
     : SimCenterAppWidget(parent), theRandVariableIW(theRV_IW)
 {
     verticalLayout = new QVBoxLayout();
@@ -197,13 +197,13 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theR
     addEvent->setMinimumWidth(75);
     addEvent->setMaximumWidth(75);
     addEvent->setText(tr("Add"));
-    connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetExistingEvent()));
+    //   connect(addEvent,SIGNAL(clicked()),this,SLOT(addInputWidgetExistingEvent()));
 
     QPushButton *removeEvent = new QPushButton();
     removeEvent->setMinimumWidth(75);
     removeEvent->setMaximumWidth(75);
     removeEvent->setText(tr("Remove"));
-    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
+    //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
 
     titleLayout->addWidget(title);
     titleLayout->addItem(spacer1);
@@ -246,7 +246,8 @@ void ExistingSimCenterEvents::addEvent(void)
    ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW, theExisting);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
-   connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
+
+ //  connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
 

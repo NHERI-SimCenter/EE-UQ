@@ -59,6 +59,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QStackedWidget>
 
+extern int getNumParallelTasks();
 
 RunWidget::RunWidget(Application *localA, Application *remoteA, SimCenterWidget **theWidgets, int numWidget, QWidget *parent)
 : SimCenterWidget(parent), localApp(localA), remoteApp(remoteA), theCurrentApplication(0)
@@ -100,7 +101,10 @@ RunWidget::showLocalApplication(void) {
 
 void
 RunWidget::showRemoteApplication(void) {
-    theStackedWidget->setCurrentIndex(1);
+    int numTasks = getNumParallelTasks();
+    remoteApp->setNumTasks(numTasks);
+
+    theStackedWidget->setCurrentIndex(1);    
     theCurrentApplication = remoteApp;
     this->show();
 }

@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "InputWidgetOpenSeesAnalysis.h"
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 #include <QJsonObject>
@@ -52,8 +52,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 
 
-InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {   
     //
     // create layout for all qLineEdits
@@ -114,10 +114,11 @@ InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidg
 
     QPushButton *chooseFile = new QPushButton();
     chooseFile->setText(tr("Choose"));
-    connect(chooseFile,SIGNAL(clicked()),this,SLOT(chooseFileName()));
     layout->addWidget(chooseFile, 5, 2);
 
-    connect(chooseFile, SLOT(click()), this, SLOT(chooseFileName()));
+    connect(dampingRatio,SIGNAL(editingFinished()), this, SLOT(dampingEditingFinished()));
+    connect(theTolerance,SIGNAL(editingFinished()), this, SLOT(toleranceEditingFinished()));
+    connect(chooseFile, SIGNAL(clicked(bool)), this, SLOT(chooseFileName()));
 
     QWidget *dummy = new QWidget();
     layout->addWidget(dummy,6,0);
@@ -153,18 +154,20 @@ InputWidgetOpenSeesAnalysis::outputToJSON(QJsonObject &jsonObject)
     jsonObject["algorithm"]=theAlgorithm->text();
     jsonObject["convergenceTest"]=theConvergenceTest->text();
 
-    bool isDouble = false;
-    double tolerance = theTolerance->text().toDouble(&isDouble);
-    if(isDouble)
-        jsonObject["tolerance"]=tolerance;
+    QString tolText = theTolerance->text();
+    bool ok;
+    double tolDouble = tolText.QString::toDouble(&ok);
+    if (ok == true)
+        jsonObject["tolerance"]=tolDouble;
     else
-        jsonObject["tolerance"]=theTolerance->text();
+        jsonObject["tolerance"]= QString("RV.") + tolText;
 
-    double dampingRatioValue = dampingRatio->text().toDouble(&isDouble);
-    if(isDouble)
-        jsonObject["dampingRatio"]=dampingRatioValue;
+    QString dampText = dampingRatio->text();
+    double dampDouble = dampText.QString::toDouble(&ok);
+    if (ok == true)
+        jsonObject["dampingRatio"]=dampDouble;
     else
-        jsonObject["dampingRatio"]=dampingRatio->text();
+        jsonObject["dampingRatio"]= QString("RV.") + dampText;
 
     if (!file->text().isEmpty() && !file->text().isNull()) {
         QFileInfo fileInfo(file->text());
@@ -183,15 +186,40 @@ InputWidgetOpenSeesAnalysis::inputFromJSON(QJsonObject &jsonObject)
     this->clear();
 
     if (jsonObject.contains("integration") && jsonObject.contains("algorithm")
-            && jsonObject.contains("convergenceTest") && jsonObject.contains("tolerance")) {
+	&& jsonObject.contains("convergenceTest")) {
 
-        theTolerance->setText(jsonObject["tolerance"].toString());
         theAlgorithm->setText(jsonObject["algorithm"].toString());
         theConvergenceTest->setText(jsonObject["convergenceTest"].toString());
         theIntegration->setText(jsonObject["integration"].toString());
 
     } else {
         emit sendErrorMessage("ERROR: InputWidgetOpenSeesAnalysis - no \"integration\" ,\"convergenceTest\" or \"algorithm\" data");
+        return false;
+    }
+
+    if (jsonObject.contains("tolerance")) {
+        QJsonValue theValue = jsonObject["tolerance"];
+        if (theValue.isString()) {
+            QString text = theValue.toString();
+            text.remove(0,3); // remove RV.
+           theTolerance->setText(text);
+       } else if (theValue.isDouble())
+            theTolerance->setText(QString::number(theValue.toDouble()));
+    } else {
+      emit sendErrorMessage("ERROR: InputWidgetOpenSeesAnalysis - no \"tolerance\" data");
+        return false;
+    }
+
+    if (jsonObject.contains("dampingRatio")) {
+        QJsonValue theValue = jsonObject["dampingRatio"];
+        if (theValue.isString()) {
+            QString text = theValue.toString();
+            text.remove(0,3); // remove RV.
+            dampingRatio->setText(text);
+       } else if (theValue.isDouble())
+            dampingRatio->setText(QString::number(theValue.toDouble()));
+    } else {
+      emit sendErrorMessage("ERROR: InputWidgetOpenSeesAnalysis - no \"dampingRatio\" data");
         return false;
     }
 
@@ -244,5 +272,40 @@ InputWidgetOpenSeesAnalysis::copyFiles(QString &dirName) {
     if  (this->copyFile(file->text(), dirName) ==  false) {
         emit sendErrorMessage(QString("ERROR: OpenSees Analysis copyFiles: failed to copy file: ") +file->text());
         return false;
+    }
+}
+
+// need to check if a random variable
+void InputWidgetOpenSeesAnalysis::dampingEditingFinished() {
+    QString text = dampingRatio->text();
+    bool ok;
+    double dampDouble = text.QString::toDouble(&ok);
+
+    if (ok == false) {
+        qDebug() << text << " " << lastDampingRatio;
+
+        if (text != lastDampingRatio) {
+            QStringList rvs;
+            rvs.append(text);
+            rvs.append("0.02");
+            theRandomVariablesContainer->addConstantRVs(rvs);
+            lastDampingRatio = text;
+        }
+    }
+}
+
+void InputWidgetOpenSeesAnalysis::toleranceEditingFinished() {
+    QString text = theTolerance->text();
+    bool ok;
+    double tolDouble = text.QString::toDouble(&ok);
+
+    if (ok == false) {
+        if (text != lastTolerance) {
+            QStringList rvs;
+            rvs.append(text);
+            rvs.append("0.02");
+            theRandomVariablesContainer->addConstantRVs(rvs);
+            lastTolerance = text;
+        }
     }
 }

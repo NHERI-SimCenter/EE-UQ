@@ -36,7 +36,7 @@
 
 
 MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -138,6 +138,11 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
+    loginWindow->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+
     //
     // connect some signals and slots
     //
@@ -202,7 +207,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
 
     feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
-    versionText = QString(tr("Version 1.0.0"));
+    versionText = QString(tr("Version 1.0.2"));
     citeText = QString(tr(""));
     aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
     copyrightText = QString("\
@@ -614,7 +619,7 @@ MainWindowWorkflowApp::onRemoteGetButtonClicked(){
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){
-    //RandomVariableInputWidget *theParameters = uq->getParameters();
+    //RandomVariablesContainer *theParameters = uq->getParameters();
     inputWidget->onExitButtonClicked();
     QCoreApplication::exit(0);
 }
@@ -664,7 +669,7 @@ void MainWindowWorkflowApp::cite()
 void MainWindowWorkflowApp::about()
 {
     QMessageBox msgBox;
-    QSpacerItem *theSpacer = new QSpacerItem(500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     msgBox.setText(aboutText);
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
@@ -673,6 +678,10 @@ void MainWindowWorkflowApp::about()
 
 void MainWindowWorkflowApp::setAbout(QString &newAbout) {
     aboutText = newAbout;
+}
+
+void MainWindowWorkflowApp::setVersion(QString &newVersion) {
+    versionText = newVersion;
 }
 
 void MainWindowWorkflowApp::submitFeedback()

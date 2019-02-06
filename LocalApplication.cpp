@@ -51,6 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QStringList>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -97,7 +98,10 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
-
+    this->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
     this->workflowScript = workflowScriptName;
 }
 
@@ -165,7 +169,7 @@ LocalApplication::onRunButtonPressed(void)
 //
 
 bool
-LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFile) {
+LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
     QString appDir = appDirName->text();
 
@@ -175,7 +179,8 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFi
     QDir scriptDir(appDir);
     scriptDir.cd("applications");
     scriptDir.cd("Workflow");
-    pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    pySCRIPT = scriptDir.absoluteFilePath(workflowScript);
+   // pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
     QFileInfo check_script(pySCRIPT);
     // check if file exists and if yes: Is it really a file and no directory?
     if (!check_script.exists() || !check_script.isFile()) {
@@ -213,15 +218,19 @@ for (int i = 0; i < files.size(); i++) {
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+
     QProcess *proc = new QProcess();
+    // QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    // proc->execute("python",args);
+
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" run ") + inputFile  + QString(" ") + registryFile;
-    qDebug() << "PYTHON COMMAND: " << command;    
-
-    proc->execute("cmd", QStringList() << "/C" << command);
+    QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    proc->execute("python",args);
 
 #else
+    // note the above not working under linux because basrc not being called so no env variables!!
+
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
@@ -229,7 +238,15 @@ for (int i = 0; i < files.size(); i++) {
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
+
     proc->waitForStarted();
+
+    //
+    // copy input file to main directory
+    // 
+
+   QString filenameIN = tmpDirectory + QDir::separator() +  QString("dakota.json");
+   QFile::copy(inputFile, filenameIN);
 
     //
     // process the results
@@ -238,11 +255,12 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
-    emit processResults(filenameOUT, filenameTAB);
 
-    // remove the tmp directory
-    QDir tmpDIR(tmpDirectory);
-    tmpDIR.removeRecursively();
+    emit processResults(filenameOUT, filenameTAB, inputFile);
+    
+    // will leave the tmp.SimCenter directory
+    //QDir tmpDIR(tmpDirectory);
+    //tmpDIR.removeRecursively();
 
     return 0;
 }
