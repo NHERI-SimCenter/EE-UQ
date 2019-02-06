@@ -153,9 +153,9 @@ main(int argc, char **argv) {
 
       json_object_set(material2,"name",json_integer(matTag+1));
       json_object_set(material2,"type",json_string("bilinear"));
-      json_object_set(material2,"K",json_real(kx));
-      json_object_set(material2,"Fy",json_real(Fyx));
-      json_object_set(material2,"beta",json_real(bx));
+      json_object_set(material2,"K",json_real(ky));
+      json_object_set(material2,"Fy",json_real(Fyy));
+      json_object_set(material2,"beta",json_real(by));
 
       json_array_append(nodes,node);
       json_array_append(materials,material1);

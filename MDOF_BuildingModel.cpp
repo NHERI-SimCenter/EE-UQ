@@ -79,7 +79,7 @@ bool
 readLineEditRV(QJsonObject &jsonObject, const char *key, QLineEdit *value)
 {
     if (jsonObject.contains(key)) {
-        QJsonValue theValue = jsonObject["factor"];
+        QJsonValue theValue = jsonObject[key];
         if (theValue.isString()) {
             QString text = theValue.toString();
             text.remove(0,3); // remove RV.
