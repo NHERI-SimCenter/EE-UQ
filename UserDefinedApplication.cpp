@@ -52,12 +52,12 @@ using namespace std;
 #include <QGridLayout>
 #include <QSpacerItem>
 
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 //#include <InputWidgetParameters.h>
 
-UserDefinedApplication::UserDefinedApplication(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+UserDefinedApplication::UserDefinedApplication(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     QGridLayout *layout = new QGridLayout();
 

@@ -63,7 +63,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "GeneralInformationWidget.h"
 #include <SIM_Selection.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <InputWidgetSampling.h>
 #include <InputWidgetOpenSeesAnalysis.h>
 #include <QDir>
@@ -119,7 +119,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     // create the various widgets
     //
 
-    theRVs = new RandomVariableInputWidget();
+    theRVs = new RandomVariablesContainer();
     theGI = GeneralInformationWidget::getInstance();
     theSIM = new SIM_Selection(theRVs);
     theEvent = new EarthquakeEventSelection(theRVs);

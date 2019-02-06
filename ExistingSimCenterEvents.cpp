@@ -38,7 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ExistingSimCenterEvents.h"
 #include <InputWidgetExistingEvent.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 #include <QPushButton>
 #include <QScrollArea>
@@ -54,7 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QScrollArea>
 
 
-ExistingEvent::ExistingEvent(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+ExistingEvent::ExistingEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
     :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
    QHBoxLayout *layout = new QHBoxLayout();
@@ -179,7 +179,7 @@ ExistingEvent::inputFromJSON(QJsonObject &jsonObject) {
     return true;
 }
 
-ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariableInputWidget *theRV_IW, QWidget *parent)
+ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariablesContainer *theRV_IW, QWidget *parent)
     : SimCenterAppWidget(parent), theRandVariableIW(theRV_IW)
 {
     verticalLayout = new QVBoxLayout();

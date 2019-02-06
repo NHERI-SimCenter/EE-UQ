@@ -47,13 +47,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 
 class InputWidgetParameters;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class OpenSeesBuildingModel : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit OpenSeesBuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit OpenSeesBuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
     ~OpenSeesBuildingModel();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -85,7 +85,7 @@ private:
     QLineEdit *elements;
     QLineEdit *ndm;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
     QStringList varNamesAndValues;
 };
 

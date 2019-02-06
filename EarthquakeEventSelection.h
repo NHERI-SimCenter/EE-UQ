@@ -47,13 +47,13 @@ class QComboBox;
 class QStackedWidget;
 class UserDefinedApplication;
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class EarthquakeEventSelection : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariableInputWidget *, QWidget *parent = 0);
+    explicit EarthquakeEventSelection(RandomVariablesContainer *, QWidget *parent = 0);
     ~EarthquakeEventSelection();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -78,7 +78,7 @@ private:
    SimCenterAppWidget *theUserDefinedApplication;
 
 
-   RandomVariableInputWidget *theRandomVariableInputWidget;
+   RandomVariablesContainer *theRandomVariablesContainer;
 };
 
 #endif // EARTHQUAKE_EVENT_SELECTION_H

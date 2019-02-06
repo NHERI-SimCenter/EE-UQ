@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
@@ -56,7 +56,7 @@ class PeerRecord : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit PeerRecord(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    explicit PeerRecord(RandomVariablesContainer *theRV, QWidget *parent = 0);
     ~PeerRecord();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -76,7 +76,7 @@ signals:
     void removeRecord();
 
 private:
-     RandomVariableInputWidget *theRandVariableIW;
+     RandomVariablesContainer *theRandVariableIW;
      QString lastFactor;
 };
 
@@ -85,7 +85,7 @@ class PeerEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit PeerEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    explicit PeerEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
     ~PeerEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -102,7 +102,7 @@ public slots:
     void onAddRecord(bool);
 
 private:
-     RandomVariableInputWidget *theRandVariableIW;
+     RandomVariablesContainer *theRandVariableIW;
 };
 
 
@@ -110,7 +110,7 @@ class ExistingPEER_Events : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingPEER_Events(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit ExistingPEER_Events(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
 
     ~ExistingPEER_Events();
 
@@ -131,7 +131,7 @@ private:
     QVBoxLayout *eventLayout;
 
     QVector<PeerEvent *>theEvents;
-    RandomVariableInputWidget *theRandVariableIW;
+    RandomVariablesContainer *theRandVariableIW;
 };
 
 #endif // EXISTING_PEER_EVENTS_H

@@ -66,8 +66,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "SHAMotionWidget.h"
 #include <UserDefinedApplication.h>
 
-EarthquakeEventSelection::EarthquakeEventSelection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariableInputWidget(theRandomVariableIW)
+EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
 {
     QVBoxLayout *layout = new QVBoxLayout();
 
@@ -100,19 +100,19 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariableInputWidget *th
     // create the individual load widgets & add to stacked widget
     //
 
-    //theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariableInputWidget);
+    //theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariablesContainer);
     //theStackedWidget->addWidget(theExistingEventsWidget);
-    theExistingEvents = new ExistingSimCenterEvents(theRandomVariableInputWidget);
+    theExistingEvents = new ExistingSimCenterEvents(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingEvents);
 
-    theExistingPeerEvents = new ExistingPEER_Events(theRandomVariableInputWidget);
+    theExistingPeerEvents = new ExistingPEER_Events(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingPeerEvents);
 
     //Adding SHA based ground motion widget
-    theSHA_MotionWidget = new SHAMotionWidget(theRandomVariableInputWidget);
+    theSHA_MotionWidget = new SHAMotionWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theSHA_MotionWidget);
 
-    theUserDefinedApplication = new UserDefinedApplication(theRandomVariableInputWidget);
+    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
     theStackedWidget->addWidget(theUserDefinedApplication);
 
     layout->addWidget(theStackedWidget);

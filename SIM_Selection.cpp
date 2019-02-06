@@ -55,8 +55,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <MDOF_BuildingModel.h>
 
 
-SIM_Selection::SIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), bimInput(0), theRandomVariableInputWidget(theRandomVariableIW)
+SIM_Selection::SIM_Selection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), bimInput(0), theRandomVariablesContainer(theRandomVariableIW)
 {
     layout = new QVBoxLayout();
 
@@ -229,14 +229,14 @@ void SIM_Selection::bimSelectionChanged(const QString &arg1)
 
     if (arg1 == QString("Spreadsheet") || arg1 == QString("SimCenterSIM")) {
         delete bimInput;
-        bimInput = new InputWidgetSheetSIM(theRandomVariableInputWidget);
+        bimInput = new InputWidgetSheetSIM(theRandomVariablesContainer);
 
     } else if (arg1 == QString("OpenSees") || (arg1 == QString("OpenSeesInput"))) {
         delete bimInput;
-        bimInput = new OpenSeesBuildingModel(theRandomVariableInputWidget);
+        bimInput = new OpenSeesBuildingModel(theRandomVariablesContainer);
     } else if (arg1 == QString("MDOF") || (arg1 == QString("MDOF_BuildingModel"))) {
         delete bimInput;
-        bimInput = new MDOF_BuildingModel(theRandomVariableInputWidget);
+        bimInput = new MDOF_BuildingModel(theRandomVariablesContainer);
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: BIM Input - no valid Method provided .. keeping old");

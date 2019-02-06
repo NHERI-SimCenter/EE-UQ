@@ -49,12 +49,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 //#include <InputWidgetParameters.h>
 
-InputWidgetExistingEvent::InputWidgetExistingEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+InputWidgetExistingEvent::InputWidgetExistingEvent(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     femSpecific = 0;
 
@@ -184,7 +184,7 @@ InputWidgetExistingEvent::setFilename1(QString name1){
         names.append(varNamesAndValues.at(i));
     }
 
-    theRandomVariableInputWidget->removeRandomVariables(names);
+    theRandomVariablesContainer->removeRandomVariables(names);
 
     // set file name & ebtry in qLine edit
 

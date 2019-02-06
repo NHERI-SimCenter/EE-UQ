@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
@@ -55,7 +55,7 @@ class ExistingEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    explicit ExistingEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
     ~ExistingEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -71,7 +71,7 @@ public slots:
     void factorEditingFinished();
 
 private:
-     RandomVariableInputWidget *theRandVariableIW;
+     RandomVariablesContainer *theRandVariableIW;
      QString lastFactor;
 };
 
@@ -80,7 +80,7 @@ class ExistingSimCenterEvents : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingSimCenterEvents(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit ExistingSimCenterEvents(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
 
     ~ExistingSimCenterEvents();
 
@@ -101,7 +101,7 @@ private:
     QVBoxLayout *eventLayout;
 
     QVector<ExistingEvent *>theEvents;
-    RandomVariableInputWidget *theRandVariableIW;
+    RandomVariablesContainer *theRandVariableIW;
 };
 
 #endif // EXISTING_SIMCENTER_EVENTS_H
