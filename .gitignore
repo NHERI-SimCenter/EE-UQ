@@ -58,3 +58,5 @@ MultipleSimCenterEvents
 MultiplePEER_Events
 *.pyc
 *.autosave
+*.json
+MDOF_BuildingModelToSAM
