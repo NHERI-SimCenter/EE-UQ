@@ -60,21 +60,24 @@ StochasticMotionInputWidget::StochasticMotionInputWidget(
   // Construct required layouts
   QVBoxLayout* layout = new QVBoxLayout();
   QHBoxLayout* model_layout = new QHBoxLayout();
-  QHBoxLayout* parameters_layout = new QHBoxLayout();
+  parameters_layout_ = new QHBoxLayout();
   
   // Create label and add items to combo box for model selection 
   QLabel* selection_label = new QLabel(tr("Stochastic Loading Model"));
+  selection_label->setStyleSheet("font-weight: bold");  
   model_selection_ = new QComboBox();
   model_selection_->addItem(tr("Vlachos et al. (2018)"));
   stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
   
   // Add widgets to layouts and layouts to this
+
   model_layout->addWidget(model_selection_);
   model_layout->addStretch();
-  parameters_layout->addWidget(stochastic_model_);
-  parameters_layout->addStretch();
+  parameters_layout_->addWidget(stochastic_model_);
+  parameters_layout_->addStretch();
+  layout->addWidget(selection_label);
   layout->addLayout(model_layout);
-  layout->addLayout(parameters_layout);
+  layout->addLayout(parameters_layout_);
   layout->addStretch();
   this->setLayout(layout);
 
@@ -90,71 +93,40 @@ StochasticMotionInputWidget::~StochasticMotionInputWidget()
 
 bool StochasticMotionInputWidget::outputToJSON(QJsonObject& jsonObject) {
   bool result = true;
-  // jsonObject["EventClassification"] = "Earthquake";
-  // jsonObject["type"] = "StochasticMotion";
-  // jsonObject["modelName"] = model_selection_->currentText();
+  jsonObject["EventClassification"] = "Earthquake";
+  jsonObject["type"] = "StochasticMotion";
+  jsonObject["modelName"] = model_selection_->currentText();
 
-  // if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-  //   jsonObject["momentMagnitude"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(0, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["ruptureDist"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(1, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["vs30"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(2, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["numberOfEvents"] =
-  //       static_cast<QSpinBox*>(
-  //           (model_inputs_->itemAt(3, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  // } else {
-  //   result = false;
-  // }
+  QJsonObject model_data;
+  stochastic_model_->outputToJSON(model_data);
+  
+  foreach (const QString& key, model_data.keys()) {
+    jsonObject.insert(key, model_data.value(key));
+  }
 
   return result;
 }
 
 bool StochasticMotionInputWidget::inputFromJSON(QJsonObject& jsonObject) {
   bool result = true;
-  
-  // if (jsonObject.value("type").toString() == "StochasticMotion") {
-  //   auto app_data = jsonObject;
-  //   if (app_data["modelName"].toString() == "Vlachos et al. (2018)") {
-  //     model_selection_->setCurrentText(app_data["modelName"].toString());
-  //     // Delete previous entries
-  //     while (model_inputs_->rowCount() > 0) {
-  //       model_inputs_->removeRow(0);
-  //     }
-  //     QDoubleSpinBox* moment_mag = new QDoubleSpinBox();
-  //     QDoubleSpinBox* rupt_dist = new QDoubleSpinBox();
-  //     QDoubleSpinBox* vs30 = new QDoubleSpinBox();
-  //     QSpinBox* num_events = new QSpinBox();
-  //     moment_mag->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     rupt_dist->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     vs30->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     num_events->setRange(1, 900000);
 
-  //     moment_mag->setValue(app_data["momentMagnitude"].toDouble());
-  //     rupt_dist->setValue(app_data["ruptureDist"].toDouble());
-  //     vs30->setValue(app_data["vs30"].toDouble());
-  //     num_events->setValue(app_data["numberOfEvents"].toInt());
-
-  //     model_inputs_->addRow(new QLabel(tr("Moment Magnitude")), moment_mag);
-  //     model_inputs_->addRow(
-  //         new QLabel(tr("Closest-to-Site Rupture Distance [km]")), rupt_dist);
-  //     model_inputs_->addRow(
-  //         new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
-  //         vs30);
-  //     model_inputs_->addRow(new QLabel(tr("Number of events to generate")),
-  //                           num_events);
-  //   }
-  // } else {
-  //   result = false;
-  // }
+  if (jsonObject.value("type").toString() == "StochasticMotion") {
+    auto app_data = jsonObject;
+    if (app_data["modelName"].toString() == "Vlachos et al. (2018)") {
+      model_selection_->setCurrentText(app_data["modelName"].toString());
+      // Assign current model to temporary pointer and create new model
+      auto temp_model = stochastic_model_;
+      stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
+      stochastic_model_->inputFromJSON(jsonObject);
+      // Replace current widget with new one and delete current one
+      parameters_layout_->replaceWidget(temp_model, stochastic_model_);
+      parameters_layout_->addStretch();
+      delete temp_model;
+      temp_model = nullptr;
+    }
+  } else {
+    result = false;
+  }
 
   return result;
 }
@@ -162,36 +134,23 @@ bool StochasticMotionInputWidget::inputFromJSON(QJsonObject& jsonObject) {
 bool StochasticMotionInputWidget::outputAppDataToJSON(QJsonObject& jsonObject) {
   bool result = true;
 
-  // jsonObject["Application"] = "StochasticGroundMotion";
-  // QJsonObject app_data;
+  jsonObject["Application"] = "StochasticGroundMotion";
+  QJsonObject app_data;
+  QJsonObject model_data;
+  stochastic_model_->outputToJSON(model_data);  
 
-  // if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-  //   app_data.insert("modelName", "vlachos2018");
-  //   app_data.insert(
-  //       "momentMagnitude",
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(0, QFormLayout::FieldRole))->widget())
-  //           ->value());
-  //   app_data.insert(
-  //       "ruptureDist",
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(1, QFormLayout::FieldRole))->widget())
-  //           ->value());
-  //   app_data.insert(
-  //       "vs30",
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(2, QFormLayout::FieldRole))->widget())
-  //           ->value());
-  //   app_data.insert(
-  //       "numberOfEvents",
-  //       static_cast<QSpinBox*>(
-  //           (model_inputs_->itemAt(3, QFormLayout::FieldRole))->widget())
-  //           ->value());
-  //   jsonObject["ApplicationData"] = app_data;
-  //   jsonObject["EventClassification"] = "Earthquake";
-  // } else {
-  //   result = false;
-  // }
+  if (model_selection_->currentText() == "Vlachos et al. (2018)") {
+    app_data.insert("modelName", "vlachos2018");
+
+    foreach (const QString& key, model_data.keys()) {
+      app_data.insert(key, model_data.value(key));
+    }
+
+    jsonObject["ApplicationData"] = app_data;
+    jsonObject["EventClassification"] = "Earthquake";
+  } else {
+    result = false;
+  }
 
   return result;
 }

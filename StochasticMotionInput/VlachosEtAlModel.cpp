@@ -35,7 +35,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: mhgardner
-
 #include <QComboBox>
 #include <QDebug>
 #include <QDoubleSpinBox>
@@ -109,84 +108,43 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
           &VlachosEtAlModel::updateVs30);
   connect(use_seed_, &QRadioButton::toggled, this,
           &VlachosEtAlModel::provideSeed);
-  // connect(seed_, QOverload<int>::of(&QSpinBox::valueChanged), this,
-  //         &VlachosEtAlModel::updateSeed);
 }
 
 bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
   bool result = true;
-  // jsonObject["EventClassification"] = "Earthquake";
-  // jsonObject["type"] = "StochasticMotion";
-  // jsonObject["modelName"] = model_selection_->currentText();
 
-  // if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-  //   jsonObject["momentMagnitude"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(0, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["ruptureDist"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(1, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["vs30"] =
-  //       static_cast<QDoubleSpinBox*>(
-  //           (model_inputs_->itemAt(2, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  //   jsonObject["numberOfEvents"] =
-  //       static_cast<QSpinBox*>(
-  //           (model_inputs_->itemAt(3, QFormLayout::FieldRole))->widget())
-  //           ->value();
-  // } else {
-  //   result = false;
-  // }
-
+  writeLineEdit(jsonObject, "momentMagnitude", *moment_magnitude_);
+  writeLineEdit(jsonObject, "ruptureDist", *rupture_dist_);
+  writeLineEdit(jsonObject, "vs30", *vs30_);
+  if (use_seed_->isChecked()) {
+    jsonObject.insert("seed", seed_->value());
+  } else {
+    jsonObject.insert("seed", "None");
+  }
+  
   return result;
 }
 
 bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   bool result = true;
-  
-  // if (jsonObject.value("type").toString() == "StochasticMotion") {
-  //   auto app_data = jsonObject;
-  //   if (app_data["modelName"].toString() == "Vlachos et al. (2018)") {
-  //     model_selection_->setCurrentText(app_data["modelName"].toString());
-  //     // Delete previous entries
-  //     while (model_inputs_->rowCount() > 0) {
-  //       model_inputs_->removeRow(0);
-  //     }
-  //     QDoubleSpinBox* moment_mag = new QDoubleSpinBox();
-  //     QDoubleSpinBox* rupt_dist = new QDoubleSpinBox();
-  //     QDoubleSpinBox* vs30 = new QDoubleSpinBox();
-  //     QSpinBox* num_events = new QSpinBox();
-  //     moment_mag->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     rupt_dist->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     vs30->setRange(0.0, std::numeric_limits<double>::infinity());
-  //     num_events->setRange(1, 900000);
 
-  //     moment_mag->setValue(app_data["momentMagnitude"].toDouble());
-  //     rupt_dist->setValue(app_data["ruptureDist"].toDouble());
-  //     vs30->setValue(app_data["vs30"].toDouble());
-  //     num_events->setValue(app_data["numberOfEvents"].toInt());
+  readLineEdit(jsonObject, "momentMagnitude", moment_magnitude_);
+  readLineEdit(jsonObject, "ruptureDist", rupture_dist_);
+  readLineEdit(jsonObject, "vs30", vs30_);
 
-  //     model_inputs_->addRow(new QLabel(tr("Moment Magnitude")), moment_mag);
-  //     model_inputs_->addRow(
-  //         new QLabel(tr("Closest-to-Site Rupture Distance [km]")), rupt_dist);
-  //     model_inputs_->addRow(
-  //         new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
-  //         vs30);
-  //     model_inputs_->addRow(new QLabel(tr("Number of events to generate")),
-  //                           num_events);
-  //   }
-  // } else {
-  //   result = false;
-  // }
+  if (jsonObject.value("seed").isString()) {
+    use_seed_->setChecked(false);    
+  } else {
+    use_seed_->setChecked(true);
+    seed_->setValue(jsonObject.value("seed").toInt());    
+  }
 
   return result;
 }
 
 void VlachosEtAlModel::updateMoment() {
   bool conversion_check;
-  double moment_mag = moment_magnitude_->text().toDouble(&conversion_check);
+  moment_magnitude_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
@@ -197,7 +155,7 @@ void VlachosEtAlModel::updateMoment() {
 
 void VlachosEtAlModel::updateRuptDist() {
   bool conversion_check;
-  double rupture_dist = rupture_dist_->text().toDouble(&conversion_check);
+  rupture_dist_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
@@ -208,7 +166,7 @@ void VlachosEtAlModel::updateRuptDist() {
 
 void VlachosEtAlModel::updateVs30() {
   bool conversion_check;
-  double vs30_value = vs30_->text().toDouble(&conversion_check);
+  vs30_->text().toDouble(&conversion_check);
 
   // Check if moment magnitude is a random variable
   if (!conversion_check) {
@@ -226,6 +184,33 @@ void VlachosEtAlModel::provideSeed(const bool& checked) {
   }
 }
 
-// void VlachosEtAlModel::updateSeed(int seed_val) {
-//   seed_->setValue(seed_val);
-// }
+void VlachosEtAlModel::writeLineEdit(QJsonObject& json_object,
+                                     const QString& key,
+                                     const QLineEdit& line_edit) const {
+  bool conversion_check;
+  double double_value = line_edit.text().toDouble(&conversion_check);  
+
+  if (conversion_check) {
+    json_object.insert(key, double_value);    
+  } else {
+    json_object.insert(key, "RV." + line_edit.text());    
+  }
+}
+
+bool VlachosEtAlModel::readLineEdit(const QJsonObject& jsonObject,
+                                    const QString& key, QLineEdit* line_edit) {
+  bool result = true;
+
+  if (jsonObject.contains(key)) {
+    auto value = jsonObject.value(key);
+    if (value.isString()) {
+      line_edit->setText(value.toString().remove(0,3));
+    } else {
+      line_edit->setText(value.toString());
+    }
+  } else {
+    result = false;
+  }
+  
+  return result;
+}

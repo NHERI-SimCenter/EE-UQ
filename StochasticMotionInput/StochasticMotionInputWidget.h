@@ -121,6 +121,7 @@ class StochasticMotionInputWidget : public SimCenterAppWidget {
  private:
   RandomVariableInputWidget* rv_input_widget_; /**< Widget for inputting random
 						  variables */
+  QHBoxLayout * parameters_layout_; /**< Layout for stochastic model widget */
   QComboBox* model_selection_; /**< Selection of ground motion model inputs */
   StochasticModelWidget* stochastic_model_; /**< Widget for inputting currently
 					       selected model parameters */

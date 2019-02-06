@@ -121,12 +121,6 @@ class VlachosEtAlModel : public StochasticModelWidget {
    */
   void provideSeed(const bool& checked);
 
-  /* /\** */
-  /*  * Update value of seed when new value entered */
-  /*  * @param[in] seed_val Current value for seed */
-  /*  *\/ */
-  /* void updateSeed(int seed_val); */
-    
  protected:
   QLabel* model_description_; /**< Brief description of model indicating relevant
 				 paper where more information can be found describing
@@ -138,6 +132,27 @@ class VlachosEtAlModel : public StochasticModelWidget {
   QRadioButton* use_seed_; /**< Radio button to indicate whether specific seed
                               value should be used */
   QFormLayout* parameters_; /**< Widget for inputting model parameters */
+
+ private:
+  /**
+   * Write lineedit key-value to JSON object
+   * @param[in, out] json_object JSON object to write line-edit key-value pair to
+   * @param[in] key Key to find value for and write to JSON
+   * @param[in] line_edit Line edit to search for value at input key
+   * @return Returns true of successful, false otherwise
+   */
+  void writeLineEdit(QJsonObject& json_object, const QString& key,
+                     const QLineEdit& line_edit) const;
+
+  /**
+   * Read input JSON object, writing value at input key to line-edit
+   * @param[in] json_object JSON object to read from
+   * @param[in] key Key to search for value
+   * @param[in, out] line_edit Line-edit to write value at key to
+   * @return Returns true if successful, false otherwise
+   */
+  bool readLineEdit(const QJsonObject& json_object, const QString& key,
+                    QLineEdit* line_edit);
 };
 
 #endif  // _VLACHOS_ET_AL_MODEL_H
