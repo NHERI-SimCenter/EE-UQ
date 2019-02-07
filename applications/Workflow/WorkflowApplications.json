@@ -45,7 +45,7 @@
       {
         "Name": "StochasticGroundMotion",
         "ExecutablePath": "applications/createEVENT/StochasticGroundMotion",
-        "ApplicationSpecificInputs":["modelName", "momentMagnitude", "vs30", "ruptureDist", "numberOfEvents"]
+        "ApplicationSpecificInputs":["modelName", "momentMagnitude", "vs30", "ruptureDist", "seed"]
       }
     ]
   },

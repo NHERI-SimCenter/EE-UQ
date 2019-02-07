@@ -140,7 +140,7 @@ bool StochasticMotionInputWidget::outputAppDataToJSON(QJsonObject& jsonObject) {
   stochastic_model_->outputToJSON(model_data);  
 
   if (model_selection_->currentText() == "Vlachos et al. (2018)") {
-    app_data.insert("modelName", "vlachos2018");
+    app_data.insert("modelName", "VlachosSiteSpecificEQ");
 
     foreach (const QString& key, model_data.keys()) {
       app_data.insert(key, model_data.value(key));
