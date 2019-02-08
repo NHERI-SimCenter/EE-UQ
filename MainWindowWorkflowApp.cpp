@@ -619,7 +619,7 @@ MainWindowWorkflowApp::onRemoteGetButtonClicked(){
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){
-    //RandomVariableInputWidget *theParameters = uq->getParameters();
+    //RandomVariablesContainer *theParameters = uq->getParameters();
     inputWidget->onExitButtonClicked();
     QCoreApplication::exit(0);
 }

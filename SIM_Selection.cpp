@@ -51,11 +51,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 #include <InputWidgetSheetSIM.h>
-#include <InputWidgetOpenSees.h>
+#include <OpenSeesBuildingModel.h>
+#include <MDOF_BuildingModel.h>
 
 
-SIM_Selection::SIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), bimInput(0), theRandomVariableInputWidget(theRandomVariableIW)
+SIM_Selection::SIM_Selection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), bimInput(0), theRandomVariablesContainer(theRandomVariableIW)
 {
     layout = new QVBoxLayout();
 
@@ -87,6 +88,7 @@ SIM_Selection::SIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWi
 
     //    bimSelection->addItem(tr("Spreadsheet"));
     bimSelection->addItem(tr("OpenSees"));
+    bimSelection->addItem(tr("MDOF"));
 
     connect(bimSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(bimSelectionChanged(QString)));
 
@@ -155,9 +157,11 @@ SIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 
     int index = 0;
     if (type == QString("SimCenterSIM")) {
-       index = 1;
+       index = 2;
     } else if (type == QString("OpenSeesInput")) {
        index = 0;
+    } else if (type == QString("MDOF_BuildingModel")) {
+       index = 1;
     } else {
         return false;
     }
@@ -225,11 +229,14 @@ void SIM_Selection::bimSelectionChanged(const QString &arg1)
 
     if (arg1 == QString("Spreadsheet") || arg1 == QString("SimCenterSIM")) {
         delete bimInput;
-        bimInput = new InputWidgetSheetSIM(theRandomVariableInputWidget);
+        bimInput = new InputWidgetSheetSIM(theRandomVariablesContainer);
 
     } else if (arg1 == QString("OpenSees") || (arg1 == QString("OpenSeesInput"))) {
         delete bimInput;
-        bimInput = new InputWidgetOpenSees(theRandomVariableInputWidget);
+        bimInput = new OpenSeesBuildingModel(theRandomVariablesContainer);
+    } else if (arg1 == QString("MDOF") || (arg1 == QString("MDOF_BuildingModel"))) {
+        delete bimInput;
+        bimInput = new MDOF_BuildingModel(theRandomVariablesContainer);
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: BIM Input - no valid Method provided .. keeping old");

@@ -1,5 +1,5 @@
-#ifndef EXISTING_SIMCENTER_EVENTS_H
-#define EXISTING_SIMCENTER_EVENTS_H
+#ifndef CONTROLLER_2D_H
+#define CONTROLLER_2D_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -38,70 +38,25 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: fmckenna
+class GlWidget2D;
 
-#include <SimCenterWidget.h>
-#include <SimCenterAppWidget.h>
+class Controller2D {
 
-class RandomVariablesContainer;
-class InputWidgetExistingEvent;
-class QRadioButton;
-class QLineEdit;
-
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-
-class ExistingEvent : public SimCenterWidget
-{
-    Q_OBJECT
 public:
-    explicit ExistingEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
-    ~ExistingEvent();
+  Controller2D();
+  virtual ~Controller2D();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+  virtual void draw(GlWidget2D *) =0;
+  virtual void getBoundary(float &height, float &width) =0;
+  virtual void setSelectionBoundary(float y1, float y2);
 
-    QRadioButton *button; // used to mark if Event intended for deletion
-    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
-    QLineEdit    *file;    // full path to file name
-    QLineEdit    *factor;  // load factor
+ public:
 
-public slots:
-    void chooseFileName(void);
-    void factorEditingFinished();
-
-private:
-     RandomVariablesContainer *theRandVariableIW;
-     QString lastFactor;
+ protected:
+  GlWidget2D *theView;
 };
 
 
-class ExistingSimCenterEvents : public SimCenterAppWidget
-{
-    Q_OBJECT
-public:
-    explicit ExistingSimCenterEvents(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
 
-    ~ExistingSimCenterEvents();
 
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &dirName);
-
-public slots:
-   void errorMessage(QString message);
-   void addEvent(void);
-   void removeEvents(void);
-   void clear(void);
-
-private:
-    QVBoxLayout *verticalLayout;
-    QVBoxLayout *eventLayout;
-
-    QVector<ExistingEvent *>theEvents;
-    RandomVariablesContainer *theRandVariableIW;
-};
-
-#endif // EXISTING_SIMCENTER_EVENTS_H
+#endif // CONTROLLER_2D_H

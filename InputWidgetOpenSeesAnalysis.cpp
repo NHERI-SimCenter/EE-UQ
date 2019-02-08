@@ -39,7 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "InputWidgetOpenSeesAnalysis.h"
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 #include <QJsonObject>
@@ -52,8 +52,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFile>
 
 
-InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+InputWidgetOpenSeesAnalysis::InputWidgetOpenSeesAnalysis(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {   
     //
     // create layout for all qLineEdits
@@ -288,7 +288,7 @@ void InputWidgetOpenSeesAnalysis::dampingEditingFinished() {
             QStringList rvs;
             rvs.append(text);
             rvs.append("0.02");
-            theRandomVariableInputWidget->addConstantRVs(rvs);
+            theRandomVariablesContainer->addConstantRVs(rvs);
             lastDampingRatio = text;
         }
     }
@@ -304,7 +304,7 @@ void InputWidgetOpenSeesAnalysis::toleranceEditingFinished() {
             QStringList rvs;
             rvs.append(text);
             rvs.append("0.02");
-            theRandomVariableInputWidget->addConstantRVs(rvs);
+            theRandomVariablesContainer->addConstantRVs(rvs);
             lastTolerance = text;
         }
     }

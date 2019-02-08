@@ -1,6 +1,3 @@
-#ifndef INPUT_WIDGET_OPENSEES_H
-#define INPUT_WIDGET_OPENSEES_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -20,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,54 +36,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include "Controller2d.h"
 
-#include <QGroupBox>
-#include <QVector>
-#include <QGridLayout>
-#include <QComboBox>
-
-class InputWidgetParameters;
-class RandomVariableInputWidget;
-
-class InputWidgetOpenSees : public SimCenterAppWidget
+Controller2D::Controller2D()
+    :theView(0)
 {
-    Q_OBJECT
-public:
-    explicit InputWidgetOpenSees(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
-    ~InputWidgetOpenSees();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &dirName);
+}
 
-    QString getMainInput();
+Controller2D::~Controller2D()
+{
 
-     // copy main file to new filename ONLY if varNamesAndValues not empy
-    void specialCopyMainInput(QString fileName, QStringList varNamesAndValues);
-    int setFilename1(QString filnema1);
+}
 
-signals:
-
-public slots:
-   void clear(void);
-   void chooseFileName1(void);
-
-private:
-
-    QGridLayout *layout;
-    QWidget     *femSpecific;
-
-    QString fileName1;
-    QLineEdit *file1;
-    QLineEdit *nodes;
-    QLineEdit *elements;
-    QLineEdit *ndm;
-
-    RandomVariableInputWidget *theRandomVariableInputWidget;
-    QStringList varNamesAndValues;
-};
-
-#endif // INPUT_WIDGET_OPENSEES_H
+void
+Controller2D::setSelectionBoundary(float y1, float y2)
+{
+  return;
+}

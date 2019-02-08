@@ -7,13 +7,13 @@
 #include "RecordSelectionConfig.h"
 #include "IntensityMeasure.h"
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class SHAMotionWidget : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit SHAMotionWidget(RandomVariableInputWidget *, QWidget *parent = nullptr);
+    explicit SHAMotionWidget(RandomVariablesContainer *, QWidget *parent = nullptr);
 
 signals:
 
@@ -31,7 +31,7 @@ private:
     RecordSelectionConfig* m_selectionConfig;
     IntensityMeasure* m_intensityMeasure;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
 };
 
 #endif // SHAMOTIONWIDGET_H
