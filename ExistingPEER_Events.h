@@ -47,6 +47,7 @@ class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
 class QSpinBox;
+class LineEditRV;
 
 #include <QGroupBox>
 #include <QVector>
@@ -65,12 +66,11 @@ public:
     QRadioButton *button;  // used to mark if Event intended for deletion
     QLineEdit    *file;    // full path to file name
     QSpinBox     *dirn;
-    QLineEdit    *factor;  // load factor
+    LineEditRV    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
     void onRemoveRecord(bool);
-    void factorEditingFinished();
 
 signals:
     void removeRecord();
