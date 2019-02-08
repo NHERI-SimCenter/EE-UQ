@@ -44,8 +44,7 @@ class EQGenerator {
    * @param[in] event_name Name to use for event
    * @return JsonObject containing loading time histories
    */
-  utilities::JsonObject generate_time_history(
-      const std::string& event_name) const;
+  utilities::JsonObject generate_time_history(const std::string& event_name);
 
  private:
   std::shared_ptr<stochastic::StochasticModel> eq_model_; /**< Stochastic model

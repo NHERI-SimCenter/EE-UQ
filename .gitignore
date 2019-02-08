@@ -38,6 +38,7 @@ moc*
 *.out
 *.app
 EE_UQ
+StochasticGroundMotion
 
 # QT
 *.pro.user

@@ -25,13 +25,18 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
           "Soil shear wave velocity averaged over top 30 meters in meters per "
           "second")
           .required() |
-      clara::detail::Opt(configuration_.output_location,
+      clara::detail::Opt(configuration_.event_file,
                          "Event file location")["-filenameEVENT"](
           "Location where generated time history should be stored")
           .required() |
       clara::detail::Opt(configuration_.seed, "Seed value")["-seed"](
           "Seed value that should be used to generate time histories")
-          .required();
+          .required() |
+      clara::detail::Opt(configuration_.rv_flag,
+                         "Random variable flag")["-getRV"](
+          "Flag indicating whether the generated event file should specify "
+          "random variable")
+          .optional();
 
   auto result = command_parser_.parse(clara::detail::Args(number_of_arguments, arguments));
 
@@ -45,6 +50,10 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
   if (configuration_.help) {
     std::cout << command_parser_ << std::endl;
   }
+}
+
+std::string CommandParser::get_model_name() const {
+  return configuration_.model_name;
 }
 
 double CommandParser::get_magnitude() const {
@@ -67,20 +76,28 @@ bool CommandParser::seed_provided() const {
   }  
 }
 
-std::string CommandParser::get_seed() const {
-  int seed_value;
+int CommandParser::get_seed() const {
+  int seed_value = 0;
   try {
     seed_value = std::stoi(configuration_.seed);
   } catch (const std::exception& e) {
     std::cerr << "ERROR: In CommandParser::get_seed(): Invalid string to int "
-                 "conversion. Check input seed value: ";
-    << e.what() << std::endl;
+                 "conversion. Check input seed value: "
+              << e.what() << std::endl;
   }
   return seed_value;
 }
 
+std::string CommandParser::get_event_file() const {
+  return configuration_.event_file;
+}
+
 bool CommandParser::get_help_flag() const {
   return configuration_.help;
+}
+
+bool CommandParser::get_rv_flag() const {
+  return configuration_.rv_flag;
 }
 
 CommandParser::Config CommandParser::get_configuration() const {

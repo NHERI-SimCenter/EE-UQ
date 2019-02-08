@@ -37,7 +37,16 @@ class CommandParser {
     std::string event_file; /**< Location where event should be saved */
     bool help = false; /**< Flag indicating whether the input requests the help
                           option */
+    bool rv_flag = false; /**< Flag indicating whether to generate event file
+                             that specifies random variable */
   };
+
+  /**
+   * Get the name of the stochastic model that will be used to generate time
+   * histories
+   * @return Name of stochastic model to use
+   */
+  std::string get_model_name() const;
 
   /**
    * Get the moment magnitude of the earthquake
@@ -79,6 +88,13 @@ class CommandParser {
    * @return Flag indicating whether help was called
    */
   bool get_help_flag() const;
+
+  /**
+   * Get flag indicating whether random variables should be specified in output
+   * event file
+   * @return Returns true if random variables should specified, false otherwise
+   */
+  bool get_rv_flag() const;
 
   /**
    * Get the configuration structure generated from command line inputs
