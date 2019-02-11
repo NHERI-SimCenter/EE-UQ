@@ -43,24 +43,23 @@ int main(int argc, char** argv) {
         auto time_history =
             eq_generator.generate_time_history("StochasticMotion")
                 .get_library_json();
-        auto array_entry = json::object({{"name", time_history.at("name")},
-             {"type", time_history.at("type")},
-             {"dT", time_history.at("dT")},
-             {"data", time_history.at("data")},
-             {"numSteps", time_history.at("numSteps")}});
 
-        for (json::iterator it = time_history.at("timeSeries").begin();
-             it != time_history.at("timeSeries").end(); ++it) {
-          if ((*it)["name"] == "accel_x") {
-            array_entry.push_back(*it);
-          }
+        if (time_history.at("Events").size() != 1) {
+          throw std::runtime_error(
+              "ERROR: In main() of StochasticGroundMotion with getRV "
+              "flag set: Generated events should have length 1\n");
         }
+        auto event_data = time_history.at("Events")[0];
 
-	for (json::iterator it = time_history.at("pattern").begin(); it != time_history.at("pattern").end(); ++it) {
-	  if ((*it)["timeSeries"] == "accel_x") {
-	    array_entry.push_back(*it);
-	  }
-	}
+        auto array_entry = json::object(
+            {{"name", event_data.at("name")},
+             {"type", event_data.at("type")},
+             {"dT", event_data.at("dT")},
+             {"Data", "Time history generated using " +
+                          inputs.get_model_name() + " model"},
+             {"numSteps", event_data.at("numSteps")},
+             {"timeSeries", json::array({event_data.at("timeSeries")[0]})},
+             {"pattern", json::array({event_data.at("pattern")[0]})}});
 	
         auto event_array = json::array();
         event_array.push_back(array_entry);
@@ -113,26 +112,25 @@ int main(int argc, char** argv) {
         auto time_history =
             eq_generator.generate_time_history("StochasticMotion")
                 .get_library_json();
-        auto array_entry =
-            json::object({{"name", time_history.at("name")},
-                          {"type", time_history.at("type")},
-                          {"dT", time_history.at("dT")},
-                          {"data", time_history.at("data")},
-                          {"numSteps", time_history.at("numSteps")}});
 
-        for (json::iterator it = time_history.at("timeSeries").begin();
-             it != time_history.at("timeSeries").end(); ++it) {
-          if ((*it)["name"] == "accel_x") {
-            array_entry.push_back(*it);
-          }
+
+        if (time_history.at("Events").size() != 1) {
+          throw std::runtime_error(
+              "ERROR: In main() of StochasticGroundMotion with getRV "
+              "flag set: Generated events should have length 1\n");
         }
+        auto event_data = time_history.at("Events")[0];
 
-	for (json::iterator it = time_history.at("pattern").begin(); it != time_history.at("pattern").end(); ++it) {
-	  if ((*it)["timeSeries"] == "accel_x") {
-	    array_entry.push_back(*it);
-	  }
-	}
-
+        auto array_entry = json::object(
+            {{"name", event_data.at("name")},
+             {"type", event_data.at("type")},
+             {"dT", event_data.at("dT")},
+             {"Data", "Time history generated using " +
+                          inputs.get_model_name() + " model"},
+             {"numSteps", event_data.at("numSteps")},
+             {"timeSeries", json::array({event_data.at("timeSeries")[0]})},
+             {"pattern", json::array({event_data.at("pattern")[0]})}});
+	
         auto event_array = json::array();
         event_array.push_back(array_entry);
         event.emplace("Events", event_array);

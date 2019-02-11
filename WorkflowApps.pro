@@ -7,4 +7,5 @@ SUBDIRS =   applications/createEDP/StandardEarthquakeEDP.pro \
             applications/performSIMULATION/OpenSeesPreprocessor.pro \
             applications/performSIMULATION/OpenSeesPostprocessor.pro \
             applications/performUQ/extractEDP.pro \
-            applications/performUQ/postprocessDAKOTA.pro
+            applications/performUQ/postprocessDAKOTA.pro \
+            applications/createEVENT/StochasticGroundMotion.pro
