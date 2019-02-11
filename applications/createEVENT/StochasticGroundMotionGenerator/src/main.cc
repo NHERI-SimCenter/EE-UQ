@@ -56,23 +56,11 @@ int main(int argc, char** argv) {
           }
         }
 
-        // for (auto const& accels : time_history.at("timeSeries")) {
-        //   if (accels["name"] == "accel_x") {
-        //     array_entry.emplace(accels);
-        //   }
-        // }
-
 	for (json::iterator it = time_history.at("pattern").begin(); it != time_history.at("pattern").end(); ++it) {
 	  if ((*it)["timeSeries"] == "accel_x") {
 	    array_entry.push_back(*it);
 	  }
 	}
-	
-	// for (auto const& pattern : time_history.at("pattern")) {
-	//   if (pattern["timeSeries"] == "accel_x") {
-	//     array_entry.emplace(pattern);
-	//   }
-	// }
 	
         auto event_array = json::array();
         event_array.push_back(array_entry);
@@ -85,7 +73,10 @@ int main(int argc, char** argv) {
       }
       // No seed provided, so only place type and subtype in Events
     } else {
-      event.emplace("Events", json::array({{"type", "Seismic"}, {"subtype", "StochasticGroundMotion"}}));
+      json event_description;
+      event_description.emplace("type", "Seismic");
+      event_description.emplace("subtype", "StochasticGroundMotion");
+      event.emplace("Events", json::array({event_description}));
     }
 
     std::ofstream event_file;
@@ -115,9 +106,9 @@ int main(int argc, char** argv) {
       json event;
       event.emplace("randomVariables", json::array());
       try {
-        auto eq_generator = EQGenerator(
-            inputs.get_model_name(), inputs.get_magnitude(),
-            inputs.get_rupt_dist(), inputs.get_vs30(), inputs.get_seed());
+        auto eq_generator =
+            EQGenerator(inputs.get_model_name(), inputs.get_magnitude(),
+                        inputs.get_rupt_dist(), inputs.get_vs30());
 
         auto time_history =
             eq_generator.generate_time_history("StochasticMotion")
@@ -136,30 +127,11 @@ int main(int argc, char** argv) {
           }
         }
 
-        // for (auto const& accels : time_history.at("timeSeries")) {
-        //   if (accels["name"] == "accel_x") {
-        //     array_entry.emplace(accels);
-        //   }
-        // }
-
 	for (json::iterator it = time_history.at("pattern").begin(); it != time_history.at("pattern").end(); ++it) {
 	  if ((*it)["timeSeries"] == "accel_x") {
 	    array_entry.push_back(*it);
 	  }
 	}
-	// for (auto const& accels :
-        //      time_history.at("timeSeries")) {
-        //   if (accels["name"] == "accel_x") {
-        //     array_entry.emplace(accels);
-        //   }
-        // }
-
-        // for (auto const& pattern :
-        //      time_history.at("pattern")) {
-        //   if (pattern["timeSeries"] == "accel_x") {
-        //     array_entry.emplace(pattern);
-        //   }
-        // }
 
         auto event_array = json::array();
         event_array.push_back(array_entry);

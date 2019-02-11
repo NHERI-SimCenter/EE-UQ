@@ -10,26 +10,26 @@
 CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
   command_parser_ =
       clara::detail::Help(configuration_.help).optional() |
-      clara::detail::Opt(configuration_.model_name, "Model name")["-modelName"](
+      clara::detail::Opt(configuration_.model_name, "Model name")["--modelName"](
           "Name of stochastic model to use")
           .required() |
       clara::detail::Opt(configuration_.moment_magnitude,
-                         "Moment magnitude")["-momentMagnitude"](
+                         "Moment magnitude")["--momentMagnitude"](
           "Moment magnitude of earthquake")
           .required() |
       clara::detail::Opt(configuration_.rupture_dist,
-                         "Rupture Distance")["-ruptureDist"](
+                         "Rupture Distance")["--ruptureDist"](
           "Closest-to-site rupture distance in kilometers")
           .required() |
-      clara::detail::Opt(configuration_.vs30, "Vs30")["-vs30"](
+      clara::detail::Opt(configuration_.vs30, "Vs30")["--vs30"](
           "Soil shear wave velocity averaged over top 30 meters in meters per "
           "second")
           .required() |
       clara::detail::Opt(configuration_.event_file,
-                         "Event file location")["-filenameEVENT"](
+                         "Event file location")["--filenameEVENT"](
           "Location where generated time history should be stored")
           .required() |
-      clara::detail::Opt(configuration_.seed, "Seed value")["-seed"](
+      clara::detail::Opt(configuration_.seed, "Seed value")["--seed"](
           "Seed value that should be used to generate time histories")
           .required() |
       clara::detail::Opt(configuration_.rv_flag,

@@ -120,9 +120,12 @@ namespace detail {
                     auto delimiterPos = next.find_first_of( " :=" );
                     if( delimiterPos != std::string::npos ) {
                         m_tokenBuffer.push_back( { TokenType::Option, next.substr( 0, delimiterPos ) } );
-                        m_tokenBuffer.push_back( { TokenType::Argument, next.substr( delimiterPos + 1 ) } );
-                    } else {
-                        if( next[1] != '-' && next.size() > 2 ) {
+                        m_tokenBuffer.push_back( { TokenType::Argument, next.substr( delimiterPos + 1 ) } );		      
+		    } else {
+		      if (next == "-getRV") {
+			m_tokenBuffer.push_back( { TokenType::Option, next } );
+			m_tokenBuffer.push_back( { TokenType::Argument, "1" } );
+		      } else if( next[1] != '-' && next.size() > 2 ) {
                             std::string opt = "- ";
                             for( size_t i = 1; i < next.size(); ++i ) {
                                 opt[1] = next[i];
