@@ -26,5 +26,5 @@ EQGenerator::EQGenerator(std::string model_name, double moment_magnitude,
 
 utilities::JsonObject EQGenerator::generate_time_history(
     const std::string& event_name) {
-  return eq_model_->generate(event_name);
+  return eq_model_->generate(event_name, true);
 }

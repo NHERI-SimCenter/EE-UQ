@@ -10,8 +10,9 @@
 CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
   command_parser_ =
       clara::detail::Help(configuration_.help).optional() |
-      clara::detail::Opt(configuration_.model_name, "Model name")["--modelName"](
-          "Name of stochastic model to use")
+      clara::detail::Opt(
+          configuration_.model_name,
+          "Model name")["--modelName"]("Name of stochastic model to use")
           .required() |
       clara::detail::Opt(configuration_.moment_magnitude,
                          "Moment magnitude")["--momentMagnitude"](
@@ -29,11 +30,15 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
                          "Event file location")["--filenameEVENT"](
           "Location where generated time history should be stored")
           .required() |
+      clara::detail::Opt(configuration_.bim_file,
+                         "BIM file location")["--filenameBIM"](
+          "Location where building information model is stored. Passed to "
+          "program by workflow, but not used.")
+          .optional() |
       clara::detail::Opt(configuration_.seed, "Seed value")["--seed"](
           "Seed value that should be used to generate time histories")
           .required() |
-      clara::detail::Opt(configuration_.rv_flag,
-                         "Random variable flag")["-getRV"](
+      clara::detail::Opt(configuration_.rv_flag)["-r"](
           "Flag indicating whether the generated event file should specify "
           "random variable")
           .optional();
@@ -57,15 +62,15 @@ std::string CommandParser::get_model_name() const {
 }
 
 double CommandParser::get_magnitude() const {
-  return configuration_.moment_magnitude;
+  return std::stod(configuration_.moment_magnitude);
 }
 
 double CommandParser::get_rupt_dist() const {
-  return configuration_.rupture_dist;
+  return std::stod(configuration_.rupture_dist);
 }
 
 double CommandParser::get_vs30() const {
-  return configuration_.vs30;
+  return std::stod(configuration_.vs30);
 }
 
 bool CommandParser::seed_provided() const {

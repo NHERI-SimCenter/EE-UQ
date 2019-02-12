@@ -28,13 +28,16 @@ class CommandParser {
    */
   struct Config {
     std::string model_name; /**< Name of stochastic model to use */
-    double moment_magnitude; /**< Moment magnitude of event */
-    double rupture_dist; /**< Closest-to-site rupture distance in kilometers */
-    double vs30; /**< Soil shear wave velocity averaged over top 30 meters in
+    std::string moment_magnitude; /**< Moment magnitude of event */
+    std::string rupture_dist; /**< Closest-to-site rupture distance in kilometers */
+    std::string vs30; /**< Soil shear wave velocity averaged over top 30 meters in
 		    meters per second */
     std::string seed =
         "None"; /**< Seed value to use for random number generator */
     std::string event_file; /**< Location where event should be saved */
+    std::string bim_file = "BldgInfo"; /**< Location of BIM file. Not used by
+                             this application, but passed as argument by
+                             workflow so need to accomodate it */
     bool help = false; /**< Flag indicating whether the input requests the help
                           option */
     bool rv_flag = false; /**< Flag indicating whether to generate event file

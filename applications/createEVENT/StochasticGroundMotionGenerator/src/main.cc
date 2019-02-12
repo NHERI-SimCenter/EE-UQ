@@ -75,6 +75,12 @@ int main(int argc, char** argv) {
       json event_description;
       event_description.emplace("type", "Seismic");
       event_description.emplace("subtype", "StochasticGroundMotion");
+
+      auto pattern = json::object({{"dof", 1},
+                                   {"timeSeries", "accel_x"},
+                                   {"type", "UniformAcceleration"}});
+
+      event_description.emplace("pattern", json::array({pattern}));
       event.emplace("Events", json::array({event_description}));
     }
 

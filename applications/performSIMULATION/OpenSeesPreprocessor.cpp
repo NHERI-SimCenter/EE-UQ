@@ -766,7 +766,7 @@ OpenSeesPreprocessor:: getNode(const char * cline,const char * floor){
 
 int main(int argc, char **argv)
 {
-  // OpenSeesPreprocessor BIM.json SAM.json EVENT.json SIM.json -getRV
+  // OpenSeesPreprocessor BIM.json SAM.json EVENT.json SIM.json -r
   // OpenSeesPreprocessor BIM.json SAM.json EVENT.json EDP.json SIM.json script 
 
   OpenSeesPreprocessor thePreprocessor;

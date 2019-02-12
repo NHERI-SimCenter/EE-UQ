@@ -8,7 +8,7 @@
 int
 main(int argc, char **argv) {
 
-  // OpenSeesInput -filenameBIM file? -filenameEVENT file? -filenameSAM file? -filePath path? -fileName file? <-getRV>
+  // OpenSeesInput --filenameBIM file? --filenameEVENT file? --filenameSAM file? --filePath path? --fileName file? <-r>
 
   if (argc == 12) {
 
@@ -22,17 +22,17 @@ main(int argc, char **argv) {
     int arg = 1;
     while(arg < argc)
     {
-        if (strcmp(argv[arg], "-filenameBIM") == 0)
+        if (strcmp(argv[arg], "--filenameBIM") == 0)
         {
             arg++;
             filenameBIM = argv[arg];
         }
-        else if (strcmp(argv[arg], "-filenameSAM") == 0)
+        else if (strcmp(argv[arg], "--filenameSAM") == 0)
         {
             arg++;
             filenameSAM = argv[arg];
         }
-        else if (strcmp(argv[arg], "-fileName") == 0)
+        else if (strcmp(argv[arg], "--fileName") == 0)
         {
             arg++;
             fileName = argv[arg];

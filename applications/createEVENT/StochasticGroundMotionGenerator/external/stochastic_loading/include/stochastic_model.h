@@ -41,19 +41,27 @@ class StochasticModel {
    * Generate loading based on stochastic model and store
    * outputs as JSON object
    * @param[in] event_name Name to assign to event
+   * @param[in] g_units Indicates that time histories should be returned in
+   *                    units of g. Defaults to false where time histories
+   *                    are returned in units of m/s^2
    * @return JsonObject containing loading time histories
    */
-  virtual utilities::JsonObject generate(const std::string& event_name) = 0;
+  virtual utilities::JsonObject generate(const std::string& event_name,
+                                         bool g_units = false) = 0;
 
   /**
    * Generate loading based on stochastic model and write
    * results to file in JSON format
    * @param[in] event_name Name to assign to event
    * @param[in, out] output_location Location to write outputs to
+   * @param[in] g_units Indicates that time histories should be returned in
+   *                    units of g. Defaults to false where time histories
+   *                    are returned in units of m/s^2
    * @return Returns true if successful, false otherwise
    */
   virtual bool generate(const std::string& event_name,
-                        const std::string& output_location) = 0;
+                        const std::string& output_location,
+                        bool g_units = false) = 0;
 
  protected:
   std::string model_name_ = "StochasticModel"; /**< Name of stochastic model */  
