@@ -46,6 +46,7 @@ class RandomVariablesContainer;
 class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
+class LineEditRV;
 
 #include <QGroupBox>
 #include <QVector>
@@ -61,14 +62,13 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    QRadioButton *button; // used to mark if Event intended for deletion
-    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
-    QLineEdit    *file;    // full path to file name
-    QLineEdit    *factor;  // load factor
+    QRadioButton   *button; // used to mark if Event intended for deletion
+    QLineEdit      *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QLineEdit      *file;    // full path to file name
+    LineEditRV    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
-    void factorEditingFinished();
 
 private:
      RandomVariablesContainer *theRandVariableIW;
