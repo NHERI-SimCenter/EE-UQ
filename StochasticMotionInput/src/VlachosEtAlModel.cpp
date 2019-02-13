@@ -100,12 +100,6 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
   this->setLayout(layout);
 
   // Connect slots
-  connect(moment_magnitude_, &QLineEdit::editingFinished, this,
-          &VlachosEtAlModel::updateMoment);
-  connect(rupture_dist_, &QLineEdit::editingFinished, this,
-          &VlachosEtAlModel::updateRuptDist);
-  connect(vs30_, &QLineEdit::editingFinished, this,
-          &VlachosEtAlModel::updateVs30);
   connect(use_seed_, &QRadioButton::toggled, this,
           &VlachosEtAlModel::provideSeed);
 }
@@ -113,9 +107,10 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
 bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
   bool result = true;
 
-  writeLineEdit(jsonObject, "momentMagnitude", *moment_magnitude_);
-  writeLineEdit(jsonObject, "ruptureDist", *rupture_dist_);
-  writeLineEdit(jsonObject, "vs30", *vs30_);
+  moment_magnitude_->outputToJSON(jsonObject, QString("momentMagnitude"));
+  rupture_dist_->outputToJSON(jsonObject, QString("ruptureDist"));
+  vs30_->outputToJSON(jsonObject, QString("vs30"));
+  
   if (use_seed_->isChecked()) {
     jsonObject.insert("seed", seed_->value());
   } else {
@@ -128,9 +123,9 @@ bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
 bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   bool result = true;
 
-  readLineEdit(jsonObject, "momentMagnitude", moment_magnitude_);
-  readLineEdit(jsonObject, "ruptureDist", rupture_dist_);
-  readLineEdit(jsonObject, "vs30", vs30_);
+  moment_magnitude_->inputFromJSON(jsonObject, QString("momentMagnitude"));
+  rupture_dist_->inputFromJSON(jsonObject, QString("ruptureDist"));
+  vs30_->inputFromJSON(jsonObject, QString("vs30"));
 
   if (jsonObject.value("seed").isString()) {
     use_seed_->setChecked(false);    
@@ -142,39 +137,6 @@ bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   return result;
 }
 
-void VlachosEtAlModel::updateMoment() {
-  bool conversion_check;
-  moment_magnitude_->text().toDouble(&conversion_check);
-
-  // Check if moment magnitude is a random variable
-  if (!conversion_check) {
-    QStringList random_var{moment_magnitude_->text(), "7.0"};
-    rv_input_widget_->addConstantRVs(random_var);
-  }
-}
-
-void VlachosEtAlModel::updateRuptDist() {
-  bool conversion_check;
-  rupture_dist_->text().toDouble(&conversion_check);
-
-  // Check if moment magnitude is a random variable
-  if (!conversion_check) {
-    QStringList random_var{rupture_dist_->text(), "200.0"};
-    rv_input_widget_->addConstantRVs(random_var);    
-  }  
-}
-
-void VlachosEtAlModel::updateVs30() {
-  bool conversion_check;
-  vs30_->text().toDouble(&conversion_check);
-
-  // Check if moment magnitude is a random variable
-  if (!conversion_check) {
-    QStringList random_var{vs30_->text(), "500.0"};
-    rv_input_widget_->addConstantRVs(random_var);    
-  }
-}
-
 void VlachosEtAlModel::provideSeed(const bool& checked) {
   if (checked) {
     seed_->setEnabled(true);
@@ -182,35 +144,4 @@ void VlachosEtAlModel::provideSeed(const bool& checked) {
     seed_->setEnabled(false);
     seed_->setValue(500);
   }
-}
-
-void VlachosEtAlModel::writeLineEdit(QJsonObject& json_object,
-                                     const QString& key,
-                                     const QLineEdit& line_edit) const {
-  bool conversion_check;
-  double double_value = line_edit.text().toDouble(&conversion_check);  
-
-  if (conversion_check) {
-    json_object.insert(key, double_value);    
-  } else {
-    json_object.insert(key, "RV." + line_edit.text());    
-  }
-}
-
-bool VlachosEtAlModel::readLineEdit(const QJsonObject& jsonObject,
-                                    const QString& key, QLineEdit* line_edit) {
-  bool result = true;
-
-  if (jsonObject.contains(key)) {
-    auto value = jsonObject.value(key);
-    if (value.isString()) {
-      line_edit->setText(value.toString().remove(0,3));
-    } else {
-      line_edit->setText(value.toString());
-    }
-  } else {
-    result = false;
-  }
-  
-  return result;
 }

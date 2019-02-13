@@ -99,25 +99,6 @@ class VlachosEtAlModel : public StochasticModelWidget {
 
  public slots:
   /**
-   * Update moment magnitude when line edit value has changed
-   * @param[in] magnitude Current value for moment magnitude in line edit
-   */
-  void updateMoment();
-
-  /**
-   * Update rupture distance when line edit value has changed
-   * @param[in] rupt_dist Current value for rupture distance in line edit
-   */
-  void updateRuptDist();
-
-  /**
-   * Update average shear-wave velocity for the upper 30-m depth (Vs30) when
-   * line edit value has changed
-   * @param[in] vs30 Current value for Vs30 in line edit
-   */
-  void updateVs30();
-
-  /**
    * Update ability to provide seed based on changed status of radio button
    * @param[in] checked Current status of radio button for providing seed
    */
@@ -134,27 +115,6 @@ class VlachosEtAlModel : public StochasticModelWidget {
   QRadioButton* use_seed_; /**< Radio button to indicate whether specific seed
                               value should be used */
   QFormLayout* parameters_; /**< Widget for inputting model parameters */
-
- private:
-  /**
-   * Write lineedit key-value to JSON object
-   * @param[in, out] json_object JSON object to write line-edit key-value pair to
-   * @param[in] key Key to find value for and write to JSON
-   * @param[in] line_edit Line edit to search for value at input key
-   * @return Returns true of successful, false otherwise
-   */
-  void writeLineEdit(QJsonObject& json_object, const QString& key,
-                     const QLineEdit& line_edit) const;
-
-  /**
-   * Read input JSON object, writing value at input key to line-edit
-   * @param[in] json_object JSON object to read from
-   * @param[in] key Key to search for value
-   * @param[in, out] line_edit Line-edit to write value at key to
-   * @return Returns true if successful, false otherwise
-   */
-  bool readLineEdit(const QJsonObject& json_object, const QString& key,
-                    QLineEdit* line_edit);
 };
 
 #endif  // _VLACHOS_ET_AL_MODEL_H
