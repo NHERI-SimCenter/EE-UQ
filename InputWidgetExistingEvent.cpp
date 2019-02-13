@@ -49,25 +49,26 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sectiontitle.h>
 #include <QFileInfo>
 
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 //#include <InputWidgetParameters.h>
 
-InputWidgetExistingEvent::InputWidgetExistingEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+InputWidgetExistingEvent::InputWidgetExistingEvent(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     femSpecific = 0;
 
     layout = new QVBoxLayout();
+    QHBoxLayout *fileName1Layout = new QHBoxLayout();
 
     QLabel *label1 = new QLabel();
-    label1->setText("Event");
+    label1->setText("File");
 
-    QHBoxLayout *fileName1Layout = new QHBoxLayout();
     file1 = new QLineEdit;
     QPushButton *chooseFile1 = new QPushButton();
     chooseFile1->setText(tr("Choose"));
     connect(chooseFile1,SIGNAL(clicked()),this,SLOT(chooseFileName1()));
+
     fileName1Layout->addWidget(label1);
     fileName1Layout->addWidget(file1);
     fileName1Layout->addWidget(chooseFile1);
@@ -183,7 +184,7 @@ InputWidgetExistingEvent::setFilename1(QString name1){
         names.append(varNamesAndValues.at(i));
     }
 
-    theRandomVariableInputWidget->removeRandomVariables(names);
+    theRandomVariablesContainer->removeRandomVariables(names);
 
     // set file name & ebtry in qLine edit
 

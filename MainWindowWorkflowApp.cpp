@@ -6,7 +6,7 @@
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
 #include <QDebug>
-#include "MainWindow.h"
+#include "MainWindowWorkflowApp.h"
 #include <QHBoxLayout>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -16,8 +16,14 @@
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QDesktopServices>
+#include <sectiontitle.h>
 
-#include <InputWidgetEE_UQ.h>
+//#include <InputWidgetEE_UQ.h>
+#include <WorkflowAppWidget.h>
+
 #include "SimCenterTableWidget.h"
 #include <QDesktopWidget>
 #include <HeaderWidget.h>
@@ -29,8 +35,8 @@
 #include <RemoteService.h>
 
 
-MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService)
+MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -41,11 +47,13 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     centralWidget->setLayout(layout);
 
-    QRect rec = QApplication::desktop()->screenGeometry();
-
-    int height = 0.7*rec.height();
-    int width = 0.7*rec.width();
-
+    //
+    // resize to primary screen
+    //
+      
+    QRect rec = QGuiApplication::primaryScreen()->geometry();
+    int height = this->height()<int(0.85*rec.height())?int(0.85*rec.height()):this->height();
+    int width  = this->width()<int(0.85*rec.width())?int(0.85*rec.width()):this->width();
     this->resize(width, height);
 
     //
@@ -53,7 +61,7 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
     //
 
     HeaderWidget *header = new HeaderWidget();
-    header->setHeadingText(tr("EE-UQ: Response of Building to Earthquake"));
+    header->setHeadingText(appName);
     layout->addWidget(header);
 
     // place a location for messages;
@@ -73,8 +81,6 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
     layoutLogin->setAlignment(Qt::AlignLeft);
     header->appendLayout(layoutLogin);
 
-
-    inputWidget = new InputWidgetEE_UQ(theRemoteInterface);
     layout->addWidget(inputWidget);
 
     // layout->addStretch();
@@ -112,21 +118,30 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
 
     loginWindow = new QWidget();
     QGridLayout *loginLayout = new QGridLayout();
+    SectionTitle *info=new SectionTitle();
+    info->setText(tr("DesignSafe User Account Info:"));
+
     QLabel *nameLabel = new QLabel();
-    nameLabel->setText("username:");
+    nameLabel->setText("Username:");
     QLabel *passwordLabel = new QLabel();
-    passwordLabel->setText("password:");
+    passwordLabel->setText("Password:");
     nameLineEdit = new QLineEdit();
     passwordLineEdit = new QLineEdit();
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     loginSubmitButton = new QPushButton();
     loginSubmitButton->setText("Login");
-    loginLayout->addWidget(nameLabel,0,0);
-    loginLayout->addWidget(nameLineEdit,0,1);
-    loginLayout->addWidget(passwordLabel,1,0);
-    loginLayout->addWidget(passwordLineEdit,1,1);
-    loginLayout->addWidget(loginSubmitButton,2,2);
+    loginLayout->addWidget(info,0,0,2,2,Qt::AlignBottom);
+    loginLayout->addWidget(nameLabel,2,0);
+    loginLayout->addWidget(nameLineEdit,2,1);
+    loginLayout->addWidget(passwordLabel,3,0);
+    loginLayout->addWidget(passwordLineEdit,3,1);
+    loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
+
+    loginWindow->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
 
     //
     // connect some signals and slots
@@ -149,6 +164,10 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
     connect(inputWidget,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
+
+    connect(theApp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
+    connect(theApp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
+    connect(theApp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
 
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
@@ -183,16 +202,78 @@ MainWindow::MainWindow(RemoteService *theService, QWidget *parent)
 
     inputWidget->setMainWindow(this);
 
+    //
+    // strings needed in about menu, use set methods to override
+    //
 
+    feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
+    versionText = QString(tr("Version 1.0.2"));
+    citeText = QString(tr(""));
+    aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
+    copyrightText = QString("\
+                            <p>\
+                            The source code is licensed under a BSD 2-Clause License:<p>\
+                            \"Copyright (c) 2017-2018, The Regents of the University of California (Regents).\"\
+                            All rights reserved.<p>\
+                            <p>\
+                            Redistribution and use in source and binary forms, with or without \
+                            modification, are permitted provided that the following conditions are met:\
+                            <p>\
+                            1. Redistributions of source code must retain the above copyright notice, this\
+                            list of conditions and the following disclaimer.\
+                            \
+                            \
+                            2. Redistributions in binary form must reproduce the above copyright notice,\
+                            this list of conditions and the following disclaimer in the documentation\
+                            and/or other materials provided with the distribution.\
+                            <p>\
+                            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\
+                            ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\
+                            WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\
+                            DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR\
+                            ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\
+                            (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\
+                            LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\
+            ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\
+            (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\
+            SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\
+            <p>\
+            The views and conclusions contained in the software and documentation are those\
+            of the authors and should not be interpreted as representing official policies,\
+            either expressed or implied, of the FreeBSD Project.\
+            <p>\
+            REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, \
+            THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.\
+            THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED HEREUNDER IS \
+            PROVIDED \"AS IS\". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,\
+            UPDATES, ENHANCEMENTS, OR MODIFICATIONS.\
+            <p>\
+            ------------------------------------------------------------------------------------\
+            <p>\
+            The compiled binary form of this application is licensed under a GPL Version 3 license.\
+            The licenses are as published by the Free Software Foundation and appearing in the LICENSE file\
+            included in the packaging of this application. \
+            <p>\
+            ------------------------------------------------------------------------------------\
+            <p>\
+            This software makes use of the QT packages (unmodified): core, gui, widgets and network\
+                                                                     <p>\
+                                                                     QT is copyright \"The Qt Company Ltd&quot; and licensed under the GNU Lesser General \
+                                                                     Public License (version 3) which references the GNU General Public License (version 3)\
+      <p>\
+      The licenses are as published by the Free Software Foundation and appearing in the LICENSE file\
+      included in the packaging of this application. \
+      <p>\
+      ");
 }
 
-MainWindow::~MainWindow()
+MainWindowWorkflowApp::~MainWindowWorkflowApp()
 {
 
 }
 
 
-bool MainWindow::save()
+bool MainWindowWorkflowApp::save()
 {
     if (currentFile.isEmpty()) {
         return saveAs();
@@ -201,7 +282,7 @@ bool MainWindow::save()
     }
 }
 
-bool MainWindow::saveAs()
+bool MainWindowWorkflowApp::saveAs()
 {
     //
     // get filename
@@ -217,7 +298,7 @@ bool MainWindow::saveAs()
     return saveFile(dialog.selectedFiles().first());
 }
 
-void MainWindow::open()
+void MainWindowWorkflowApp::open()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
     if (!fileName.isEmpty())
@@ -225,13 +306,13 @@ void MainWindow::open()
 }
 
 
-void MainWindow::openFile(QString fileName)
+void MainWindowWorkflowApp::openFile(QString fileName)
 {
     if (!fileName.isEmpty())
         loadFile(fileName);
 }
 
-void MainWindow::newFile()
+void MainWindowWorkflowApp::newFile()
 {
     // clear old
     inputWidget->clear();
@@ -241,7 +322,7 @@ void MainWindow::newFile()
 }
 
 
-void MainWindow::setCurrentFile(const QString &fileName)
+void MainWindowWorkflowApp::setCurrentFile(const QString &fileName)
 {
     currentFile = fileName;
     //  setWindowModified(false);
@@ -253,7 +334,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
     setWindowFilePath(shownName);
 }
 
-bool MainWindow::saveFile(const QString &fileName)
+bool MainWindowWorkflowApp::saveFile(const QString &fileName)
 {
     //
     // open file
@@ -288,7 +369,7 @@ bool MainWindow::saveFile(const QString &fileName)
     return true;
 }
 
-void MainWindow::loadFile(const QString &fileName)
+void MainWindowWorkflowApp::loadFile(const QString &fileName)
 {
     //
     // open file
@@ -329,7 +410,7 @@ void MainWindow::loadFile(const QString &fileName)
 }
 
 
-void MainWindow::createActions() {
+void MainWindowWorkflowApp::createActions() {
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
 
@@ -338,17 +419,16 @@ void MainWindow::createActions() {
 
     //QToolBar *fileToolBar = addToolBar(tr("File"));
 
-    QAction *newAction = new QAction(tr("&New"), this);
-    newAction->setShortcuts(QKeySequence::New);
-    newAction->setStatusTip(tr("Create a new file"));
-    connect(newAction, &QAction::triggered, this, &MainWindow::newFile);
-    fileMenu->addAction(newAction);
-    //fileToolBar->addAction(newAction);
+    //    QAction *newAction = new QAction(tr("&New"), this);
+    //    newAction->setShortcuts(QKeySequence::New);
+    //    newAction->setStatusTip(tr("Create a new file"));
+    //    connect(newAction, &QAction::triggered, this, &MainWindowWorkflowApp::newFile);
+    //    fileMenu->addAction(newAction);
 
     QAction *openAction = new QAction(tr("&Open"), this);
     openAction->setShortcuts(QKeySequence::Open);
     openAction->setStatusTip(tr("Open an existing file"));
-    connect(openAction, &QAction::triggered, this, &MainWindow::open);
+    connect(openAction, &QAction::triggered, this, &MainWindowWorkflowApp::open);
     fileMenu->addAction(openAction);
     //fileToolBar->addAction(openAction);
 
@@ -356,12 +436,12 @@ void MainWindow::createActions() {
     QAction *saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcuts(QKeySequence::Save);
     saveAction->setStatusTip(tr("Save the document to disk"));
-    connect(saveAction, &QAction::triggered, this, &MainWindow::save);
+    connect(saveAction, &QAction::triggered, this, &MainWindowWorkflowApp::save);
     fileMenu->addAction(saveAction);
 
     QAction *saveAsAction = new QAction(tr("&Save As"), this);
     saveAsAction->setStatusTip(tr("Save the document with new filename to disk"));
-    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(saveAsAction, &QAction::triggered, this, &MainWindowWorkflowApp::saveAs);
     fileMenu->addAction(saveAsAction);
 
     // strangely, this does not appear in menu (at least on a mac)!! ..
@@ -373,25 +453,15 @@ void MainWindow::createActions() {
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
 
-    // the Model Menu cotains is a check list of which model type is currently being edited
-    // to get the current value check each menu item
-    // only one menu item should be selected at a time, the dafault on startup is BIM
-    QMenu *modelMenu = menuBar()->addMenu(tr("&Model"));
-
-    QAction *bimAction = new QAction(tr("&BIM"), this);
-    bimAction->setCheckable(true);
-    bimAction->setChecked(true);
-    bimAction->setStatusTip(tr("Create a Building Information Model"));
-    modelMenu->addAction(bimAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
-
-    QAction *samAction = new QAction(tr("&SAM"), this);
-    samAction->setCheckable(true);
-    samAction->setStatusTip(tr("Create a Structure Information Model"));
-    modelMenu->addAction(samAction);
-    //todo: the menu should connect to a funcation that presents a confirmation dialog, saves the current model to file,
-    // unchecks the previous value, reloads thhe main withdow with the appropriate InputWIdetSheetXX class
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
+    QAction *citeAct = helpMenu->addAction(tr("&How to cite"), this, &MainWindowWorkflowApp::cite);
+    QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
+    //aboutAct->setStatusTip(tr("Show the application's About box"));
 
     /*
  cutAction = new QAction(tr("Cu&t"), this);
@@ -450,12 +520,13 @@ void MainWindow::createActions() {
  selectSubMenu->addAction(selectColumnAction);
  selectSubMenu->addAction(selectAllAction);
 */
+
 }
 
 
 
 
-void MainWindow::onLoginButtonClicked() {
+void MainWindowWorkflowApp::onLoginButtonClicked() {
 
     if (loggedIn == false) {
         numTries = 0;
@@ -466,7 +537,7 @@ void MainWindow::onLoginButtonClicked() {
     }
 }
 
-void MainWindow::onLoginSubmitButtonClicked() {
+void MainWindowWorkflowApp::onLoginSubmitButtonClicked() {
 
     int maxNumTries = 3;
 
@@ -487,7 +558,7 @@ void MainWindow::onLoginSubmitButtonClicked() {
 
 
 void
-MainWindow::attemptLoginReturn(bool ok){
+MainWindowWorkflowApp::attemptLoginReturn(bool ok){
 
     int maxNumTries = 3;
 
@@ -515,7 +586,7 @@ MainWindow::attemptLoginReturn(bool ok){
 
 
 void
-MainWindow::logoutReturn(bool ok){
+MainWindowWorkflowApp::logoutReturn(bool ok){
 
     if (ok == true) {
         loggedIn = false;
@@ -527,41 +598,106 @@ MainWindow::logoutReturn(bool ok){
 }
 
 void
-MainWindow::onRunButtonClicked() {
+MainWindowWorkflowApp::onRunButtonClicked() {
     inputWidget->onRunButtonClicked();
 }
 
 void
-MainWindow::onRemoteRunButtonClicked(){
-    inputWidget->onRemoteRunButtonClicked();
+MainWindowWorkflowApp::onRemoteRunButtonClicked(){
+    if (loggedIn == true)
+        inputWidget->onRemoteRunButtonClicked();
+    else
+        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
 }
 
 void
-MainWindow::onRemoteGetButtonClicked(){
-    inputWidget->onRemoteGetButtonClicked();
+MainWindowWorkflowApp::onRemoteGetButtonClicked(){
+    if (loggedIn == true)
+        inputWidget->onRemoteGetButtonClicked();
+    else
+        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
 };
 
-void MainWindow::onExitButtonClicked(){
-    //RandomVariableInputWidget *theParameters = uq->getParameters();
+void MainWindowWorkflowApp::onExitButtonClicked(){
+    //RandomVariablesContainer *theParameters = uq->getParameters();
     inputWidget->onExitButtonClicked();
     QCoreApplication::exit(0);
 }
 
 
 void
-MainWindow::statusMessage(const QString msg){
+MainWindowWorkflowApp::statusMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "STATUS MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void
-MainWindow::errorMessage(const QString msg){
+MainWindowWorkflowApp::errorMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "ERROR MESSAGE" << msg;
+    QApplication::processEvents();
 }
 
 void
-MainWindow::fatalMessage(const QString msg){
+MainWindowWorkflowApp::fatalMessage(const QString msg){
     errorLabel->setText(msg);
     qDebug() << "FATAL MESSAGE" << msg;
 }
+
+
+void MainWindowWorkflowApp::version()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(versionText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::cite()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(citeText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::about()
+{
+    QMessageBox msgBox;
+    QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    msgBox.setText(aboutText);
+    QGridLayout *layout = (QGridLayout*)msgBox.layout();
+    layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+    msgBox.exec();
+}
+
+void MainWindowWorkflowApp::setAbout(QString &newAbout) {
+    aboutText = newAbout;
+}
+
+void MainWindowWorkflowApp::setVersion(QString &newVersion) {
+    versionText = newVersion;
+}
+
+void MainWindowWorkflowApp::submitFeedback()
+{
+    QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::copyright()
+{
+  QMessageBox msgBox;
+  QSpacerItem *theSpacer = new QSpacerItem(700, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  msgBox.setText(copyrightText);
+  QGridLayout *layout = (QGridLayout*)msgBox.layout();
+  layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
+  msgBox.exec();
+
+}
+

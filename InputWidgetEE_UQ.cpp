@@ -50,15 +50,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QStackedWidget>
-#include <InputWidgetEarthquakeEvent.h>
+#include <EarthquakeEventSelection.h>
 #include <RunLocalWidget.h>
 #include <QProcess>
 #include <QCoreApplication>
-
+#include <RemoteService.h>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QHostInfo>
+#include <QUuid>
 
 #include "GeneralInformationWidget.h"
-#include <InputWidgetBIM_Selection.h>
-#include <RandomVariableInputWidget.h>
+#include <SIM_Selection.h>
+#include <RandomVariablesContainer.h>
 #include <InputWidgetSampling.h>
 #include <InputWidgetOpenSeesAnalysis.h>
 #include <QDir>
@@ -67,50 +72,127 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <LocalApplication.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
-
 #include <RunWidget.h>
+#include <InputWidgetBIM.h>
+#include <InputWidgetUQ.h>
+
+
+
+#include "CustomizedItemModel.h"
+
+#include <QSettings>
+#include <QUuid>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QHostInfo>
+
+// static pointer for global procedure set in constructor
+static InputWidgetEE_UQ *theApp = 0;
+
+// global procedure
+int getNumParallelTasks() {
+    return theApp->getMaxNumParallelTasks();
+}
 
 InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
-    : QWidget(parent), theRemoteService(theService)
+    : WorkflowAppWidget(theService, parent)
 {
+    // set static pointer for global procedure
+    theApp = this;
 
+    //
+    // user settings
+    //
+
+    /* remove user uuid saving .. goes against what google permits
+    QSettings settings("SimCenter", "uqFEM");
+    QVariant savedValue = settings.value("uuid");
+    QUuid uuid;
+    if (savedValue.isNull()) {
+        uuid = QUuid::createUuid();
+        settings.setValue("uuid",uuid);
+    } else
+        uuid =savedValue.toUuid();
+     */
     //
     // create the various widgets
     //
 
-    theRVs = new RandomVariableInputWidget();
-    theGI = new GeneralInformationWidget();
-    theSIM = new InputWidgetBIM_Selection(theRVs);
-    theEvent = new InputWidgetEarthquakeEvent(theRVs);
+    theRVs = new RandomVariablesContainer();
+    theGI = GeneralInformationWidget::getInstance();
+    theSIM = new SIM_Selection(theRVs);
+    theEvent = new EarthquakeEventSelection(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
-    theUQ = new InputWidgetSampling();
+    theUQ_Method = new InputWidgetSampling();
 
     theResults = new DakotaResultsSampling();
-    localApp = new LocalApplication;
-    remoteApp = new RemoteApplication(theService);
+    localApp = new LocalApplication("EE-UQ.py");
+    remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
-   // theRunLocalWidget = new RunLocalWidget(theUQ);
-    SimCenterWidget *theWidgets[2];
-    theWidgets[0] = theAnalysis;
-    theWidgets[1] = theUQ;
-    int numWidgets = 2;
-    theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 2);
+   // theRunLocalWidget = new RunLocalWidget(theUQ_Method);
+    SimCenterWidget *theWidgets[1];// =0;
+    //theWidgets[0] = theAnalysis;
+    //theWidgets[1] = theUQ_Method;
+    theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 0);
 
     //
     // connect signals and slots
     //
 
+    // error messages and signals
+    connect(theResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+    connect(theGI,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theGI,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theGI,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+    connect(theSIM,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theSIM,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theSIM,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+    connect(theEvent,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theEvent,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theEvent,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+    connect(theRunWidget,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theRunWidget,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theRunWidget,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+
+    connect(localApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(localApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(localApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
+    connect(remoteApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(remoteApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(remoteApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
+    connect(localApp,SIGNAL(processResults(QString, QString, QString)), this, SLOT(processResults(QString, QString, QString)));
 
     connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
-    connect(theJobManager,SIGNAL(processResults(QString &, QString &)), this, SLOT(processResults(QString&,QString&)));
-    connect(remoteApp,SIGNAL(successfullJobStart), theRunWidget, SLOT(hide()));
+
+    connect(theJobManager,SIGNAL(processResults(QString , QString, QString)), this, SLOT(processResults(QString, QString, QString)));
+    connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
+
+    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
+
+    //
+    // some of above widgets are inside some tabbed widgets
+    //
+
+   // theBIM = new InputWidgetBIM(theGI, theSIM);
+    theUQ = new InputWidgetUQ(theUQ_Method,theRVs);
+
+    //
     //
     //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
     //  and we will use a QStacked widget for displaying the widget. Which of widgets displayed in StackedView depends on
@@ -129,15 +211,18 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     treeView = new QTreeView();
-    standardModel = new QStandardItemModel ;
+    standardModel = new CustomizedItemModel; //QStandardItemModel ;
     QStandardItem *rootNode = standardModel->invisibleRootItem();
 
     //defining bunch of items for inclusion in model
-    QStandardItem *giItem    = new QStandardItem("GEN");
-    QStandardItem *rvItem   = new QStandardItem("RVs");
-    QStandardItem *bimItem = new QStandardItem("SIM");
+    //QStandardItem *giItem    = new QStandardItem("GEN");
+    //
+
+     QStandardItem *giItem = new QStandardItem("GI");
+    QStandardItem *bimItem = new QStandardItem("BIM");
     QStandardItem *evtItem = new QStandardItem("EVT");
-   // QStandardItem *anaItem = new QStandardItem("ANA");
+    QStandardItem *uqItem   = new QStandardItem("UQ");
+    QStandardItem *femItem = new QStandardItem("FEM");
     //QStandardItem *uqItem = new QStandardItem("UQM");
     QStandardItem *resultsItem = new QStandardItem("RES");
 
@@ -145,8 +230,8 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     rootNode->appendRow(giItem);
     rootNode->appendRow(bimItem);
     rootNode->appendRow(evtItem);
-   // rootNode->appendRow(anaItem);
-    rootNode->appendRow(rvItem);
+    rootNode->appendRow(femItem);
+    rootNode->appendRow(uqItem);
     //rootNode->appendRow(uqItem);
     rootNode->appendRow(resultsItem);
 
@@ -157,6 +242,22 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     treeView->expandAll();
     treeView->setHeaderHidden(true);
     treeView->setMaximumWidth(100);
+
+    //
+    // customize the apperance of the menu on the left
+    //
+
+    treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff ); // hide the horizontal scroll bar
+    treeView->setObjectName("treeViewOnTheLeft");
+    treeView->setIndentation(0);
+    QFile file(":/styles/stylesheet.qss");
+    if(file.open(QFile::ReadOnly)) {
+        treeView->setStyleSheet(file.readAll());
+        file.close();
+    }
+    else
+        qDebug() << "Open Style File Failed!";
+
 
     //
     // set up so that a slection change triggers the selectionChanged slot
@@ -179,9 +280,9 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theStackedWidget->addWidget(theGI);
     theStackedWidget->addWidget(theSIM);
     theStackedWidget->addWidget(theEvent);
-   // theStackedWidget->addWidget(theAnalysis);
-    theStackedWidget->addWidget(theRVs);
-    // theStackedWidget->addWidget(theUQ);
+    theStackedWidget->addWidget(theAnalysis);
+    theStackedWidget->addWidget(theUQ);
+    // theStackedWidget->addWidget(theUQ_Method);
     theStackedWidget->addWidget(theResults);
 
     // add stacked widget to layout
@@ -189,7 +290,47 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     // set current selection to GI
     treeView->setCurrentIndex( infoItemIdx );
+    infoItemIdx = resultsItem->index();
 
+    // access a web page which will increment the usage count for this tool
+    manager = new QNetworkAccessManager(this);
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyFinished(QNetworkReply*)));
+
+    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
+
+    // access a web page which will increment the usage count for this tool
+    manager = new QNetworkAccessManager(this);
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyFinished(QNetworkReply*)));
+
+    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/bfm/use.php")));
+    //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
+
+
+    QNetworkRequest request;
+    QUrl host("http://www.google-analytics.com/collect");
+    request.setUrl(host);
+    request.setHeader(QNetworkRequest::ContentTypeHeader,
+                      "application/x-www-form-urlencoded");
+
+    // setup parameters of request
+    QString requestParams;
+    QUuid uuid = QUuid::createUuid();
+    QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
+    requestParams += "v=1"; // version of protocol
+    requestParams += "&tid=UA-126303135-1-1"; // Google Analytics account
+    requestParams += "&cid=" + uuid.toString(); // unique user identifier
+    requestParams += "&t=event";  // hit type = event others pageview, exception
+    requestParams += "&an=EEUQ";   // app name
+    requestParams += "&av=1.0.1"; // app version
+    requestParams += "&ec=EEUQ";   // event category
+    requestParams += "&ea=start"; // event action
+
+    // send request via post method
+    manager->post(request, requestParams.toStdString().c_str());
 }
 
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
@@ -197,12 +338,10 @@ InputWidgetEE_UQ::~InputWidgetEE_UQ()
 
 }
 
-void InputWidgetEE_UQ::setMainWindow(MainWindow* main)
+void InputWidgetEE_UQ::replyFinished(QNetworkReply *pReply)
 {
-    window = main;
-    treeView->setCurrentIndex( infoItemIdx );
+    return;
 }
-
 
 void
 InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
@@ -211,20 +350,20 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
     const QModelIndex index = treeView->selectionModel()->currentIndex();
     QString selectedText = index.data(Qt::DisplayRole).toString();
 
-    if (selectedText == "GEN")
+    if (selectedText == "GI")
         theStackedWidget->setCurrentIndex(0);
-    else if (selectedText == "SIM")
+    if (selectedText == "BIM")
         theStackedWidget->setCurrentIndex(1);
     else if (selectedText == "EVT")
         theStackedWidget->setCurrentIndex(2);
-    // else if (selectedText == "ANA")
-    //    theStackedWidget->setCurrentIndex(3);
-    else if (selectedText == "RVs")
+    else if (selectedText == "FEM")
         theStackedWidget->setCurrentIndex(3);
+    else if (selectedText == "UQ")
+        theStackedWidget->setCurrentIndex(4);
     // else if (selectedText == "UQM")
     //   theStackedWidget->setCurrentIndex(5);
     else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(4);
+        theStackedWidget->setCurrentIndex(5);
 }
 
 
@@ -260,11 +399,11 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     apps["EDP"] = appsEDP;
 
     QJsonObject jsonObjectUQ;
-    theUQ->outputToJSON(jsonObjectUQ);
+    theUQ_Method->outputToJSON(jsonObjectUQ);
     jsonObjectTop["UQ_Method"] = jsonObjectUQ;
 
     QJsonObject appsUQ;
-    theUQ->outputAppDataToJSON(appsUQ);
+    theUQ_Method->outputAppDataToJSON(appsUQ);
     apps["UQ"]=appsUQ;
 
     QJsonObject jsonObjectAna;
@@ -293,10 +432,12 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
  void
- InputWidgetEE_UQ::processResults(QString &dakotaOut, QString &dakotaTab){
-      theResults->processResults(dakotaOut, dakotaTab);
+ InputWidgetEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+
+      theResults->processResults(dakotaOut, dakotaTab, inputFile);
       theRunWidget->hide();
-      theStackedWidget->setCurrentIndex(4);
+      treeView->setCurrentIndex(infoItemIdx);
+      theStackedWidget->setCurrentIndex(5);
  }
 
 void
@@ -333,6 +474,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     theEvent->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
+
     /*
     if (jsonObject.contains("Events")) {
         QJsonObject jsonObjEventInformation = jsonObject["Event"].toObject();
@@ -373,7 +515,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         if (theApplicationObject.contains("UQ")) {
             QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            theUQ->inputAppDataFromJSON(theObject);
+            theUQ_Method->inputAppDataFromJSON(theObject);
         } else
             return false;
 
@@ -393,6 +535,8 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 void
 InputWidgetEE_UQ::onRunButtonClicked() {
+    theRunWidget->hide();
+    theRunWidget->setMinimumWidth(this->width()*0.5);
     theRunWidget->showLocalApplication();
 }
 
@@ -405,6 +549,7 @@ InputWidgetEE_UQ::onRemoteRunButtonClicked(){
     if (loggedIn == true) {
 
         theRunWidget->hide();
+        theRunWidget->setMinimumWidth(this->width()*0.5);
         theRunWidget->showRemoteApplication();
 
     } else {
@@ -445,7 +590,20 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    QString tmpDirectory = workingDir + QDir::separator() + QString("tmp.SimCenter"); // + QDir::separator() + QString("templatedir");
+    // designsafe will need a unique name
+    /* *********************************************
+    will let ParallelApplication rename dir
+    QUuid uniqueName = QUuid::createUuid();
+    QString strUnique = uniqueName.toString();
+    strUnique = strUnique.mid(1,36);
+    QString tmpDirName = QString("tmp.SimCenter") + strUnique;
+    *********************************************** */
+
+    QString tmpDirName = QString("tmp.SimCenter");
+    qDebug() << "TMP_DIR: " << tmpDirName;
+    QDir workDir(workingDir);
+
+    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
@@ -453,14 +611,14 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     } else
       destinationDirectory.mkpath(tmpDirectory);
 
-    QString templateDirectory  = tmpDirectory + QDir::separator() + subDir;
+    QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
 
     // copyPath(path, tmpDirectory, false);
     theSIM->copyFiles(templateDirectory);
     theEvent->copyFiles(templateDirectory);
     theAnalysis->copyFiles(templateDirectory);
-    theUQ->copyFiles(templateDirectory);
+    theUQ_Method->copyFiles(templateDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
@@ -522,21 +680,9 @@ InputWidgetEE_UQ::loadFile(const QString fileName){
 
     this->clear();
     this->inputFromJSON(jsonObj);
-
 }
 
-
-void
-InputWidgetEE_UQ::statusMessage(const QString msg){
-    emit sendStatusMessage(msg);
-}
-
-void
-InputWidgetEE_UQ::errorMessage(const QString msg){
-    emit sendErrorMessage(msg);
-}
-
-void
-InputWidgetEE_UQ::fatalMessage(const QString msg){
-    emit sendFatalMessage(msg);
+int
+InputWidgetEE_UQ::getMaxNumParallelTasks() {
+    return theUQ_Method->getNumParallelTasks();
 }

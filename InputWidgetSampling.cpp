@@ -40,7 +40,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "InputWidgetSampling.h"
 //#include <DakotaResultsSampling.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 
 #include <QPushButton>
@@ -142,6 +142,11 @@ InputWidgetSampling::~InputWidgetSampling()
 void InputWidgetSampling::clear(void)
 {
 
+}
+
+int
+InputWidgetSampling::getNumParallelTasks(void){
+  return numSamples->text().toInt();
 }
 
 bool
@@ -299,9 +304,9 @@ InputWidgetSampling::getResults(void) {
 }
 
 
-RandomVariableInputWidget *
+RandomVariablesContainer *
 InputWidgetSampling::getParameters(void) {
     QString classType("Uncertain");
-  return new RandomVariableInputWidget(classType);
+  return new RandomVariablesContainer(classType);
 }
 */

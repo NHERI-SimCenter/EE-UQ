@@ -51,7 +51,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QJsonArray>
 #include <QTableWidget>
-#include <MainWindow.h>
 #include <QTemporaryFile>
 #include <QHeaderView>
 #include <QRect>
@@ -59,10 +58,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDesktopWidget>
 
 #include <QMenu>
+#include <QDir>
 
 #include  <QDebug>
 class RemoteService;
-#include <MainWindow.h>
 
 RemoteJobManager::RemoteJobManager(RemoteService *theRemoteInterface, QWidget *parent)
     : QWidget(parent), triggeredRow(-1)
@@ -336,6 +335,10 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         name2="dakota.out";
         name3="dakotaTab.out";
 
+	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
+	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
+	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
+
         QStringList localFiles;
         localFiles.append(name1);
         localFiles.append(name2);
@@ -345,7 +348,7 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         // download data to temp files & then process them as normal
         //
 
-        QString dakotaJSON = archiveDir + QString("/templatedir/dakota.json");
+        QString dakotaJSON = archiveDir + QString("/dakota.json");
         QString dakotaOUT = archiveDir + QString("/dakota.out");
         QString dakotaTAB = archiveDir + QString("/dakotaTab.out");
 
@@ -370,13 +373,11 @@ RemoteJobManager::downloadFilesReturn(bool result)
 
     if (result == true) {
       emit loadFile(name1);
-      emit processResults(name2, name3);
+      emit processResults(name2, name3, name1);
       this->hide();
     } else {
         emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
-    }
-
-
+   }
 }
 
 void
@@ -398,6 +399,7 @@ RemoteJobManager::getJobData(void) {
         getJobDetailsRequest = 2;
         emit getJobDetails(jobIDRequest);
     }
+
     triggeredRow = -1;
 }
 

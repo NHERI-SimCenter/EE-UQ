@@ -51,13 +51,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QStringList>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
 
 
-LocalApplication::LocalApplication(QWidget *parent)
+LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -65,10 +66,12 @@ LocalApplication::LocalApplication(QWidget *parent)
 
     QLabel *workingDirLabel = new QLabel();
     workingDirLabel->setText(QString("Working Dir Location:"));
+
     runLayout->addWidget(workingDirLabel,1,0);
 
     workingDirName = new QLineEdit();
     workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
     QLabel *appDirLabel = new QLabel();
@@ -77,10 +80,12 @@ LocalApplication::LocalApplication(QWidget *parent)
 
     appDirName = new QLineEdit();
     appDirName->setText(QCoreApplication::applicationDirPath());
+    appDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
     runLayout->addWidget(appDirName,2,1);
 
     QPushButton *pushButton = new QPushButton();
     pushButton->setText("Submit");
+    pushButton->setToolTip(tr("Press to launch job on local machine"));
     runLayout->addWidget(pushButton,3,1);
 
    // layout->addWidget(theUQ);
@@ -93,6 +98,11 @@ LocalApplication::LocalApplication(QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+    this->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+    this->workflowScript = workflowScriptName;
 }
 
 bool
@@ -148,6 +158,7 @@ LocalApplication::onRunButtonPressed(void)
 
     QString templateDir("templatedir");
 
+    emit sendStatusMessage("Gathering Files to local workdir");
     emit setupForRun(workingDir, templateDir);
 }
 
@@ -158,20 +169,40 @@ LocalApplication::onRunButtonPressed(void)
 //
 
 bool
-LocalApplication::setupDoneRunApplication(QString &tmpDirectory,QString &inputFile) {
+LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
     QString appDir = appDirName->text();
 
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
+    QString pySCRIPT;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath(workflowScript);
+   // pySCRIPT = scriptDir.absoluteFilePath("EE-UQ.py");
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        emit sendErrorMessage(QString("NO SCRIPT FILE: ") + pySCRIPT);
+        return false;
+    }
 
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         emit sendErrorMessage(QString("NO REGISTRY FILE: ") + registryFile);
+        return false;
+    }
+
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
+
+    qDebug() << "Running Simulations";
+    emit sendStatusMessage("Running the Simulations");
 
     /************************************************************************
 for (int i = 0; i < files.size(); i++) {
@@ -181,28 +212,41 @@ for (int i = 0; i < files.size(); i++) {
 }
 ***********************************************************************/
 
+    emit sendStatusMessage("Running Dakota .. either run remotely or patience!");
+
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
+
     QProcess *proc = new QProcess();
+    // QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    // proc->execute("python",args);
+
 
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningLocal");
-    qDebug() << command;
-    proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
+    QStringList args{pySCRIPT, "run",inputFile,registryFile};
+    proc->execute("python",args);
 
 #else
+    // note the above not working under linux because basrc not being called so no env variables!!
+
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
+    qDebug() << "PYTHON COMMAND: " << command;    
     proc->execute("bash", QStringList() << "-c" <<  command);
 
-    qInfo() << command;
-
 #endif
+
     proc->waitForStarted();
+
+    //
+    // copy input file to main directory
+    // 
+
+   QString filenameIN = tmpDirectory + QDir::separator() +  QString("dakota.json");
+   QFile::copy(inputFile, filenameIN);
 
     //
     // process the results
@@ -211,6 +255,12 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
-    emit processResults(filenameOUT, filenameTAB);
-    qDebug() << "PROCESSED RESULTS";
+
+    emit processResults(filenameOUT, filenameTAB, inputFile);
+    
+    // will leave the tmp.SimCenter directory
+    //QDir tmpDIR(tmpDirectory);
+    //tmpDIR.removeRecursively();
+
+    return 0;
 }

@@ -1,0 +1,20 @@
+{
+"appId":"simcenter-dakota-1.0.0",
+"archive":"true",
+"archiveSystem":"designsafe.storage.default",
+"inputs":{
+   "inputDirectory":"agave://designsafe.storage.default/tg457427/tmp.SimCenter"
+},
+"memoryPerNode":"1GB",
+"name":"uqFEM:",
+"nodeCount":1,
+"parameters":{
+  "driverFile":"workflow_driver",
+  "errorFile":"dakota.err",
+  "inputFile":"dakota.in",
+  "modules":"petsc",
+  "outputFile":"dakota.out"
+},
+"processorsPerNode":32,
+"requestedTime":"00:02:00"
+}

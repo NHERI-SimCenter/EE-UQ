@@ -45,6 +45,7 @@ class QVBoxLayout;
 class DakotaResults : public SimCenterWidget
 {
     Q_OBJECT
+
 public:
     explicit DakotaResults(QWidget *parent = 0);
     virtual ~DakotaResults();
@@ -52,7 +53,7 @@ public:
     virtual bool outputToJSON(QJsonObject &rvObject);
     virtual bool inputFromJSON(QJsonObject &rvObject);
 
-    virtual int processResults(QString &filenameResults, QString &filenameTab);
+    virtual int processResults(QString filenameResults, QString filenameTab, QString finlenameInput);
 
     void setResultWidget(DakotaResults *result);
 

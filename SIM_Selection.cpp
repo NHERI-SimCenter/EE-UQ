@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetBIM_Selection.h"
+#include "SIM_Selection.h"
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -51,11 +51,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterWidget.h>
 #include <InputWidgetSheetSIM.h>
-#include <InputWidgetOpenSees.h>
+#include <OpenSeesBuildingModel.h>
+#include <MDOF_BuildingModel.h>
 
 
-InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), bimInput(0), theRandomVariableInputWidget(theRandomVariableIW)
+SIM_Selection::SIM_Selection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), bimInput(0), theRandomVariablesContainer(theRandomVariableIW)
 {
     layout = new QVBoxLayout();
 
@@ -85,8 +86,9 @@ InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *th
     name->setSpacing(10);
     name->setMargin(0);
 
-    bimSelection->addItem(tr("Spreadsheet"));
+    //    bimSelection->addItem(tr("Spreadsheet"));
     bimSelection->addItem(tr("OpenSees"));
+    bimSelection->addItem(tr("MDOF"));
 
     connect(bimSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(bimSelectionChanged(QString)));
 
@@ -96,17 +98,18 @@ InputWidgetBIM_Selection::InputWidgetBIM_Selection(RandomVariableInputWidget *th
     this->setLayout(layout);
 
     // set Samlping as the default
-    this->bimSelectionChanged(tr("Spreadsheet"));
+    //    this->bimSelectionChanged(tr("Spreadsheet"));
+    this->bimSelectionChanged(tr("OpenSees"));
     layout->setMargin(0);
 }
 
-InputWidgetBIM_Selection::~InputWidgetBIM_Selection()
+SIM_Selection::~SIM_Selection()
 {
 
 }
 
 
-void InputWidgetBIM_Selection::clear(void)
+void SIM_Selection::clear(void)
 {
 
 }
@@ -115,7 +118,7 @@ void InputWidgetBIM_Selection::clear(void)
 
 
 bool
-InputWidgetBIM_Selection::outputToJSON(QJsonObject &jsonObject)
+SIM_Selection::outputToJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -136,7 +139,7 @@ InputWidgetBIM_Selection::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
+SIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 {
     bool result = false;
     this->clear();
@@ -154,8 +157,10 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 
     int index = 0;
     if (type == QString("SimCenterSIM")) {
-       index = 0;
+       index = 2;
     } else if (type == QString("OpenSeesInput")) {
+       index = 0;
+    } else if (type == QString("MDOF_BuildingModel")) {
        index = 1;
     } else {
         return false;
@@ -174,7 +179,7 @@ InputWidgetBIM_Selection::inputFromJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
+SIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
 {
     bool result = false;
 
@@ -187,7 +192,7 @@ InputWidgetBIM_Selection::outputAppDataToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
+SIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
     bool result = true;
 
@@ -200,7 +205,7 @@ InputWidgetBIM_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetBIM_Selection::copyFiles(QString &destDir) {
+SIM_Selection::copyFiles(QString &destDir) {
 
     if (bimInput != 0) {
         return  bimInput->copyFiles(destDir);
@@ -209,7 +214,7 @@ InputWidgetBIM_Selection::copyFiles(QString &destDir) {
     return false;
 }
 
-void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)
+void SIM_Selection::bimSelectionChanged(const QString &arg1)
 {
     selectionChangeOK = true;
 
@@ -224,11 +229,14 @@ void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)
 
     if (arg1 == QString("Spreadsheet") || arg1 == QString("SimCenterSIM")) {
         delete bimInput;
-        bimInput = new InputWidgetSheetSIM(theRandomVariableInputWidget);
+        bimInput = new InputWidgetSheetSIM(theRandomVariablesContainer);
 
     } else if (arg1 == QString("OpenSees") || (arg1 == QString("OpenSeesInput"))) {
         delete bimInput;
-        bimInput = new InputWidgetOpenSees(theRandomVariableInputWidget);
+        bimInput = new OpenSeesBuildingModel(theRandomVariablesContainer);
+    } else if (arg1 == QString("MDOF") || (arg1 == QString("MDOF_BuildingModel"))) {
+        delete bimInput;
+        bimInput = new MDOF_BuildingModel(theRandomVariablesContainer);
     } else {
         selectionChangeOK = false;
         emit sendErrorMessage("ERROR: BIM Input - no valid Method provided .. keeping old");
@@ -245,7 +253,7 @@ void InputWidgetBIM_Selection::bimSelectionChanged(const QString &arg1)
 
 
 void
-InputWidgetBIM_Selection::errorMessage(QString message){
+SIM_Selection::errorMessage(QString message){
   emit sendErrorMessage(message);
 }
 

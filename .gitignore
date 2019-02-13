@@ -12,6 +12,7 @@ moc*
 *.lo
 *.o
 *.obj
+*.pyc
 
 # Precompiled Headers
 *.gch
@@ -42,6 +43,9 @@ moc*
 qcustomplot.h
 qcustomplot.cpp
 *.stash
+qrc_images.cpp
+qrc_images1.cpp
+qrc_styles.cpp
 
 # OTHER
 Makefile
@@ -50,3 +54,9 @@ OpenSeesInput
 OpenSeesPostprocessor
 OpenSeesPreprocessor
 extractEDP
+MultipleSimCenterEvents
+MultiplePEER_Events
+*.pyc
+*.autosave
+*.json
+MDOF_BuildingModelToSAM

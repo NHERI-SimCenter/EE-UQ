@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAIN_WINDOW_WORKFLOW_APP_H
+#define MAIN_WINDOW_WORKFLOW_APP_H
 
 #include <QMainWindow>
 #include <QItemSelection>
@@ -10,20 +10,27 @@
 
 //#include <JsonValidator.h>
 
-class InputWidgetEE_UQ;
+class WorkflowAppWidget;
 class SimCenterWidget;
 class QPushButton;
 class QLabel;
 
 
 
-class MainWindow : public QMainWindow
+class MainWindowWorkflowApp : public QMainWindow
 {
   Q_OBJECT
     
-    public:
-  explicit MainWindow(RemoteService *theRemoteInterface, QWidget *parent = 0);
-  ~MainWindow();
+public:
+    explicit MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theRemoteInterface, QWidget *parent = 0);
+    ~MainWindowWorkflowApp();
+    void setCopyright(QString &copyright);
+    void setVersion(QString &version);
+    void setAbout(QString &about);
+    void setFeedback(QString &feedback);
+    void setCite(QString &cite);
+
+ protected:
 
  signals:
     void attemptLogin(QString, QString);
@@ -36,6 +43,12 @@ class MainWindow : public QMainWindow
     void openFile(QString filename);
     bool save();
     bool saveAs();
+
+    void about();
+    void submitFeedback();
+    void version();
+    void copyright();
+    void cite();
 
     // for main actions
     void onRunButtonClicked();
@@ -79,15 +92,19 @@ class MainWindow : public QMainWindow
     bool loggedIn;
     int numTries;
 
-    //Ui::MainWindow *ui;
-
     QString currentFile;
-    InputWidgetEE_UQ *inputWidget;
+    WorkflowAppWidget *inputWidget;
     RemoteService *theRemoteInterface;
     //SimCenterWidget *currentWidget;
 
     QPushButton *loginButton;
     QLabel *errorLabel;
+
+    QString versionText;
+    QString aboutText;
+    QString copyrightText;
+    QString feedbackURL;
+    QString citeText;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAIN_WINDOW_WORKFLOW_APP_H

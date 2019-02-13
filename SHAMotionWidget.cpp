@@ -5,8 +5,8 @@
 #include "GMPEWidget.h"
 #include "IntensityMeasureWidget.h"
 
-SHAMotionWidget::SHAMotionWidget(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+SHAMotionWidget::SHAMotionWidget(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     QVBoxLayout* gmToolsLayout = new QVBoxLayout(this);
 

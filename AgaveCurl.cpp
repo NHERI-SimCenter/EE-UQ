@@ -81,13 +81,15 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
     // for operation the class needs two temporary files to function
     //  - either use name Qt provides or use a QUid in current dir
 
-    QUuid uniqueName1 = QUuid::createUuid();
-    QString strUnique1 = uniqueName1.toString();
-    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique1.mid(1,36);
+    // QUuid uniqueName1 = QUuid::createUuid();
+    // QString strUnique1 = uniqueName1.toString();
+    // uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique1.mid(1,36);
+    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("SimCenter.thing1");;
 
-    QUuid uniqueName2 = QUuid::createUuid();
-    QString strUnique2 = uniqueName2.toString();
-    uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique2.mid(1,36);
+    // QUuid uniqueName2 = QUuid::createUuid();
+    // QString strUnique2 = uniqueName2.toString();
+    // uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique2.mid(1,36);
+    uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("SimCenter.thing2");;
 
     //
     // init curl variables
@@ -402,7 +404,7 @@ AgaveCurl::uploadDirectory(const QString &local, const QString &remote)
 
     QDir originDirectory(local);
     if (! originDirectory.exists()) {
-      emit errorMessage("ERROR - local directory does not exist!");
+      emit errorMessage(QString("ERROR - local directory does not exist : ") + local);
       return false;
     }
     QString dirName = originDirectory.dirName();
@@ -766,9 +768,7 @@ AgaveCurl::downloadFile(const QString &remoteFile, const QString &localFile)
     // if failure, go get message, emit signal and return false;
 
     message = QString("Failed to Download File: ") + remoteFile; // more descriptive message
-    // const char *str = curl_easy_strerror(ret);
-    //QString errorString(str);
-    qDebug() << "ERROR: " << message;
+
     emit errorMessage(message);
     return false;
 }

@@ -67,3 +67,8 @@ Application::setupDoneRunApplication(QString &tmpDir, QString &inputFile) {
     qDebug() << "Appliation::setupDoneRunAppliction";
     return true;
 }
+
+void
+Application::setNumTasks(int numTasks) {
+  return;
+}

@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetOpenSees.h"
+#include "OpenSeesBuildingModel.h"
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -55,12 +55,12 @@ using namespace std;
 #include <QGridLayout>
 
 #include <OpenSeesParser.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 //#include <InputWidgetParameters.h>
 
-InputWidgetOpenSees::InputWidgetOpenSees(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     femSpecific = 0;
 
@@ -102,13 +102,19 @@ InputWidgetOpenSees::InputWidgetOpenSees(RandomVariableInputWidget *theRandomVar
 
 }
 
-InputWidgetOpenSees::~InputWidgetOpenSees()
+OpenSeesBuildingModel::~OpenSeesBuildingModel()
 {
+    // remove old random variables
+    QStringList names;
+    for (int i=0; i<varNamesAndValues.size()-1; i+=2) {
+        names.append(varNamesAndValues.at(i));
+    }
 
+    theRandomVariablesContainer->removeRandomVariables(names);
 }
 
 
-void InputWidgetOpenSees::clear(void)
+void OpenSeesBuildingModel::clear(void)
 {
 
 }
@@ -116,7 +122,7 @@ void InputWidgetOpenSees::clear(void)
 
 
 bool
-InputWidgetOpenSees::outputToJSON(QJsonObject &jsonObject)
+OpenSeesBuildingModel::outputToJSON(QJsonObject &jsonObject)
 {
     // just need to send the class type here.. type needed in object in case user screws up
     jsonObject["type"]="OpenSeesInput";
@@ -151,7 +157,7 @@ InputWidgetOpenSees::outputToJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetOpenSees::inputFromJSON(QJsonObject &jsonObject)
+OpenSeesBuildingModel::inputFromJSON(QJsonObject &jsonObject)
 {
     varNamesAndValues.clear();
 
@@ -188,7 +194,7 @@ InputWidgetOpenSees::inputFromJSON(QJsonObject &jsonObject)
 
 
 bool
-InputWidgetOpenSees::outputAppDataToJSON(QJsonObject &jsonObject) {
+OpenSeesBuildingModel::outputAppDataToJSON(QJsonObject &jsonObject) {
 
     //
     // per API, need to add name of application to be called in AppLication
@@ -208,7 +214,7 @@ InputWidgetOpenSees::outputAppDataToJSON(QJsonObject &jsonObject) {
     return true;
 }
 bool
-InputWidgetOpenSees::inputAppDataFromJSON(QJsonObject &jsonObject) {
+OpenSeesBuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
 
     //
     // from ApplicationData
@@ -258,7 +264,7 @@ InputWidgetOpenSees::inputAppDataFromJSON(QJsonObject &jsonObject) {
 
 
 int
-InputWidgetOpenSees::setFilename1(QString name1){
+OpenSeesBuildingModel::setFilename1(QString name1){
 
     // remove old random variables
     QStringList names;
@@ -266,7 +272,7 @@ InputWidgetOpenSees::setFilename1(QString name1){
         names.append(varNamesAndValues.at(i));
     }
 
-    theRandomVariableInputWidget->removeRandomVariables(names);
+    theRandomVariablesContainer->removeRandomVariables(names);
 
     // set file name & ebtry in qLine edit
 
@@ -280,19 +286,19 @@ InputWidgetOpenSees::setFilename1(QString name1){
     OpenSeesParser theParser;
     varNamesAndValues = theParser.getVariables(fileName1);
 
-    theRandomVariableInputWidget->addConstantRVs(varNamesAndValues);
+    theRandomVariablesContainer->addConstantRVs(varNamesAndValues);
 
     return 0;
 }
 
 void
-InputWidgetOpenSees::chooseFileName1(void) {
+OpenSeesBuildingModel::chooseFileName1(void) {
     fileName1=QFileDialog::getOpenFileName(this,tr("Open File"),"C://", "All files (*.*)");
     int ok = this->setFilename1(fileName1);
 }
 
 void
-InputWidgetOpenSees::specialCopyMainInput(QString fileName, QStringList varNames) {
+OpenSeesBuildingModel::specialCopyMainInput(QString fileName, QStringList varNames) {
     // if OpenSees or FEAP parse the file for the variables
     if (varNames.size() > 0) {
         OpenSeesParser theParser;
@@ -301,12 +307,12 @@ InputWidgetOpenSees::specialCopyMainInput(QString fileName, QStringList varNames
 }
 
 
-QString InputWidgetOpenSees::getMainInput() {
+QString OpenSeesBuildingModel::getMainInput() {
     return fileName1;
 }
 
  bool
- InputWidgetOpenSees::copyFiles(QString &dirName) {
+ OpenSeesBuildingModel::copyFiles(QString &dirName) {
 
      QString fileName = file1->text();
 
@@ -321,7 +327,7 @@ QString InputWidgetOpenSees::getMainInput() {
 
      SimCenterAppWidget::copyPath(thePath, dirName, false);
 
-     QStringList varNames = theRandomVariableInputWidget->getRandomVariableNames();
+     QStringList varNames = theRandomVariablesContainer->getRandomVariableNames();
 
      // now create special copy of original main script that handles the RV
      OpenSeesParser theParser;

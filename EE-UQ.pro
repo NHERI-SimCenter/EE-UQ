@@ -11,63 +11,36 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
+win32 {
+    RC_ICONS = icons/NHERI-EEUQ-Icon.ico
+} else {
+    mac {
+    ICON = icons/NHERI-EEUQ-Icon.icns
+    }
+}
+
 macos:LIBS += /usr/lib/libcurl.dylib
 win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
+linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
 
+win32:INCLUDEPATH += "..\jansson\build\include"
+win32:LIBS += "..\jansson\build\lib\release\jansson.lib"
+
+include(./EE-UQ.pri)
 include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
+include(./MiniZip/MiniZip.pri)
 
-SOURCES += main.cpp\
-    MainWindow.cpp\
-    InputWidgetEE_UQ.cpp\
-    InputWidgetSampling.cpp \
-    UniformMotionInput.cpp \
-    InputWidgetEarthquakeEvent.cpp \
-    InputWidgetBIM_Selection.cpp \
-    InputWidgetOpenSees.cpp \
-    InputWidgetOpenSeesAnalysis.cpp \
-    InputWidgetExistingEvent.cpp \
-    SHAMotionWidget.cpp \
-    OpenSeesParser.cpp \
-    EarthquakeRecord.cpp \
-    RunLocalWidget.cpp \
-    DakotaResults.cpp \
-    DakotaResultsSampling.cpp \
-    MyTableWidget.cpp \
-    AgaveCurl.cpp \
-    RemoteApplication.cpp \
-    RunWidget.cpp \
-    LocalApplication.cpp \
-    Application.cpp \
-    RemoteJobManager.cpp \
-    RemoteService.cpp
+SOURCES += main.cpp \
+    InputWidgetEE_UQ.cpp \
+    RunWidget.cpp
 
-HEADERS  += MainWindow.h\
+HEADERS  += \
     InputWidgetEE_UQ.h\
-    InputWidgetSampling.h \
-    UniformMotionInput.h \
-    InputWidgetEarthquakeEvent.h \
-    InputWidgetBIM_Selection.h \
-    InputWidgetOpenSees.h \
-    InputWidgetOpenSeesAnalysis.h \
-    InputWidgetExistingEvent.h \
-    SHAMotionWidget.h \
-    OpenSeesParser.h \
-    EarthquakeRecord.h \
-    RunLocalWidget.h \
-    DakotaResults.h \
-    DakotaResultsSampling.h \
-    MyTableWidget.h \
-    AgaveCurl.h \
-    RemoteApplication.h \
-    RunWidget.h \
-    LocalApplication.h \
-    Application.h \
-    RemoteJobManager.h \
-    RemoteService.h
+    RunWidget.h 
 
 RESOURCES += \
     images.qrc \

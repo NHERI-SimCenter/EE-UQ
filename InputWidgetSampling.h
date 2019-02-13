@@ -52,7 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 class InputWidgetEDP;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetSampling : public  SimCenterAppWidget
 {
@@ -67,9 +67,10 @@ public:
     bool inputAppDataFromJSON(QJsonObject &rvObject);
 
     int processResults(QString &filenameResults, QString &filenameTab);
+    int getNumParallelTasks(void);
 
    // DakotaResults *getResults(void);
-    //RandomVariableInputWidget  *getParameters();
+    //RandomVariablesContainer  *getParameters();
 
 signals:
 
@@ -89,7 +90,7 @@ private:
     QComboBox   *uqSelection;
     QWidget     *uqSpecific;
 
-    RandomVariableInputWidget *theParameters;
+    RandomVariablesContainer *theParameters;
     //InputWidgetEDP *theEdpWidget;
     //DakotaSamplingResults *results;
 };

@@ -52,13 +52,13 @@ class LocalApplication : public Application
 {
     Q_OBJECT
 public:
-    explicit LocalApplication(QWidget *parent = nullptr);
+    explicit LocalApplication(QString workflowScriptName, QWidget *parent = nullptr);
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
 
 signals:
-    void processResults(QString &, QString &);
+    void processResults(QString , QString, QString);
 
 public slots:
    void onRunButtonPressed(void);
@@ -68,6 +68,7 @@ private:
 
     QLineEdit *workingDirName;
     QLineEdit *appDirName;
+    QString workflowScript;
 };
 
 #endif // LOCAL_APPLICATION_H

@@ -5,6 +5,8 @@
 #include <sstream>
 #include <map>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 OpenSeesPreprocessor::OpenSeesPreprocessor()
   :rootBIM(0), rootSAM(0), rootEVENT(0), rootEDP(0), rootSIM(0), 
@@ -67,7 +69,11 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 				      const char *filenameTCL)
 {
 
+  json_error_t error;
   fileBIM = BIM;
+
+  //Loading Bim File
+  rootBIM = json_load_file(BIM, 0, &error);
 
   //
   // open tcl script
@@ -81,7 +87,6 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
   // load the SAM file
   //
 
-  json_error_t error;
   rootSAM = json_load_file(SAM, 0, &error);
 
   bool processedSAM = false;
@@ -103,7 +108,7 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 	json_t *rvName = json_object_get(theRV,"name");
 	json_t *rvValue = json_object_get(theRV,"value");
 	const char *name = json_string_value(rvName);      
-	double value = json_real_value(rvValue);      
+	double value = json_number_value(rvValue);      
 	
 	tclFile << "pset " << name << " " << value << "\n";
       }
@@ -117,7 +122,6 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
       if (NDM == 1) NDF = 1;
       if (NDM == 2) NDF = 2;
       if (NDM == 3) NDF = 3;
-      printf("NDM: %d\n",NDM);
       processedSAM = true;
     }
   }
@@ -137,9 +141,11 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 
   // process damping
   rootSIM = json_load_file(SIM, 0, &error);
-  processDamping(tclFile);
+  // do not prescribe damping for custom analysis scripts
+  json_t *fileScript = json_object_get(rootSIM,"fileName");
+  if (fileScript == NULL) processDamping(tclFile);
 
-  //
+  // 
   // process events
   //   - creates events and does analysis
   //
@@ -168,16 +174,16 @@ OpenSeesPreprocessor::processMaterials(ofstream &s){
     
     if (strcmp(type,"shear") == 0) {
       int tag = json_integer_value(json_object_get(material,"name"));
-      double K0 = json_real_value(json_object_get(material,"K0"));
-      double Sy = json_real_value(json_object_get(material,"Sy"));
-      double eta = json_real_value(json_object_get(material,"eta"));
-      double C = json_real_value(json_object_get(material,"C"));
-      double gamma = json_real_value(json_object_get(material,"gamma"));
-      double alpha = json_real_value(json_object_get(material,"alpha"));
-      double beta = json_real_value(json_object_get(material,"beta"));
-      double omega = json_real_value(json_object_get(material,"omega"));
-      double eta_soft = json_real_value(json_object_get(material,"eta_soft"));
-      double a_k = json_real_value(json_object_get(material,"a_k"));
+      double K0 = json_number_value(json_object_get(material,"K0"));
+      double Sy = json_number_value(json_object_get(material,"Sy"));
+      double eta = json_number_value(json_object_get(material,"eta"));
+      double C = json_number_value(json_object_get(material,"C"));
+      double gamma = json_number_value(json_object_get(material,"gamma"));
+      double alpha = json_number_value(json_object_get(material,"alpha"));
+      double beta = json_number_value(json_object_get(material,"beta"));
+      double omega = json_number_value(json_object_get(material,"omega"));
+      double eta_soft = json_number_value(json_object_get(material,"eta_soft"));
+      double a_k = json_number_value(json_object_get(material,"a_k"));
       //s << "uniaxialMaterial Elastic " << tag << " " << K0 << "\n";
       if (K0==0)
           K0=1.0e-6;
@@ -203,6 +209,16 @@ OpenSeesPreprocessor::processMaterials(ofstream &s){
         << " " << -beta*(alpha*Sy) << " " << e3n
         << " " << gamma
         << " " << gamma << " " << 0.0 << " " << 0.0 << " " << a_k << "\n";
+
+    } else if (strcmp(type,"bilinear") == 0) {
+
+      int tag = json_integer_value(json_object_get(material,"name"));
+      double K = json_number_value(json_object_get(material,"K"));
+      double Fy = json_number_value(json_object_get(material,"Fy"));
+      double beta = json_number_value(json_object_get(material,"beta"));
+
+      s << "uniaxialMaterial Steel01 " << tag << " " << Fy << " " << K
+        << " " << beta << "\n";
     }
   }
   return 0;
@@ -243,13 +259,13 @@ OpenSeesPreprocessor::processNodes(ofstream &s){
     json_t *crd;
     int crdIndex;
     json_array_foreach(crds, crdIndex, crd) {
-      s << json_real_value(crd) << " " ;
+      s << json_number_value(crd) << " " ;
     }
 
     json_t *mass = json_object_get(node,"mass");
     if (mass != NULL) {
       s << "-mass ";
-      double massV = json_real_value(mass);
+      double massV = json_number_value(mass);
       for (int i=0; i<NDF; i++)
 	s << massV << " " ;
     }
@@ -299,8 +315,24 @@ OpenSeesPreprocessor::processElements(ofstream &s){
 	s << json_integer_value(nodeTag) << " " ;
       }
 
-      int matTag = json_integer_value(json_object_get(element,"uniaxial_material"));
-      s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+      json_t *matObject = json_object_get(element,"uniaxial_material");
+	int sizeMat = json_array_size(matObject);
+	if (sizeMat == 0) {
+	  int matTag = json_integer_value(matObject);
+	  s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+	} else if (sizeMat == 1) {
+	  int matTag = json_integer_value(json_array_get(matObject,0));	  
+	  s << "-mat " << matTag << " " << matTag << " -dir 1 2\n";
+	} else if (sizeMat == 2) {
+	  int matTag1 = json_integer_value(json_array_get(matObject,0));	  
+	  int matTag2 = json_integer_value(json_array_get(matObject,1));	  
+	  s << "-mat " << matTag1 << " " << matTag2 << " -dir 1 2\n";
+	} else if (sizeMat == 3) {
+	  int matTag1 = json_integer_value(json_array_get(matObject,0));	  
+	  int matTag2 = json_integer_value(json_array_get(matObject,1));	  
+	  int matTag3 = json_integer_value(json_array_get(matObject,2));	  
+	  s << "-mat " << matTag1 << " " << matTag2 << " " << matTag3 << " -dir 1 2 3\n";
+	}
     }
   }
   return 0;
@@ -309,7 +341,7 @@ OpenSeesPreprocessor::processElements(ofstream &s){
 
 int
 OpenSeesPreprocessor::processDamping(ofstream &s){
-    double damping = json_real_value(json_object_get(rootSIM,"dampingRatio"));
+    double damping = json_number_value(json_object_get(rootSIM,"dampingRatio"));
     s << "set xDamp " << damping << ";\n"
       << "set MpropSwitch 1.0;\n"
       << "set KcurrSwitch 0.0;\n"
@@ -382,13 +414,15 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
     // create recorder foreach EDP
     // loop through EDPs and find corresponding EDP
 
+    char edpEventName[50];
+    
     for (int j=0; j<numEDPs; j++) {
-      printf("EDP: %d\n",j);
+      // printf("EDP: %d\n",j);
 
       json_t *eventEDPs = json_array_get(edps, j);
-      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
-
-      if (strcmp(edpEventName, eventName) == 0) {
+      //      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
+      //      if (strcmp(edpEventName, eventName) == 0) {
+      sprintf(edpEventName,"%d",j);
 
 	json_t *eventEDP = json_object_get(eventEDPs,"responses");
 	int numResponses = json_array_size(eventEDP);
@@ -430,6 +464,38 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    for (int ii=0; ii<sizeDOFs; ii++)
 	      s << dof[ii] << " " ;
 	    s << " accel\n";
+
+	    delete [] dof;
+	  }
+
+	  else if (strcmp(type,"max_rel_disp") == 0) {
+
+	    const char *cline = json_string_value(json_object_get(response, "cline"));
+	    const char *floor = json_string_value(json_object_get(response, "floor"));
+
+	    int nodeTag = this->getNode(cline,floor);	    
+
+	    json_t *theDOFs = json_object_get(response, "dofs");
+	    int sizeDOFs = json_array_size(theDOFs);
+	    int *dof = new int[sizeDOFs];
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      dof[ii] = json_integer_value(json_array_get(theDOFs,ii));
+
+	    string fileString;
+	    ostringstream temp;  //temp as in temporary
+
+	    temp << fileBIM << edpEventName << "." << type << "." << cline << "." << floor << ".out";
+
+	    fileString=temp.str(); 
+
+	    const char *fileName = fileString.c_str();
+
+	    int startTimeSeries = 101;
+	    s << "recorder EnvelopeNode -file " << fileName;
+	    s << " -node " << nodeTag << " -dof ";
+	    for (int ii=0; ii<sizeDOFs; ii++)
+	      s << dof[ii] << " " ;
+	    s << " disp\n";
 
 	    delete [] dof;
 	  }
@@ -496,17 +562,25 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    delete [] dof;
 	  }
 	}
-      }
+	// removing requirement name be same
     }
 
     // create analysis
     if (analysisType == 1) {
       s << "\n# Perform the analysis\n";
-      s << "numberer RCM\n";
-      s << "system BandGen\n";
-      s << "integrator Newmark 0.5 0.25\n";
-      s << "analysis Transient\n";
-      s << "analyze " << numSteps << " " << dT << "\n";      
+      json_t *fileScript = json_object_get(rootSIM,"fileName");
+      if (fileScript != NULL) {
+	s << "source " << json_string_value(fileScript);
+      } else {
+	s << "numberer RCM\n";
+	s << "system Umfpack\n";
+	double tol = json_number_value(json_object_get(rootSIM,"tolerance"));
+	s << "integrator " << json_string_value(json_object_get(rootSIM,"integration")) << "\n";
+      s << "test " << json_string_value(json_object_get(rootSIM,"convergenceTest")) << " " << tol << " 20 \n";
+	s << "algorithm " << json_string_value(json_object_get(rootSIM,"algorithm")) << "\n";
+	s << "analysis Transient -numSubLevels 2 -numSubSteps 10 \n";
+	s << "analyze " << numSteps << " " << dT << "\n";      
+      }
     }
   }
   return 0;
@@ -524,22 +598,29 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 
   const char *eventType = json_string_value(json_object_get(event,"type"));
 
-  std::cerr << "Processing Event type: " << eventType << "\n";
+  //  std::cerr << "Processing Event type: " << eventType << "\n";
 
   if (strcmp(eventType,"Seismic") == 0) {
     analysisType = 1;
     numSteps = json_integer_value(json_object_get(event,"numSteps"));
-    dT = json_real_value(json_object_get(event,"dT"));
+    dT = json_number_value(json_object_get(event,"dT"));
   } else
     return -1;
 
   std::map <string,int> timeSeriesList;
   std::map <string,int>::iterator it;
 
+  double eventFactor = 1.0;
+  json_t *eventFactorObj = json_object_get(event,"factor");
+  if (eventFactorObj != NULL) {
+    if (json_is_real(eventFactorObj))
+      eventFactor = json_number_value(eventFactorObj);
+  }
+
   int index = 0;
   json_t *timeSeriesArray = json_object_get(event,"timeSeries");
   int numSeriesArray = json_array_size(timeSeriesArray);
-  printf("NUM SERIES: %d\n",numSeriesArray);
+  //  printf("NUM SERIES: %d\n",numSeriesArray);
   //  json_array_foreach(timeSeriesArray, index, timeSeries) {
   for (int i=0; i<numSeriesArray; i++) {
     timeSeries = json_array_get(timeSeriesArray, i);
@@ -547,30 +628,85 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     //    if (index < NDM) {
       const char *subType = json_string_value(json_object_get(timeSeries,"type"));        
       if (strcmp(subType,"Value")  == 0) {
-	double dt = json_real_value(json_object_get(timeSeries,"dT"));
+
+	double seriesFactor = 1.0;
+	json_t *seriesFactorObj = json_object_get(timeSeries,"factor");
+	if (seriesFactorObj != NULL) {
+	  if (json_is_real(seriesFactorObj))
+	    seriesFactor = json_number_value(seriesFactorObj);
+	}
+
+	double dt = json_number_value(json_object_get(timeSeries,"dT"));
 	json_t *data = json_object_get(timeSeries,"data");
-	s << "timeSeries Path " << numSeries << " -dt " << dt;
+
+	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
 	s << " -values \{ ";
+	
+
+	//We need to check units for conversion
+	double unitConversionFactor = 1.0;
+	
+	//First let's read units from bim
+	json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+	json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+	json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+	json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+	
+	//Parsing BIM Units
+	Units::UnitSystem bimUnits;
+	bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+	bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+	
+	json_t* evtUnitsJson = json_object_get(event, "units");
+	Units::UnitSystem eventUnits;
+	
+	if(NULL != evtUnitsJson)
+	  {
+	    json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
+	    if(NULL != evtLengthJson)
+	      eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
+	    
+	    json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
+	    if(NULL != evtTimeJson)
+	      eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
+	    
+	    unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
+	  }
+	else
+	  {
+	    std::cerr << "Warning! Event file has no units!, assuming acceleration is in g units" << std::endl;
+	    eventUnits.lengthUnit = Units::LengthUnit::Meter;
+	    eventUnits.timeUnit = Units::TimeUnit::Second;
+	    
+	    unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
+	  }
+	
 	json_t *dataV;
 	int dataIndex;
+
+	//
+	// write data to file, multiply it by conversion fcator and eventFactor
+	//
+
+
 	json_array_foreach(data, dataIndex, dataV) {
-	  s << json_real_value(dataV) << " " ;
+	  s << json_number_value(dataV) * unitConversionFactor * eventFactor << " " ;
 	}
+
 	s << " }\n";
 	
 	string name(json_string_value(json_object_get(timeSeries,"name")));
-	printf("TIMESERIES: %s\n",name.c_str());
-
+	//printf("TIMESERIES: %s\n",name.c_str());
+	
 	timeSeriesList[name]=numSeries;
 	numSeries++;
       }
-      //    }
   }    
 
   json_t *patternArray = json_object_get(event,"pattern");
   int numPatternArray = json_array_size(patternArray);
 
-  printf("NUM SERIES: %d\n",numSeriesArray);
+  //  printf("NUM SERIES: %d\n",numSeriesArray);
   //    json_array_foreach(patternArray, index, pattern) {
   for (int i=0; i<numPatternArray; i++) {
     pattern = json_array_get(patternArray, i);
@@ -578,7 +714,7 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
     const char *subType = json_string_value(json_object_get(pattern,"type"));        
     if (strcmp(subType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
-      
+            
       int series = 0;
       string name(json_string_value(json_object_get(pattern,"timeSeries")));
       printf("%s\n",name.c_str());
@@ -593,6 +729,10 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       int seriesTag = timeSeriesList[name];
       s << "pattern UniformExcitation " << numPattern << " " << dirn;
       s << " -accel " << series << "\n";
+
+      s << "set numStep " << numSteps << "\n";
+      s << "set dt " << dT << "\n";
+
       numPattern++;
     }
   }
@@ -614,7 +754,7 @@ OpenSeesPreprocessor:: getNode(const char * cline,const char * floor){
       const char * f = json_string_value(json_object_get(mapObject,"floor"));
       if (strcmp(f,floor) == 0) {
 	int node = json_integer_value(json_object_get(mapObject,"node"));
-	printf("cline : %s floor %s node %d\n",cline, floor, node);
+	//	printf("cline : %s floor %s node %d\n",cline, floor, node);
 	return json_integer_value(json_object_get(mapObject,"node"));
       }
     }
@@ -635,6 +775,179 @@ int main(int argc, char **argv)
     thePreprocessor.writeRV(argv[1], argv[2], argv[3], argv[4]);
   else 
     thePreprocessor.createInputFile(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
-    
+
   return 0;
+}
+
+
+namespace Units
+{
+
+double GetLengthFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitSystem)
+{
+    if(LengthUnit::Unknown == fromUnitSystem.lengthUnit)
+    {
+        std::cerr << "Unknown length unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(LengthUnit::Unknown == toUnitSystem.lengthUnit)
+    {
+        std::cerr << "Unknown length unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(fromUnitSystem.lengthUnit == toUnitSystem.lengthUnit)
+        return 1.0;
+
+
+    //Converting from fromUnitSystem to Millimeter
+    double toMillimeter = 1.0;
+
+    if(LengthUnit::Meter == fromUnitSystem.lengthUnit)
+        toMillimeter = 1000.0;
+
+    else if(LengthUnit::Centimeter == fromUnitSystem.lengthUnit)
+        toMillimeter = 10.0;
+
+    else if(LengthUnit::Millimeter == fromUnitSystem.lengthUnit)
+        toMillimeter = 1.0;
+
+    else if(LengthUnit::Inch == fromUnitSystem.lengthUnit)
+        toMillimeter = 25.4;
+
+    else if(LengthUnit::Foot == fromUnitSystem.lengthUnit)
+        toMillimeter = 304.8;
+
+    //Converting from Millimeter to toUnitSystem
+    double fromMillimeter = 1.0;
+
+    if(LengthUnit::Meter == toUnitSystem.lengthUnit)
+        fromMillimeter = 0.001;
+
+    else if(LengthUnit::Centimeter == toUnitSystem.lengthUnit)
+        fromMillimeter = 0.1;
+
+    else if(LengthUnit::Millimeter == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0;
+
+    else if(LengthUnit::Inch == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0/25.4;
+
+    else if(LengthUnit::Foot == toUnitSystem.lengthUnit)
+        fromMillimeter = 1.0/304.8;
+
+    return toMillimeter * fromMillimeter;
+}
+
+double GetTimeFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitsystem)
+{
+    if(TimeUnit::Unknown == fromUnitSystem.timeUnit)
+    {
+        std::cerr << "Unknown time unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(TimeUnit::Unknown == toUnitsystem.timeUnit)
+    {
+        std::cerr << "Unknown time unit!!!" << std::endl;
+        return 1.0;
+    }
+
+    if(fromUnitSystem.timeUnit == toUnitsystem.timeUnit)
+        return 1.0;
+
+    //converting to second
+    double toSecond = 1.0;
+    if(TimeUnit::Hour == fromUnitSystem.timeUnit)
+        toSecond = 3600.0;
+
+    else if(TimeUnit::Minute == fromUnitSystem.timeUnit)
+        toSecond = 60.0;
+
+    //converting from second
+    double fromSecond = 1.0;
+    if(TimeUnit::Hour == toUnitsystem.timeUnit)
+        fromSecond = 1.0/3600.0;
+
+    else if(TimeUnit::Minute == toUnitsystem.timeUnit)
+        fromSecond = 1.0/60.0;
+
+    return toSecond * fromSecond;
+}
+
+double GetAccelerationFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitSystem)
+{
+    double timeFactor = GetTimeFactor(fromUnitSystem, toUnitSystem);
+    double lengthFactor = GetLengthFactor(fromUnitSystem, toUnitSystem);
+
+    return lengthFactor / std::pow(timeFactor, 2);
+}
+
+LengthUnit ParseLengthUnit(const char* lengthUnit)
+{
+    std::string lengthUnitString(lengthUnit);
+    std::transform(lengthUnitString.begin(), lengthUnitString.end(), lengthUnitString.begin(), ::tolower);
+
+    static std::map<std::string, LengthUnit> lengthUnitMap
+    {
+        {"m", LengthUnit::Meter},
+        {"meter", LengthUnit::Meter},
+        {"meters", LengthUnit::Meter},
+        {"cm", LengthUnit::Centimeter},
+
+        {"centimeter", LengthUnit::Centimeter},
+        {"centimeters", LengthUnit::Centimeter},
+
+        {"mm", LengthUnit::Millimeter},
+        {"millimeter", LengthUnit::Millimeter},
+        {"millimeters", LengthUnit::Millimeter},
+        
+        {"in", LengthUnit::Inch},
+        {"inch", LengthUnit::Inch},
+        {"inches", LengthUnit::Inch},
+        
+        {"ft", LengthUnit::Foot},
+        {"foot", LengthUnit::Foot},
+        {"feet", LengthUnit::Foot}
+    };
+
+    if(lengthUnitMap.end() != lengthUnitMap.find(lengthUnitString))
+        return lengthUnitMap[lengthUnitString];
+
+    std::cerr << "Failed to parse length unit: " << lengthUnitString  << "!!!" << std::endl;
+    return LengthUnit::Unknown;
+}
+
+TimeUnit ParseTimeUnit(const char* timeUnit)
+{
+    std::string timeUnitString(timeUnit);
+    std::transform(timeUnitString.begin(), timeUnitString.end(), timeUnitString.begin(), ::tolower);
+
+    static map<std::string, TimeUnit> timeUnitMap
+    {
+        {"s", TimeUnit::Second},
+        {"sec", TimeUnit::Second},
+        {"second", TimeUnit::Second},
+        {"seconds", TimeUnit::Second},
+
+        {"min", TimeUnit::Minute},
+        {"minute", TimeUnit::Minute},
+        {"minutes", TimeUnit::Minute},
+
+        {"hr", TimeUnit::Hour},
+        {"hour", TimeUnit::Hour},
+        {"hours", TimeUnit::Hour},
+
+    };
+
+    if(timeUnitMap.end() != timeUnitMap.find(timeUnitString))
+        return timeUnitMap[timeUnitString];
+
+    std::cerr << "Failed to parse time unit: " << timeUnitString  << "!!!" << std::endl;
+
+    return TimeUnit::Unknown;
+}
+
+
 }

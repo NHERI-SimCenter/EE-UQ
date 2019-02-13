@@ -37,7 +37,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-// Purpose: a widget for managing submiited jobs by uqFEM tool
+// Purpose: a widget for managing submiited jobs by WorkflowApp tool
 //  - allow for refresh of status, deletion of submitted jobs, and download of results from finished job
 
 #include "RemoteApplication.h"
@@ -57,11 +57,18 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
+#include <QUuid>
 
+#include <ZipUtils.h>
 
-RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
+RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QWidget *parent)
 : Application(parent), theRemoteService(theService)
 {
+    workflowScriptName = name;
+    shortDirName = workflowScriptName;
+    //shortDirName = name.chopped(3); // remove .py
+    shortDirName.chop(3);
+
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();
 
@@ -69,30 +76,36 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
     layout->addWidget(nameLabel, 0,0);
 
     nameLineEdit = new QLineEdit();
+    nameLineEdit->setToolTip(tr("A meaningful name to provide for you to remember run later (days and weeks from now)"));
     layout->addWidget(nameLineEdit,0,1);
 
     QLabel *numCPU_Label = new QLabel();
-    numCPU_Label->setText(QString("num Nodes:"));
+    numCPU_Label->setText(QString("Num Nodes:"));
+
     layout->addWidget(numCPU_Label,1,0);
 
     numCPU_LineEdit = new QLineEdit();
     numCPU_LineEdit->setText("1");
+    numCPU_LineEdit->setToolTip(tr("Total # of nodes to use (each node has many cores)"));
     layout->addWidget(numCPU_LineEdit,1,1);
 
     QLabel *numProcessorsLabel = new QLabel();
-    numProcessorsLabel->setText(QString("num Processors per Node:"));
+    numProcessorsLabel->setText(QString("Total # Processes:"));
+
     layout->addWidget(numProcessorsLabel,2,0);
 
     numProcessorsLineEdit = new QLineEdit();
     numProcessorsLineEdit->setText("32");
+        numProcessorsLineEdit->setToolTip(tr("Total # of Processes to Start"));
     layout->addWidget(numProcessorsLineEdit,2,1);
 
     QLabel *runtimeLabel = new QLabel();
-    runtimeLabel->setText(QString("max Run Time:"));
+    runtimeLabel->setText(QString("Max Run Time:"));
     layout->addWidget(runtimeLabel,3,0);
 
     runtimeLineEdit = new QLineEdit();
     runtimeLineEdit->setText("00:20:00");
+    runtimeLineEdit->setToolTip(tr("Run time Limit on running Job hours:Min:Sec. Job will be stopped if while running it exceeds this"));
     layout->addWidget(runtimeLineEdit,3,1);
 
     QLabel *appNameLabel = new QLabel();
@@ -100,7 +113,8 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
     layout->addWidget(appNameLabel,4,0);
 
     appLineEdit = new QLineEdit();
-    appLineEdit->setText("dakota-6.6.0u1");
+    appLineEdit->setText("simcenter-dakota-1.0.0u1");
+    appLineEdit->setToolTip(tr("Name of Agave App to run. Do not edit unless you really know what you are doing!"));
     //appLineEdit->setText("Dakota-6.6.0.0u1");
     layout->addWidget(appLineEdit,4,1);
 
@@ -110,6 +124,7 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
 
     workingDirName = new QLineEdit();
     workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     layout->addWidget(workingDirName,5,1);
 
     QLabel *appDirLabel = new QLabel();
@@ -118,6 +133,7 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
 
     localAppDirName = new QLineEdit();
     localAppDirName->setText(QCoreApplication::applicationDirPath());
+    localAppDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
     layout->addWidget(localAppDirName,6,1);
 
     QLabel *appDirLabel1 = new QLabel();
@@ -126,10 +142,13 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
 
     remoteAppDirName = new QLineEdit();
     remoteAppDirName->setText("/home1/00477/tg457427/EE-UQ");
+    remoteAppDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
+
     layout->addWidget(remoteAppDirName,7,1);
 
     pushButton = new QPushButton();
     pushButton->setText("Submit");
+    pushButton->setToolTip(tr("Press to launch job on remote machine. After pressing, window closes when Job Starts"));
     layout->addWidget(pushButton,8,1);
 
     this->setLayout(layout);
@@ -155,6 +174,11 @@ RemoteApplication::RemoteApplication(RemoteService *theService, QWidget *parent)
     //
     // set up connections
     //
+
+    this->setStyleSheet("QComboBox {background: #FFFFFF;} \
+  QGroupBox {font-weight: bold;}\
+  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
+  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
 }
@@ -200,8 +224,6 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 void
 RemoteApplication::onRunButtonPressed(void)
 {
-    qDebug() << "RemoteApplication::onRunButtonClicked()";
-
     int ok = 0;
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
@@ -225,7 +247,7 @@ RemoteApplication::onRunButtonPressed(void)
 
 
 //
-// now use the applications Workflow Application EE-UQ.py  to run dakota and produce output files:
+// now use the applications Workflow Application script to run dakota and produce output files:
 //    dakota.in dakota.out dakotaTab.out dakota.err
 //
 
@@ -234,13 +256,29 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QString appDir = localAppDirName->text();
 
-    QString pySCRIPT = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("EE-UQ.py");
+    qDebug() << "REMOTEAPP: setupDone " << tmpDirectory << " " << inputFile << " " << appDir;
+    QString pySCRIPT;
 
-    QString registryFile = appDir +  QDir::separator() + "applications" + QDir::separator() + "Workflow" + QDir::separator() +
-            QString("WorkflowApplications.json");
-    qDebug() << pySCRIPT;
+    QDir scriptDir(appDir);
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
+    pySCRIPT = scriptDir.absoluteFilePath(workflowScriptName);
+    QFileInfo check_script(pySCRIPT);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (!check_script.exists() || !check_script.isFile()) {
+        qDebug() << "NO SCRIPT FILE: " << pySCRIPT;
+        return false;
+    }
 
+    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    QFileInfo check_registry(registryFile);
+    if (!check_registry.exists() || !check_registry.isFile()) {
+         qDebug() << "NO REGISTRY FILE: " << registryFile;
+        return false;
+    }
+
+    qDebug() << "SCRIPT: " << pySCRIPT;
+    qDebug() << "REGISTRY: " << registryFile;
 
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
@@ -258,37 +296,90 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
     //
 
     QProcess *proc = new QProcess();
+    QStringList args{pySCRIPT, "set_up",inputFile,registryFile};
+    proc->execute("python",args);
 
+    /*
 #ifdef Q_OS_WIN
-    QString command = QString("python ") + pySCRIPT + QString(" ") + tDirectory + QString(" ") + tmpDirectory  + QString(" runningRemote");
-    qDebug() << command;
+    QString command = QString("python ") + pySCRIPT + QString(" ") + " set_up " + QString(" ") + inputFile  + QString(" ") + registryFile;
+    qDebug() << "PYTHON COMMAND: " << command;
+
     proc->execute("cmd", QStringList() << "/C" << command);
-    //   proc->start("cmd", QStringList(), QIODevice::ReadWrite);
 
 #else
     QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" set_up ") + inputFile + QString(" ") +
             registryFile;
 
     proc->execute("bash", QStringList() << "-c" <<  command);
-
-    qInfo() << command;
+    qDebug() << "PYTHON COMMAND: " << command;
 
 #endif
+    */
     proc->waitForStarted();
+
+
+
+    //
+    // in tmpDirectory we will zip up current template dir and then remove before sending (doone to reduce number of sends)
+    //
+
+    QDir templateDir(tmpDirectory);
+    templateDir.cd("templatedir");
+    QString templateDIR = templateDir.absolutePath();
+
+#ifdef Q_OS_WIN
+    templateDir.rename("workflow_driver.bat","workflow_driver");
+#endif
+
+    QFileInfo check_workflow(templateDir.absoluteFilePath("workflow_driver"));
+    if (!check_workflow.exists() || !check_workflow.isFile()) {
+        emit sendErrorMessage(("Local Falure Setting up Dakota"));
+        qDebug() << "Local Failure Setting Up Dakota ";
+        return false;
+    }
+    templateDir.cdUp();
+
+    QString zipFile(templateDir.absoluteFilePath("templatedir.zip"));
+    qDebug() << "ZIP FILE: " << zipFile;
+    qDebug() << "DIR TO ZIP: " << templateDIR;
+    QDir tmpDir(templateDIR);
+
+    ZipUtils::ZipFolder(tmpDir, zipFile);
+    //ZipUtils::ZipFolder(QDir(templateDIR), zipFile);
+
+    QDir dirToRemove(templateDIR);
+    templateDir.cd("templatedir");
+    templateDir.removeRecursively();
 
     //
     // now upload files to remote local
     //
-    tempDirectory = tmpDirectory;
+
+    // rename dir so unique at DesignSafe
+    QUuid uniqueName = QUuid::createUuid();
+    QString strUnique = uniqueName.toString();
+    strUnique = strUnique.mid(1,36);
+    QString newName = QString("tmp.SimCenter") + strUnique;
 
     QDir theDirectory(tmpDirectory);
+    theDirectory.cdUp();
+    if (theDirectory.rename("tmp.SimCenter",newName) != true) {
+        emit sendErrorMessage(QString("Could not rename directory to ") + newName);
+        return false;
+    }
+
+    qDebug() << "newName: " << newName;
+    tempDirectory = theDirectory.absoluteFilePath(newName);
+
+    theDirectory.cd(newName);
     QString dirName = theDirectory.dirName();
     
     QString remoteDirectory = remoteHomeDirPath + QString("/") + dirName;
-    
     pushButton->setEnabled(false);
 
-    emit uploadDirCall(tmpDirectory, remoteHomeDirPath);
+    emit uploadDirCall(tempDirectory, remoteHomeDirPath);
+
+    return 0;
 }
 
 // this slot is invoked on return from uploadDirectory signal in pushButtonClicked slot
@@ -306,7 +397,7 @@ RemoteApplication::uploadDirReturn(bool result)
       
       pushButton->setDisabled(true);
       
-      job["name"]=QString("uqFEM:") + nameLineEdit->text();
+      job["name"]=shortDirName + nameLineEdit->text();
       int nodeCount = numCPU_LineEdit->text().toInt();
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;
@@ -327,7 +418,7 @@ RemoteApplication::uploadDirReturn(bool result)
       parameters["inputFile"]="dakota.in";
       parameters["outputFile"]="dakota.out";
       parameters["errorFile"]="dakota.err";
-      parameters["driverFile"]="./workflow_driver";
+      parameters["driverFile"]="workflow_driver";
       parameters["modules"]="petsc";
       job["parameters"]=parameters;
       
@@ -353,7 +444,7 @@ RemoteApplication::uploadDirReturn(bool result)
       emit startJobCall(job);
       
       // now remove the tmp directory
-      //theDirectory.removeRecursively();
+      theDirectory.removeRecursively();
     }
 }
 
@@ -375,3 +466,10 @@ RemoteApplication::startJobReturn(QString result) {
    pushButton->setEnabled(true);
    emit successfullJobStart();
 }
+
+void
+RemoteApplication::setNumTasks(int numTasks) {
+    if (numTasks < 32)
+        numProcessorsLineEdit->setText(QString::number(numTasks));
+}
+

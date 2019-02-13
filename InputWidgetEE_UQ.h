@@ -46,17 +46,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardItemModel>
 #include <QHBoxLayout>
 #include "MainWindow.h"
+#include <WorkflowAppWidget.h>
 
-class RandomVariableInputWidget;
-//class InputWidgetSheetSIM;
-class InputWidgetBIM_Selection;
+class RandomVariablesContainer;
+class InputWidgetBIM;
+class InputWidgetUQ;
+
+class SIM_Selection;
 class InputWidgetSampling;
-class EarthquakeLoadingInput;
+
 class InputWidgetOpenSeesAnalysis;
 class UQOptions;
 class ResultsWidget;
 class GeneralInformationWidget;
-class InputWidgetEarthquakeEvent;
+class EarthquakeEventSelection;
 class QStackedWidget;
 class DakotaResults;
 
@@ -65,8 +68,10 @@ class RunWidget;
 class Application;
 class RemoteService;
 class RemoteJobManager;
+class QNetworkAccessManager;
+class QNetworkReply;
 
-class InputWidgetEE_UQ : public QWidget
+class InputWidgetEE_UQ : public WorkflowAppWidget
 {
     Q_OBJECT
 public:
@@ -77,52 +82,48 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
     void clear(void);
 
-    void setMainWindow(MainWindow* window);
+    //void setMainWindow(MainWindow* window);
     void onRunButtonClicked();
     void onRemoteRunButtonClicked();
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
+    int getMaxNumParallelTasks();
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
     void sendLoadFile(QString filename);
 
-    void sendStatusMessage(QString message);
-    void sendErrorMessage(QString message);
-    void sendFatalMessage(QString message);
-
 public slots:  
     void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
     void setUpForApplicationRun(QString &, QString &);
-    void processResults(QString &dakotaOut, QString &dakotaTab);
+    void processResults(QString dakotaOut, QString dakotaTab, QString inputFile);
 
     void loadFile(QString filename);
-    void statusMessage(QString message);
-    void errorMessage(QString message);
-    void fatalMessage(QString message);
-
+    void replyFinished(QNetworkReply*);
 
 private:
 
-    MainWindow* window;
-
+    //MainWindow* window;
     QHBoxLayout *horizontalLayout;
     QTreeView *treeView;
     QStandardItemModel *standardModel;
+    QStandardItem *rootNode;
 
     GeneralInformationWidget *theGI;
-    RandomVariableInputWidget *theRVs;
+    RandomVariablesContainer *theRVs;
 
-    //InputWidgetSheetSIM *theSIM;
-    InputWidgetBIM_Selection *theSIM;
-    InputWidgetSampling *theUQ;
-    InputWidgetEarthquakeEvent *theEvent;
+    // the AppWidgets .. not all displayed in main UI
+    SIM_Selection *theSIM;
+    InputWidgetSampling *theUQ_Method;
+    EarthquakeEventSelection *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
     DakotaResults *theResults;
-   // RunLocalWidget *theRunLocalWidget;
 
-    RemoteService *theRemoteService;
+    // other widgets appearing in UI
+    InputWidgetBIM *theBIM; // contains GI and SIM
+    InputWidgetUQ *theUQ;
+
     RunWidget *theRunWidget;
     Application *localApp;
     Application *remoteApp;
@@ -133,6 +134,7 @@ private:
     QJsonObject *jsonObjOrig;
 
     QStackedWidget *theStackedWidget;
+    QNetworkAccessManager *manager;
 };
 
 #endif // INPUT_WIDGET_EE_UQ_H
