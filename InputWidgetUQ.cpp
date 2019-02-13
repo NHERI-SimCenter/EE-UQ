@@ -38,11 +38,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "InputWidgetUQ.h"
 #include <QTabWidget>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <InputWidgetSampling.h>
 
 
-InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariableInputWidget *RV, QWidget *parent)
+InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
     :QWidget(parent),theRVs(RV),theUQ(UQ)
 {
     QHBoxLayout *layout = new QHBoxLayout();

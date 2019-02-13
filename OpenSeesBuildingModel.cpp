@@ -55,12 +55,12 @@ using namespace std;
 #include <QGridLayout>
 
 #include <OpenSeesParser.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 
 //#include <InputWidgetParameters.h>
 
-OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW)
+OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
     femSpecific = 0;
 
@@ -104,7 +104,13 @@ OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariableInputWidget *theRando
 
 OpenSeesBuildingModel::~OpenSeesBuildingModel()
 {
+    // remove old random variables
+    QStringList names;
+    for (int i=0; i<varNamesAndValues.size()-1; i+=2) {
+        names.append(varNamesAndValues.at(i));
+    }
 
+    theRandomVariablesContainer->removeRandomVariables(names);
 }
 
 
@@ -266,7 +272,7 @@ OpenSeesBuildingModel::setFilename1(QString name1){
         names.append(varNamesAndValues.at(i));
     }
 
-    theRandomVariableInputWidget->removeRandomVariables(names);
+    theRandomVariablesContainer->removeRandomVariables(names);
 
     // set file name & ebtry in qLine edit
 
@@ -280,7 +286,7 @@ OpenSeesBuildingModel::setFilename1(QString name1){
     OpenSeesParser theParser;
     varNamesAndValues = theParser.getVariables(fileName1);
 
-    theRandomVariableInputWidget->addConstantRVs(varNamesAndValues);
+    theRandomVariablesContainer->addConstantRVs(varNamesAndValues);
 
     return 0;
 }
@@ -321,7 +327,7 @@ QString OpenSeesBuildingModel::getMainInput() {
 
      SimCenterAppWidget::copyPath(thePath, dirName, false);
 
-     QStringList varNames = theRandomVariableInputWidget->getRandomVariableNames();
+     QStringList varNames = theRandomVariablesContainer->getRandomVariableNames();
 
      // now create special copy of original main script that handles the RV
      OpenSeesParser theParser;

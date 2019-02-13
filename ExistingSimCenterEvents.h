@@ -42,10 +42,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class InputWidgetExistingEvent;
 class QRadioButton;
 class QLineEdit;
+class LineEditRV;
 
 #include <QGroupBox>
 #include <QVector>
@@ -55,23 +56,22 @@ class ExistingEvent : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingEvent(RandomVariableInputWidget *theRV, QWidget *parent = 0);
+    explicit ExistingEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
     ~ExistingEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    QRadioButton *button; // used to mark if Event intended for deletion
-    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
-    QLineEdit    *file;    // full path to file name
-    QLineEdit    *factor;  // load factor
+    QRadioButton   *button; // used to mark if Event intended for deletion
+    QLineEdit      *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QLineEdit      *file;    // full path to file name
+    LineEditRV    *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
-    void factorEditingFinished();
 
 private:
-     RandomVariableInputWidget *theRandVariableIW;
+     RandomVariablesContainer *theRandVariableIW;
      QString lastFactor;
 };
 
@@ -80,7 +80,7 @@ class ExistingSimCenterEvents : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingSimCenterEvents(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit ExistingSimCenterEvents(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
 
     ~ExistingSimCenterEvents();
 
@@ -101,7 +101,7 @@ private:
     QVBoxLayout *eventLayout;
 
     QVector<ExistingEvent *>theEvents;
-    RandomVariableInputWidget *theRandVariableIW;
+    RandomVariablesContainer *theRandVariableIW;
 };
 
 #endif // EXISTING_SIMCENTER_EVENTS_H

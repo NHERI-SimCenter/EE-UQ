@@ -42,13 +42,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterAppWidget.h>
 
 class QLineEdit;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetOpenSeesAnalysis : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetOpenSeesAnalysis(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit InputWidgetOpenSeesAnalysis(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
     ~InputWidgetOpenSeesAnalysis();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -74,7 +74,7 @@ private:
     QLineEdit   *dampingRatio;
 
     QLineEdit *file;
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
 
     QString lastDampingRatio;
     QString lastTolerance;

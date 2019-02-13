@@ -49,7 +49,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //class QVBoxLayout;
 class QLineEdit;
 class InputWidgetParameters;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class QTableWidget;
 
 
@@ -57,7 +57,7 @@ class MDOF_BuildingModel : public SimCenterAppWidget, public Controller2D
 {
     Q_OBJECT
 public:
-    explicit MDOF_BuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit MDOF_BuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
     ~MDOF_BuildingModel();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -132,7 +132,7 @@ private:
     //SpreadsheetWidget *theSpreadsheet;
     QTableWidget *theSpreadsheet;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
     QStringList varNamesAndValues;
 
     QMap<QString, int>randomVariables;

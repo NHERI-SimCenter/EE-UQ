@@ -48,13 +48,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 #include <QPushButton>
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class SIM_Selection : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit SIM_Selection(RandomVariableInputWidget *, QWidget *parent = 0);
+    explicit SIM_Selection(RandomVariablesContainer *, QWidget *parent = 0);
     ~SIM_Selection();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -89,7 +89,7 @@ private:
     SimCenterAppWidget *bimInput;
     bool selectionChangeOK;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
 
 };
 

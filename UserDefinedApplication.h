@@ -41,14 +41,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <SimCenterAppWidget.h>
 
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class QLineEdit;
 
 class UserDefinedApplication : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit UserDefinedApplication(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit UserDefinedApplication(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
     ~UserDefinedApplication();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -71,7 +71,7 @@ private:
    QLineEdit *file;
    QLineEdit *application;
 
-   RandomVariableInputWidget *theRandomVariableInputWidget;
+   RandomVariablesContainer *theRandomVariablesContainer;
 };
 
 #endif // USER_DEFINED_APPLICATION_H

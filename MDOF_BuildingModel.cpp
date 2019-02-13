@@ -67,7 +67,7 @@ using namespace std;
 #include <math.h>
 
 #include <OpenSeesParser.h>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <QTableWidget>
 
 
@@ -79,7 +79,7 @@ bool
 readLineEditRV(QJsonObject &jsonObject, const char *key, QLineEdit *value)
 {
     if (jsonObject.contains(key)) {
-        QJsonValue theValue = jsonObject["factor"];
+        QJsonValue theValue = jsonObject[key];
         if (theValue.isString()) {
             QString text = theValue.toString();
             text.remove(0,3); // remove RV.
@@ -187,8 +187,8 @@ createTextEntry(QString text,
     return res;
 }
 
-MDOF_BuildingModel::MDOF_BuildingModel(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent)
-  : SimCenterAppWidget(parent), theRandomVariableInputWidget(theRandomVariableIW), 
+MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+  : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW), 
     numStories(0),
     floorHeights(0), storyHeights(0),
     fMinSelected(-1),fMaxSelected(-1), 
@@ -391,7 +391,7 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
         QStringList rvs;
         for (i = randomVariables.begin(); i != randomVariables.end(); ++i)
             rvs << i.key();
-        theRandomVariableInputWidget->removeRandomVariables(rvs);
+        theRandomVariablesContainer->removeRandomVariables(rvs);
 
         randomVariables.clear();
 
@@ -1443,7 +1443,7 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
      } else {
          randomVariables[text] = numReferences;
          RandomVariable *theRV = new RandomVariable(QString("Uncertain"), text);
-         theRandomVariableInputWidget->addRandomVariable(theRV);
+         theRandomVariablesContainer->addRandomVariable(theRV);
          qDebug() << "ADDING RV: " << text << " number" << randomVariables[text];
      }
  }
@@ -1455,7 +1455,7 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
          qDebug() << "removing RV: " << text << " number" << randomVariables[text];
          if (randomVariables[text] < 1) {
              QStringList rvsToRemove; rvsToRemove << text;
-             theRandomVariableInputWidget->removeRandomVariables(rvsToRemove);
+             theRandomVariablesContainer->removeRandomVariables(rvsToRemove);
              qDebug() << "REMOVING RV: " << text << " number" << randomVariables[text];
              randomVariables.remove(text);
          }

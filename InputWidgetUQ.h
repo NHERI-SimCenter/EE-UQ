@@ -42,7 +42,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QWidget>
 
 class QTabWidget;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 class InputWidgetSampling;
 
 // this class is just a tabbed widget for GI and SIM widgets
@@ -53,7 +53,7 @@ class InputWidgetUQ : public QWidget
 {
     Q_OBJECT
 public:
-  explicit InputWidgetUQ(InputWidgetSampling *, RandomVariableInputWidget *, QWidget *parent = 0);
+  explicit InputWidgetUQ(InputWidgetSampling *, RandomVariablesContainer *, QWidget *parent = 0);
     ~InputWidgetUQ();
 
 signals:
@@ -65,7 +65,7 @@ signals:
 
 private:
     QTabWidget *theTab;
-    RandomVariableInputWidget *theRVs;
+    RandomVariablesContainer *theRVs;
     InputWidgetSampling *theUQ;
 } ; 
 

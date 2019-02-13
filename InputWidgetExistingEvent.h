@@ -47,13 +47,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 
 class InputWidgetParameters;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 class InputWidgetExistingEvent : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit InputWidgetExistingEvent(RandomVariableInputWidget *theRandomVariableIW, QWidget *parent = 0);
+    explicit InputWidgetExistingEvent(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
     ~InputWidgetExistingEvent();
 
     bool outputToJSON(QJsonObject &rvObject);
@@ -82,7 +82,7 @@ private:
     QString fileName1;
     QLineEdit *file1;
 
-    RandomVariableInputWidget *theRandomVariableInputWidget;
+    RandomVariablesContainer *theRandomVariablesContainer;
     QStringList varNamesAndValues;
 };
 
