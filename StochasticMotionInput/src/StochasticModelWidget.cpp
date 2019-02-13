@@ -38,11 +38,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QString>
 #include <QWidget>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include "StochasticModelWidget.h"
 
 StochasticModelWidget::StochasticModelWidget(
-    RandomVariableInputWidget* random_variables, QWidget* parent)
+    RandomVariablesContainer* random_variables, QWidget* parent)
     : SimCenterWidget(parent),
       rv_input_widget_(random_variables)
 {}

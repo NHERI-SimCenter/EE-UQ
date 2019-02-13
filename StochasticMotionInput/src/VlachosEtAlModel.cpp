@@ -47,19 +47,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QString>
 #include <QVBoxLayout>
 
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <SimCenterWidget.h>
 
 #include "VlachosEtAlModel.h"
 
-VlachosEtAlModel::VlachosEtAlModel(RandomVariableInputWidget* random_variables,
+VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
                                    QWidget* parent)
     : StochasticModelWidget(random_variables, parent)
 {
   // Initialize member variables
-  moment_magnitude_ = new QLineEdit();
-  rupture_dist_ = new QLineEdit();
-  vs30_ = new QLineEdit();
+  moment_magnitude_ = new LineEditRV(random_variables);
+  rupture_dist_ = new LineEditRV(random_variables);
+  vs30_ = new LineEditRV(random_variables);
   seed_ = new QSpinBox();
   seed_->setMinimum(1);
   seed_->setMaximum(2147483647);

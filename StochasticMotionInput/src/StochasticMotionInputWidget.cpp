@@ -47,14 +47,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QSpinBox>
 #include <QString>
 #include <QVBoxLayout>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include "StochasticModelWidget.h"
 #include "StochasticMotionInputWidget.h"
 #include "VlachosEtAlModel.h"
 
 
 StochasticMotionInputWidget::StochasticMotionInputWidget(
-    RandomVariableInputWidget* random_variables, QWidget* parent)
+    RandomVariablesContainer* random_variables, QWidget* parent)
     : SimCenterAppWidget(parent),
       rv_input_widget_(random_variables) {
   // Construct required layouts

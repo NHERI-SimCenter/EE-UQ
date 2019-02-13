@@ -38,6 +38,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: mhgardner
+#include <LineEditRV.h>
 #include <QFormLayout>
 #include <QJsonObject>
 #include <QLabel>
@@ -46,11 +47,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QSpinBox>
 #include <QString>
 #include <QWidget>
-#include <RandomVariableInputWidget.h>
+#include <RandomVariablesContainer.h>
 #include <SimCenterWidget.h>
 #include "StochasticModelWidget.h"
 
 // Forward declarations
+class LineEditRV;
 class QFormLayout;
 class QJsonObject;
 class QLabel;
@@ -59,7 +61,7 @@ class QRadioButton;
 class QSpinBox;
 class QString;
 class QWidget;
-class RandomVariableInputWidget;
+class RandomVariablesContainer;
 
 /**
  * Widget for inputting parameters for stochastic earthquake time history
@@ -73,7 +75,7 @@ class VlachosEtAlModel : public StochasticModelWidget {
    * @param[in, out] random_variables Widget to store random variables to
    * @param[in, out] parent Pointer to parent widget. Defaults to nullptr.
    */
-  explicit VlachosEtAlModel(RandomVariableInputWidget* random_variables,
+  explicit VlachosEtAlModel(RandomVariablesContainer* random_variables,
                             QWidget* parent = nullptr);
 
   /**
@@ -125,9 +127,9 @@ class VlachosEtAlModel : public StochasticModelWidget {
   QLabel* model_description_; /**< Brief description of model indicating relevant
 				 paper where more information can be found describing
 				 model in greater detail */
-  QLineEdit * moment_magnitude_; /**< Moment magnitude of event */
-  QLineEdit * rupture_dist_; /**< Closest-to-site rupture distance */
-  QLineEdit * vs30_; /**< Average shear-wave velocity for the upper 30-m depth (Vs30) */
+  LineEditRV * moment_magnitude_; /**< Moment magnitude of event */
+  LineEditRV * rupture_dist_; /**< Closest-to-site rupture distance */
+  LineEditRV * vs30_; /**< Average shear-wave velocity for the upper 30-m depth (Vs30) */
   QSpinBox * seed_; /**< Value to use as seed for motion generation */
   QRadioButton* use_seed_; /**< Radio button to indicate whether specific seed
                               value should be used */

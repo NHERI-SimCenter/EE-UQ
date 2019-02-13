@@ -3,7 +3,7 @@
 #message($$PWD)
 
 INCLUDEPATH += $$PWD \
-    $$PWD/StochasticMotionInput
+    $$PWD/StochasticMotionInput/include
 
 INCLUDEPATH += "../EE-UQ"
 
@@ -37,9 +37,9 @@ SOURCES += \
     $$PWD/SIM_Selection.cpp \
     $$PWD/InputWidgetBIM.cpp \
     $$PWD/InputWidgetUQ.cpp \
-    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.cpp \
-    $$PWD/StochasticMotionInput/StochasticModelWidget.cpp \
-    $$PWD/StochasticMotionInput/VlachosEtAlModel.cpp \
+    $$PWD/StochasticMotionInput/src/StochasticMotionInputWidget.cpp \
+    $$PWD/StochasticMotionInput/src/StochasticModelWidget.cpp \
+    $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp \
     $$PWD/Controller2D.cpp \
     $$PWD/GlWidget2D.cpp
 
@@ -74,9 +74,9 @@ HEADERS  += \
     $$PWD/SIM_Selection.h \
     $$PWD/InputWidgetBIM.h \
     $$PWD/InputWidgetUQ.h \
-    $$PWD/StochasticMotionInput/StochasticMotionInputWidget.h \
-    $$PWD/StochasticMotionInput/StochasticModelWidget.h \    
-    $$PWD/StochasticMotionInput/VlachosEtAlModel.h \
+    $$PWD/StochasticMotionInput/include/StochasticMotionInputWidget.h \
+    $$PWD/StochasticMotionInput/include/StochasticModelWidget.h \    
+    $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h \
     $$PWD/Controller2D.h \
     $$PWD/GlWidget2D.h
 

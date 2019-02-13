@@ -1,5 +1,5 @@
-#ifndef _STOCHASTIC_MODEL_WIDGET_H
-#define _STOCHASTIC_MODEL_WIDGET_H
+#ifndef _STOCHASTIC_MOTION_INPUT_WIDGET_H
+#define _STOCHASTIC_MOTION_INPUT_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -38,13 +38,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 *************************************************************************** */
 
 // Written: mhgardner
+
+#include <QComboBox>
 #include <QJsonObject>
 #include <QString>
 #include <QWidget>
-#include <RandomVariableInputWidget.h>
-#include <SimCenterWidget.h>
+#include <RandomVariablesContainer.h>
+#include <SimCenterAppWidget.h>
+#include "StochasticModelWidget.h"
 
 // Forward declarations
+class QComboBox;
 class QJsonObject;
 class QString;
 class QWidget;
@@ -52,37 +56,51 @@ class RandomVariableInputWidget;
 
 /**
  * Widget for inputting parameters for stochastic earthquake time history
- * generation model
+ * generation
  */
-class StochasticModelWidget : public SimCenterWidget {
+class StochasticMotionInputWidget : public SimCenterAppWidget {
   Q_OBJECT
  public:
   /**
-   * @constructor Construct new stochastic model input widget
+   * @constructor Construct new stochastic motion input widget
    * @param[in, out] random_variables Widget to store random variables to
    * @param[in, out] parent Pointer to parent widget. Defaults to nullptr.
    */
-  explicit StochasticModelWidget(RandomVariableInputWidget* random_variables,
-                                 QWidget* parent = nullptr);
+  explicit StochasticMotionInputWidget(RandomVariablesContainer* random_variables,
+				       QWidget* parent = nullptr);
 
   /**
-   * @destructor Virtual desctructor for stochastic model input widget
+   * @destructor Virtual desctructor for stochastic input widget
    */
-  virtual ~StochasticModelWidget() {};
+  virtual ~StochasticMotionInputWidget();
 
   /**
-   * Instantiate stochastic motion input widget from input JSON object
+   * Instantiate stochastice motion input widger from input JSON object
    * @param[in] rvObject JSON object containing input information
    * @return Returns true if successful, false otherwise
    */
-  virtual bool inputFromJSON(QJsonObject& rvObject) = 0;
+  bool inputFromJSON(QJsonObject& rvObject);
 
   /**
    * Write all current class data to JSON required to reconstruct class
    * @param[in, out] rvObject JSON object to write output to
    * @return Returns true if successful, false otherwise
    */
-  virtual bool outputToJSON(QJsonObject& rvObject) = 0;
+  bool outputToJSON(QJsonObject& rvObject) override;
+
+  /**
+   * Read application-specific data from JSON object
+   * @param[in] rvObject JSON object to read application data from
+   * @return Returns true if successful, false otherwise
+   */
+  bool inputAppDataFromJSON(QJsonObject& rvObject) override;
+
+  /**
+   * Write application-specific data to JSON object
+   * @param[in, out] rvObject JSON object to write application data to
+   * @return Returns true if successful, false otherwise
+   */
+  bool outputAppDataToJSON(QJsonObject& rvObject) override;
 
  signals:
   void sendErrorMessage(QString message);
@@ -92,11 +110,21 @@ class StochasticModelWidget : public SimCenterWidget {
    * Emit error message displaing input message
    * @param[in] message String containg error message to emit
    */
-   virtual void errorMessage(QString message);
+  void errorMessage(QString message);
 
- protected:
-  RandomVariableInputWidget* rv_input_widget_; /**< Widget for inputting random
+  /**
+   * Emit change in model selection
+   * @param[in] model String name currently selected model
+   */
+  void modelSelectionChanged(const QString& model);
+
+ private:
+  RandomVariablesContainer* rv_input_widget_; /**< Widget for inputting random
 						  variables */
+  QHBoxLayout * parameters_layout_; /**< Layout for stochastic model widget */
+  QComboBox* model_selection_; /**< Selection of ground motion model inputs */
+  StochasticModelWidget* stochastic_model_; /**< Widget for inputting currently
+					       selected model parameters */
 };
 
-#endif  // _STOCHASTIC_MODEL_WIDGET_H
+#endif  // _STOCHASTIC_MOTION_INPUT_WIDGET_H
