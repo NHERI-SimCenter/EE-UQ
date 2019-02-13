@@ -32,58 +32,16 @@ int main(int argc, char** argv) {
   if (inputs.get_rv_flag()) {
     json event;
     event.emplace("randomVariables", json::array());
+    json event_description;
+    event_description.emplace("type", "Seismic");
+    event_description.emplace("subtype", "StochasticGroundMotion");
 
-    // If seed has been provided, generate time history
-    if (inputs.seed_provided()) {
-      try {
-        auto eq_generator = EQGenerator(
-            inputs.get_model_name(), inputs.get_magnitude(),
-            inputs.get_rupt_dist(), inputs.get_vs30(), inputs.get_seed());
+    auto pattern = json::object({{"dof", 1},
+                                 {"timeSeries", "accel_x"},
+                                 {"type", "UniformAcceleration"}});
 
-        auto time_history =
-            eq_generator.generate_time_history("StochasticMotion")
-                .get_library_json();
-
-        if (time_history.at("Events").size() != 1) {
-          throw std::runtime_error(
-              "ERROR: In main() of StochasticGroundMotion with getRV "
-              "flag set: Generated events should have length 1\n");
-        }
-        auto event_data = time_history.at("Events")[0];
-
-        auto array_entry = json::object(
-            {{"name", event_data.at("name")},
-             {"type", event_data.at("type")},
-             {"dT", event_data.at("dT")},
-             {"Data", "Time history generated using " +
-                          inputs.get_model_name() + " model"},
-             {"numSteps", event_data.at("numSteps")},
-             {"timeSeries", json::array({event_data.at("timeSeries")[0]})},
-             {"pattern", json::array({event_data.at("pattern")[0]})}});
-	
-        auto event_array = json::array();
-        event_array.push_back(array_entry);
-        event.emplace("Events", event_array);
-      } catch (const std::exception& e) {
-        std::cerr << "ERROR: In main() of StochasticGroundMotion with getRV "
-                     "flag set: "
-                  << e.what() << std::endl;
-        return 1;
-      }
-      // No seed provided, so only place type and subtype in Events
-    } else {
-      json event_description;
-      event_description.emplace("type", "Seismic");
-      event_description.emplace("subtype", "StochasticGroundMotion");
-
-      auto pattern = json::object({{"dof", 1},
-                                   {"timeSeries", "accel_x"},
-                                   {"type", "UniformAcceleration"}});
-
-      event_description.emplace("pattern", json::array({pattern}));
-      event.emplace("Events", json::array({event_description}));
-    }
-
+    event_description.emplace("pattern", json::array({pattern}));
+    event.emplace("Events", json::array({event_description}));
     std::ofstream event_file;
     event_file.open(inputs.get_event_file());
 
@@ -103,22 +61,31 @@ int main(int argc, char** argv) {
     }
   // No random variable flag passed, so generate ground motion
   } else {
-    // If seed is not provided, need to generate new ground motion. Otherwise,
-    // don't need to do anything since ground motion was generated when getRV
-    // flag was passed
-    
-    if (!inputs.seed_provided()) {
-      json event;
-      event.emplace("randomVariables", json::array());
+    std::unique_ptr<EQGenerator> eq_generator;
+    json event;
+    event.emplace("randomVariables", json::array());
+
+    std::ifstream bim_file(inputs.get_bim_file());
+    json input_data;
+    bim_file >> input_data;
+
+    for (json::iterator it = input_data["Events"].begin();
+         it != input_data["Events"].end(); ++it) {
       try {
-        auto eq_generator =
-            EQGenerator(inputs.get_model_name(), inputs.get_magnitude(),
-                        inputs.get_rupt_dist(), inputs.get_vs30());
+        // Check seed provided
+        if (inputs.seed_provided()) {
+          eq_generator = std::make_unique<EQGenerator>(
+              inputs.get_model_name(), it->at("momentMagnitude"),
+              it->at("ruptureDist"), it->at("vs30"), inputs.get_seed());
+        } else {
+          eq_generator = std::make_unique<EQGenerator>(
+              inputs.get_model_name(), it->at("momentMagnitude"),
+              it->at("ruptureDist"), it->at("vs30"));
+        }
 
         auto time_history =
-            eq_generator.generate_time_history("StochasticMotion")
+            eq_generator->generate_time_history("StochasticMotion")
                 .get_library_json();
-
 
         if (time_history.at("Events").size() != 1) {
           throw std::runtime_error(
@@ -136,7 +103,7 @@ int main(int argc, char** argv) {
              {"numSteps", event_data.at("numSteps")},
              {"timeSeries", json::array({event_data.at("timeSeries")[0]})},
              {"pattern", json::array({event_data.at("pattern")[0]})}});
-	
+
         auto event_array = json::array();
         event_array.push_back(array_entry);
         event.emplace("Events", event_array);
@@ -146,26 +113,24 @@ int main(int argc, char** argv) {
             << e.what() << std::endl;
         return 1;
       }
+    }
 
-      std::ofstream event_file;
-      event_file.open(inputs.get_event_file());
+    // Write prettyfied JSON to file
+    std::ofstream event_file;
+    event_file.open(inputs.get_event_file());
 
-      if (!event_file.is_open()) {
-        std::cerr << "\nERROR: In main() of StochasticGroundMotion: Could "
-                     "not open output location\n";
-      }
+    if (!event_file.is_open()) {
+      std::cerr << "\nERROR: In main() of StochasticGroundMotion: Could "
+                   "not open output location\n";
+    }
+    event_file << std::setw(4) << event << std::endl;
+    event_file.close();
 
-      // Write prettyfied JSON to file
-      event_file << std::setw(4) << event << std::endl;
-      event_file.close();
-
-      if (event_file.fail()) {
-        std::cerr
-            << "\nERROR: In In main() of StochasticGroundMotion:: Error when "
-               "closing output location\n";
-      }
+    if (event_file.fail()) {
+      std::cerr
+          << "\nERROR: In In main() of StochasticGroundMotion:: Error when "
+             "closing output location\n";
     }
   }
-
   return 0;
 }

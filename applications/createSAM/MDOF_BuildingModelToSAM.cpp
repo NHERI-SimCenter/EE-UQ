@@ -14,7 +14,7 @@ main(int argc, char **argv) {
   char *filenameBIM = NULL;
   char *filenameSAM = NULL;
 
-  // MDOF --filenameBIM file? --filenameEVENT file? --filenameSAM file? <-r>
+  // MDOF --filenameBIM file? --filenameEVENT file? --filenameSAM file? <--getRV>
 
   if (argc == 8 || argc == 7) {
 
@@ -35,7 +35,7 @@ main(int argc, char **argv) {
     }
 
   } else {
-    fprintf(stderr, "ERROR - MDOF - incorrect # args want: MDOF --filenameBIM file? --filenameEVENT file? --filenameSAM file? <-r>\n");
+    fprintf(stderr, "ERROR - MDOF - incorrect # args want: MDOF --filenameBIM file? --filenameEVENT file? --filenameSAM file? <--getRV>\n");
   }
 
 
@@ -70,7 +70,7 @@ main(int argc, char **argv) {
   int numNodes = numStory + 1;
 
   //
-  // if no -r print out model, otherwise not needed 
+  // if no --getRV print out model, otherwise not needed 
   //
 
   if (argc == 7) {

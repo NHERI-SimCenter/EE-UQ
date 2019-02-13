@@ -14,37 +14,31 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
           configuration_.model_name,
           "Model name")["--modelName"]("Name of stochastic model to use")
           .required() |
-      clara::detail::Opt(configuration_.moment_magnitude,
-                         "Moment magnitude")["--momentMagnitude"](
-          "Moment magnitude of earthquake")
-          .required() |
-      clara::detail::Opt(configuration_.rupture_dist,
-                         "Rupture Distance")["--ruptureDist"](
-          "Closest-to-site rupture distance in kilometers")
-          .required() |
-      clara::detail::Opt(configuration_.vs30, "Vs30")["--vs30"](
-          "Soil shear wave velocity averaged over top 30 meters in meters per "
-          "second")
-          .required() |
       clara::detail::Opt(configuration_.event_file,
                          "Event file location")["--filenameEVENT"](
           "Location where generated time history should be stored")
           .required() |
       clara::detail::Opt(configuration_.bim_file,
                          "BIM file location")["--filenameBIM"](
-          "Location where building information model is stored. Passed to "
-          "program by workflow, but not used.")
-          .optional() |
+          "Location where building information model is stored")
+          .required() |
       clara::detail::Opt(configuration_.seed, "Seed value")["--seed"](
           "Seed value that should be used to generate time histories")
           .required() |
-      clara::detail::Opt(configuration_.rv_flag)["-r"](
+      clara::detail::Opt(configuration_.rv_flag)["-r"]["--getRV"](
           "Flag indicating whether the generated event file should specify "
           "random variable")
           .optional();
 
   auto result = command_parser_.parse(clara::detail::Args(number_of_arguments, arguments));
 
+
+  std::cout << "\nThese are the command line inputs:";
+  std::cout << "\nModel name: " << configuration_.model_name;
+  std::cout << "\nSeed: " << configuration_.seed;
+  std::cout << "\nRV flag: " << configuration_.rv_flag;
+  std::cout << "\nEvent file: " << configuration_.event_file << std::endl;
+  
   // Check whether command line was succussfully parsed
   if (!result) {
     std::cerr << "ERROR: In command line inputs: " << result.errorMessage() << std::endl;
@@ -59,18 +53,6 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
 
 std::string CommandParser::get_model_name() const {
   return configuration_.model_name;
-}
-
-double CommandParser::get_magnitude() const {
-  return std::stod(configuration_.moment_magnitude);
-}
-
-double CommandParser::get_rupt_dist() const {
-  return std::stod(configuration_.rupture_dist);
-}
-
-double CommandParser::get_vs30() const {
-  return std::stod(configuration_.vs30);
 }
 
 bool CommandParser::seed_provided() const {
@@ -95,6 +77,10 @@ int CommandParser::get_seed() const {
 
 std::string CommandParser::get_event_file() const {
   return configuration_.event_file;
+}
+
+std::string CommandParser::get_bim_file() const {
+  return configuration_.bim_file;
 }
 
 bool CommandParser::get_help_flag() const {

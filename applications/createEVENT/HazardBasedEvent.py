@@ -140,8 +140,8 @@ def createNGAWest2Event(rsn, scaleFactor, recordsFolder, eventFilePath):
 def main():
     inputArgs = sys.argv
 
-    #Process only if -r is passed
-    if not "-r" in inputArgs:
+    #Process only if --getRV is passed
+    if not "--getRV" in inputArgs:
         sys.exit(0)
 
     #First let's process the arguments

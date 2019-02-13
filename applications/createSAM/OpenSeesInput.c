@@ -8,7 +8,7 @@
 int
 main(int argc, char **argv) {
 
-  // OpenSeesInput --filenameBIM file? --filenameEVENT file? --filenameSAM file? --filePath path? --fileName file? <-r>
+  // OpenSeesInput --filenameBIM file? --filenameEVENT file? --filenameSAM file? --filePath path? --fileName file? <--getRV>
 
   if (argc == 12) {
 

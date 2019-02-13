@@ -40,7 +40,7 @@ int main(int argc, char **argv)
       arg++;
       filenameEDP = argv[arg];
     }
-    else if (strcmp(argv[arg], "-r") ==0) {
+    else if (strcmp(argv[arg], "--getRV") ==0) {
       getRV = true;
     }
 

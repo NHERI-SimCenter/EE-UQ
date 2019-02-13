@@ -12,7 +12,7 @@ def main():
     argInputFile = inputArgs.index("--fileName") + 1
     inputFile = inputArgs[argInputFile]
 
-    # only copy file if -r, which occurs when argc == 10
+    # only copy file if --getRV, which occurs when argc == 10
     argc = len(sys.argv)
     if (argc == 10):
         if (inputFile != eventFile):

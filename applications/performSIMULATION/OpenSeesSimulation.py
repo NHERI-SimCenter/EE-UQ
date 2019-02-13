@@ -15,7 +15,7 @@ scriptDir = os.path.dirname(os.path.realpath(__file__))
 
 #If requesting random variables run getUncertainty
 #Otherwise, Run Opensees 
-if "-r" in inputArgs:
+if "--getRV" in inputArgs:
     getUncertaintyCommand = '{}/OpenSeesPreprocessor {} {} {} {}'.format(scriptDir, bimName, samName, evtName, simName)
     subprocess.Popen(getUncertaintyCommand, shell=True).wait()
 else:

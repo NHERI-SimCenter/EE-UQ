@@ -265,7 +265,7 @@ def main(run_type, inputFile, applicationsRegistry):
             buildingAppDataList.append('-' + key.encode('ascii', 'ignore'))
             buildingAppDataList.append(buildingAppData.get(key).encode('ascii', 'ignore'))
 
-        buildingAppDataList.append('-r')
+        buildingAppDataList.append('--getRV')
         command, result, returncode = runApplication(buildingAppDataList)
         log_output.append([command, result, returncode])
 
@@ -293,7 +293,7 @@ def main(run_type, inputFile, applicationsRegistry):
             simFILE = id + '-SIM.json'
             driverFile = id + '-driver'
 
-            # open driver file & write building app (minus the -r) to it
+            # open driver file & write building app (minus the --getRV) to it
             driverFILE = open(driverFile, 'w')
             for item in buildingAppDataList:
                 driverFILE.write('%s ' % item)
@@ -315,7 +315,7 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            eventAppDataList.append('-r')
+            eventAppDataList.append('--getRV')
             command, result, returncode = runApplication(eventAppDataList)
             log_output.append([command, result, returncode])
 
@@ -331,7 +331,7 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            modelAppDataList.append('-r')
+            modelAppDataList.append('--getRV')
             command, result, returncode = runApplication(modelAppDataList)
             log_output.append([command, result, returncode])
 
@@ -348,7 +348,7 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            edpAppDataList.append('-r')
+            edpAppDataList.append('--getRV')
             command, result, returncode = runApplication(edpAppDataList)
             log_output.append([command, result, returncode])
 
@@ -364,7 +364,7 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            simAppDataList.append('-r')
+            simAppDataList.append('--getRV')
             command, result, returncode = runApplication(simAppDataList)
             log_output.append([command, result, returncode])
 

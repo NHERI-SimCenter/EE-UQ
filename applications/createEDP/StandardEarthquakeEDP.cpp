@@ -13,9 +13,9 @@ using namespace std;
 int main(int argc, char **argv)
 {
 
-  // StandardEarthquakeEDP --filenameBIM file --filenameEVENT file? --filenameSAM file? --filenameEDP file? <-r>
+  // StandardEarthquakeEDP --filenameBIM file --filenameEVENT file? --filenameSAM file? --filenameEDP file? <--getRV>
 
-  if (argc == 10) { // only do if -r is passed
+  if (argc == 10) { // only do if --getRV is passed
 
     char *filenameBIM = argv[2];     
     char *filenameEVENT = argv[4]; 
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	arg++;
 	filenameEDP = argv[arg];
       }
-      else if (strcmp(argv[arg], "-r") ==0) {
+      else if (strcmp(argv[arg], "--getRV") ==0) {
 	getRV = true;
       }
       

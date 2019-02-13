@@ -269,7 +269,7 @@ def main(run_type, inputFile, applicationsRegistry):
         simFILE = 'SIM.json'
         driverFile = 'driver'
 
-        # open driver file & write building app (minus the -r) to it
+        # open driver file & write building app (minus the --getRV) to it
         driverFILE = open(driverFile, 'w')
 
         # get RV for event
@@ -289,7 +289,7 @@ def main(run_type, inputFile, applicationsRegistry):
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        eventAppDataList.append('-r')
+        eventAppDataList.append('--getRV')
         if (eventAppExe.endswith('.py')):
             eventAppDataList[1] = eventAppExeLocal
         else:
@@ -313,7 +313,7 @@ def main(run_type, inputFile, applicationsRegistry):
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        modelAppDataList.append('-r')
+        modelAppDataList.append('--getRV')
 
         if (modelingAppExe.endswith('.py')):
             modelAppDataList[1] = modelingAppExeLocal
@@ -344,7 +344,7 @@ def main(run_type, inputFile, applicationsRegistry):
         else:
             edpAppDataList[0] = edpAppExeLocal
 
-        edpAppDataList.append('-r')
+        edpAppDataList.append('--getRV')
         command, result, returncode = runApplication(edpAppDataList)
         log_output.append([command, result, returncode])
 
@@ -363,7 +363,7 @@ def main(run_type, inputFile, applicationsRegistry):
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        simAppDataList.append('-r')
+        simAppDataList.append('--getRV')
         if (simAppExe.endswith('.py')):
             simAppDataList[1] = simAppExeLocal
         else:
