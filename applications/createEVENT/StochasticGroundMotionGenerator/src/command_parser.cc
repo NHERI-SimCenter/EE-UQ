@@ -31,13 +31,6 @@ CommandParser::CommandParser(int& number_of_arguments, char* arguments[]) {
           .optional();
 
   auto result = command_parser_.parse(clara::detail::Args(number_of_arguments, arguments));
-
-
-  std::cout << "\nThese are the command line inputs:";
-  std::cout << "\nModel name: " << configuration_.model_name;
-  std::cout << "\nSeed: " << configuration_.seed;
-  std::cout << "\nRV flag: " << configuration_.rv_flag;
-  std::cout << "\nEvent file: " << configuration_.event_file << std::endl;
   
   // Check whether command line was succussfully parsed
   if (!result) {
