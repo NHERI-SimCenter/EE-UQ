@@ -74,11 +74,11 @@ int main(int argc, char** argv) {
       try {
         // Check seed provided
         if (inputs.seed_provided()) {
-          eq_generator = std::make_unique<EQGenerator>(
+          eq_generator = std::make_shared<EQGenerator>(
               inputs.get_model_name(), it->at("momentMagnitude"),
               it->at("ruptureDist"), it->at("vs30"), inputs.get_seed());
         } else {
-          eq_generator = std::make_unique<EQGenerator>(
+          eq_generator = std::make_shared<EQGenerator>(
               inputs.get_model_name(), it->at("momentMagnitude"),
               it->at("ruptureDist"), it->at("vs30"));
         }
