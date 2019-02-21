@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     }
   // No random variable flag passed, so generate ground motion
   } else {
-    std::unique_ptr<EQGenerator> eq_generator;
+    std::shared_ptr<EQGenerator> eq_generator;
     json event;
     event.emplace("randomVariables", json::array());
 
