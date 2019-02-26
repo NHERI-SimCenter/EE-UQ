@@ -140,14 +140,14 @@ def createNGAWest2Event(rsn, scaleFactor, recordsFolder, eventFilePath):
 def main():
     inputArgs = sys.argv
 
-    #Process only if -getRV is passed
-    if not "-getRV" in inputArgs:
+    #Process only if --getRV is passed
+    if not "--getRV" in inputArgs:
         sys.exit(0)
 
     #First let's process the arguments
-    argBIM = inputArgs.index("-filenameBIM") + 1
+    argBIM = inputArgs.index("--filenameBIM") + 1
     bimFilePath = inputArgs[argBIM]
-    argEVENT = inputArgs.index("-filenameEVENT") + 1
+    argEVENT = inputArgs.index("--filenameEVENT") + 1
     eventFilePath = inputArgs[argEVENT]
 
     #Ensure a hazard cache folder exist

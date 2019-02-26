@@ -41,6 +41,11 @@
         "Name": "HazardBasedEvent",
         "ExecutablePath": "applications/createEVENT/HazardBasedEvent.py",
         "ApplicationSpecificInputs":[]
+      },
+      {
+        "Name": "StochasticGroundMotion",
+        "ExecutablePath": "applications/createEVENT/StochasticGroundMotion",
+        "ApplicationSpecificInputs":["modelName", "seed"]
       }
     ]
   },

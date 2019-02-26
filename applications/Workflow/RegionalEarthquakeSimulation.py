@@ -265,7 +265,7 @@ def main(run_type, inputFile, applicationsRegistry):
             buildingAppDataList.append('-' + key.encode('ascii', 'ignore'))
             buildingAppDataList.append(buildingAppData.get(key).encode('ascii', 'ignore'))
 
-        buildingAppDataList.append('-getRV')
+        buildingAppDataList.append('--getRV')
         command, result, returncode = runApplication(buildingAppDataList)
         log_output.append([command, result, returncode])
 
@@ -293,14 +293,14 @@ def main(run_type, inputFile, applicationsRegistry):
             simFILE = id + '-SIM.json'
             driverFile = id + '-driver'
 
-            # open driver file & write building app (minus the -getRV) to it
+            # open driver file & write building app (minus the --getRV) to it
             driverFILE = open(driverFile, 'w')
             for item in buildingAppDataList:
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
             # get RV for event
-            eventAppDataList = [eventAppExe, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE]
+            eventAppDataList = [eventAppExe, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
             if (eventAppExe.endswith('.py')):
                 eventAppDataList.insert(0, 'python')
 
@@ -315,12 +315,12 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            eventAppDataList.append('-getRV')
+            eventAppDataList.append('--getRV')
             command, result, returncode = runApplication(eventAppDataList)
             log_output.append([command, result, returncode])
 
             # get RV for building model
-            modelAppDataList = [modelingAppExe, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM',
+            modelAppDataList = [modelingAppExe, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
                                 samFILE]
 
             for key in modelingAppData.keys():
@@ -331,14 +331,14 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            modelAppDataList.append('-getRV')
+            modelAppDataList.append('--getRV')
             command, result, returncode = runApplication(modelAppDataList)
             log_output.append([command, result, returncode])
 
 
             # get RV for EDP!
-            edpAppDataList = [edpAppExe, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM', samFILE,
-                              '-filenameEDP', edpFILE]
+            edpAppDataList = [edpAppExe, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
+                              '--filenameEDP', edpFILE]
 
             for key in edpAppData.keys():
                 edpAppDataList.append('-' + key.encode('ascii', 'ignore'))
@@ -348,13 +348,13 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            edpAppDataList.append('-getRV')
+            edpAppDataList.append('--getRV')
             command, result, returncode = runApplication(edpAppDataList)
             log_output.append([command, result, returncode])
 
             # get RV for Simulation
-            simAppDataList = [simAppExe, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
-                              '-filenameEDP', edpFILE, '-filenameSIM', simFILE]
+            simAppDataList = [simAppExe, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+                              '--filenameEDP', edpFILE, '--filenameSIM', simFILE]
 
             for key in simAppData.keys():
                 simAppDataList.append('-' + key.encode('ascii', 'ignore'))
@@ -364,12 +364,12 @@ def main(run_type, inputFile, applicationsRegistry):
                 driverFILE.write('%s ' % item)
             driverFILE.write('\n')
 
-            simAppDataList.append('-getRV')
+            simAppDataList.append('--getRV')
             command, result, returncode = runApplication(simAppDataList)
             log_output.append([command, result, returncode])
 
             # Adding CreateLoss to Dakota Driver
-            dlAppDataList = [dlAppExe, '-filenameBIM', bimFILE, '-filenameEDP', edpFILE, '-filenameLOSS', dlFILE]
+            dlAppDataList = [dlAppExe, '--filenameBIM', bimFILE, '--filenameEDP', edpFILE, '--filenameLOSS', dlFILE]
 
             for key in dlAppData.keys():
                 dlAppDataList.append('-' + key.encode('ascii', 'ignore'))
@@ -381,8 +381,8 @@ def main(run_type, inputFile, applicationsRegistry):
             # perform the simulation
             driverFILE.close()
 
-            uqAppDataList = [uqAppExe, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
-                             '-filenameEDP', edpFILE, '-filenameLOSS', dlFILE, '-filenameSIM', simFILE, 'driverFile',
+            uqAppDataList = [uqAppExe, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+                             '--filenameEDP', edpFILE, '--filenameLOSS', dlFILE, '--filenameSIM', simFILE, 'driverFile',
                              driverFile]
 
             for key in uqAppData.keys():
