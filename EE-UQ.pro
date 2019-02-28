@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts concurrent network
+QT       += core gui charts concurrent network sql qml webenginewidgets uitools webengine webchannel
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,7 +19,7 @@ win32 {
     }
 }
 
-macos:LIBS += /usr/lib/libcurl.dylib
+macos:LIBS += /usr/lib/libcurl.dylib -llapack -lblas
 win32:INCLUDEPATH += "c:\Users\SimCenter\libCurl-7.59.0\include"
 win32:LIBS += C:\Users\SimCenter\libCurl-7.59.0/lib/libcurl.lib
 linux:LIBS += /usr/lib/x86_64-linux-gnu/libcurl.so
@@ -32,6 +32,7 @@ include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
+include(../SiteResponseTool/SiteResponseTool.pri)
 include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp \

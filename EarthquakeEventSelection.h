@@ -46,6 +46,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class QComboBox;
 class QStackedWidget;
 class UserDefinedApplication;
+class RockOutcrop;
 
 class RandomVariablesContainer;
 
@@ -77,6 +78,7 @@ private:
    SimCenterAppWidget *theExistingPeerEvents;
    SimCenterAppWidget *theUserDefinedApplication;
    SimCenterAppWidget *theStochasticMotionWidget;
+   SimCenterAppWidget *theRockOutcrop;
 
    RandomVariablesContainer *theRandomVariablesContainer;
 };

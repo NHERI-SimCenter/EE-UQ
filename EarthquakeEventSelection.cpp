@@ -66,6 +66,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "SHAMotionWidget.h"
 #include <UserDefinedApplication.h>
 #include "StochasticMotionInputWidget.h"
+#include "RockOutcrop.h"
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
@@ -85,7 +86,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->addItem(tr("User Application"));
+    eventSelection->addItem(tr("Site Response"));
     eventSelection->addItem(tr("Stochastic Ground Motion Model"));
+
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
@@ -120,6 +123,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     // Adding stochastic ground motion model widget
     theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theStochasticMotionWidget);
+
+
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
