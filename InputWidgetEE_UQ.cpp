@@ -419,7 +419,6 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     theEvent->outputToJSON(jsonObjectTop);
     theEvent->outputAppDataToJSON(apps);
 
-
     theRunWidget->outputToJSON(jsonObjectTop);
 
     jsonObjectTop["Applications"]=apps;
@@ -464,6 +463,39 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     if (jsonObject.contains("StructuralInformation")) {
         QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
         theSIM->inputFromJSON(jsonObjStructuralInformation);
+    } else
+        return false;
+
+    if (jsonObject.contains("Applications")) {
+
+        QJsonObject theApplicationObject = jsonObject["Applications"].toObject();
+
+        if (theApplicationObject.contains("Modeling")) {
+            QJsonObject theObject = theApplicationObject["Modeling"].toObject();
+            theSIM->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+
+        // note: Events is different because the object is an Array
+        if (theApplicationObject.contains("Events")) {
+            QJsonObject theObject = theApplicationObject["Events"].toObject();
+            theEvent->inputAppDataFromJSON(theApplicationObject);
+        } else
+            return false;
+
+
+        if (theApplicationObject.contains("UQ")) {
+            QJsonObject theObject = theApplicationObject["UQ"].toObject();
+            theUQ_Method->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+
+        if (theApplicationObject.contains("Simulation")) {
+            QJsonObject theObject = theApplicationObject["Simulation"].toObject();
+            theAnalysis->inputAppDataFromJSON(theObject);
+        } else
+            return false;
+
     } else
         return false;
 
