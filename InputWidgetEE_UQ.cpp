@@ -437,7 +437,7 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
       theResults->processResults(dakotaOut, dakotaTab, inputFile);
       theRunWidget->hide();
       treeView->setCurrentIndex(infoItemIdx);
-      theStackedWidget->setCurrentIndex(4);
+      theStackedWidget->setCurrentIndex(5);
  }
 
 void

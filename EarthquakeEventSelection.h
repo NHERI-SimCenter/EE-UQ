@@ -76,7 +76,7 @@ private:
    SimCenterAppWidget *theExistingEvents;
    SimCenterAppWidget *theExistingPeerEvents;
    SimCenterAppWidget *theUserDefinedApplication;
-
+   SimCenterAppWidget *theStochasticMotionWidget;
 
    RandomVariablesContainer *theRandomVariablesContainer;
 };

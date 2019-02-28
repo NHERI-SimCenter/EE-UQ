@@ -104,7 +104,13 @@ OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariablesContainer *theRandom
 
 OpenSeesBuildingModel::~OpenSeesBuildingModel()
 {
+    // remove old random variables
+    QStringList names;
+    for (int i=0; i<varNamesAndValues.size()-1; i+=2) {
+        names.append(varNamesAndValues.at(i));
+    }
 
+    theRandomVariablesContainer->removeRandomVariables(names);
 }
 
 

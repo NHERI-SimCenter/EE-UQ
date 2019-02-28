@@ -4,7 +4,7 @@
 
 if [ "$#" -lt 10 ]; then
     echo $#
-    echo "wrong # parameters, want OpenSeesSimulation.sh -filenameBIM BIM.json -filenameSAM SAM.json -filenameEVENT EVENT.json -filenameEDP EDP.json -filenameSIM SIM.json <-getRV>
+    echo "wrong # parameters, want OpenSeesSimulation.sh --filenameBIM BIM.json --filenameSAM SAM.json --filenameEVENT EVENT.json --filenameEDP EDP.json --filenameSIM SIM.json <--getRV>
     echo "wrong #paramateres, want: performSimulation fileBIM fileSAM fileEVENT fileEDP"
     exit
 fi
