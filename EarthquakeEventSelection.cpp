@@ -167,42 +167,14 @@ EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
         QJsonArray theEvents = jsonObject["Events"].toArray();
         QJsonValue theValue = theEvents.at(0);
         if (theValue.isNull()) {
-          return false;
+            qDebug() << "EarthquakeEventSelection::no Event in Events";
+            return false;
         }
         theEvent = theValue.toObject();
-        if (theEvent.contains("type")) {
-            QJsonValue theName = theEvent["type"];
-            type = theName.toString();
-        } else
-            return false;
-    } else
+    } else {
+        qDebug() << "EarthquakeEventSelection::no Events";
         return false;
-
-    int index = 0;
-    if ((type == QString("Existing Events")) ||
-        (type == QString("ExistingSimCenterEvents"))) {
-      index = 0;
-    } else if ((type == QString("Existing PEER Events")) ||
-               (type == QString("ExistingPEER_Events"))) {
-      index = 1;
-    } else if (type == QString("Hazard Based Event")) {
-      index = 2;
-    } else if ((type == QString("User Application")) ||
-               (type == QString("UserDefinedApplication"))) {
-      index = 3;
-    } else if (type == QString("Site Response") ||
-           type == QString("SiteResponse")) {
-      index = 4;
-    } else if (type == QString("Stochastic Ground Motion Model") ||
-               type == QString("StochasticMotion")) {
-          index = 5;
-        } else {
-      return false;
     }
-
-    eventSelection->setCurrentIndex(index);
-
-    // if worked, just invoke method on new type
 
     if (theCurrentEvent != 0) {
         return theCurrentEvent->inputFromJSON(theEvent);
@@ -270,6 +242,8 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
 
     QJsonObject theEvent;
+    QString type;
+
 
     if (jsonObject.contains("Events")) {
         QJsonArray theEvents = jsonObject["Events"].toArray();
@@ -278,11 +252,41 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
           return false;
         }
         theEvent = theValue.toObject();
+        if (theEvent.contains("Application")) {
+            QJsonValue theName = theEvent["Application"];
+            type = theName.toString();
+        } else
+            return false;
     } else
         return false;
 
 
     // if worked, just invoke method on new type
+
+    int index = 0;
+    if ((type == QString("Existing Events")) ||
+            (type == QString("ExistingSimCenterEvents"))) {
+        index = 0;
+    } else if ((type == QString("Existing PEER Events")) ||
+               (type == QString("ExistingPEER_Events"))) {
+        index = 1;
+    } else if (type == QString("Hazard Based Event")) {
+        index = 2;
+    } else if ((type == QString("User Application")) ||
+               (type == QString("UserDefinedApplication"))) {
+        index = 3;
+    } else if (type == QString("Site Response") ||
+               type == QString("SiteResponse")) {
+        index = 4;
+    } else if (type == QString("Stochastic Ground Motion Model") ||
+               type == QString("StochasticMotion")) {
+        index = 5;
+    } else {
+        return false;
+    }
+
+    eventSelection->setCurrentIndex(index);
+
 
     if (theCurrentEvent != 0 && !theEvent.isEmpty()) {
         return theCurrentEvent->inputAppDataFromJSON(theEvent);
