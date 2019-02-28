@@ -120,6 +120,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
     theStackedWidget->addWidget(theUserDefinedApplication);
 
+    // Adding SRT widget
+    theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theRockOutcrop);
+
     // Adding stochastic ground motion model widget
     theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theStochasticMotionWidget);
@@ -186,10 +190,13 @@ EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
     } else if ((type == QString("User Application")) ||
                (type == QString("UserDefinedApplication"))) {
       index = 3;
-    } else if (type == QString("Stochastic Ground Motion Model") ||
-	       type == QString("StochasticMotion")) {
+    } else if (type == QString("Site Response") ||
+           type == QString("SiteResponse")) {
       index = 4;
-    } else {
+    } else if (type == QString("Stochastic Ground Motion Model") ||
+               type == QString("StochasticMotion")) {
+          index = 5;
+        } else {
       return false;
     }
 
@@ -231,8 +238,13 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = theUserDefinedApplication;
     }
 
-    else if (arg1 == "Stochastic Ground Motion Model") {
+    else if (arg1 == "Site Response") {
       theStackedWidget->setCurrentIndex(4);
+      theCurrentEvent = theRockOutcrop;
+    }
+
+    else if (arg1 == "Stochastic Ground Motion Model") {
+      theStackedWidget->setCurrentIndex(5);
       theCurrentEvent = theStochasticMotionWidget;
     }
 
@@ -249,7 +261,6 @@ EarthquakeEventSelection::outputAppDataToJSON(QJsonObject &jsonObject)
     theCurrentEvent->outputAppDataToJSON(singleEventData);
     eventArray.append(singleEventData);
     jsonObject["Events"]=eventArray;
-
     return true;
 }
 
