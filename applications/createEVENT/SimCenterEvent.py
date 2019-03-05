@@ -5,14 +5,14 @@ def main():
     inputArgs = sys.argv
 
     #First let's process the arguments
-    argBIM = inputArgs.index("-filenameBIM") + 1
+    argBIM = inputArgs.index("--filenameBIM") + 1
     bimFile = inputArgs[argBIM]
-    argEVENT = inputArgs.index("-filenameEVENT") + 1
+    argEVENT = inputArgs.index("--filenameEVENT") + 1
     eventFile = inputArgs[argEVENT]
-    argInputFile = inputArgs.index("-fileName") + 1
+    argInputFile = inputArgs.index("--fileName") + 1
     inputFile = inputArgs[argInputFile]
 
-    # only copy file if -getRV, which occurs when argc == 10
+    # only copy file if --getRV, which occurs when argc == 10
     argc = len(sys.argv)
     if (argc == 10):
         if (inputFile != eventFile):

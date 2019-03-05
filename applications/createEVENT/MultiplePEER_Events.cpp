@@ -16,7 +16,7 @@ int createSimCenterEvent(json_t *obj);
 
 int main(int argc, char **argv)
 {
-  // StandardEarthquakeEDP -filenameBIM file -filenameEVENT file? <-getRV>
+  // StandardEarthquakeEDP --filenameBIM file --filenameEVENT file? <--getRV>
 
   char *filenameBIM = argv[2];     
   char *filenameEVENT = argv[4]; 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   if (argc == 6) { 
 
     //
-    // if -getRV:
+    // if --getRV:
     //   1) we create Event Files
     //   2) we want to set EVENT file with random variables and events that just contain name
     //
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     json_dump_file(rootEvent,filenameEVENT,0);   
     //    json_dump_file(rootEvent,filenameEVENT,JSON_INDENT(1));   
 
-  }  else { // if not -getRV we want to copy file to EVENT fileName
+  }  else { // if not --getRV we want to copy file to EVENT fileName
 
     //
     // need to open up EVENT file and process to see which of EVENTS to use

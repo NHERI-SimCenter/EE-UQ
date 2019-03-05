@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "Controller2d.h"
+#include "Controller2D.h"
 
 Controller2D::Controller2D()
     :theView(0)

@@ -16,7 +16,7 @@ void addEvent(const char *fileNameEvent, json_t *obj);
 int main(int argc, char **argv)
 {
 
-  // StandardEarthquakeEDP -filenameBIM file -filenameEVENT file? <-getRV>
+  // StandardEarthquakeEDP --filenameBIM file --filenameEVENT file? <--getRV>
 
   char *filenameBIM = argv[2];     
   char *filenameEVENT = argv[4]; 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   if (argc == 6) { 
 
     //
-    // if -getRV we want to set EVENT file with random variables and events that just contain name
+    // if --getRV we want to set EVENT file with random variables and events that just contain name
     //
 
     // output jsonObject for any Random Variables
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     // dump the event file
     json_dump_file(rootEvent,filenameEVENT,0);   
 
-  }  else { // if not -getRV we want to copy file to EVENT fileName
+  }  else { // if not --getRV we want to copy file to EVENT fileName
 
     //
     // need to open up EVENT file and process to see which of EVENTS to use

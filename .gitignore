@@ -37,6 +37,8 @@ moc*
 *.exe
 *.out
 *.app
+EE_UQ
+StochasticGroundMotion
 
 # QT
 *.pro.user
@@ -49,6 +51,7 @@ qrc_styles.cpp
 
 # OTHER
 Makefile
+Makefile.*
 StandardEarthquakeEDP
 OpenSeesInput
 OpenSeesPostprocessor
@@ -56,7 +59,9 @@ OpenSeesPreprocessor
 extractEDP
 MultipleSimCenterEvents
 MultiplePEER_Events
+postprocessDAKOTA
 *.pyc
 *.autosave
+debug.log
 *.json
 MDOF_BuildingModelToSAM

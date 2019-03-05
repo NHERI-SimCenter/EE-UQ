@@ -269,27 +269,27 @@ def main(run_type, inputFile, applicationsRegistry):
         simFILE = 'SIM.json'
         driverFile = 'driver'
 
-        # open driver file & write building app (minus the -getRV) to it
+        # open driver file & write building app (minus the --getRV) to it
         driverFILE = open(driverFile, 'w')
 
         # get RV for event
-        eventAppDataList = [eventAppExeRemote, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE]
+        eventAppDataList = [eventAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
         if (eventAppExe.endswith('.py')):
             eventAppDataList.insert(0, 'python')
 
         for key in eventAppData.keys():
-            eventAppDataList.append(u'-' + key)
+            eventAppDataList.append(u'--' + key)
             value = eventAppData.get(key)
             #if (os.path.exists(value) and not os.path.isabs(value)):
             #    value = os.path.abspath(value)
-            eventAppDataList.append(u'' + value)
+            eventAppDataList.append(u'' + str(value))
             
             
         for item in eventAppDataList:
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        eventAppDataList.append('-getRV')
+        eventAppDataList.append('--getRV')
         if (eventAppExe.endswith('.py')):
             eventAppDataList[1] = eventAppExeLocal
         else:
@@ -299,21 +299,21 @@ def main(run_type, inputFile, applicationsRegistry):
         log_output.append([command, result, returncode])
 
         # get RV for building model
-        modelAppDataList = [modelingAppExeRemote, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM',
+        modelAppDataList = [modelingAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
                             samFILE]
 
         if (modelingAppExe.endswith('.py')):
             modelAppDataList.insert(0, 'python')
 
         for key in modelingAppData.keys():
-            modelAppDataList.append(u'-' + key)
+            modelAppDataList.append(u'--' + key)
             modelAppDataList.append(u'' + modelingAppData.get(key))
 
         for item in modelAppDataList:
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        modelAppDataList.append('-getRV')
+        modelAppDataList.append('--getRV')
 
         if (modelingAppExe.endswith('.py')):
             modelAppDataList[1] = modelingAppExeLocal
@@ -325,14 +325,14 @@ def main(run_type, inputFile, applicationsRegistry):
 
 
         # get RV for EDP!
-        edpAppDataList = [edpAppExeRemote, '-filenameBIM', bimFILE, '-filenameEVENT', eventFILE, '-filenameSAM', samFILE,
-                          '-filenameEDP', edpFILE]
+        edpAppDataList = [edpAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
+                          '--filenameEDP', edpFILE]
 
         if (edpAppExe.endswith('.py')):
             edpAppDataList.insert(0, 'python')
 
         for key in edpAppData.keys():
-            edpAppDataList.append(u'-' + key)
+            edpAppDataList.append(u'--' + key)
             edpAppDataList.append(u'' + edpAppData.get(key))
 
         for item in edpAppDataList:
@@ -344,26 +344,26 @@ def main(run_type, inputFile, applicationsRegistry):
         else:
             edpAppDataList[0] = edpAppExeLocal
 
-        edpAppDataList.append('-getRV')
+        edpAppDataList.append('--getRV')
         command, result, returncode = runApplication(edpAppDataList)
         log_output.append([command, result, returncode])
 
         # get RV for Simulation
-        simAppDataList = [simAppExeRemote, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
-                          '-filenameEDP', edpFILE, '-filenameSIM', simFILE]
+        simAppDataList = [simAppExeRemote, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+                          '--filenameEDP', edpFILE, '--filenameSIM', simFILE]
 
         if (simAppExe.endswith('.py')):
             simAppDataList.insert(0, 'python')
 
         for key in simAppData.keys():
-            simAppDataList.append(u'-' + key)
+            simAppDataList.append(u'--' + key)
             simAppDataList.append(u'' + simAppData.get(key))
 
         for item in simAppDataList:
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
 
-        simAppDataList.append('-getRV')
+        simAppDataList.append('--getRV')
         if (simAppExe.endswith('.py')):
             simAppDataList[1] = simAppExeLocal
         else:
@@ -376,8 +376,8 @@ def main(run_type, inputFile, applicationsRegistry):
         # perform the simulation
         driverFILE.close()
 
-        uqAppDataList = [uqAppExeLocal, '-filenameBIM', bimFILE, '-filenameSAM', samFILE, '-filenameEVENT', eventFILE,
-                         '-filenameEDP', edpFILE, '-filenameSIM', simFILE, '-driverFile', driverFile]
+        uqAppDataList = [uqAppExeLocal, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+                         '--filenameEDP', edpFILE, '--filenameSIM', simFILE, '--driverFile', driverFile]
 
         if (uqAppExe.endswith('.py')):
             uqAppDataList.insert(0, 'python')
@@ -385,7 +385,7 @@ def main(run_type, inputFile, applicationsRegistry):
         uqAppDataList.append(run_type)
 
         for key in uqAppData.keys():
-            uqAppDataList.append(u'-' + key)
+            uqAppDataList.append(u'--' + key)
             value = uqAppData.get(key)
             if type(value) == str:
                 uqAppDataList.append(u'' + value)
