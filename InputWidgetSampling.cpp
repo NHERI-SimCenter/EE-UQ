@@ -173,6 +173,9 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 bool
 InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
+
+    return 0; //fmk
+
     bool result = false;
     this->clear();
 
@@ -248,7 +251,7 @@ InputWidgetSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
     // get sampleingMethodData, if not present it's an error
 
     if (jsonObject.contains("ApplicationData")) {
-        QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+        QJsonObject uq = jsonObject["ApplicationData"].toObject();
 
         //
         // get method, #sample and seed, if not present an error
