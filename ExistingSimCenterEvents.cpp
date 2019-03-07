@@ -159,8 +159,8 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariablesContainer *theRV
     SectionTitle *title=new SectionTitle();
     title->setText(tr("List of SimCenter Events"));
     title->setMinimumWidth(250);
-    QSpacerItem *spacer1 = new QSpacerItem(50,10);
-    QSpacerItem *spacer2 = new QSpacerItem(20,10);
+   // QSpacerItem *spacer1 = new QSpacerItem(50,10);
+   // QSpacerItem *spacer2 = new QSpacerItem(20,10);
 
     QPushButton *addEvent = new QPushButton();
     addEvent->setMinimumWidth(75);
@@ -174,11 +174,18 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariablesContainer *theRV
     removeEvent->setText(tr("Remove"));
     //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetExistingEvent()));
 
+    QPushButton *loadDirectory = new QPushButton();
+    loadDirectory->setMinimumWidth(150);
+    loadDirectory->setMaximumWidth(150);
+    loadDirectory->setText(tr("Load Directory"));
+
     titleLayout->addWidget(title);
-    titleLayout->addItem(spacer1);
+    titleLayout->addSpacing(50);
     titleLayout->addWidget(addEvent);
-    titleLayout->addItem(spacer2);
+    titleLayout->addSpacing(20);
     titleLayout->addWidget(removeEvent);
+    titleLayout->addSpacing(50);
+    titleLayout->addWidget(loadDirectory);
     titleLayout->addStretch();
 
     QScrollArea *sa = new QScrollArea;
@@ -200,6 +207,7 @@ ExistingSimCenterEvents::ExistingSimCenterEvents(RandomVariablesContainer *theRV
     this->setLayout(verticalLayout);
     connect(addEvent, SIGNAL(pressed()), this, SLOT(addEvent()));
     connect(removeEvent, SIGNAL(pressed()), this, SLOT(removeEvents()));
+    connect(loadDirectory, SIGNAL(pressed()), this, SLOT(loadEventsFromDir()));
 }
 
 
@@ -217,6 +225,76 @@ void ExistingSimCenterEvents::addEvent(void)
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
 }
 
+
+void ExistingSimCenterEvents::loadEventsFromDir(void) {
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                 "/home",
+                                                 QFileDialog::ShowDirsOnly
+                                                 | QFileDialog::DontResolveSymlinks);
+
+    this->clear();
+
+    QDir directory(dir);
+    QString recordsTxt(directory.filePath("Records.txt"));
+    QFileInfo checkFile(recordsTxt);
+
+    if (checkFile.exists() && checkFile.isFile()) {
+
+        QFile file(recordsTxt);
+        if (!file.open(QIODevice::ReadOnly)) {
+            qDebug() << file.errorString();
+            return;
+        }
+
+        QStringList wordList;
+        while (!file.atEnd()) {
+            QByteArray line = file.readLine();
+            QByteArrayList lineList = line.split(',');
+            if (lineList.length() >= 2) {
+
+                QString fileName = lineList.at(0);
+                QString factor = lineList.at(1);
+                factor.remove(QRegExp("[\\n\\t\\r]"));
+
+                QFileInfo checkName(directory.filePath(fileName));
+                if (checkName.exists() && checkName.isFile()) {
+
+                    ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW);
+                    QFileInfo infoFile(fileName);
+                    QString name = infoFile.baseName();
+                    theEvent->theName->setText(name);
+                    theEvent->file->setText(directory.filePath(fileName));
+                    theEvent->factor->setText(factor);
+
+                    theEvents.append(theEvent);
+                    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
+
+                } else {
+                    qDebug() << "ExistingEvents: load directory file " << fileName << " does not exist";
+                }
+            }
+
+        }
+
+        file.close();
+
+    } else {
+
+        QStringList fileList= directory.entryList(QStringList() << "*.json",QDir::Files);
+        foreach(QString fileName, fileList) {
+            InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
+            ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW);
+            QFileInfo infoFile(fileName);
+            QString name = infoFile.baseName();
+            theEvent->theName->setText(name);
+            theEvent->file->setText(directory.filePath(fileName));
+
+            theEvents.append(theEvent);
+            eventLayout->insertWidget(eventLayout->count()-1, theEvent);
+        }
+    }
+
+}
 
 void ExistingSimCenterEvents::removeEvents(void)
 {
@@ -289,7 +367,7 @@ ExistingSimCenterEvents::inputFromJSON(QJsonObject &jsonObject)
           foreach (const QJsonValue &eventValue, eventArray) {
 
                // get data, create an event, read it and then add to layout
-     qDebug() << "Creating existing event";
+
               QJsonObject eventObject = eventValue.toObject();
               ExistingEvent *theEvent = new ExistingEvent(theRandVariableIW);
 
