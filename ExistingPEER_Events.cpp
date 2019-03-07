@@ -106,6 +106,7 @@ PeerRecord::chooseFileName(void) {
     QFileInfo fileInfo(file->text());
 }
 
+
 void
 PeerRecord::onRemoveRecord(bool value) {
     if (value == true)
@@ -311,8 +312,7 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariablesContainer *theRV_IW, QWi
     SectionTitle *title=new SectionTitle();
     title->setText(tr("List of PEER Events"));
     title->setMinimumWidth(250);
-    QSpacerItem *spacer1 = new QSpacerItem(50,10);
-    QSpacerItem *spacer2 = new QSpacerItem(20,10);
+
 
     QPushButton *addEvent = new QPushButton();
     addEvent->setMinimumWidth(75);
@@ -326,11 +326,19 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariablesContainer *theRV_IW, QWi
     removeEvent->setText(tr("Remove"));
     //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
 
+
+    QPushButton *loadDirectory = new QPushButton();
+    loadDirectory->setMinimumWidth(150);
+    loadDirectory->setMaximumWidth(150);
+    loadDirectory->setText(tr("Load Directory"));
+
     titleLayout->addWidget(title);
-    titleLayout->addItem(spacer1);
+    titleLayout->addSpacing(50);
     titleLayout->addWidget(addEvent);
-    titleLayout->addItem(spacer2);
+    titleLayout->addSpacing(20);
     titleLayout->addWidget(removeEvent);
+    titleLayout->addSpacing(50);
+    titleLayout->addWidget(loadDirectory);
     titleLayout->addStretch();
 
     QScrollArea *sa = new QScrollArea;
@@ -351,8 +359,11 @@ ExistingPEER_Events::ExistingPEER_Events(RandomVariablesContainer *theRV_IW, QWi
     //verticalLayout->addStretch();
 
     this->setLayout(verticalLayout);
+
+
     connect(addEvent, SIGNAL(pressed()), this, SLOT(addEvent()));
     connect(removeEvent, SIGNAL(pressed()), this, SLOT(removeEvents()));
+    connect(loadDirectory, SIGNAL(pressed()), this, SLOT(loadEventsFromDir()));
 }
 
 
@@ -371,6 +382,39 @@ void ExistingPEER_Events::addEvent(void)
    //connect(this,SLOT(InputWidgetExistingEventErrorMessage(QString)), theEvent, SIGNAL(sendErrorMessage(QString)));
 }
 
+void ExistingPEER_Events::loadEventsFromDir(void) {
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                 "/home",
+                                                 QFileDialog::ShowDirsOnly
+                                                 | QFileDialog::DontResolveSymlinks);
+
+    this->clear();
+
+    QDir directory(dir);
+    QStringList fileList= directory.entryList(QStringList() << "*.AT2",QDir::Files);
+    foreach(QString fileName, fileList) {
+        InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
+        PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
+        QString name = fileName;
+        name.chop(4); // remove .AT2
+        if (name.contains("RSN")) {
+              name.remove(0,3); // remove RSN
+              int index = name.indexOf(QString("_"));
+              if (index != -1)
+                  name=name.left(index);
+        }
+
+        theEvent->theName->setText(name);
+        PeerRecord *theRecord = theEvent->theRecords.at(0);
+        if (theRecord != NULL) {
+            theRecord->file->setText(directory.filePath(fileName));
+        }
+        theEvents.append(theEvent);
+        eventLayout->insertWidget(eventLayout->count()-1, theEvent);
+    }
+
+
+}
 
 void ExistingPEER_Events::removeEvents(void)
 {
