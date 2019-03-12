@@ -404,39 +404,41 @@ void ExistingPEER_Events::loadEventsFromDir(void) {
             while (!file.atEnd()) {
                 QByteArray line = file.readLine();
                 QByteArrayList lineList = line.split(',');
-                QString fileName = lineList.at(0);
-                QString factor = lineList.at(1);
-                factor.remove(QRegExp("[\\n\\t\\r]"));
 
-                QFileInfo checkName(directory.filePath(fileName));
-                if (checkName.exists() && checkName.isFile()) {
+                if (lineList.length() >= 2) {
 
+                    QString fileName = lineList.at(0);
+                    QString factor = lineList.at(1);
+                    factor.remove(QRegExp("[\\n\\t\\r]"));
 
-                    InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
-                    PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
+                    QFileInfo checkName(directory.filePath(fileName));
+                    if (checkName.exists() && checkName.isFile()) {
 
-                    QString name(fileName);
-                    name.chop(4); // remove .AT2
-                    if (name.contains("RSN")) {
-                        name.remove(0,3); // remove RSN
-                        int index = name.indexOf(QString("_"));
-                        if (index != -1)
-                            name=name.left(index);
+                        InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
+                        PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
+
+                        QString name(fileName);
+                        name.chop(4); // remove .AT2
+                        if (name.contains("RSN")) {
+                            name.remove(0,3); // remove RSN
+                            int index = name.indexOf(QString("_"));
+                            if (index != -1)
+                                name=name.left(index);
+                        }
+
+                        theEvent->theName->setText(name);
+                        PeerRecord *theRecord = theEvent->theRecords.at(0);
+                        if (theRecord != NULL) {
+                            theRecord->file->setText(directory.filePath(fileName));
+                            theRecord->factor->setText(factor);
+                        }
+
+                        theEvents.append(theEvent);
+                        eventLayout->insertWidget(eventLayout->count()-1, theEvent);
+                    } else {
+                        qDebug() << "Existing PEER_Records: load directory file " << fileName << " does not exist";
                     }
-
-                    theEvent->theName->setText(name);
-                    PeerRecord *theRecord = theEvent->theRecords.at(0);
-                    if (theRecord != NULL) {
-                        theRecord->file->setText(directory.filePath(fileName));
-                        theRecord->factor->setText(factor);
-                    }
-
-                    theEvents.append(theEvent);
-                    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
-                } else {
-                    qDebug() << "Existing PEER_Records: load directory file " << fileName << " does not exist";
                 }
-
             }
 
             file.close();

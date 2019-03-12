@@ -1,6 +1,3 @@
-#ifndef EXISTING_SIMCENTER_EVENTS_H
-#define EXISTING_SIMCENTER_EVENTS_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -20,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,70 +36,70 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-#include <SimCenterAppWidget.h>
+#include "StandardEarthquakeEDP.h"
+#include <RandomVariablesContainer.h>
 
-class RandomVariablesContainer;
-class InputWidgetExistingEvent;
-class QRadioButton;
-class QLineEdit;
-class LineEditRV;
+//#include <InputWidgetParameters.h>
 
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
-
-class ExistingEvent : public SimCenterWidget
+StandardEarthquakeEDP::StandardEarthquakeEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
-    Q_OBJECT
-public:
-    explicit ExistingEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
-    ~ExistingEvent();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
+}
 
-    QRadioButton   *button; // used to mark if Event intended for deletion
-    QLineEdit      *theName; // a QLineEdit with name of Event (filename minus path and extension)
-    QLineEdit      *file;    // full path to file name
-    LineEditRV     *factor;  // load factor
-
-public slots:
-    void chooseFileName(void);
-
-private:
-     RandomVariablesContainer *theRandVariableIW;
-     QString lastFactor;
-};
-
-
-class ExistingSimCenterEvents : public SimCenterAppWidget
+StandardEarthquakeEDP::~StandardEarthquakeEDP()
 {
-    Q_OBJECT
-public:
-    explicit ExistingSimCenterEvents(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
 
-    ~ExistingSimCenterEvents();
+}
 
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &dirName);
 
-public slots:
-   void errorMessage(QString message);
-   void addEvent(void);
-   void removeEvents(void);
-   void clear(void);
-   void loadEventsFromDir(void);
+void
+StandardEarthquakeEDP::clear(void)
+{
 
-private:
-    QVBoxLayout *verticalLayout;
-    QVBoxLayout *eventLayout;
+}
 
-    QVector<ExistingEvent *>theEvents;
-    RandomVariablesContainer *theRandVariableIW;
-};
 
-#endif // EXISTING_SIMCENTER_EVENTS_H
+
+bool
+StandardEarthquakeEDP::outputToJSON(QJsonObject &jsonObject)
+{
+    // just need to send the class type here.. type needed in object in case user screws up
+    jsonObject["type"]="StandardEarthquakeEDP";
+
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::inputFromJSON(QJsonObject &jsonObject)
+{
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::outputAppDataToJSON(QJsonObject &jsonObject) {
+
+    //
+    // per API, need to add name of application to be called in AppLication
+    // and all data to be used in ApplicationDate
+    //
+
+    jsonObject["Application"] = "StandardEarthquakeEDP";
+    QJsonObject dataObj;
+    jsonObject["ApplicationData"] = dataObj;
+
+    return true;
+}
+bool
+StandardEarthquakeEDP::inputAppDataFromJSON(QJsonObject &jsonObject) {
+
+}
+
+
+bool
+StandardEarthquakeEDP::copyFiles(QString &dirName) {
+  
+}
+

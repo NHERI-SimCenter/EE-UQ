@@ -1173,6 +1173,11 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
    readLineEditRV(jsonObject,"Kx", inKx);
    readLineEditRV(jsonObject,"Ky", inKy);
 
+   QString typHeight =  inHeight->text();
+   bool ok;
+   double height = typHeight.toDouble(&ok);
+   if (ok == false) height = 1.0;
+
    theSpreadsheet->clear();
    theSpreadsheet->setColumnCount(9);
    theSpreadsheet->setRowCount(numStories);
@@ -1197,8 +1202,9 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            return false;
        }
 
-
        updatingPropertiesTable = true;
+       floorHeights[0] = 0.;
+
        for (int i=0; i<numStories; i++) {
 
            QJsonValue theFloor = theArray[i];
@@ -1214,6 +1220,11 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            readCellRV(floorData, "height", item);
            item->setToolTip(QString("height of story " + QString::number(i+1)));
            theSpreadsheet->setItem(i, 2, item);
+
+           double heightStory = item->text().toDouble(&ok);
+           if (ok == false) heightStory = height;
+           storyHeights[i]= height;
+           floorHeights[i+1] = floorHeights[i]+height;
 
            item = new QTableWidgetItem();
            readCellRV(floorData, "kx", item);
@@ -1251,6 +1262,7 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            item->setToolTip(QString("damping ratio of mode " + QString::number(i+1)));
            theSpreadsheet->setItem(i, 8, item);
        }
+
    }
 
    QJsonArray rvArray;
@@ -1266,6 +1278,8 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
     jsonObject["randomVar"]=rvArray;
 
     updatingPropertiesTable = false;
+
+    buildingH = floorHeights[numStories];
 
     if (theView != 0) {
         this->draw(theView);
@@ -1312,7 +1326,6 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
  void
  MDOF_BuildingModel::draw(GlWidget2D *)
  {
-
      if (numStories == 0)
             return;
 

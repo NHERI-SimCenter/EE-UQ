@@ -86,9 +86,9 @@ SIM_Selection::SIM_Selection(RandomVariablesContainer *theRandomVariableIW, QWid
     name->setSpacing(10);
     name->setMargin(0);
 
-    //    bimSelection->addItem(tr("Spreadsheet"));
-    bimSelection->addItem(tr("OpenSees"));
+    //    bimSelection->addItem(tr("Spreadsheet"));  
     bimSelection->addItem(tr("MDOF"));
+    bimSelection->addItem(tr("OpenSees"));
 
     connect(bimSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(bimSelectionChanged(QString)));
 
@@ -99,7 +99,7 @@ SIM_Selection::SIM_Selection(RandomVariablesContainer *theRandomVariableIW, QWid
 
     // set Samlping as the default
     //    this->bimSelectionChanged(tr("Spreadsheet"));
-    this->bimSelectionChanged(tr("OpenSees"));
+    this->bimSelectionChanged(tr("MDOF"));
     layout->setMargin(0);
 }
 
@@ -159,9 +159,9 @@ SIM_Selection::inputFromJSON(QJsonObject &jsonObject)
     if (type == QString("SimCenterSIM")) {
        index = 2;
     } else if (type == QString("OpenSeesInput")) {
-       index = 0;
-    } else if (type == QString("MDOF_BuildingModel")) {
        index = 1;
+    } else if (type == QString("MDOF_BuildingModel")) {
+       index = 0;
     } else {
         return false;
     }

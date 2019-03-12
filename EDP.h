@@ -1,5 +1,5 @@
-#ifndef EXISTING_SIMCENTER_EVENTS_H
-#define EXISTING_SIMCENTER_EVENTS_H
+#ifndef EDP_H
+#define EDP_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -39,70 +39,43 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterWidget.h>
-#include <SimCenterAppWidget.h>
+#include <QWidget>
 
-class RandomVariablesContainer;
-class InputWidgetExistingEvent;
-class QRadioButton;
 class QLineEdit;
-class LineEditRV;
+class QHBoxLayout;
+class QRadioButton;
+class QLabel;
+class QPushButton;
 
-#include <QGroupBox>
-#include <QVector>
-#include <QVBoxLayout>
+//class EDP_Data;
 
-class ExistingEvent : public SimCenterWidget
+class EDP : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ExistingEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
-    ~ExistingEvent();
+    explicit EDP(QString *name = 0, QWidget *parent = 0);
+    ~EDP();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
 
-    QRadioButton   *button; // used to mark if Event intended for deletion
-    QLineEdit      *theName; // a QLineEdit with name of Event (filename minus path and extension)
-    QLineEdit      *file;    // full path to file name
-    LineEditRV     *factor;  // load factor
+    void setResults(double *);
+
+signals:
+    void removeEDP(EDP *);
 
 public slots:
-    void chooseFileName(void);
+    void removeEDP(void);
 
 private:
-     RandomVariablesContainer *theRandVariableIW;
-     QString lastFactor;
+   // EDPData *theData;
+    QPushButton *removeButton;
+    QRadioButton *button;
+    QLineEdit *variableName;
+    QHBoxLayout *mainLayout;
+    bool resultsSet;
+    QLineEdit *mean;
+    QLineEdit *stdDev;
 };
 
-
-class ExistingSimCenterEvents : public SimCenterAppWidget
-{
-    Q_OBJECT
-public:
-    explicit ExistingSimCenterEvents(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
-
-    ~ExistingSimCenterEvents();
-
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputToJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &dirName);
-
-public slots:
-   void errorMessage(QString message);
-   void addEvent(void);
-   void removeEvents(void);
-   void clear(void);
-   void loadEventsFromDir(void);
-
-private:
-    QVBoxLayout *verticalLayout;
-    QVBoxLayout *eventLayout;
-
-    QVector<ExistingEvent *>theEvents;
-    RandomVariablesContainer *theRandVariableIW;
-};
-
-#endif // EXISTING_SIMCENTER_EVENTS_H
+#endif // EDP_H
