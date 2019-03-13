@@ -1219,7 +1219,7 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            item = new QTableWidgetItem();
            readCellRV(floorData, "height", item);
            item->setToolTip(QString("height of story " + QString::number(i+1)));
-           theSpreadsheet->setItem(i, 2, item);
+           theSpreadsheet->setItem(i, 1, item);
 
            double heightStory = item->text().toDouble(&ok);
            if (ok == false) heightStory = height;
@@ -1229,7 +1229,7 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            item = new QTableWidgetItem();
            readCellRV(floorData, "kx", item);
            item->setToolTip(QString("initial stiffness of story " + QString::number(i+1) + " in x dirn"));
-           theSpreadsheet->setItem(i, 1, item);
+           theSpreadsheet->setItem(i, 2, item);
 
            item = new QTableWidgetItem();
            readCellRV(floorData, "Fyx", item);
