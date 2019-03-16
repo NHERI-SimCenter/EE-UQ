@@ -32,8 +32,13 @@ def workflow_log(msg):
 
 # function to return result of invoking an application
 def runApplication(application_plus_args):
+    if application_plus_args[0] == 'python':
+        command = 'python "{}" '.format(application_plus_args[1])+' '.join(application_plus_args[2:])
+    else:
+        command = '"{}" '.format(application_plus_args[0])+' '.join(application_plus_args[1:])
+
     try:
-        result = subprocess.check_output(' '.join(application_plus_args), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
         # for line in result.split('\n'):
         # pass
         # print(line)
@@ -44,7 +49,7 @@ def runApplication(application_plus_args):
 
     if returncode != 0:
         workflow_log('NON-ZERO RETURN CODE: %s' % returncode)
-    return ' '.join(application_plus_args), result, returncode
+    return command, result, returncode
 
 
 def add_full_path(possible_filename):
