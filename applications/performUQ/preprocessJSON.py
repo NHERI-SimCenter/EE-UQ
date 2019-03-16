@@ -361,7 +361,7 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     f.write('#comment to fix a bug\n')
     if (runType == "local"):
-        f.write(scriptDir + '/extractEDP ' + edpName + ' results.out \n')
+        f.write('"{}'.format(scriptDir) + '/extractEDP" ' + edpName + ' results.out \n')
     else:
         extractEDPCommand = posixpath.join(remoteDir, 'applications/performUQ/extractEDP')
         f.write(extractEDPCommand + ' ' + edpName + ' results.out \n')

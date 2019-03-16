@@ -5,8 +5,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
+    string_types = basestring
 else:
-    from past.builtins import basestring
+    string_types = str
 
 import json
 import os
@@ -267,16 +268,16 @@ def main(run_type, inputFile, applicationsRegistry):
         driverFILE = open(driverFile, 'w')
 
         # get RV for event
-        eventAppDataList = [eventAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
+        eventAppDataList = ['"{}"'.format(eventAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
         if (eventAppExe.endswith('.py')):
             eventAppDataList.insert(0, 'python')
 
         for key in eventAppData.keys():
-            eventAppDataList.append(u'--' + key)
+            eventAppDataList.append(u"--" + key)
             value = eventAppData.get(key)
             #if (os.path.exists(value) and not os.path.isabs(value)):
             #    value = os.path.abspath(value)
-            eventAppDataList.append(u'' + value)
+            eventAppDataList.append(u"" + value)
             
             
         for item in eventAppDataList:
@@ -285,15 +286,15 @@ def main(run_type, inputFile, applicationsRegistry):
 
         eventAppDataList.append('--getRV')
         if (eventAppExe.endswith('.py')):
-            eventAppDataList[1] = eventAppExeLocal
+            eventAppDataList[1] = u""+eventAppExeLocal
         else:
-            eventAppDataList[0] = eventAppExeLocal
+            eventAppDataList[0] = u""+eventAppExeLocal
 
         command, result, returncode = runApplication(eventAppDataList)
         log_output.append([command, result, returncode])
 
         # get RV for building model
-        modelAppDataList = [modelingAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
+        modelAppDataList = ['"{}"'.format(modelingAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
                             samFILE]
 
         if (modelingAppExe.endswith('.py')):
@@ -319,7 +320,7 @@ def main(run_type, inputFile, applicationsRegistry):
 
 
         # get RV for EDP!
-        edpAppDataList = [edpAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
+        edpAppDataList = ['"{}"'.format(edpAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
                           '--filenameEDP', edpFILE]
 
         if (edpAppExe.endswith('.py')):
@@ -343,7 +344,7 @@ def main(run_type, inputFile, applicationsRegistry):
         log_output.append([command, result, returncode])
 
         # get RV for Simulation
-        simAppDataList = [simAppExeRemote, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+        simAppDataList = ['"{}"'.format(simAppExeRemote), '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
                           '--filenameEDP', edpFILE, '--filenameSIM', simFILE]
 
         if (simAppExe.endswith('.py')):
@@ -370,18 +371,20 @@ def main(run_type, inputFile, applicationsRegistry):
         # perform the simulation
         driverFILE.close()
 
-        uqAppDataList = [uqAppExeLocal, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+        uqAppDataList = ['"{}"'.format(uqAppExeLocal), '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
                          '--filenameEDP', edpFILE, '--filenameSIM', simFILE, '--driverFile', driverFile]
 
         if (uqAppExe.endswith('.py')):
             uqAppDataList.insert(0, 'python')
+            uqAppDataList[1] = uqAppExeLocal
 
         uqAppDataList.append(run_type)
 
         for key in uqAppData.keys():
             uqAppDataList.append(u'--' + key)
             value = uqAppData.get(key)
-            if type(value) == str:
+            #if type(value) == string_types:
+            if isinstance(value, string_types):
                 uqAppDataList.append(u'' + value)
             else:
                 uqAppDataList.append(u'' + str(value))
@@ -396,12 +399,14 @@ def main(run_type, inputFile, applicationsRegistry):
             workflow_log('Setup run only. No simulation performed.')
 
     except WorkFlowInputError as e:
+        print('workflow error: %s' % e.value)
         workflow_log('workflow error: %s' % e.value)
         workflow_log(divider)
         exit(1)
 
     # unhandled exceptions are handled here
-    except:
+    except Exception as e:
+        print('workflow error: %s' % e.value)
         raise
         workflow_log('unhandled exception... exiting')
         exit(1)
