@@ -313,24 +313,28 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     for event in data["EngineeringDemandParameters"]:
         eventIndex = data["EngineeringDemandParameters"].index(event)
         for edp in event["responses"]:
+            known = False
             if(edp["type"] == "max_abs_acceleration"):
                 edpAcronym = "PFA"
                 floor = edp["floor"]
+                known = True
 
             elif(edp["type"] == "max_drift"):
                 edpAcronym = "PID"
                 floor = edp["floor1"]
+                known = True
 
             elif(edp["type"] == "max_rel_disp"):
                 edpAcronym = "PFD"
                 floor = edp["floor"]
+                known = True
 
             else:
-                edpAcronym = "UnknownEDP"
+                f.write("'{}' ".format(edp["type"]))
 
-            for dof in edp["dofs"]:
-                f.write("'{}-{}-{}-{}' ".format(eventIndex + 1, edpAcronym, floor, dof))
-
+            if (known == True):
+                for dof in edp["dofs"]:
+                    f.write("'{}-{}-{}-{}' ".format(eventIndex + 1, edpAcronym, floor, dof))
 
     f.write('\n')
     f.write('no_gradients\n')
