@@ -5,8 +5,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
+    string_types = basestring
 else:
-    from past.builtins import basestring
+    string_types = str
 
 import json
 import os
@@ -382,7 +383,8 @@ def main(run_type, inputFile, applicationsRegistry):
         for key in uqAppData.keys():
             uqAppDataList.append(u'--' + key)
             value = uqAppData.get(key)
-            if type(value) == str:
+            #if type(value) == string_types:
+            if isinstance(value, string_types):
                 uqAppDataList.append(u'' + value)
             else:
                 uqAppDataList.append(u'' + str(value))
