@@ -36,47 +36,70 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetUQ.h"
-#include <QTabWidget>
+#include "StandardEarthquakeEDP.h"
 #include <RandomVariablesContainer.h>
-#include <InputWidgetSampling.h>
 
+//#include <InputWidgetParameters.h>
 
-InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
-    :QWidget(parent),theRVs(RV),theUQ(UQ)
-{
-    QVBoxLayout *layout = new QVBoxLayout();
-
-    // place in tab widget
-    /*
-    theTab = new QTabWidget();
-    theTab->addTab(theUQ,"Sampling Methods");
-    theTab->addTab(theRVs,"Random Variables");
-    theTab->setCurrentIndex(1);
-
-    layout->addWidget(theTab);
-    */
-    QGroupBox* methodGroupBox = new QGroupBox("Sampling Method", this);
-    QVBoxLayout *methodLayout = new QVBoxLayout();
-    methodLayout->addWidget(UQ);
-    methodGroupBox->setLayout(methodLayout);
-    layout->addWidget(methodGroupBox);
-
-    QGroupBox* rvGroupBox = new QGroupBox("Random Variables", this);
-    QVBoxLayout *rvLayout = new QVBoxLayout();
-    rvLayout->addWidget(RV);
-    rvGroupBox->setLayout(rvLayout);
-    layout->addWidget(rvGroupBox, 1.0);
-
-    //layout->addStretch();
-    layout->setMargin(0);
-
-    this->setLayout(layout);
-}
-
-InputWidgetUQ::~InputWidgetUQ()
+StandardEarthquakeEDP::StandardEarthquakeEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
 
 }
 
+StandardEarthquakeEDP::~StandardEarthquakeEDP()
+{
+
+}
+
+
+void
+StandardEarthquakeEDP::clear(void)
+{
+
+}
+
+
+
+bool
+StandardEarthquakeEDP::outputToJSON(QJsonObject &jsonObject)
+{
+    // just need to send the class type here.. type needed in object in case user screws up
+    jsonObject["type"]="StandardEarthquakeEDP";
+
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::inputFromJSON(QJsonObject &jsonObject)
+{
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::outputAppDataToJSON(QJsonObject &jsonObject) {
+
+    //
+    // per API, need to add name of application to be called in AppLication
+    // and all data to be used in ApplicationDate
+    //
+
+    jsonObject["Application"] = "StandardEarthquakeEDP";
+    QJsonObject dataObj;
+    jsonObject["ApplicationData"] = dataObj;
+
+    return true;
+}
+bool
+StandardEarthquakeEDP::inputAppDataFromJSON(QJsonObject &jsonObject) {
+
+}
+
+
+bool
+StandardEarthquakeEDP::copyFiles(QString &dirName) {
+  
+}
 

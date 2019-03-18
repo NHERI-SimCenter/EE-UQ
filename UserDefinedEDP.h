@@ -1,3 +1,6 @@
+#ifndef USER_DEFINED_EDP_H
+#define USER_DEFINED_EDP_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -36,47 +39,58 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetUQ.h"
-#include <QTabWidget>
-#include <RandomVariablesContainer.h>
-#include <InputWidgetSampling.h>
+#include <SimCenterAppWidget.h>
 
+#include <QGroupBox>
+#include <QVector>
+#include <QVBoxLayout>
+#include <QComboBox>
 
-InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
-    :QWidget(parent),theRVs(RV),theUQ(UQ)
+class EDP;
+class InputWidgetParameters;
+class RandomVariablesContainer;
+
+class UserDefinedEDP : public SimCenterAppWidget
 {
-    QVBoxLayout *layout = new QVBoxLayout();
+    Q_OBJECT
+public:
+    explicit UserDefinedEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
+    ~UserDefinedEDP();
 
-    // place in tab widget
-    /*
-    theTab = new QTabWidget();
-    theTab->addTab(theUQ,"Sampling Methods");
-    theTab->addTab(theRVs,"Random Variables");
-    theTab->setCurrentIndex(1);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &dirName);
 
-    layout->addWidget(theTab);
-    */
-    QGroupBox* methodGroupBox = new QGroupBox("Sampling Method", this);
-    QVBoxLayout *methodLayout = new QVBoxLayout();
-    methodLayout->addWidget(UQ);
-    methodGroupBox->setLayout(methodLayout);
-    layout->addWidget(methodGroupBox);
+    QString getMainScript();
+    int setProcessingScript(QString filename);
+    int setAdditionalInput(QString filename);
 
-    QGroupBox* rvGroupBox = new QGroupBox("Random Variables", this);
-    QVBoxLayout *rvLayout = new QVBoxLayout();
-    rvLayout->addWidget(RV);
-    rvGroupBox->setLayout(rvLayout);
-    layout->addWidget(rvGroupBox, 1.0);
+signals:
 
-    //layout->addStretch();
-    layout->setMargin(0);
+public slots:
+   void clear(void);
+   void chooseProcessingScript(void);
+   void chooseAdditionalInput(void);
 
-    this->setLayout(layout);
-}
+   void addEDP(void);
+   void removeEDP(EDP *);
 
-InputWidgetUQ::~InputWidgetUQ()
-{
+private:
+   void addEDP(QString &name);
 
-}
+    QLineEdit   *processingScriptLE;
+    //QString filenameProcesssingScript;
 
+    QLineEdit   *additionalInputLE;
+    // filenameAdditionalINput;
 
+    QVector<EDP *>theEDPs;
+    QVBoxLayout *edpLayout;
+    QFrame *edp;
+
+    RandomVariablesContainer *theRandomVariablesContainer;
+};
+
+#endif // USER_DEFINED_EDP_H

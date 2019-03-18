@@ -165,10 +165,6 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
-    connect(theApp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(theApp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(theApp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
-
 
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
     // connect job manager
@@ -607,7 +603,7 @@ MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteRunButtonClicked();
     else
-        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
+        this->errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
 }
 
 void
@@ -615,7 +611,7 @@ MainWindowWorkflowApp::onRemoteGetButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteGetButtonClicked();
     else
-        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
+        this->errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){

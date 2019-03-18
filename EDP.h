@@ -1,3 +1,6 @@
+#ifndef EDP_H
+#define EDP_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -17,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -36,47 +39,43 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetUQ.h"
-#include <QTabWidget>
-#include <RandomVariablesContainer.h>
-#include <InputWidgetSampling.h>
+#include <QWidget>
 
+class QLineEdit;
+class QHBoxLayout;
+class QRadioButton;
+class QLabel;
+class QPushButton;
 
-InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
-    :QWidget(parent),theRVs(RV),theUQ(UQ)
+//class EDP_Data;
+
+class EDP : public QWidget
 {
-    QVBoxLayout *layout = new QVBoxLayout();
+    Q_OBJECT
+public:
+    explicit EDP(QString *name = 0, QWidget *parent = 0);
+    ~EDP();
 
-    // place in tab widget
-    /*
-    theTab = new QTabWidget();
-    theTab->addTab(theUQ,"Sampling Methods");
-    theTab->addTab(theRVs,"Random Variables");
-    theTab->setCurrentIndex(1);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
 
-    layout->addWidget(theTab);
-    */
-    QGroupBox* methodGroupBox = new QGroupBox("Sampling Method", this);
-    QVBoxLayout *methodLayout = new QVBoxLayout();
-    methodLayout->addWidget(UQ);
-    methodGroupBox->setLayout(methodLayout);
-    layout->addWidget(methodGroupBox);
+    void setResults(double *);
 
-    QGroupBox* rvGroupBox = new QGroupBox("Random Variables", this);
-    QVBoxLayout *rvLayout = new QVBoxLayout();
-    rvLayout->addWidget(RV);
-    rvGroupBox->setLayout(rvLayout);
-    layout->addWidget(rvGroupBox, 1.0);
+signals:
+    void removeEDP(EDP *);
 
-    //layout->addStretch();
-    layout->setMargin(0);
+public slots:
+    void removeEDP(void);
 
-    this->setLayout(layout);
-}
+private:
+   // EDPData *theData;
+    QPushButton *removeButton;
+    QRadioButton *button;
+    QLineEdit *variableName;
+    QHBoxLayout *mainLayout;
+    bool resultsSet;
+    QLineEdit *mean;
+    QLineEdit *stdDev;
+};
 
-InputWidgetUQ::~InputWidgetUQ()
-{
-
-}
-
-
+#endif // EDP_H

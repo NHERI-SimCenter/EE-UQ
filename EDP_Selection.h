@@ -1,3 +1,6 @@
+#ifndef EDP_SELECTION_H
+#define EDP_SELECTION_H
+
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -36,47 +39,46 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetUQ.h"
-#include <QTabWidget>
-#include <RandomVariablesContainer.h>
-#include <InputWidgetSampling.h>
+#include <SimCenterAppWidget.h>
 
+#include <QGroupBox>
+#include <QVector>
+class QComboBox;
+class QStackedWidget;
+class UserDefinedApplication;
+class RockOutcrop;
 
-InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
-    :QWidget(parent),theRVs(RV),theUQ(UQ)
+class RandomVariablesContainer;
+
+class EDP_Selection : public  SimCenterAppWidget
 {
-    QVBoxLayout *layout = new QVBoxLayout();
+    Q_OBJECT
+public:
+    explicit EDP_Selection(RandomVariablesContainer *, QWidget *parent = 0);
+    ~EDP_Selection();
 
-    // place in tab widget
-    /*
-    theTab = new QTabWidget();
-    theTab->addTab(theUQ,"Sampling Methods");
-    theTab->addTab(theRVs,"Random Variables");
-    theTab->setCurrentIndex(1);
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputAppDataToJSON(QJsonObject &rvObject);
+    bool inputAppDataFromJSON(QJsonObject &rvObject);
+    bool copyFiles(QString &destName);
 
-    layout->addWidget(theTab);
-    */
-    QGroupBox* methodGroupBox = new QGroupBox("Sampling Method", this);
-    QVBoxLayout *methodLayout = new QVBoxLayout();
-    methodLayout->addWidget(UQ);
-    methodGroupBox->setLayout(methodLayout);
-    layout->addWidget(methodGroupBox);
+    void clear(void);
 
-    QGroupBox* rvGroupBox = new QGroupBox("Random Variables", this);
-    QVBoxLayout *rvLayout = new QVBoxLayout();
-    rvLayout->addWidget(RV);
-    rvGroupBox->setLayout(rvLayout);
-    layout->addWidget(rvGroupBox, 1.0);
+signals:
 
-    //layout->addStretch();
-    layout->setMargin(0);
+public slots:
+   void edpSelectionChanged(const QString &arg1);
 
-    this->setLayout(layout);
-}
+private:
+   QComboBox   *edpSelection;
+   QStackedWidget *theStackedWidget;
+   SimCenterAppWidget *theCurrentEDP;
 
-InputWidgetUQ::~InputWidgetUQ()
-{
+   SimCenterAppWidget *theStandardEarthquakeEDPs;
+   SimCenterAppWidget *theUserDefinedEDPs;
 
-}
+   RandomVariablesContainer *theRandomVariablesContainer;
+};
 
-
+#endif // EDP_SELECTION_H
