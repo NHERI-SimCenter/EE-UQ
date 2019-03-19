@@ -1,5 +1,5 @@
-#ifndef EARTHQUAKE_EVENT_SELECTION_H
-#define EARTHQUAKE_EVENT_SELECTION_H
+#ifndef EDP_SELECTION_H
+#define EDP_SELECTION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -50,12 +50,12 @@ class RockOutcrop;
 
 class RandomVariablesContainer;
 
-class EarthquakeEventSelection : public  SimCenterAppWidget
+class EDP_Selection : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
+    explicit EDP_Selection(RandomVariablesContainer *, QWidget *parent = 0);
+    ~EDP_Selection();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -63,24 +63,22 @@ public:
     bool inputAppDataFromJSON(QJsonObject &rvObject);
     bool copyFiles(QString &destName);
 
+    void clear(void);
+
 signals:
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
+   void edpSelectionChanged(const QString &arg1);
 
 private:
-   QComboBox   *eventSelection;
+   QComboBox   *edpSelection;
    QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
+   SimCenterAppWidget *theCurrentEDP;
 
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
+   SimCenterAppWidget *theStandardEarthquakeEDPs;
+   SimCenterAppWidget *theUserDefinedEDPs;
 
    RandomVariablesContainer *theRandomVariablesContainer;
 };
 
-#endif // EARTHQUAKE_EVENT_SELECTION_H
+#endif // EDP_SELECTION_H

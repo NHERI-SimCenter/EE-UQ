@@ -1,6 +1,3 @@
-#ifndef EARTHQUAKE_EVENT_SELECTION_H
-#define EARTHQUAKE_EVENT_SELECTION_H
-
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
@@ -39,48 +36,70 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include "StandardEarthquakeEDP.h"
+#include <RandomVariablesContainer.h>
 
-#include <QGroupBox>
-#include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
-class RockOutcrop;
+//#include <InputWidgetParameters.h>
 
-class RandomVariablesContainer;
-
-class EarthquakeEventSelection : public  SimCenterAppWidget
+StandardEarthquakeEDP::StandardEarthquakeEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
 {
-    Q_OBJECT
-public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
+}
 
-signals:
+StandardEarthquakeEDP::~StandardEarthquakeEDP()
+{
 
-public slots:
-   void eventSelectionChanged(const QString &arg1);
+}
 
-private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
 
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
+void
+StandardEarthquakeEDP::clear(void)
+{
 
-   RandomVariablesContainer *theRandomVariablesContainer;
-};
+}
 
-#endif // EARTHQUAKE_EVENT_SELECTION_H
+
+
+bool
+StandardEarthquakeEDP::outputToJSON(QJsonObject &jsonObject)
+{
+    // just need to send the class type here.. type needed in object in case user screws up
+    jsonObject["type"]="StandardEarthquakeEDP";
+
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::inputFromJSON(QJsonObject &jsonObject)
+{
+    return true;
+}
+
+
+bool
+StandardEarthquakeEDP::outputAppDataToJSON(QJsonObject &jsonObject) {
+
+    //
+    // per API, need to add name of application to be called in AppLication
+    // and all data to be used in ApplicationDate
+    //
+
+    jsonObject["Application"] = "StandardEarthquakeEDP";
+    QJsonObject dataObj;
+    jsonObject["ApplicationData"] = dataObj;
+
+    return true;
+}
+bool
+StandardEarthquakeEDP::inputAppDataFromJSON(QJsonObject &jsonObject) {
+
+}
+
+
+bool
+StandardEarthquakeEDP::copyFiles(QString &dirName) {
+  
+}
+

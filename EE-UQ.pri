@@ -28,6 +28,9 @@ SOURCES += \
     $$PWD/RemoteService.cpp \
     $$PWD/RemoteJobManager.cpp \
     $$PWD/WorkflowAppWidget.cpp \
+    $$PWD/EDP_Selection.cpp \
+    $$PWD/StandardEarthquakeEDP.cpp \
+    $$PWD/UserDefinedEDP.cpp \
     $$PWD/ExistingSimCenterEvents.cpp \
     $$PWD/ExistingPEER_Events.cpp \
     $$PWD/CustomizedItemModel.cpp\
@@ -41,7 +44,8 @@ SOURCES += \
     $$PWD/StochasticMotionInput/src/StochasticModelWidget.cpp \
     $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp \
     $$PWD/Controller2D.cpp \
-    $$PWD/GlWidget2D.cpp
+    $$PWD/GlWidget2D.cpp \
+    $$PWD/EDP.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -64,6 +68,9 @@ HEADERS  += \
     $$PWD/RemoteJobManager.h \
     $$PWD/RemoteService.h \
     $$PWD/WorkflowAppWidget.h \
+    $$PWD/EDP_Selection.h \
+    $$PWD/StandardEarthquakeEDP.h \
+    $$PWD/UserDefinedEDP.h \
     $$PWD/ExistingSimCenterEvents.h \
     $$PWD/CustomizedItemModel.h \
     $$PWD/DakotaResults.h\
@@ -78,7 +85,8 @@ HEADERS  += \
     $$PWD/StochasticMotionInput/include/StochasticModelWidget.h \    
     $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h \
     $$PWD/Controller2D.h \
-    $$PWD/GlWidget2D.h
+    $$PWD/GlWidget2D.h \
+    $$PWD/EDP.h
 
 RESOURCES += \
     images.qrc \

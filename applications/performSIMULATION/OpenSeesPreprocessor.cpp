@@ -397,9 +397,12 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
   json_t *edps = json_object_get(rootEDP,"EngineeringDemandParameters");  
 
   int numEvents = json_array_size(events);
+
   int numEDPs = json_array_size(edps);
 
   s << "loadConst -time 0.0\n";
+
+  const char *postprocessingScript = NULL;
 
   for (int i=0; i<numEvents; i++) {
     
@@ -424,22 +427,41 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
       //      if (strcmp(edpEventName, eventName) == 0) {
       sprintf(edpEventName,"%d",j);
 
-	json_t *eventEDP = json_object_get(eventEDPs,"responses");
+      
+      //
+      // check for additionalInput
+      //
+      
+      json_t *recorderIn = json_object_get(eventEDPs,"additionalInput"); 
+      if (recorderIn != NULL) {
+	const char *fileIN = json_string_value(recorderIn);
+	s << "source " << fileIN << "\n";
+      }
+
+      json_t *postprocessScript = json_object_get(eventEDPs,"postprocessScript"); 
+      if (postprocessScript != NULL) {
+	postprocessingScript = json_string_value(postprocessScript);
+      }
+    
+      json_t *eventEDP = json_object_get(eventEDPs,"responses");
+
+      if (eventEDP != NULL) {
+      
 	int numResponses = json_array_size(eventEDP);
-
+	
 	for (int k=0; k<numResponses; k++) {
-
-
+	  
+	  
 	  json_t *response = json_array_get(eventEDP, k);
 	  const char *type = json_string_value(json_object_get(response, "type"));
-
+	  
 	  if (strcmp(type,"max_abs_acceleration") == 0) {
-
+	    
 	    const char *cline = json_string_value(json_object_get(response, "cline"));
 	    const char *floor = json_string_value(json_object_get(response, "floor"));
-
+	    
 	    int nodeTag = this->getNode(cline,floor);	    
-
+	    
 	    json_t *theDOFs = json_object_get(response, "dofs");
 	    int sizeDOFs = json_array_size(theDOFs);
 	    int *dof = new int[sizeDOFs];
@@ -562,8 +584,9 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	    delete [] dof;
 	  }
 	}
-	// removing requirement name be same
+      }
     }
+   
 
     // create analysis
     if (analysisType == 1) {
@@ -582,6 +605,23 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 	s << "analyze " << numSteps << " " << dT << "\n";      
       }
     }
+
+
+    if (postprocessingScript != NULL) {
+      if(strstr(postprocessingScript, ".py") != NULL) {
+	s <<  "remove recorders\n proc call_python {} {\n set output [exec python " <<
+	  postprocessingScript << "]\n puts $output\n }\n call_python \n";
+      } else if(strstr(postprocessingScript, ".tcl") != NULL) {
+	  s << "source " << postprocessingScript;
+      }
+    }
+
+    /*
+    if (additionalIn != NULL) {
+      const char *fileIN = json_string_value(additionalIn);
+      s << "source " << fileIN << "\n";
+    }
+    */
   }
   return 0;
 }

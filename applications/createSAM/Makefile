@@ -18,10 +18,10 @@ OpenSeesInput: $(OBJS)
 	$(CXX) $(LDFLAGS) -o OpenSeesInput  OpenSeesInput.o $(LDLIBS)
 
 MDOF: $(OBJS)
-	$(CXX) $(LDFLAGS) -o MDOF_BuildingModelToSAM MDOF_BuildingModelToSAM.o $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o MDOF_BuildingModel MDOF_BuildingModelToSAM.o $(LDLIBS)
 
 clean:
 	$(RM) *~ \#* *.o *.out
 
 distclean: clean
-	$(RM) OpenSeesInput
+	$(RM) OpenSeesInput MDOF_BuildingModel

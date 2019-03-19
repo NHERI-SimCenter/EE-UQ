@@ -1,5 +1,5 @@
-#ifndef EARTHQUAKE_EVENT_SELECTION_H
-#define EARTHQUAKE_EVENT_SELECTION_H
+#ifndef USER_DEFINED_EDP_H
+#define USER_DEFINED_EDP_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -43,44 +43,54 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QGroupBox>
 #include <QVector>
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
-class RockOutcrop;
+#include <QVBoxLayout>
+#include <QComboBox>
 
+class EDP;
+class InputWidgetParameters;
 class RandomVariablesContainer;
 
-class EarthquakeEventSelection : public  SimCenterAppWidget
+class UserDefinedEDP : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
+    explicit UserDefinedEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
+    ~UserDefinedEDP();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
+    bool copyFiles(QString &dirName);
+
+    QString getMainScript();
+    int setProcessingScript(QString filename);
+    int setAdditionalInput(QString filename);
 
 signals:
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
+   void clear(void);
+   void chooseProcessingScript(void);
+   void chooseAdditionalInput(void);
+
+   void addEDP(void);
+   void removeEDP(EDP *);
 
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
+   void addEDP(QString &name);
 
-   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
+    QLineEdit   *processingScriptLE;
+    //QString filenameProcesssingScript;
 
-   RandomVariablesContainer *theRandomVariablesContainer;
+    QLineEdit   *additionalInputLE;
+    // filenameAdditionalINput;
+
+    QVector<EDP *>theEDPs;
+    QVBoxLayout *edpLayout;
+    QFrame *edp;
+
+    RandomVariablesContainer *theRandomVariablesContainer;
 };
 
-#endif // EARTHQUAKE_EVENT_SELECTION_H
+#endif // USER_DEFINED_EDP_H

@@ -38,6 +38,12 @@
 	]
       },
       {
+        "Name": "Site Response",
+        "ExecutablePath": "applications/createEVENT/SiteResponse",
+        "ApplicationSpecificInputs": [
+	]
+      },
+      {
         "Name": "HazardBasedEvent",
         "ExecutablePath": "applications/createEVENT/HazardBasedEvent.py",
         "ApplicationSpecificInputs":[]
