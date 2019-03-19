@@ -145,7 +145,7 @@ LocalApplication::onRunButtonPressed(void)
     QDir dirWork(workingDir);
     if (!dirWork.exists())
         if (!dirWork.mkdir(workingDir)) {
-            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir);
+            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using existing directory."));
             return;
         }
 

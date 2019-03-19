@@ -70,6 +70,7 @@ class RemoteService;
 class RemoteJobManager;
 class QNetworkAccessManager;
 class QNetworkReply;
+class EDP_Selection;
 
 class InputWidgetEE_UQ : public WorkflowAppWidget
 {
@@ -118,6 +119,7 @@ private:
     InputWidgetSampling *theUQ_Method;
     EarthquakeEventSelection *theEvent;
     InputWidgetOpenSeesAnalysis *theAnalysis;
+    EDP_Selection *theEDP;
     DakotaResults *theResults;
 
     // other widgets appearing in UI
