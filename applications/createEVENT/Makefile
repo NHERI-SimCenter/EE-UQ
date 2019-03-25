@@ -1,4 +1,5 @@
 #CC=clang
+
 CXX           = /usr/local/gcc-7.1/bin/g++-7.2
 LINKER           = $(CXX)
 #CXX=g++
@@ -20,11 +21,13 @@ SRC = StochasticGroundMotionGenerator/src/command_parser.cc \
 
 OBJS = command_parser.o eq_generator.o main.o
 
+all: MultipleEvents MultiplePeer SiteResponse StochasticGroundMotion
+
 StochasticGroundMotion: $(SRC)
 	$(CXX) $(LDFLAGS) -c StochasticGroundMotionGenerator/src/command_parser.cc $(CPPFLAGS) $(STOCHASTIC_INC)
 	$(CXX) $(LDFLAGS) -c StochasticGroundMotionGenerator/src/eq_generator.cc $(CPPFLAGS) $(STOCHASTIC_INC)
 	$(CXX) $(LDFLAGS) -c StochasticGroundMotionGenerator/src/main.cc $(STOCHASTIC_INC)
-	$(LINKER) $(LDFLAGS) -o StochasticGroundMotions $(OBJS) $(LDLIBS) $(STOCHASTIC_LIBS)
+	$(LINKER) $(LDFLAGS) -o StochasticGroundMotion $(OBJS) $(LDLIBS) $(STOCHASTIC_LIBS)
 
 MultipleEvents: MultipleSimCenterEvents.o
 	$(CXX) $(LDFLAGS) -o MultipleSimCenterEvents MultipleSimCenterEvents.o $(LDLIBS)
@@ -32,7 +35,8 @@ MultipleEvents: MultipleSimCenterEvents.o
 MultiplePeer: MultiplePEER_Events.o
 	$(CXX) $(LDFLAGS) -o MultiplePEER_Events MultiplePEER_Events.o $(LDLIBS)
 
-all: MultipleEvents MultiplePeer StochasticGroundMotion
+SiteResponse: SiteResponse.o
+	$(CXX) $(LDFLAGS) -o SiteResponse SiteResponse.o $(LDLIBS)
 
 debug:
 
