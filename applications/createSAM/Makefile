@@ -1,4 +1,4 @@
-CC=gcc-7.2
+CC=gcc
 CXX=g++
 RM=rm -f
 CPPFLAGS= -I /usr/local/jansson/include -I ./nanoflann/include
