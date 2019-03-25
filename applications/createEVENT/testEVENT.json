@@ -1,9 +1,0 @@
-{
-    "Events": [
-        {
-            "subtype": "StochasticGroundMotion",
-            "type": "Seismic"
-        }
-    ],
-    "randomVariables": []
-}
