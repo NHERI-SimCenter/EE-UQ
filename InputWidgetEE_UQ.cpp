@@ -322,16 +322,17 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     // setup parameters of request
     QString requestParams;
-    QUuid uuid = QUuid::createUuid();
+    QUuid uuid = InputWidgetEE_UQ::getUserId();
     QString hostname = QHostInfo::localHostName() + "." + QHostInfo::localDomainName();
     requestParams += "v=1"; // version of protocol
-    requestParams += "&tid=UA-126303135-1-1"; // Google Analytics account
+    requestParams += "&tid=UA-126303135-1"; // Google Analytics account
     requestParams += "&cid=" + uuid.toString(); // unique user identifier
     requestParams += "&t=event";  // hit type = event others pageview, exception
     requestParams += "&an=EEUQ";   // app name
     requestParams += "&av=1.0.1"; // app version
     requestParams += "&ec=EEUQ";   // event category
     requestParams += "&ea=start"; // event action
+    requestParams += "&aip=1"; // Anonymize IP
 
     // send request via post method
     manager->post(request, requestParams.toStdString().c_str());
@@ -345,6 +346,19 @@ InputWidgetEE_UQ::~InputWidgetEE_UQ()
 void InputWidgetEE_UQ::replyFinished(QNetworkReply *pReply)
 {
     return;
+}
+
+//TODO: This code may need to be refactored and shared in SimCenterCommon
+QUuid InputWidgetEE_UQ::getUserId()
+{
+    QSettings commonSettings("SimCenter", "Common"); //These names will need to be constants to be shared
+    QVariant userIdSetting = commonSettings.value("userId");
+    if (!userIdSetting.isValid())
+    {
+        commonSettings.setValue("userId", QUuid::createUuid());
+        userIdSetting = commonSettings.value("userId");
+    }
+    return userIdSetting.toUuid();
 }
 
 void
