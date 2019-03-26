@@ -36,6 +36,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <cstring>
+#include <vector>
 #include "UserDefinedEDP.h"
 #include <EDP.h>
 
@@ -346,61 +348,49 @@ int
 UserDefinedEDP::setProcessingScript(QString name){
 
     // set file name & ebtry in qLine edit
-
     //filenameProcessingScript = name;
     this->clear();
-
     processingScriptLE->setText(name);
+    std::ifstream in_file(name.toStdString());
+    unsigned int max_iters = 100;
+    unsigned int count = 0;
+    bool found_line = false;
+    std::string current_line;
+    std::string EDP_array("EDPs");
+    std::string token;
+    
+    // Iterate over file until line containing EDPs is found or maximum number of iterations
+    // is reached
+    while (!found_line && count < max_iters) {
+      // Get current line and search for EDP array
+      std::getline(in_file, current_line);
+      std::size_t found_EDPs = current_line.find(EDP_array);
 
-    //
-    // parse first line of file & check or line for anything EDP:
-    //
-
-    ifstream inFile(name.toStdString());
-
-    // read line 1 l & look for EDP
-    // if EDP parse all strings seperated by :
-
-    string line;
-    string pattern("EDP:");
-
-    int numLine = 0;
-    while (numLine < 5) {
-        getline(inFile, line);
-        qDebug() << QString::fromStdString(line);
-
-        std::size_t found = line.find(pattern);
-        std::size_t start = 0;
-        if (found!=std::string::npos) {
-            start = found+4;
-            string endMarker(";");
-            while ((found = line.find(endMarker, start)) != std::string::npos) {
-                std::string edpName = line.substr (start,found-start);
-                QString name = QString::fromStdString(edpName);
-
-                this->addEDP(name);
-                start = found+1;
-            }
-            // add last
-            std::string edpName = line.substr (start,line.length()-start-1);
-            QString name = QString::fromStdString(edpName);
-            qDebug() << QString("->") << name<< QString("<-") << start << " " << line.length();
-            this->addEDP(name);
-        }
-
-        numLine++;
+      // If EDP array found, iterate over it to find EDPs and add them
+      if (found_EDPs != std::string::npos) {
+	std::stringstream line_to_check(current_line);
+	unsigned int counter = 0;
+	while (std::getline(line_to_check, token, '\'')) {
+	  counter++;
+	  // Since names are between two "'" characters, only add token after second occurance
+	  if (counter == 2) {
+	    QString name = QString::fromStdString(token);
+	    this->addEDP(name);	    
+	    counter = 0;
+	  }
+	}
+      	found_line = true;	
+      }           
+      count++;
     }
 
     // close file
-    inFile.close();
-
-    /*
-    OpenSeesParser theParser;
-    varNamesAndValues = theParser.getVariables(fileName1);
-    theRandomVariablesContainer->addConstantRVs(varNamesAndValues);
-    */
-
-    return 0;
+    in_file.close();
+    if (found_line) {
+      return 0;
+    } else {
+      return 1;
+    }
 }
 
 void
