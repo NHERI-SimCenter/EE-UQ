@@ -1,6 +1,5 @@
-#CC=clang
-
-CXX           = /usr/local/gcc-7.1/bin/g++-7.2
+CC= /usr/local/gcc-7.1/bin/gcc-7.2
+CXX = /usr/local/gcc-7.1/bin/g++-7.2
 LINKER           = $(CXX)
 #CXX=g++
 RM=rm -f
@@ -44,4 +43,4 @@ clean:
 	$(RM) $(OBJS) *~ \#* *.o
 
 distclean: clean 
-	$(RM) MultipleSimCenterEvents MultiplePEER_Events StochasticGroundMotion
+	$(RM) MultipleSimCenterEvents MultiplePEER_Events StochasticGroundMotion SiteResponse
