@@ -137,6 +137,8 @@ private:
 
     QStackedWidget *theStackedWidget;
     QNetworkAccessManager *manager;
+
+    static QUuid getUserId();
 };
 
 #endif // INPUT_WIDGET_EE_UQ_H

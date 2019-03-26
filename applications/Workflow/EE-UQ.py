@@ -191,7 +191,7 @@ def main(run_type, inputFile, applicationsRegistry):
                     edpAppExeLocal = os.path.join(localAppDir,edpAppExe)
                     edpAppExeRemote = posixpath.join(remoteAppDir,edpAppExe)
                 else:
-                    raise WorkFlowInputError('EDP application %s not in registry', edpApplication)
+                    raise WorkFlowInputError('EDP application %s not in registry' % edpApplication)
                 
             else:
                 raise WorkFlowInputError('Need an EDPApplication in EDP data')
