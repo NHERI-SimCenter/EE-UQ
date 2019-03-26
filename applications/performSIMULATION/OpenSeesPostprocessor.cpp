@@ -88,6 +88,14 @@ OpenSeesPostprocessor::processEDPs(){
   
   int numEvents = json_array_size(edps);
   char edpEventName[50];
+  
+  //
+  // try opening results.out file; unknown EDP results may be there or are already in ED"
+  //
+
+  ifstream resultsFile;  
+  resultsFile.open("results.out");
+  double valueResults = 0;
 
   for (int i=0; i<numEvents; i++) {
 
@@ -264,9 +272,26 @@ OpenSeesPostprocessor::processEDPs(){
 	  json_t *scalarValues = json_object_get(response,"scalar_data");
 	  json_array_append(scalarValues,json_real(num));
 	*/
+      } 
+      
+      else {
+	fprintf(stderr, "%s\n",type);
+	double valueResults = 0;
+	if (resultsFile.is_open() && !resultsFile.eof()) {
+	  resultsFile >> valueResults;
+	  fprintf(stderr, "%f\n",valueResults);
+	}
+
+	json_t *data = json_array();	
+	json_array_append(data, json_real(valueResults));
+	json_object_set(response,"scalar_data",data);	  
+
       }
     }
   }
+
+  if (resultsFile.is_open())
+      resultsFile.close();
 
   return 0;
 }

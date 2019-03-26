@@ -1,6 +1,7 @@
 #ifndef _WINDOW_H_
 #define _WINDOW_H_
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <functional>
 #include <tuple>

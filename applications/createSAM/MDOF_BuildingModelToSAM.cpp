@@ -56,9 +56,15 @@ main(int argc, char **argv) {
 
   // ensure this is correct type
   json_t *SIM = json_object_get(rootBIM,"StructuralInformation");  
+
   json_t *typeSIM = json_object_get(SIM,"type");  
   if ((typeSIM == 0) || (strcmp("MDOF_BuildingModel",json_string_value(typeSIM)) != 0)) {
-    fprintf(stderr, "ERROR - MDOF_BuildingModelToSAM - incorrect type\n");    
+    if (typeSIM != 0) 
+      fprintf(stderr, "type: %s\n", json_string_value(typeSIM));
+    else
+      fprintf(stderr, "type: NONE PROVIDED\n");
+
+    fprintf(stderr, "ERROR - MDOF_BuildingModel - incorrect type\n");    
   }
   
   //

@@ -1,6 +1,7 @@
 #ifndef _FILTER_H_
 #define _FILTER_H_
 
+#include <memory>
 #include <stdexcept>
 #include <vector>
 #include <intel_ipp/include/ipps.h>
@@ -23,7 +24,7 @@ std::function<std::vector<std::vector<double>>(int, double)>
         [](int filter_order,
            double cutoff_freq) -> std::vector<std::vector<double>> {
   // Allocated memory for coefficients
-  Ipp64f taps[2 * (filter_order + 1)];
+  std::vector<Ipp64f> taps(2 * (filter_order + 1));
   IppStatus status = ippStsNoErr;
   int internal_buffer_size;
 
@@ -37,7 +38,7 @@ std::function<std::vector<std::vector<double>>(int, double)>
   
   // Divide by 2 to make cutoff frequency match the definition given in MATLAB
   Ipp8u * internal_calcs = ippsMalloc_8u(internal_buffer_size);
-  status = ippsIIRGenHighpass_64f(cutoff_freq / 2.0, 0, filter_order, taps,
+  status = ippsIIRGenHighpass_64f(cutoff_freq / 2.0, 0, filter_order, taps.data(),
                                   ippButterworth, internal_calcs);
 
   // Check if filter computation succeeded
