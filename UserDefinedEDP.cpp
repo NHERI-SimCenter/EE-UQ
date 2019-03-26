@@ -348,7 +348,15 @@ UserDefinedEDP::setProcessingScript(QString name){
     // set file name & ebtry in qLine edit
 
     //filenameProcessingScript = name;
-    this->clear();
+    // remove old EDP
+    int numEDPs = theEDPs.size();
+    for (int i = numEDPs-1; i >= 0; i--) {
+        EDP *theEDP = theEDPs.at(i);
+        theEDP->close();
+        edpLayout->removeWidget(theEDP);
+        theEDPs.remove(i);
+        delete theEDP;
+    }
 
     processingScriptLE->setText(name);
 
@@ -358,11 +366,37 @@ UserDefinedEDP::setProcessingScript(QString name){
 
     ifstream inFile(name.toStdString());
 
-    // read line 1 l & look for EDP
+    // read line 1 l & look for EDP:
     // if EDP parse all strings seperated by :
 
     string line;
     string pattern("EDP:");
+
+    /*
+     * 
+     string delimiterOpen    = ("\"");
+     string delimiterOpen    = ("\'");
+     string delimiterClose   = ("\"");
+     int shift = delimiterOpen.size();
+     vector<string> vec;
+
+     string str ("start $deli:foo:deli$ something else $deli:baa:deli$ doesnt matter");
+
+int main() {
+vector<string> founds;
+int firstPos = str.find(delimiterOpen);
+  while (firstPos != string::npos) {
+      int lastPos = str.find(delimiterClose, firstPos);
+      if (lastPos!=string::npos) {
+         founds.push_back(str.substr(firstPos+shift, lastPos-firstPos-shift));
+      }
+      firstPos = str.find(delimiterOpen, (lastPos==string::npos? firstPos+1:lastPos+1));
+  }
+
+  for (vector<string>::iterator it = founds.begin(); it!=founds.end();it++) {
+      cout<<(*it)<<endl;
+  }
+  */
 
     int numLine = 0;
     while (numLine < 5) {
