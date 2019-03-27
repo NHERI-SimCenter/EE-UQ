@@ -5,9 +5,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
-
-#else:
-#    from past.builtins import basestring
+    string_types = basestring
+else:
+    string_types = str
 
 import os
 import subprocess
