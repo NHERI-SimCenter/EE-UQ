@@ -105,7 +105,7 @@ double GetAccelerationFactor(UnitSystem& fromUnitSystem, UnitSystem& toUnitSyste
     double timeFactor = GetTimeFactor(fromUnitSystem, toUnitSystem);
     double lengthFactor = GetLengthFactor(fromUnitSystem, toUnitSystem);
 
-    return lengthFactor / std::pow(timeFactor, 2);
+    return lengthFactor / (timeFactor*timeFactor);
 }
 
 LengthUnit ParseLengthUnit(const char* lengthUnit)

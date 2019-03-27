@@ -603,7 +603,7 @@ MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteRunButtonClicked();
     else
-        this->errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
+        this->errorMessage(tr("You Must LOGIN (button top right) before you can run a remote job"));
 }
 
 void
@@ -611,7 +611,7 @@ MainWindowWorkflowApp::onRemoteGetButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteGetButtonClicked();
     else
-        this->errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
+        this->errorMessage(tr("You Must LOGIN (button top right) before you can run retrieve remote data"));
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){
