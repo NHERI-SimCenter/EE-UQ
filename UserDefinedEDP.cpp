@@ -339,6 +339,7 @@ UserDefinedEDP::inputAppDataFromJSON(QJsonObject &jsonObject) {
     //
 
     this->clear();
+    return 0;
 
 }
 
@@ -413,6 +414,7 @@ UserDefinedEDP::chooseProcessingScript(void) {
 int
 UserDefinedEDP::setAdditionalInput(QString filename) {
     additionalInputLE->setText(filename);
+    return 0;
 }
 
 void
@@ -441,6 +443,7 @@ UserDefinedEDP::chooseAdditionalInput(void) {
              return false;
          }
      }
+     return 0;
  }
 
 

@@ -13,6 +13,7 @@ import json
 import os
 import subprocess
 from time import gmtime, strftime
+import posixpath
 
 divider = '#' * 80
 log_output = []
@@ -42,8 +43,7 @@ def main(run_type, inputFile, applicationsRegistry):
         #
         with open(applicationsRegistry, 'r') as data_file:
             registryData = json.load(data_file)
-            # convert all relative paths to full paths
-            relative2fullpath(registryData)
+            # convert all relative paths to full paths            
 
         A = 'Applications'
         Applications = dict()
@@ -125,8 +125,11 @@ def main(run_type, inputFile, applicationsRegistry):
 
                             if eventApplication in Applications['EventApplications'].keys():
                                 eventAppExe = Applications['EventApplications'].get(eventApplication)
-                                eventAppExeLocal = os.path.join(localAppDir,eventAppExe)
-                                eventAppExeRemote = os.path.join(remoteAppDir,eventAppExe)
+                                workflow_log(remoteAppDir)
+                                workflow_log(eventAppExe)
+                                eventAppExeLocal = posixpath.join(localAppDir,eventAppExe)
+                                eventAppExeRemote = posixpath.join(remoteAppDir,eventAppExe)
+                                workflow_log(eventAppExeRemote)
                             else:
                                 raise WorkFlowInputError('Event application %s not in registry' % eventApplication)
 
@@ -157,8 +160,8 @@ def main(run_type, inputFile, applicationsRegistry):
                 modelingAppData = modelingApp['ApplicationData']
                 if modelingApplication in Applications['ModelingApplications'].keys():
                     modelingAppExe = Applications['ModelingApplications'].get(modelingApplication)
-                    modelingAppExeLocal = os.path.join(localAppDir,modelingAppExe)
-                    modelingAppExeRemote = os.path.join(remoteAppDir,modelingAppExe)
+                    modelingAppExeLocal = posixpath.join(localAppDir,modelingAppExe)
+                    modelingAppExeRemote = posixpath.join(remoteAppDir,modelingAppExe)
                 else:
                     raise WorkFlowInputError('Modeling application %s not in registry' % modelingApplication)
 
@@ -183,10 +186,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 edpAppData = edpApp['ApplicationData']
                 if edpApplication in Applications['EDPApplications'].keys():
                     edpAppExe = Applications['EDPApplications'].get(edpApplication)
-                    edpAppExeLocal = os.path.join(localAppDir,edpAppExe)
-                    edpAppExeRemote = os.path.join(remoteAppDir,edpAppExe)
+                    edpAppExeLocal = posixpath.join(localAppDir,edpAppExe)
+                    edpAppExeRemote = posixpath.join(remoteAppDir,edpAppExe)
                 else:
-                    raise WorkFlowInputError('EDP application %s not in registry', edpApplication)
+                    raise WorkFlowInputError('EDP application {} not in registry'.format(edpApplication))
                 
             else:
                 raise WorkFlowInputError('Need an EDPApplication in EDP data')
@@ -208,10 +211,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 simAppData = simulationApp['ApplicationData']
                 if simulationApplication in Applications['SimulationApplications'].keys():
                     simAppExe = Applications['SimulationApplications'].get(simulationApplication)
-                    simAppExeLocal = os.path.join(localAppDir,simAppExe)
-                    simAppExeRemote = os.path.join(remoteAppDir,simAppExe)
+                    simAppExeLocal = posixpath.join(localAppDir,simAppExe)
+                    simAppExeRemote = posixpath.join(remoteAppDir,simAppExe)
                 else:
-                    raise WorkFlowInputError('Simulation application %s not in registry', simulationApplication)
+                    raise WorkFlowInputError('Simulation application {} not in registry'.format(simulationApplication))
 
             else:
                 raise WorkFlowInputError('Need an SimulationApplication in Simulation data')
@@ -230,10 +233,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 uqAppData = uqApp['ApplicationData']
                 if uqApplication in Applications['UQApplications'].keys():
                     uqAppExe = Applications['UQApplications'].get(uqApplication)
-                    uqAppExeLocal = os.path.join(localAppDir,uqAppExe)
-                    uqAppExeRemote = os.path.join(localAppDir,uqAppExe)
+                    uqAppExeLocal = posixpath.join(localAppDir,uqAppExe)
+                    uqAppExeRemote = posixpath.join(localAppDir,uqAppExe)
                 else:
-                    raise WorkFlowInputError('UQ application %s not in registry', uqApplication)
+                    raise WorkFlowInputError('UQ application {} not in registry'.format(uqApplication))
 
             else:
                 raise WorkFlowInputError('Need a UQApplication in UQ data')
@@ -275,11 +278,8 @@ def main(run_type, inputFile, applicationsRegistry):
         for key in eventAppData.keys():
             eventAppDataList.append(u"--" + key)
             value = eventAppData.get(key)
-            #if (os.path.exists(value) and not os.path.isabs(value)):
-            #    value = os.path.abspath(value)
             eventAppDataList.append(u"" + value)
-            
-            
+                        
         for item in eventAppDataList:
             driverFILE.write('%s ' % item)
         driverFILE.write('\n')
@@ -383,7 +383,6 @@ def main(run_type, inputFile, applicationsRegistry):
         for key in uqAppData.keys():
             uqAppDataList.append(u'--' + key)
             value = uqAppData.get(key)
-            #if type(value) == string_types:
             if isinstance(value, string_types):
                 uqAppDataList.append(u'' + value)
             else:
@@ -407,10 +406,8 @@ def main(run_type, inputFile, applicationsRegistry):
     # unhandled exceptions are handled here
     except Exception as e:
         print('workflow error: %s' % e.value)
-        raise
         workflow_log('unhandled exception... exiting')
-        exit(1)
-
+        raise
 
 if __name__ == '__main__':
 
