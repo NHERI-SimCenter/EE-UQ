@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <Units.h>
+#include <iostream>
 
 //#include <string>
 //#include <sstream>
@@ -84,10 +86,20 @@ main(int argc, char **argv) {
     // get ModelData
     json_t *modelData = json_object_get(SIM,"ModelData");  
 
+    //ReadBIMUnits
+    json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+    json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+    json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+    json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+    Units::UnitSystem bimUnits;
+    bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+    bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+
     // initialize some variablles
     double height = 0;
     double weight = 0;
-    double G = 386.41;
+    double G = Units::GetGravity(bimUnits);//used to be 386.41 before converting the units
+    std::cout << "G: " << G << std::endl;
     int ndf = 2;
     double floorHeight = 0.0;
     double buildingWeight = 0.0;
