@@ -1,5 +1,5 @@
-CC= /usr/local/gcc-7.1/bin/gcc-7.2
-CXX = /usr/local/gcc-7.1/bin/g++-7.2
+CC= gcc
+CXX = g++
 LINKER           = $(CXX)
 #CXX=g++
 RM=rm -f
@@ -12,7 +12,7 @@ STOCHASTIC_INC = -I ./StochasticGroundMotionGenerator/external \
 	-I ./StochasticGroundMotionGenerator/external/nlohmann_json \
 	-I ./StochasticGroundMotionGenerator/external/stochastic_loading/include
 
-STOCHASTIC_LIBS = /opt/intel/mkl/lib/libmkl_intel_lp64.a /opt/intel/mkl/lib/libmkl_intel_thread.a /opt/intel/mkl/lib/libmkl_core.a /opt/intel/compilers_and_libraries/mac/lib/libiomp5.a /opt/intel/ipp/lib/libippcore.a /opt/intel/ipp/lib/libippvm.a /opt/intel/ipp/lib/libipps.a ../../../Stochastic-Loading-Module/build/liblstoc.a
+STOCHASTIC_LIBS = /opt/intel/mkl/lib/libmkl_intel_lp64.a /opt/intel/mkl/lib/libmkl_intel_thread.a /opt/intel/mkl/lib/libmkl_core.a /opt/intel/compilers_and_libraries/mac/lib/libiomp5.a /opt/intel/ipp/lib/libippcore.a /opt/intel/ipp/lib/libippvm.a /opt/intel/ipp/lib/libipps.a ../../../smelt/build/liblstoc.a
 
 SRC = StochasticGroundMotionGenerator/src/command_parser.cc \
 	StochasticGroundMotionGenerator/src/eq_generator.cc \

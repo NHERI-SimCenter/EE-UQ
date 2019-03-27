@@ -139,17 +139,23 @@ int main(int argc, char *argv[])
 
   w.show();
 
-  QFile file(":/styleCommon/style.qss");
+
+  QFile file(":/styleCommon/common_experimental.qss");
   if(file.open(QFile::ReadOnly)) {
     QString styleSheet = QLatin1String(file.readAll());
     a.setStyleSheet(styleSheet);
   }
 
 
+
+
+
+/*
   theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
 QGroupBox {font-weight: bold;}\
 QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
 QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+*/
 
 
 //QTQTabWidget::pane{

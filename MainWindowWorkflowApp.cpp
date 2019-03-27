@@ -138,10 +138,12 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
+    /*
     loginWindow->setStyleSheet("QComboBox {background: #FFFFFF;} \
   QGroupBox {font-weight: bold;}\
   QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
   QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+  */
 
     //
     // connect some signals and slots
