@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 RM=rm -f
-CPPFLAGS= -I /usr/local/jansson/include -I ./nanoflann/include -std=c++11
+CPPFLAGS= -I /usr/local/jansson/include -I ./nanoflann/include -I ../common -std=c++11 
 LDFLAGS= 
 LDLIBS=/usr/local/jansson/lib/libjansson.a
 
@@ -17,10 +17,11 @@ debug: all
 
 OpenSeesPreprocessor.o: OpenSeesPreprocessor.cpp OpenSeesPreprocessor.h
 
-mainPostprocessor.o: OpesnSeesPostprocessor.h  OpenSeesPostprocessor.h
+mainPostprocessor.o: OpesnSeesPostprocessor.h  OpenSeesPostprocessor.h 
 
 OpenSeesPreprocessor: $(OBJS_PRE)
-	$(CXX) $(LDFLAGS) -o OpenSeesPreprocessor $(OBJS_PRE) $(LDLIBS)
+	$(CXX) -c ../common/Units.cpp $(CPPFLAGS) -o Units.o
+	$(CXX) $(LDFLAGS) -o OpenSeesPreprocessor $(OBJS_PRE) Units.o $(LDLIBS)
 
 mainPostprocessor: $(OBJS_POST)
 	$(CXX) $(LDFLAGS) -o OpenSeesPostprocessor $(OBJS_POST) $(LDLIBS)
