@@ -155,7 +155,7 @@ createTextEntry(QString text,
                 int col =0,
                 int minL=100,
                 int maxL=100,
-                QString *unitText =0,
+                QString *unitText = NULL,
                 bool itemRight = false)
 {
     //QHBoxLayout *entryLayout = new QHBoxLayout();
@@ -171,7 +171,7 @@ createTextEntry(QString text,
     theLayout->addWidget(entryLabel,row,col);
     theLayout->addWidget(res,row,col+1);
 
-    if (unitText != 0) {
+    if (unitText != NULL) {
         QLabel *unitLabel = new QLabel();
         unitLabel->setText(*unitText);
         unitLabel->setMinimumWidth(40);
@@ -206,18 +206,6 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     by = "0.1";
     dampingRatio = "0.02";
 
-    //
-    // some QStrings to avoid duplication of units
-    //
-
-    QString blank(tr("   "));
-    QString kips(tr("k"  ));
-    QString g(tr("g"  ));
-    QString kipsInch(tr("k/in"));
-    QString inch(tr("in  "));
-    QString sec(tr("sec"));
-    QString percent(tr("\%   "));
-
     QHBoxLayout *layout = new QHBoxLayout();
 
     QVBoxLayout *inputLayout = new QVBoxLayout();
@@ -230,12 +218,12 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     //Building information
     QGroupBox* mainProperties = new QGroupBox("Building Information");
     QGridLayout *mainPropertiesLayout = new QGridLayout();
-    inFloors = createTextEntry(tr("Number Floors"), tr("number of floors or stories in building"),mainPropertiesLayout, 0, 0, 100, 100, &blank);
-    inWeight = createTextEntry(tr("Floor Weights"), tr("total building weight, each floor will have a weight given by weight/ number of floors"), mainPropertiesLayout, 1, 0, 100, 100, &kips);
-    inHeight = createTextEntry(tr("Story Heights"), tr("total height of building in inches, each floor will have a height given by total height / number of floors"),mainPropertiesLayout, 2, 0, 100, 100, &inch);
-    inKx = createTextEntry(tr("Story Stiffness X dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 0, 100, 100, &kipsInch);
-    inKy = createTextEntry(tr("Story Stiffness Y dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 4, 100, 100, &kipsInch);
-    inDamping = createTextEntry(tr("Damping Ratio"),tr("for each mode of vibraation a number that specifies how quickly the structure stops vibrating in that mode"), mainPropertiesLayout, 4, 0, 100, 100, &percent);
+    inFloors = createTextEntry(tr("Number Floors"), tr("number of floors or stories in building"),mainPropertiesLayout, 0, 0, 100, 100);
+    inWeight = createTextEntry(tr("Floor Weights"), tr("total building weight, each floor will have a weight given by weight/ number of floors"), mainPropertiesLayout, 1, 0, 100, 100);
+    inHeight = createTextEntry(tr("Story Heights"), tr("total height of building in inches, each floor will have a height given by total height / number of floors"),mainPropertiesLayout, 2, 0, 100, 100);
+    inKx = createTextEntry(tr("Story Stiffness X dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 0, 100, 100);
+    inKy = createTextEntry(tr("Story Stiffness Y dirn"), tr("story stiffnesses, that force required to push the floor above 1 inch, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 3, 4, 100, 100);
+    inDamping = createTextEntry(tr("Damping Ratio"),tr("for each mode of vibraation a number that specifies how quickly the structure stops vibrating in that mode"), mainPropertiesLayout, 4, 0, 100, 100);
 
     inFloors->setValidator(new QIntValidator);
     //inWeight->setValidator(new QDoubleValidator);
@@ -268,7 +256,7 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
 
     floorMassFrame = new QGroupBox("Selected Floor Weights");
     QGridLayout *floorMassFrameLayout = new QGridLayout();
-    inFloorWeight = createTextEntry(tr("Floor Weight"), tr("individual floor weight, will change total weight if edit"),floorMassFrameLayout,0,0, 100, 100, &kips);
+    inFloorWeight = createTextEntry(tr("Floor Weight"), tr("individual floor weight, will change total weight if edit"),floorMassFrameLayout,0,0, 100, 100);
     floorMassFrame->setLayout(floorMassFrameLayout);
     inputLayout->addWidget(floorMassFrame);
     floorMassFrame->setVisible(false);
@@ -282,12 +270,12 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     storyPropertiesFrame = new QGroupBox("Selected Story Properties");
     storyPropertiesFrame->setObjectName(QString::fromUtf8("storyPropertiesFrame"));
     QGridLayout *storyPropertiesFrameLayout = new QGridLayout();
-    inStoryHeight = createTextEntry(tr("Story Height"), tr("for stories selected sets story height, effects overall height if edited"), storyPropertiesFrameLayout,0,0,100,100,&inch);
-    inStoryKx = createTextEntry(tr("Stiffness X dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,0, 100,100,&kipsInch);
-    inStoryFyx = createTextEntry(tr("Yield Strength X dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,0, 100,100,&kips);
+    inStoryHeight = createTextEntry(tr("Story Height"), tr("for stories selected sets story height, effects overall height if edited"), storyPropertiesFrameLayout,0,0,100,100);
+    inStoryKx = createTextEntry(tr("Stiffness X dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,0, 100,100);
+    inStoryFyx = createTextEntry(tr("Yield Strength X dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,0, 100,100);
     inStoryBx = createTextEntry(tr("Hardening Ratio X dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3, 0);
-    inStoryKy = createTextEntry(tr("Stiffness Y dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,3, 100,100,&kipsInch);
-    inStoryFyy = createTextEntry(tr("Yield Strength Y dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,3, 100,100,&kips);
+    inStoryKy = createTextEntry(tr("Stiffness Y dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,3, 100,100);
+    inStoryFyy = createTextEntry(tr("Yield Strength Y dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,3, 100,100);
     inStoryBy = createTextEntry(tr("Hardening Ratio Y dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3, 3);
 
     storyPropertiesFrame->setLayout(storyPropertiesFrameLayout);
