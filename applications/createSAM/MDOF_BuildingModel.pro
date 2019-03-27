@@ -1,8 +1,12 @@
 TEMPLATE = app
-CONFIG += console
+CONFIG += console c++11
 
 DESTDIR  = $$PWD
-SOURCES += MDOF_BuildingModelToSAM.cpp
+SOURCES += MDOF_BuildingModelToSAM.cpp \
+           $$PWD/../common/Units.cpp
+
+INCLUDEPATH += $$PWD/../common
+
 
 macx{
     INCLUDEPATH+="/usr/local/jansson/include"
