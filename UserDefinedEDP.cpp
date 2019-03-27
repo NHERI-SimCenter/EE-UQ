@@ -361,8 +361,10 @@ UserDefinedEDP::setProcessingScript(QString name){
         delete theEDP;
     }
 
+    // set filename
     processingScriptLE->setText(name);
 
+    // process file looking for line with EDPs
     std::ifstream in_file(name.toStdString());
     unsigned int max_iters = 100;
     unsigned int count = 0;
@@ -374,26 +376,26 @@ UserDefinedEDP::setProcessingScript(QString name){
     // Iterate over file until line containing EDPs is found or maximum number of iterations
     // is reached
     while (!found_line && count < max_iters) {
-      // Get current line and search for EDP array
-      std::getline(in_file, current_line);
-      std::size_t found_EDPs = current_line.find(EDP_array);
+        // Get current line and search for EDP array
+        std::getline(in_file, current_line);
+        std::size_t found_EDPs = current_line.find(EDP_array);
 
-      // If EDP array found, iterate over it to find EDPs and add them
-      if (found_EDPs != std::string::npos) {
-	std::stringstream line_to_check(current_line);
-	unsigned int counter = 0;
-	while (std::getline(line_to_check, token, '\'')) {
-	  counter++;
-	  // Since names are between two "'" characters, only add token after second occurance
-	  if (counter == 2) {
-	    QString name = QString::fromStdString(token);
-	    this->addEDP(name);	    
-	    counter = 0;
-	  }
-	}
-      	found_line = true;	
-      }           
-      count++;
+        // If EDP array found, iterate over it to find EDPs and add them
+        if (found_EDPs != std::string::npos) {
+            std::stringstream line_to_check(current_line);
+            unsigned int counter = 0;
+            while (std::getline(line_to_check, token, '\'')) {
+                counter++;
+                // Since names are between two "'" characters, only add token after second occurance
+                if (counter == 2) {
+                    QString name = QString::fromStdString(token);
+                    this->addEDP(name);
+                    counter = 0;
+                }
+            }
+            found_line = true;
+        }
+        count++;
     }
 
     // close file
@@ -465,6 +467,7 @@ UserDefinedEDP::chooseAdditionalInput(void) {
      theEDPs.append(theEDP);
      edpLayout->insertWidget(edpLayout->count()-1, theEDP);
 
+     // should not really allow user to remove these ones .. but then should not have a remove button! .. need to change script
      connect(theEDP, SIGNAL(removeEDP(EDP*)), this, SLOT(removeEDP(EDP*)));
  }
 
@@ -473,8 +476,6 @@ void UserDefinedEDP::removeEDP(EDP *theEDPtoRemove)
 {
     // find the ones selected & remove them
     int numEDPs = theEDPs.size();
-
-     qDebug() << "removeEDP" << numEDPs;
 
     for (int i = numEDPs-1; i >= 0; i--) {
         EDP *theEDP = theEDPs.at(i);
