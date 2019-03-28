@@ -1,4 +1,4 @@
-﻿/* *****************************************************************************
+/* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
 All rights reserved.
 
@@ -64,7 +64,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QUuid>
 #include <QFuture>
 #include <QDialog>
-
+#include <QStandardPaths>
+#include <QDir>
 
 using namespace std;
 
@@ -81,15 +82,17 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
     // for operation the class needs two temporary files to function
     //  - either use name Qt provides or use a QUid in current dir
 
-    // QUuid uniqueName1 = QUuid::createUuid();
-    // QString strUnique1 = uniqueName1.toString();
-    // uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique1.mid(1,36);
-    uniqueFileName1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("SimCenter.thing1");;
 
-    // QUuid uniqueName2 = QUuid::createUuid();
-    // QString strUnique2 = uniqueName2.toString();
-    // uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + strUnique2.mid(1,36);
-    uniqueFileName2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("SimCenter.thing2");;
+    //Get application data folder
+    QString writableLocation = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::AppLocalDataLocation);
+
+    //Create the folder if it does not exist
+    QDir writableDir(writableLocation);
+    if(!writableDir.exists())
+        writableDir.mkpath(".");
+
+    uniqueFileName1 = writableDir.filePath("SimCenter.thing1");
+    uniqueFileName2 = writableDir.filePath("SimCenter.thing2");
 
     //
     // init curl variables
