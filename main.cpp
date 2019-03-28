@@ -141,12 +141,14 @@ int main(int argc, char *argv[])
 
 
   QFile file(":/styleCommon/common_experimental.qss");
-  if(file.open(QFile::ReadOnly)) {
+  QFile fileEEUQ(":/styles/stylesheet_eeuq.qss");
+  if(file.open(QFile::ReadOnly) && fileEEUQ.open(QFile::ReadOnly)) {
     QString styleSheet = QLatin1String(file.readAll());
-    a.setStyleSheet(styleSheet);
+    QString styleSheetEEUQ = QLatin1String(fileEEUQ.readAll());
+    a.setStyleSheet(styleSheet+styleSheetEEUQ);
+    file.close();
+    fileEEUQ.close();
   }
-
-
 
 
 
