@@ -246,7 +246,10 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     treeView->setHeaderHidden(true);
     treeView->setMinimumWidth(100);
     treeView->setMaximumWidth(100);
+    treeView->setMinimumWidth(100);
+
     treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
+
 
     //
     // customize the apperance of the menu on the left
@@ -255,7 +258,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff ); // hide the horizontal scroll bar
     treeView->setObjectName("treeViewOnTheLeft");
     treeView->setIndentation(0);
-    QFile file(":/styles/stylesheet.qss");
+    QFile file(":/styles/menuBar.qss");
     if(file.open(QFile::ReadOnly)) {
         treeView->setStyleSheet(file.readAll());
         file.close();

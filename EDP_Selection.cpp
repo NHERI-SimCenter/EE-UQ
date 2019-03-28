@@ -76,6 +76,7 @@ EDP_Selection::EDP_Selection(RandomVariablesContainer *theRandomVariableIW, QWid
     edpSelection = new QComboBox();
     edpSelection->addItem(tr("Standard Earthquake"));
     edpSelection->addItem(tr("User Defined"));
+    edpSelection->setObjectName("EDPSelectionComboBox");
 
     edpSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
