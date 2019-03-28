@@ -22,7 +22,11 @@ win32{
     LIBS+="../../../jansson/build/x64/Release/jansson.lib"
 }
 
-unix:!macx{
+unix{
     INCLUDEPATH += $$PWD/StochasticGroundMotionGenerator/external/stochastic_loading/include
     LIBS += $$PWD/StochasticGroundMotionGenerator/external/stochastic_loading/lib/liblstoc.so
+}
+unix:macx{
+    INCLUDEPATH += $$PWD/StochasticGroundMotionGenerator/external/stochastic_loading/include
+    LIBS += $$PWD/StochasticGroundMotionGenerator/external/stochastic_loading/lib/liblstoc.dylib
 }

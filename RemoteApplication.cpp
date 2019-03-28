@@ -175,10 +175,12 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     // set up connections
     //
 
+    /*
     this->setStyleSheet("QComboBox {background: #FFFFFF;} \
   QGroupBox {font-weight: bold;}\
   QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
   QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+  */
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
 }
