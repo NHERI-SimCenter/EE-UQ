@@ -201,8 +201,8 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputF
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
-    qDebug() << "Running Simulations";
-    emit sendStatusMessage("Running the Simulations");
+
+    //emit sendStatusMessage("Running the Simulations");
 
     /************************************************************************
 for (int i = 0; i < files.size(); i++) {
@@ -212,7 +212,9 @@ for (int i = 0; i < files.size(); i++) {
 }
 ***********************************************************************/
 
-    emit sendStatusMessage("Running Dakota .. either run remotely or patience!");
+    //emit sendStatusMessage("Running Dakota .. either run remotely or patience!");
+    qDebug() << "Running the Simulation Workflow... ";
+    emit sendStatusMessage("Running the Simulation Workflow... ");
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
