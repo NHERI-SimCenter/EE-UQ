@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#EDP:Disp_Node_4;Disp_Node_3
 # written: fmk 01/18
 
 import sys
