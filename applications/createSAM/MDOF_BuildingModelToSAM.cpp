@@ -81,7 +81,8 @@ main(int argc, char **argv) {
   // if no --getRV print out model, otherwise not needed 
   //
 
-  if (argc == 7) {
+  if (strcmp("--getRV", argv[argc-1]) != 0) {
+    //  if (argc == 7) { NOT WORKING if WIndows Python file for linux
 
     // get ModelData
     json_t *modelData = json_object_get(SIM,"ModelData");  
