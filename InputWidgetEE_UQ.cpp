@@ -245,6 +245,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     treeView->expandAll();
     treeView->setHeaderHidden(true);
     treeView->setMaximumWidth(100);
+    treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
 
     //
     // customize the apperance of the menu on the left
