@@ -56,7 +56,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
-
+#include <QFileDialog>
 
 LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
@@ -64,6 +64,7 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     QGridLayout *runLayout = new QGridLayout();
 
+    //Working Directory
     QLabel *workingDirLabel = new QLabel();
     workingDirLabel->setText(QString("Working Directory:"));
 
@@ -75,6 +76,12 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
+    QPushButton *workDirButton = new QPushButton();
+    workDirButton->setText("Browse");
+    workDirButton->setToolTip(tr("Select the Working Directory"));
+    runLayout->addWidget(workDirButton,1,2);
+
+    //Workflow Applications Directory
     QLabel *appDirLabel = new QLabel();
     appDirLabel->setText(QString("Applications Directory:"));
     runLayout->addWidget(appDirLabel,2,0);
@@ -84,6 +91,12 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     appDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
     runLayout->addWidget(appDirName,2,1);
 
+    QPushButton *appsDirButton = new QPushButton();
+    appsDirButton->setText("Browse");
+    appsDirButton->setToolTip(tr("Select the Workflow Applications Directory"));
+    runLayout->addWidget(appsDirButton,2,2);
+
+    //Run Button
     QPushButton *pushButton = new QPushButton();
     pushButton->setText("Submit");
     pushButton->setToolTip(tr("Press to launch job on local machine"));
@@ -100,7 +113,7 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
 
-    //Automatically changing to forward slash
+    //Automatically changing paths to forward slash
     connect(workingDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             workingDirName->setText(newValue.replace('\\','/'));
@@ -109,6 +122,37 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     connect(appDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             appDirName->setText(newValue.replace('\\','/'));
+    });
+
+    //Browse buttons
+    connect(workDirButton, &QPushButton::clicked, this, [this](){
+        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+        if(QDir(workingDirName->text()).exists())
+            existingDir = workingDirName->text();
+
+        QString selectedDir = QFileDialog::getExistingDirectory(this,
+                                                                tr("Select Working Directory for Local Simulation"),
+                                                                existingDir,
+                                                                QFileDialog::ShowDirsOnly);
+
+        if(!selectedDir.isEmpty())
+            workingDirName->setText(selectedDir);
+    });
+
+    connect(appsDirButton, &QPushButton::clicked, this, [this](){
+        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+        if(QDir(appDirName->text()).exists())
+            existingDir = appDirName->text();
+
+        QString selectedDir = QFileDialog::getExistingDirectory(this,
+                                                                tr("Select SimCenter Workflow Applications Directory for Local Simulation"),
+                                                                existingDir,
+                                                                QFileDialog::ShowDirsOnly);
+
+        if(!selectedDir.isEmpty())
+            appDirName->setText(selectedDir);
     });
 
     /*
