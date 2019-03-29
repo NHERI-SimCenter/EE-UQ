@@ -66,6 +66,7 @@ StochasticMotionInputWidget::StochasticMotionInputWidget(
   QLabel* selection_label = new QLabel(tr("Stochastic Loading Model"));
   //selection_label->setStyleSheet("font-weight: bold");
   model_selection_ = new QComboBox();
+  model_selection_->setObjectName("StochasticLoadingModel");
   model_selection_->addItem(tr("Vlachos et al. (2018)"));
   stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
   
