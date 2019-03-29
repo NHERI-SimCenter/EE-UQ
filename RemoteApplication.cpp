@@ -58,7 +58,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QDir>
 #include <QUuid>
-
+#include <QFileDialog>
 #include <ZipUtils.h>
 
 RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QWidget *parent)
@@ -118,6 +118,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     //appLineEdit->setText("Dakota-6.6.0.0u1");
     layout->addWidget(appLineEdit,4,1);
 
+    //Working Directory
     QLabel *workingDirLabel = new QLabel();
     workingDirLabel->setText(QString("Working Directory:"));
     layout->addWidget(workingDirLabel,5,0);
@@ -128,6 +129,12 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     layout->addWidget(workingDirName,5,1);
 
+    QPushButton *workDirButton = new QPushButton();
+    workDirButton->setText("Browse");
+    workDirButton->setToolTip(tr("Select the Working Directory"));
+    layout->addWidget(workDirButton,5,2);
+
+    //Local Workflow Applications Directory
     QLabel *appDirLabel = new QLabel();
     appDirLabel->setText(QString("Local Applications Directory:"));
     layout->addWidget(appDirLabel,6,0);
@@ -136,6 +143,12 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     localAppDirName->setText(QCoreApplication::applicationDirPath());
     localAppDirName->setToolTip(tr("Location on your system where the SimCenter workflow applications exist. Only edit if you know what you are doing."));
     layout->addWidget(localAppDirName,6,1);
+
+    QPushButton *localAppsDirButton = new QPushButton();
+    localAppsDirButton->setText("Browse");
+    localAppsDirButton->setToolTip(tr("Select the Local Workflow Applications Directory"));
+    layout->addWidget(localAppsDirButton,6,2);
+
 
     QLabel *appDirLabel1 = new QLabel();
     appDirLabel1->setText(QString("Remote Applications Directory:"));
@@ -180,6 +193,37 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     connect(localAppDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             localAppDirName->setText(newValue.replace('\\','/'));
+    });
+
+    //Browse buttons
+    connect(workDirButton, &QPushButton::clicked, this, [this](){
+        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+        if(QDir(workingDirName->text()).exists())
+            existingDir = workingDirName->text();
+
+        QString selectedDir = QFileDialog::getExistingDirectory(this,
+                                                                tr("Select Local Working Directory for Cloud Simulation"),
+                                                                existingDir,
+                                                                QFileDialog::ShowDirsOnly);
+
+        if(!selectedDir.isEmpty())
+            workingDirName->setText(selectedDir);
+    });
+
+    connect(localAppsDirButton, &QPushButton::clicked, this, [this](){
+        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+        if(QDir(localAppDirName->text()).exists())
+            existingDir = localAppDirName->text();
+
+        QString selectedDir = QFileDialog::getExistingDirectory(this,
+                                                                tr("Select Local SimCenter Workflow Applications Directory for Cloud Simulation"),
+                                                                existingDir,
+                                                                QFileDialog::ShowDirsOnly);
+
+        if(!selectedDir.isEmpty())
+            localAppDirName->setText(selectedDir);
     });
 
     //
