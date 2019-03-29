@@ -340,37 +340,41 @@ OpenSeesPreprocessor::processElements(ofstream &s){
 
 int
 OpenSeesPreprocessor::processDamping(ofstream &s){
+
     double damping = json_number_value(json_object_get(rootSIM,"dampingRatio"));
-    s << "set xDamp " << damping << ";\n"
-      << "set MpropSwitch 1.0;\n"
-      << "set KcurrSwitch 0.0;\n"
-      << "set KinitSwitch 0.0;\n"
-      << "set KcommSwitch 1.0;\n"
-      << "set nEigenI 1;\n";
 
-    json_t *geometry = json_object_get(rootSAM,"Geometry");
-    json_t *nodes = json_object_get(geometry,"nodes");
-    int nStory = json_array_size(nodes)-1;
-    int nEigenJ=0;
-    if (nStory <= 0) {
-      nEigenJ = 2;
-      nStory = 1;
-    } else if (nStory<=2)
-      nEigenJ=nStory*2;   //first mode or second mode
-    else
-      nEigenJ=3*2;          
-
-     s << "set nEigenJ "<<nEigenJ<<";\n"
-       << "set lambdaN [eigen -fullGenLapack "<< nEigenJ <<"];\n"
-       << "set lambdaI [lindex $lambdaN [expr $nEigenI-1]];\n"
-       << "set lambdaJ [lindex $lambdaN [expr $nEigenJ-1]];\n"
-       << "set omegaI [expr pow($lambdaI,0.5)];\n"
-       << "set omegaJ [expr pow($lambdaJ,0.5)];\n"
-       << "set alphaM [expr $MpropSwitch*$xDamp*(2*$omegaI*$omegaJ)/($omegaI+$omegaJ)];\n"
-       << "set betaKcurr [expr $KcurrSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
-       << "set betaKinit [expr $KinitSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
-       << "set betaKcomm [expr $KcommSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
-       << "rayleigh $alphaM $betaKcurr $betaKinit $betaKcomm;\n";
+    if (damping != 0.0) {
+      s << "set xDamp " << damping << ";\n"
+	<< "set MpropSwitch 1.0;\n"
+	<< "set KcurrSwitch 0.0;\n"
+	<< "set KinitSwitch 0.0;\n"
+	<< "set KcommSwitch 1.0;\n"
+	<< "set nEigenI 1;\n";
+      
+      json_t *geometry = json_object_get(rootSAM,"Geometry");
+      json_t *nodes = json_object_get(geometry,"nodes");
+      int nStory = json_array_size(nodes)-1;
+      int nEigenJ=0;
+      if (nStory <= 0) {
+	nEigenJ = 2;
+	nStory = 1;
+      } else if (nStory<=2)
+	nEigenJ=nStory*2;   //first mode or second mode
+      else
+	nEigenJ=3*2;          
+      
+      s << "set nEigenJ "<<nEigenJ<<";\n"
+	<< "set lambdaN [eigen -fullGenLapack "<< nEigenJ <<"];\n"
+	<< "set lambdaI [lindex $lambdaN [expr $nEigenI-1]];\n"
+	<< "set lambdaJ [lindex $lambdaN [expr $nEigenJ-1]];\n"
+	<< "set omegaI [expr pow($lambdaI,0.5)];\n"
+	<< "set omegaJ [expr pow($lambdaJ,0.5)];\n"
+	<< "set alphaM [expr $MpropSwitch*$xDamp*(2*$omegaI*$omegaJ)/($omegaI+$omegaJ)];\n"
+	<< "set betaKcurr [expr $KcurrSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
+	<< "set betaKinit [expr $KinitSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
+	<< "set betaKcomm [expr $KcommSwitch*2.*$xDamp/($omegaI+$omegaJ)];\n"
+	<< "rayleigh $alphaM $betaKcurr $betaKinit $betaKcomm;\n";
+    }
 
      return 0;
 }
