@@ -117,6 +117,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
 
     loginWindow = new QWidget();
+    loginWindow->setWindowTitle("Login to DesignSafe");
     QGridLayout *loginLayout = new QGridLayout();
     SectionTitle *info=new SectionTitle();
     info->setText(tr("DesignSafe User Account Info:"));
@@ -154,7 +155,9 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     connect(loginSubmitButton,SIGNAL(clicked(bool)),this,SLOT(onLoginSubmitButtonClicked()));
     connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
     connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
-
+    connect(passwordLineEdit, &QLineEdit::returnPressed, this, [this](){
+        this->onLoginSubmitButtonClicked();
+    });
     // logout
     connect(this,SIGNAL(logout()),theRemoteInterface,SLOT(logoutCall()));
     connect(theRemoteInterface,SIGNAL(logoutReturn(bool)),this,SLOT(logoutReturn(bool)));
@@ -605,7 +608,10 @@ MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteRunButtonClicked();
     else
-        this->errorMessage(tr("You Must LOGIN (button top right) before you can run a remote job"));
+    {
+        this->errorMessage(tr("You must log in to DesignSafe before you can run a remote job"));
+        this->onLoginButtonClicked();
+    }
 }
 
 void
