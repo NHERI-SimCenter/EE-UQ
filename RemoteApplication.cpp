@@ -119,30 +119,31 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     layout->addWidget(appLineEdit,4,1);
 
     QLabel *workingDirLabel = new QLabel();
-    workingDirLabel->setText(QString("Working Dir Location:"));
+    workingDirLabel->setText(QString("Working Directory:"));
     layout->addWidget(workingDirLabel,5,0);
 
     workingDirName = new QLineEdit();
-    workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirName->setText(workingDir.filePath("EE-UQ/RemoteWorkDir"));
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     layout->addWidget(workingDirName,5,1);
 
     QLabel *appDirLabel = new QLabel();
-    appDirLabel->setText(QString("Local App Dir Location:"));
+    appDirLabel->setText(QString("Local Applications Directory:"));
     layout->addWidget(appDirLabel,6,0);
 
     localAppDirName = new QLineEdit();
     localAppDirName->setText(QCoreApplication::applicationDirPath());
-    localAppDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
+    localAppDirName->setToolTip(tr("Location on your system where the SimCenter workflow applications exist. Only edit if you know what you are doing."));
     layout->addWidget(localAppDirName,6,1);
 
     QLabel *appDirLabel1 = new QLabel();
-    appDirLabel1->setText(QString("Remote App Dir Location:"));
+    appDirLabel1->setText(QString("Remote Applications Directory:"));
     layout->addWidget(appDirLabel1,7,0);
 
     remoteAppDirName = new QLineEdit();
     remoteAppDirName->setText("/home1/00477/tg457427/SimCenter/EE-UQ-V1.1");
-    remoteAppDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
+    remoteAppDirName->setToolTip(tr("Location on TACC Stampede 2 where the SimCenter workflow applications exist(For Advanced Users)"));
 
     layout->addWidget(remoteAppDirName,7,1);
 
@@ -170,6 +171,16 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     connect(this,SIGNAL(startJobCall(QJsonObject)),theService,SLOT(startJobCall(QJsonObject)));
     connect(theService,SIGNAL(startJobReturn(QString)), this, SLOT(startJobReturn(QString)));
 
+    //Automatically changing to forward slash
+    connect(workingDirName, &QLineEdit::textChanged, this, [this](QString newValue){
+        if (newValue.contains('\\'))
+            workingDirName->setText(newValue.replace('\\','/'));
+    });
+
+    connect(localAppDirName, &QLineEdit::textChanged, this, [this](QString newValue){
+        if (newValue.contains('\\'))
+            localAppDirName->setText(newValue.replace('\\','/'));
+    });
 
     //
     // set up connections
@@ -230,8 +241,8 @@ RemoteApplication::onRunButtonPressed(void)
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
     if (!dirWork.exists())
-        if (!dirWork.mkdir(workingDir)) {
-            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir);
+        if (!dirWork.mkpath(workingDir)) {
+            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
 

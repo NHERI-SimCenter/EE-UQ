@@ -65,17 +65,18 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     QGridLayout *runLayout = new QGridLayout();
 
     QLabel *workingDirLabel = new QLabel();
-    workingDirLabel->setText(QString("Working Dir Location:"));
+    workingDirLabel->setText(QString("Working Directory:"));
 
     runLayout->addWidget(workingDirLabel,1,0);
 
     workingDirName = new QLineEdit();
-    workingDirName->setText(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    workingDirName->setText(workingDir.filePath("EE-UQ/LocalWorkDir"));
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
     QLabel *appDirLabel = new QLabel();
-    appDirLabel->setText(QString("Application Dir Location:"));
+    appDirLabel->setText(QString("Applications Directory:"));
     runLayout->addWidget(appDirLabel,2,0);
 
     appDirName = new QLineEdit();
@@ -98,6 +99,18 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     //
 
     connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
+
+    //Automatically changing to forward slash
+    connect(workingDirName, &QLineEdit::textChanged, this, [this](QString newValue){
+        if (newValue.contains('\\'))
+            workingDirName->setText(newValue.replace('\\','/'));
+    });
+
+    connect(appDirName, &QLineEdit::textChanged, this, [this](QString newValue){
+        if (newValue.contains('\\'))
+            appDirName->setText(newValue.replace('\\','/'));
+    });
+
     /*
     this->setStyleSheet("QComboBox {background: #FFFFFF;} \
   QGroupBox {font-weight: bold;}\
@@ -146,8 +159,8 @@ LocalApplication::onRunButtonPressed(void)
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
     if (!dirWork.exists())
-        if (!dirWork.mkdir(workingDir)) {
-            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using existing directory."));
+        if (!dirWork.mkpath(workingDir)) {
+            emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
 
