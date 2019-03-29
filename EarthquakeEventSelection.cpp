@@ -81,6 +81,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     QLabel *label = new QLabel();
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
+    eventSelection->setObjectName("LoadingTypeCombox");
     //    eventSelection->addItem(tr("Existing"));
     eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("Multiple PEER"));

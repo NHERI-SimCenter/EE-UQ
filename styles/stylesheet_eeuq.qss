@@ -13,5 +13,18 @@ QComboBox#EDPSelectionComboBox {
     min-width: 16em;
 }
 
+QComboBox#LoadingTypeCombox {
+    min-width: 16em;
+}
+
+QComboBox#StochasticLoadingModel {
+    min-width: 10em;
+}
+
+QComboBox#RecordDatabaseSelector {
+    min-width: 17em;
+}
+
+
 
 
