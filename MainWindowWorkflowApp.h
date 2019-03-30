@@ -105,6 +105,7 @@ public:
     QString copyrightText;
     QString feedbackURL;
     QString citeText;
+    bool isAutoLogin;
 };
 
 #endif // MAIN_WINDOW_WORKFLOW_APP_H
