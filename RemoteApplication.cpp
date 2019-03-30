@@ -125,7 +125,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
 
     workingDirName = new QLineEdit();
     QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    workingDirName->setText(workingDir.filePath("EE-UQ/RemoteWorkDir"));
+    workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/RemoteWorkDir"));
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     layout->addWidget(workingDirName,5,1);
 

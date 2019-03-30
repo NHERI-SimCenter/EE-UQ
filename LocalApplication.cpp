@@ -72,7 +72,8 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     workingDirName = new QLineEdit();
     QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    workingDirName->setText(workingDir.filePath("EE-UQ/LocalWorkDir"));
+
+    workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/LocalWorkDir"));
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
