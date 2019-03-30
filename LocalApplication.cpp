@@ -72,7 +72,8 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     workingDirName = new QLineEdit();
     QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    workingDirName->setText(workingDir.filePath("EE-UQ/LocalWorkDir"));
+
+    workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/LocalWorkDir"));
     workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
     runLayout->addWidget(workingDirName,1,1);
 
@@ -180,13 +181,23 @@ LocalApplication::inputFromJSON(QJsonObject &dataObject) {
 
     if (dataObject.contains("localAppDir")) {
         QJsonValue theName = dataObject["localAppDir"];
-        appDirName->setText(theName.toString());
+        if(QDir(theName.toString()).exists())
+            appDirName->setText(theName.toString());
+        else
+            appDirName->setText(QCoreApplication::applicationDirPath());
+
     } else
         return false;
 
     if (dataObject.contains("workingDir")) {
         QJsonValue theName = dataObject["workingDir"];
-        workingDirName->setText(theName.toString());
+        if(QDir(theName.toString()).exists())
+            workingDirName->setText(theName.toString());
+        else {
+            QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+            workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/LocalWorkDir"));
+        }
+
     } else
         return false;
 

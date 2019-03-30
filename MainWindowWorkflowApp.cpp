@@ -36,7 +36,7 @@
 
 
 MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false), isAutoLogin(false)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -151,7 +151,11 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
 
     // login
-    connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
+    connect(loginButton,&QPushButton::clicked,this,[this](bool)
+    {
+        isAutoLogin = false;
+        onLoginButtonClicked();
+    });
     connect(loginSubmitButton,SIGNAL(clicked(bool)),this,SLOT(onLoginSubmitButtonClicked()));
     connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
     connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
@@ -571,6 +575,11 @@ MainWindowWorkflowApp::attemptLoginReturn(bool ok){
         //this->enableButtons();
 
         //theJobManager->up
+        if(isAutoLogin)
+        {
+            onRemoteRunButtonClicked();
+            isAutoLogin = false;
+        }
     } else {
         loggedIn = false;
 
@@ -611,6 +620,7 @@ MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     {
         this->errorMessage(tr("You must log in to DesignSafe before you can run a remote job"));
         this->onLoginButtonClicked();
+        isAutoLogin = true;
     }
 }
 
