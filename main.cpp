@@ -52,6 +52,11 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+    //Setting Core Application Name, Organization and Version
+    QCoreApplication::setApplicationName("EE-UQ");
+    QCoreApplication::setOrganizationName("SimCenter");
+    QCoreApplication::setApplicationVersion("1.1.0");
+
   //
   // set up logging of output messages for user debugging
   //
