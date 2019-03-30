@@ -257,7 +257,10 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 
     if (dataObject.contains("localAppDir")) {
         QJsonValue theName = dataObject["localAppDir"];
-        localAppDirName->setText(theName.toString());
+        if(QDir(theName.toString()).exists())
+            localAppDirName->setText(theName.toString());
+        else
+            localAppDirName->setText(QCoreApplication::applicationDirPath());
     } else
         return false;
 
@@ -268,7 +271,12 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 
     if (dataObject.contains("workingDir")) {
         QJsonValue theName = dataObject["workingDir"];
-        workingDirName->setText(theName.toString());
+        if(QDir(theName.toString()).exists())
+            workingDirName->setText(theName.toString());
+        else {
+            QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+            workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/RemoteWorkDir"));
+        }
     } else
         return false;
 
