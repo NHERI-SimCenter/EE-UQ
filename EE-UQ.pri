@@ -45,7 +45,8 @@ SOURCES += \
     $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp \
     $$PWD/Controller2D.cpp \
     $$PWD/GlWidget2D.cpp \
-    $$PWD/EDP.cpp
+    $$PWD/EDP.cpp \
+    $$PWD/GoogleAnalytics.cpp
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h\
@@ -86,7 +87,8 @@ HEADERS  += \
     $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h \
     $$PWD/Controller2D.h \
     $$PWD/GlWidget2D.h \
-    $$PWD/EDP.h
+    $$PWD/EDP.h \
+    $$PWD/GoogleAnalytics.h
 
 RESOURCES += \
     images.qrc \
