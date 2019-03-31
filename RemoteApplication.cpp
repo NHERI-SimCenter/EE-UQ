@@ -398,7 +398,7 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QFileInfo check_workflow(templateDir.absoluteFilePath("workflow_driver"));
     if (!check_workflow.exists() || !check_workflow.isFile()) {
-        emit sendErrorMessage(("Local Falure Setting up Dakota"));
+        emit sendErrorMessage(("Local Failure Setting up Dakota"));
         qDebug() << "Local Failure Setting Up Dakota ";
         return false;
     }
