@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QTime>
 #include <QTextStream>
+#include <GoogleAnalytics.h>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -52,10 +53,13 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
-    //Setting Core Application Name, Organization and Version
+    //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
     QCoreApplication::setApplicationVersion("1.1.0");
+    GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    GoogleAnalytics::StartSession();
+    GoogleAnalytics::ReportStart();
 
   //
   // set up logging of output messages for user debugging
@@ -179,6 +183,7 @@ QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239
   theRemoteService->logout();
   thread->quit();
 
+  GoogleAnalytics::EndSession();
   // done
   return res;
 }

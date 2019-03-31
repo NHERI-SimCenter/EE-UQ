@@ -23,6 +23,8 @@ SHAMotionWidget::SHAMotionWidget(RandomVariablesContainer *theRandomVariableIW, 
     m_intensityMeasure = new IntensityMeasure(this);
     IntensityMeasureWidget* imWidget = new IntensityMeasureWidget(*m_intensityMeasure, this);
     gmToolsLayout->addWidget(imWidget, 0);
+    //TODO:Intensity measure widget is ambigous so it is removed temporarily
+    imWidget->setHidden(true);
 
     m_selectionConfig = new RecordSelectionConfig(this);
     RecordSelectionWidget* selectionWidget = new RecordSelectionWidget(*m_selectionConfig, this);
