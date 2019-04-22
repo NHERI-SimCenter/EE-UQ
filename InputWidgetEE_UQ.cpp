@@ -482,7 +482,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         // note: Events is different because the object is an Array
         if (theApplicationObject.contains("Events")) {
-            QJsonObject theObject = theApplicationObject["Events"].toObject();
+	  //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
             theEvent->inputAppDataFromJSON(theApplicationObject);
         } else
             return false;
