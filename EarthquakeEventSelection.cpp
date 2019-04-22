@@ -170,6 +170,7 @@ EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
             return false;
         }
         theEvent = theValue.toObject();
+
     } else {
         qDebug() << "EarthquakeEventSelection::no Events";
         return false;
@@ -259,7 +260,6 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-
     // based on application name value set event type
 
     int index = 0;
@@ -276,6 +276,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
         index = 3;
     } else if (type == QString("Stochastic Ground Motion Model") ||
 	       type == QString("Stochastic Ground Motion") ||
+	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
         index = 4;
     } else if ((type == QString("User Application")) ||
@@ -286,7 +287,6 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     }
 
     eventSelection->setCurrentIndex(index);
-
 
     // invoke inputAppDataFromJSON on new type
     if (theCurrentEvent != 0 && !theEvent.isEmpty()) {
