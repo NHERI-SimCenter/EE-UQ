@@ -321,7 +321,12 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
             elif(edp["type"] == "max_drift"):
                 edpAcronym = "PID"
-                floor = edp["floor1"]
+                floor = edp["floor2"]
+                known = True
+
+            elif(edp["type"] == "max_pressure"):
+                edpAcronym = "PSP"
+                floor = edp["floor2"]
                 known = True
 
             elif(edp["type"] == "max_rel_disp"):
