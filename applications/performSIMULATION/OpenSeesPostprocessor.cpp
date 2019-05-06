@@ -126,7 +126,7 @@ OpenSeesPostprocessor::processEDPs(){
 	const char *fileName = fileString.c_str();
 	
 	//
-	// opencfile & process data into a json array called: data
+	// open file & process data into a json array called: data
 	//
 
 	json_t *data = json_array();
