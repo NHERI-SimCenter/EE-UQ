@@ -1,32 +1,18 @@
 #!/usr/bin/python
-# written: fmk 01/18
 
 import sys
 import re
-
-#print 'Number of arguments:', len(sys.argv), 'arguments.'
-#print 'Argument List:', str(sys.argv)
 
 EDPs = ['Node_4_Disp', 'Node_3_Disp']
 
 inputArgs = sys.argv
 
-#outFile = open('results.out','w')
-
-#
-# process output file "SimCenterOut.txt" for nodal displacements
-#
-
 with open ('node.out', 'rt') as inFile:
     line = inFile.readline()
     line = inFile.readline()
     line = inFile.readline()
-    print(line)
-    print(line.split())
     displ = line.split()
     numNode = len(displ)
-
-print(numNode)
 
 inFile.close
 
@@ -39,7 +25,6 @@ outFile = open('results.out','w')
 #
 # note for now assuming no ERROR in user data
 #
-#for i in inputArgs[1:]:
 
 for i in EDPs[0:]:
     print i
