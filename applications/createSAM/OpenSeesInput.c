@@ -73,7 +73,7 @@ main(int argc, char **argv) {
     // loop over each node in nodes list, creating nodeMapping entry
     int index;
     json_t *intObj;
-    int floor = 1;
+    int floor = 0;  // ground floor floor 0
     char floorString[10];
     
     json_array_foreach(theNodes, index, intObj) {
