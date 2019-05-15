@@ -70,7 +70,7 @@ class AgaveCurl: public RemoteService
 
 public:
 
-    explicit AgaveCurl(QString &tenant, QString &storage, QObject *parent = nullptr);
+  explicit AgaveCurl(QString &tenant, QString &storage, QString *appDirName = nullptr, QObject *parent = nullptr);
     ~AgaveCurl();
 
     bool login(QString login, QString password);
@@ -145,6 +145,7 @@ private:
 
     QString username;
     QString password;
+    QString appDirName;
 
     bool slotNeededLocally;
     bool slotResultBool;

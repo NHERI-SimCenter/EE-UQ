@@ -75,12 +75,12 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
-AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
+AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QString *appDir, QObject *parent)
   :RemoteService(parent), tenant(_tenant), storage(_storage), loggedInFlag(false), slotNeededLocally(false)
 {
     //
-    // for operation the class needs two temporary files to function
-    //  - either use name Qt provides or use a QUid in current dir
+    // for operation this class needs two temporary files to function
+    //  - hence thing1 and thing2
 
 
     //Get application data folder
@@ -103,6 +103,8 @@ AgaveCurl::AgaveCurl(QString &_tenant, QString &_storage, QObject *parent)
     tenantURL="https://agave.designsafe-ci.org/";
     appClient = QString("appClient");
 
+    if (appDir != nullptr)
+      appDirName = QString(*appDir);
 }
 
 AgaveCurl::~AgaveCurl()
@@ -164,6 +166,9 @@ AgaveCurl::loginCall(QString uname, QString upassword)
   emit loginReturn(result);
   if (result == true) {
     QString result = storage + username;
+    if (!appDirName.isEmpty())
+      result = result + "/" + appDirName;
+
     emit getHomeDirPathReturn(result);
   }
 }
@@ -174,8 +179,11 @@ AgaveCurl::login(QString uname, QString upassword)
    username = uname;
    password = upassword;
 
-    QString consumerSecret;
-    QString consumerKey;
+   QString consumerSecret;
+   QString consumerKey;
+
+   curl_slist_free_all(slist1);
+   slist1 = NULL;
 
     //
     // first try deleting old app, needed if program crashed or old not deleted
@@ -326,13 +334,41 @@ AgaveCurl::login(QString uname, QString upassword)
             QString bearer = QString("Authorization: Bearer ") + accessToken;
             slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
             loggedInFlag = true;
-            emit statusMessage("Login SUCCESS");
+	    
+	    // now if appDir is specified make sure dir exists, 
+	    // creating it does delete existing one and one call as opposed to 2 if not there
+	    if (!appDirName.isEmpty()) {
+	      QString home = storage + username;
+	      bool ok = this->mkdir(appDirName, username);
+	      if (ok != true) {
+		QString message = QString("WARNING - could not create " ) + appDirName 
+		  + QString("on login, using home dir instead");
+		appDirName = QString(""); // no erase function!
+		emit statusMessage(message);
+	      } else {
+		emit statusMessage("Login SUCCESS");
+	      }
+	    } else {
+	      emit statusMessage("Login SUCCESS");
+	    }
+
 	    return true;
         }
-	emit statusMessage("ERROR - no access toen returned!");
+	emit statusMessage("ERROR - no access token returned!");
 	return false;
     }
     return false;
+
+   /* *************************************************** to test aloe
+    consumerKey = QString("");
+    consumerSecret = QString("");
+    QString accessToken = QString("");
+    QString bearer = QString("Authorization: Bearer ") + accessToken;
+    slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
+    loggedInFlag = true;
+    emit statusMessage("SUCCESS fmk");
+    return true;
+    **************************************************************** */
 }
 
 void
@@ -539,12 +575,14 @@ AgaveCurl::mkdirCall(const QString &remoteName, const QString &remotePath) {
 bool
 AgaveCurl::mkdir(const QString &remoteName, const QString &remotePath) {
 
-    QString message = QString("Contacting ") + tenant + QString(" to create dir ") + remotePath;
+  QString message = QString("Contacting ") + tenant + QString(" to create dir ") + remotePath + QString("/") + remoteName;
     emit statusMessage(message);
 
      bool result = false;
 
      QString url = tenantURL + QString("files/v2/media/") + remotePath;
+
+     qDebug() << "mkdir URL: " << url;
 
      QString postField = QString("action=mkdir&path=") + remoteName;
      int postFieldLength = postField.length() ; // strlen(postFieldChar);
