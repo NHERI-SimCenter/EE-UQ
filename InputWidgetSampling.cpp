@@ -164,6 +164,7 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     uq["samples"]=numSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
+    uq["evalID"] = QString("RV.DAKOTA_EVAL_ID"); // put in so application can get id during analysis
   //  result = theEdpWidget->outputToJSON(uq);
     jsonObject["samplingMethodData"]=uq;
     return result;
