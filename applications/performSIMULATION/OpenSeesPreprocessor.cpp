@@ -387,7 +387,7 @@ OpenSeesPreprocessor::processDamping(ofstream &s){
 
 int 
 OpenSeesPreprocessor::processEvents(ofstream &s){
-  std::cerr << "ProcessingEvents\n";
+
   //
   // foreach EVENT
   //   create load pattern(s)
