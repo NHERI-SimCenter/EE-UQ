@@ -128,9 +128,12 @@ int main(int argc, char *argv[])
 
      w.setAbout(textAboutEE_UQ);
 
-     QString version("1.1.0");
+     QString version("Version 1.1.0");
      w.setVersion(version);
 
+     QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
+     w.setDocumentationURL(manualURL);
+ 
   //
   // move remote interface to a thread
   //

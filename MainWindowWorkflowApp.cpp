@@ -210,10 +210,11 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
     // strings needed in about menu, use set methods to override
     //
-
-    feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
-    versionText = QString(tr("Version 1.0.2"));
-    citeText = QString(tr(""));
+    manualURL = QString("");
+    feedbackURL = QString("https://docs.google.com/forms/d/e/1FAIpQLSfh20kBxDmvmHgz9uFwhkospGLCeazZzL770A2GuYZ2KgBZBA/viewform");
+    featureRequestURL = QString("https://docs.google.com/forms/d/e/1FAIpQLScTLkSwDjPNzH8wx8KxkyhoIT7AI9KZ16Wg9TuW1GOhSYFOag/viewform");
+    versionText = QString("");
+    citeText = QString("");
     aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
     copyrightText = QString("\
                             <p>\
@@ -454,78 +455,17 @@ void MainWindowWorkflowApp::createActions() {
     // check for yourself by changing Quit to drivel and it works
     QAction *exitAction = new QAction(tr("&Quit"), this);
     connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
-    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
     QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-    QAction *citeAct = helpMenu->addAction(tr("&How to cite"), this, &MainWindowWorkflowApp::cite);
+    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindowWorkflowApp::manual);
+    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
+    QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindowWorkflowApp::submitFeatureRequest);
+    QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-
-    /*
- cutAction = new QAction(tr("Cu&t"), this);
- cutAction->setIcon(QIcon(":/images/cut.png"));
- cutAction->setShortcut(QKeySequence::Cut);
- cutAction->setStatusTip(tr("Cut the current selection's contents "
-                            "to the clipboard"));
- //connect(cutAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(cut()));
-
- copyAction = new QAction(tr("&Copy"), this);
- copyAction->setIcon(QIcon(":/images/copy.png"));
- copyAction->setShortcut(QKeySequence::Copy);
- copyAction->setStatusTip(tr("Copy the current selection's contents "
-                             "to the clipboard"));
- //connect(copyAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(copy()));
-
- pasteAction = new QAction(tr("&Paste"), this);
- pasteAction->setIcon(QIcon(":/images/paste.png"));
- pasteAction->setShortcut(QKeySequence::Paste);
- pasteAction->setStatusTip(tr("Paste the clipboard's contents into "
-                              "the current selection"));
- //connect(pasteAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(paste()));
-
- deleteAction = new QAction(tr("&Delete"), this);
- deleteAction->setShortcut(QKeySequence::Delete);
- deleteAction->setStatusTip(tr("Delete the current selection's "
-                               "contents"));
- //connect(deleteAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(del()));
-
- editMenu = menuBar()->addMenu(tr("&Edit"));
- editMenu->addAction(cutAction);
- editMenu->addAction(copyAction);
- editMenu->addAction(pasteAction);
- editMenu->addAction(deleteAction);
-
-
-
- selectRowAction = new QAction(tr("&Row"), this);
- selectRowAction->setStatusTip(tr("Select all the cells in the "
-                                  "current row"));
- //connect(selectRowAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectCurrentRow()));
-
- selectColumnAction = new QAction(tr("&Column"), this);
- selectColumnAction->setStatusTip(tr("Select all the cells in the "
-                                     "current column"));
- //connect(selectColumnAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectCurrentColumn()));
-
- selectAllAction = new QAction(tr("&All"), this);
- selectAllAction->setShortcut(QKeySequence::SelectAll);
- selectAllAction->setStatusTip(tr("Select all the cells in the "
-                                  "spreadsheet"));
- //connect(selectAllAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectAll()));
-
- selectSubMenu = editMenu->addMenu(tr("&Select"));
- selectSubMenu->addAction(selectRowAction);
- selectSubMenu->addAction(selectColumnAction);
- selectSubMenu->addAction(selectAllAction);
-*/
-
 }
 
 
@@ -690,17 +630,21 @@ void MainWindowWorkflowApp::about()
     msgBox.exec();
 }
 
-void MainWindowWorkflowApp::setAbout(QString &newAbout) {
-    aboutText = newAbout;
-}
-
-void MainWindowWorkflowApp::setVersion(QString &newVersion) {
-    versionText = newVersion;
-}
-
 void MainWindowWorkflowApp::submitFeedback()
 {
     QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::manual()
+{
+    QDesktopServices::openUrl(QUrl(manualURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::submitFeatureRequest()
+{
+    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
     //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
 }
 
@@ -714,4 +658,47 @@ void MainWindowWorkflowApp::copyright()
   msgBox.exec();
 
 }
+
+void 
+MainWindowWorkflowApp::setCopyright(QString &newText)
+{
+  copyrightText = newText;
+}
+
+void 
+MainWindowWorkflowApp::setVersion(QString &newText)
+{
+  versionText = newText;
+}
+
+void 
+MainWindowWorkflowApp::setAbout(QString &newText)
+{
+  aboutText = newText;
+}
+
+void
+MainWindowWorkflowApp::setDocumentationURL(QString &newText)
+{
+  manualURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setFeedbackURL(QString &newText)
+{
+  feedbackURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setFeatureURL(QString &newText)
+{
+  featureRequestURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setCite(QString &newText)
+{
+  citeText = newText;
+}
+
 
