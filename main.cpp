@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QTime>
 #include <QTextStream>
+#include <GoogleAnalytics.h>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -52,6 +53,14 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+    //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
+    QCoreApplication::setApplicationName("EE-UQ");
+    QCoreApplication::setOrganizationName("SimCenter");
+    QCoreApplication::setApplicationVersion("1.1.0");
+    GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    GoogleAnalytics::StartSession();
+    GoogleAnalytics::ReportStart();
+
   //
   // set up logging of output messages for user debugging
   //
@@ -78,8 +87,9 @@ int main(int argc, char *argv[])
 
   QString tenant("designsafe");
   QString storage("agave://designsafe.storage.default/");
+  QString dirName("EE-UQ");
 
-  AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage);
+  AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
 
 
   //
@@ -111,16 +121,19 @@ int main(int argc, char *argv[])
       This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
       their own applications for others to use.\
       <p>\
-      This is Version 1.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
+      This is Version 1.1.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
       features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
       also would benefit from it.\
       <p>";
 
      w.setAbout(textAboutEE_UQ);
 
-     QString version("1.0.2");
+     QString version("Version 1.1.0");
      w.setVersion(version);
 
+     QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
+     w.setDocumentationURL(manualURL);
+ 
   //
   // move remote interface to a thread
   //
@@ -139,17 +152,25 @@ int main(int argc, char *argv[])
 
   w.show();
 
-  QFile file(":/styleCommon/style.qss");
-  if(file.open(QFile::ReadOnly)) {
+
+  QFile file(":/styleCommon/common_experimental.qss");
+  QFile fileEEUQ(":/styles/stylesheet_eeuq.qss");
+  if(file.open(QFile::ReadOnly) && fileEEUQ.open(QFile::ReadOnly)) {
     QString styleSheet = QLatin1String(file.readAll());
-    a.setStyleSheet(styleSheet);
+    QString styleSheetEEUQ = QLatin1String(fileEEUQ.readAll());
+    a.setStyleSheet(styleSheet+styleSheetEEUQ);
+    file.close();
+    fileEEUQ.close();
   }
 
 
+
+/*
   theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
 QGroupBox {font-weight: bold;}\
 QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
 QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+*/
 
 
 //QTQTabWidget::pane{
@@ -166,6 +187,7 @@ QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239
   theRemoteService->logout();
   thread->quit();
 
+  GoogleAnalytics::EndSession();
   // done
   return res;
 }

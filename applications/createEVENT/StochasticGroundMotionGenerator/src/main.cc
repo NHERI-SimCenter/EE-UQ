@@ -1,3 +1,4 @@
+#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <memory>
@@ -8,6 +9,9 @@
 #include "eq_generator.h"
 
 using json = nlohmann::json;
+typedef std::chrono::duration<
+    int, std::ratio_multiply<std::chrono::hours::period, std::ratio<8> >::type>
+    Days; /* UTC: +8:00 */
 
 int main(int argc, char** argv) {
 
@@ -68,7 +72,7 @@ int main(int argc, char** argv) {
     std::ifstream bim_file(inputs.get_bim_file());
     json input_data;
     bim_file >> input_data;
-
+    
     for (json::iterator it = input_data["Events"].begin();
          it != input_data["Events"].end(); ++it) {
       try {
@@ -78,9 +82,32 @@ int main(int argc, char** argv) {
               inputs.get_model_name(), it->at("momentMagnitude"),
               it->at("ruptureDist"), it->at("vs30"), inputs.get_seed());
         } else {
+          // Calculate number of nanoseconds in time to use as seed
+          std::chrono::time_point<std::chrono::system_clock> now =
+              std::chrono::system_clock::now();
+          auto duration = now.time_since_epoch();
+          Days days = std::chrono::duration_cast<Days>(duration);
+          duration -= days;
+          auto hours = std::chrono::duration_cast<std::chrono::hours>(duration);
+          duration -= hours;
+          auto minutes =
+              std::chrono::duration_cast<std::chrono::minutes>(duration);
+          duration -= minutes;
+          auto seconds =
+              std::chrono::duration_cast<std::chrono::seconds>(duration);
+          duration -= seconds;
+          auto milliseconds =
+              std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+          duration -= milliseconds;
+          auto microseconds =
+              std::chrono::duration_cast<std::chrono::microseconds>(duration);
+          duration -= microseconds;
+          auto nanoseconds =
+              std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
+
           eq_generator = std::make_shared<EQGenerator>(
               inputs.get_model_name(), it->at("momentMagnitude"),
-              it->at("ruptureDist"), it->at("vs30"));
+              it->at("ruptureDist"), it->at("vs30"), nanoseconds.count());	  
         }
 
         auto time_history =

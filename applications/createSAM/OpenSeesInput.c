@@ -60,12 +60,12 @@ main(int argc, char **argv) {
     //
 
     rootBIM = json_load_file(filenameBIM, 0, &error);
-    json_t *theSI = json_object_get(rootBIM,"StructuralInformation");
+    json_t *theSIM = json_object_get(rootBIM,"StructuralInformation");
 
-    json_t *theNodes = json_object_get(theSI,"nodes");
+    json_t *theNodes = json_object_get(theSIM,"nodes");
 
     // check nodes exists
-    if (theSI == NULL ||  theNodes == NULL) {
+    if (theSIM == NULL ||  theNodes == NULL) {
       fprintf(stderr,"OpenSeesInput - no nodes section found ");    
       return -1;
     }
@@ -73,7 +73,7 @@ main(int argc, char **argv) {
     // loop over each node in nodes list, creating nodeMapping entry
     int index;
     json_t *intObj;
-    int floor = 1;
+    int floor = 0;  // ground floor floor 0
     char floorString[10];
     
     json_array_foreach(theNodes, index, intObj) {
@@ -94,14 +94,14 @@ main(int argc, char **argv) {
     int nStory = floor -2;
     json_object_set(rootSAM,"numStory",json_integer(nStory));
 
-    json_t *ndm = json_object_get(theSI, "ndm");
+    json_t *ndm = json_object_get(theSIM, "ndm");
     json_object_set(rootSAM,"ndm", ndm);
 
 
-    json_t *theRVs = json_object_get(theSI,"randomVar");
+    json_t *theRVs = json_object_get(theSIM,"randomVar");
 
     // check nodes exists
-    if (theSI == NULL ||  theRVs == NULL) {
+    if (theSIM == NULL ||  theRVs == NULL) {
       fprintf(stdout,"OpenSeesInput - no randomVar section found ");    
       return -1;
     }

@@ -307,7 +307,7 @@ DakotaResultsSampling::inputFromJSON(QJsonObject &jsonObject)
     // add 3 Widgets to TabWidget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 
@@ -564,7 +564,6 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
         std::istringstream is(inputLine);
         int col=0;
         spreadsheet->insertRow(rowCount);
-        qDebug() << "RowCOUNT: " << rowCount;
         for (int i=0; i<colCount+2; i++) {
             std::string data;
             is >> data;
@@ -612,11 +611,13 @@ int DakotaResultsSampling::processResults(QString filenameResults, QString filen
     // add summary, detained info and spreadsheet with chart to the tabed widget
     //
 
-    tabWidget->addTab(summary,tr("Summmary"));
+    tabWidget->addTab(summary,tr("Summary"));
     tabWidget->addTab(dakotaText, tr("General"));
     tabWidget->addTab(widget, tr("Data Values"));
 
     tabWidget->adjustSize();
+
+    emit sendErrorMessage(tr(""));
 
     return 0;
 }

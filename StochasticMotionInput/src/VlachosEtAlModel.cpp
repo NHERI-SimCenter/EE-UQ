@@ -80,7 +80,7 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
       tr("This model implements the method described in Vlachos et\nal. (2018) "
          "- \"Predictive model for site specific simulation of\nground motions "
          "based on earthquake scenarions\""));
-  model_description_->setStyleSheet("QLabel { color : gray; }");    
+  //model_description_->setStyleSheet("QLabel { color : gray; }");
 
   // Construct required layouts
   QVBoxLayout* layout = new QVBoxLayout();

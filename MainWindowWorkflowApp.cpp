@@ -36,7 +36,7 @@
 
 
 MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
-  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false)
+  : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false), isAutoLogin(false)
 {
     //
     // create a layout & widget for central area of this QMainWidget
@@ -117,6 +117,7 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
 
     loginWindow = new QWidget();
+    loginWindow->setWindowTitle("Login to DesignSafe");
     QGridLayout *loginLayout = new QGridLayout();
     SectionTitle *info=new SectionTitle();
     info->setText(tr("DesignSafe User Account Info:"));
@@ -138,21 +139,29 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     loginLayout->addWidget(loginSubmitButton,4,2);
     loginWindow->setLayout(loginLayout);
 
+    /*
     loginWindow->setStyleSheet("QComboBox {background: #FFFFFF;} \
   QGroupBox {font-weight: bold;}\
   QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
   QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
+  */
 
     //
     // connect some signals and slots
     //
 
     // login
-    connect(loginButton,SIGNAL(clicked(bool)),this,SLOT(onLoginButtonClicked()));
+    connect(loginButton,&QPushButton::clicked,this,[this](bool)
+    {
+        isAutoLogin = false;
+        onLoginButtonClicked();
+    });
     connect(loginSubmitButton,SIGNAL(clicked(bool)),this,SLOT(onLoginSubmitButtonClicked()));
     connect(this,SIGNAL(attemptLogin(QString, QString)),theRemoteInterface,SLOT(loginCall(QString, QString)));
     connect(theRemoteInterface,SIGNAL(loginReturn(bool)),this,SLOT(attemptLoginReturn(bool)));
-
+    connect(passwordLineEdit, &QLineEdit::returnPressed, this, [this](){
+        this->onLoginSubmitButtonClicked();
+    });
     // logout
     connect(this,SIGNAL(logout()),theRemoteInterface,SLOT(logoutCall()));
     connect(theRemoteInterface,SIGNAL(logoutReturn(bool)),this,SLOT(logoutReturn(bool)));
@@ -164,10 +173,6 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     connect(inputWidget,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
     connect(inputWidget,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
     connect(inputWidget,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
-
-    connect(theApp,SIGNAL(sendErrorMessage(QString)),this,SLOT(errorMessage(QString)));
-    connect(theApp,SIGNAL(sendStatusMessage(QString)),this,SLOT(statusMessage(QString)));
-    connect(theApp,SIGNAL(sendFatalMessage(QString)),this,SLOT(fatalMessage(QString)));
 
 
     // connect(runButton, SIGNAL(clicked(bool)),this,SLOT(onRunButtonClicked()));
@@ -205,10 +210,11 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     //
     // strings needed in about menu, use set methods to override
     //
-
-    feedbackURL = QString("https://www.designsafe-ci.org/help/new-ticket");
-    versionText = QString(tr("Version 1.0.2"));
-    citeText = QString(tr(""));
+    manualURL = QString("");
+    feedbackURL = QString("https://docs.google.com/forms/d/e/1FAIpQLSfh20kBxDmvmHgz9uFwhkospGLCeazZzL770A2GuYZ2KgBZBA/viewform");
+    featureRequestURL = QString("https://docs.google.com/forms/d/e/1FAIpQLScTLkSwDjPNzH8wx8KxkyhoIT7AI9KZ16Wg9TuW1GOhSYFOag/viewform");
+    versionText = QString("");
+    citeText = QString("");
     aboutText = QString(tr("This is a SeimCenter Workflow Applicatios"));
     copyrightText = QString("\
                             <p>\
@@ -449,78 +455,17 @@ void MainWindowWorkflowApp::createActions() {
     // check for yourself by changing Quit to drivel and it works
     QAction *exitAction = new QAction(tr("&Quit"), this);
     connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    // exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Exit the application"));
     fileMenu->addAction(exitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
-    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
     QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-    QAction *citeAct = helpMenu->addAction(tr("&How to cite"), this, &MainWindowWorkflowApp::cite);
+    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindowWorkflowApp::manual);
+    QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
+    QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindowWorkflowApp::submitFeatureRequest);
+    QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-
-    /*
- cutAction = new QAction(tr("Cu&t"), this);
- cutAction->setIcon(QIcon(":/images/cut.png"));
- cutAction->setShortcut(QKeySequence::Cut);
- cutAction->setStatusTip(tr("Cut the current selection's contents "
-                            "to the clipboard"));
- //connect(cutAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(cut()));
-
- copyAction = new QAction(tr("&Copy"), this);
- copyAction->setIcon(QIcon(":/images/copy.png"));
- copyAction->setShortcut(QKeySequence::Copy);
- copyAction->setStatusTip(tr("Copy the current selection's contents "
-                             "to the clipboard"));
- //connect(copyAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(copy()));
-
- pasteAction = new QAction(tr("&Paste"), this);
- pasteAction->setIcon(QIcon(":/images/paste.png"));
- pasteAction->setShortcut(QKeySequence::Paste);
- pasteAction->setStatusTip(tr("Paste the clipboard's contents into "
-                              "the current selection"));
- //connect(pasteAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(paste()));
-
- deleteAction = new QAction(tr("&Delete"), this);
- deleteAction->setShortcut(QKeySequence::Delete);
- deleteAction->setStatusTip(tr("Delete the current selection's "
-                               "contents"));
- //connect(deleteAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(del()));
-
- editMenu = menuBar()->addMenu(tr("&Edit"));
- editMenu->addAction(cutAction);
- editMenu->addAction(copyAction);
- editMenu->addAction(pasteAction);
- editMenu->addAction(deleteAction);
-
-
-
- selectRowAction = new QAction(tr("&Row"), this);
- selectRowAction->setStatusTip(tr("Select all the cells in the "
-                                  "current row"));
- //connect(selectRowAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectCurrentRow()));
-
- selectColumnAction = new QAction(tr("&Column"), this);
- selectColumnAction->setStatusTip(tr("Select all the cells in the "
-                                     "current column"));
- //connect(selectColumnAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectCurrentColumn()));
-
- selectAllAction = new QAction(tr("&All"), this);
- selectAllAction->setShortcut(QKeySequence::SelectAll);
- selectAllAction->setStatusTip(tr("Select all the cells in the "
-                                  "spreadsheet"));
- //connect(selectAllAction, SIGNAL(triggered()), inputWidget->getActiveSpreadsheet(), SLOT(selectAll()));
-
- selectSubMenu = editMenu->addMenu(tr("&Select"));
- selectSubMenu->addAction(selectRowAction);
- selectSubMenu->addAction(selectColumnAction);
- selectSubMenu->addAction(selectAllAction);
-*/
-
 }
 
 
@@ -570,6 +515,11 @@ MainWindowWorkflowApp::attemptLoginReturn(bool ok){
         //this->enableButtons();
 
         //theJobManager->up
+        if(isAutoLogin)
+        {
+            onRemoteRunButtonClicked();
+            isAutoLogin = false;
+        }
     } else {
         loggedIn = false;
 
@@ -607,7 +557,11 @@ MainWindowWorkflowApp::onRemoteRunButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteRunButtonClicked();
     else
-        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run a remote job"));
+    {
+        this->errorMessage(tr("You must log in to DesignSafe before you can run a remote job"));
+        this->onLoginButtonClicked();
+        isAutoLogin = true;
+    }
 }
 
 void
@@ -615,7 +569,7 @@ MainWindowWorkflowApp::onRemoteGetButtonClicked(){
     if (loggedIn == true)
         inputWidget->onRemoteGetButtonClicked();
     else
-        emit errorMessage(tr("You Must be LOGIN (button top right) before you can run retrieve remote data"));
+        this->errorMessage(tr("You Must LOGIN (button top right) before you can run retrieve remote data"));
 };
 
 void MainWindowWorkflowApp::onExitButtonClicked(){
@@ -676,17 +630,21 @@ void MainWindowWorkflowApp::about()
     msgBox.exec();
 }
 
-void MainWindowWorkflowApp::setAbout(QString &newAbout) {
-    aboutText = newAbout;
-}
-
-void MainWindowWorkflowApp::setVersion(QString &newVersion) {
-    versionText = newVersion;
-}
-
 void MainWindowWorkflowApp::submitFeedback()
 {
     QDesktopServices::openUrl(QUrl(feedbackURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::manual()
+{
+    QDesktopServices::openUrl(QUrl(manualURL, QUrl::TolerantMode));
+    //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
+}
+
+void MainWindowWorkflowApp::submitFeatureRequest()
+{
+    QDesktopServices::openUrl(QUrl(featureRequestURL, QUrl::TolerantMode));
     //QDesktopServices::openUrl(QUrl("https://www.designsafe-ci.org/help/new-ticket/", QUrl::TolerantMode));
 }
 
@@ -700,4 +658,47 @@ void MainWindowWorkflowApp::copyright()
   msgBox.exec();
 
 }
+
+void 
+MainWindowWorkflowApp::setCopyright(QString &newText)
+{
+  copyrightText = newText;
+}
+
+void 
+MainWindowWorkflowApp::setVersion(QString &newText)
+{
+  versionText = newText;
+}
+
+void 
+MainWindowWorkflowApp::setAbout(QString &newText)
+{
+  aboutText = newText;
+}
+
+void
+MainWindowWorkflowApp::setDocumentationURL(QString &newText)
+{
+  manualURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setFeedbackURL(QString &newText)
+{
+  feedbackURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setFeatureURL(QString &newText)
+{
+  featureRequestURL = newText;
+}
+
+void
+MainWindowWorkflowApp::setCite(QString &newText)
+{
+  citeText = newText;
+}
+
 

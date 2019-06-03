@@ -81,13 +81,14 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     QLabel *label = new QLabel();
     label->setText(QString("Loading Type"));
     eventSelection = new QComboBox();
+    eventSelection->setObjectName("LoadingTypeCombox");
     //    eventSelection->addItem(tr("Existing"));
     eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("Multiple PEER"));
-    eventSelection->addItem(tr("Hazard Based Event"));
-    eventSelection->addItem(tr("User Application"));
+    eventSelection->addItem(tr("Hazard Based Event"));    
     eventSelection->addItem(tr("Site Response"));
-    eventSelection->addItem(tr("Stochastic Ground Motion Model"));
+    eventSelection->addItem(tr("Stochastic Ground Motion"));
+    eventSelection->addItem(tr("User Application"));
 
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -117,9 +118,6 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theSHA_MotionWidget);
 
-    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theUserDefinedApplication);
-
     // Adding SRT widget
     theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
     theStackedWidget->addWidget(theRockOutcrop);
@@ -128,7 +126,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theStochasticMotionWidget);
 
-
+    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theUserDefinedApplication);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
@@ -171,6 +170,7 @@ EarthquakeEventSelection::inputFromJSON(QJsonObject &jsonObject) {
             return false;
         }
         theEvent = theValue.toObject();
+
     } else {
         qDebug() << "EarthquakeEventSelection::no Events";
         return false;
@@ -205,21 +205,20 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = theSHA_MotionWidget;
     }
 
-    else if(arg1 == "User Application") {
-        theStackedWidget->setCurrentIndex(3);
-        theCurrentEvent = theUserDefinedApplication;
-    }
-
     else if (arg1 == "Site Response") {
-      theStackedWidget->setCurrentIndex(4);
+      theStackedWidget->setCurrentIndex(3);
       theCurrentEvent = theRockOutcrop;
     }
 
-    else if (arg1 == "Stochastic Ground Motion Model") {
-      theStackedWidget->setCurrentIndex(5);
+    else if (arg1 == "Stochastic Ground Motion") {
+      theStackedWidget->setCurrentIndex(4);
       theCurrentEvent = theStochasticMotionWidget;
     }
 
+    else if(arg1 == "User Application") {
+        theStackedWidget->setCurrentIndex(5);
+        theCurrentEvent = theUserDefinedApplication;
+    }
     else {
         qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;
     }
@@ -244,6 +243,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     QJsonObject theEvent;
     QString type;
 
+    // from Events get the single event
 
     if (jsonObject.contains("Events")) {
         QJsonArray theEvents = jsonObject["Events"].toArray();
@@ -260,8 +260,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-
-    // if worked, just invoke method on new type
+    // based on application name value set event type
 
     int index = 0;
     if ((type == QString("Existing Events")) ||
@@ -271,15 +270,17 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
                (type == QString("ExistingPEER_Events"))) {
         index = 1;
     } else if (type == QString("Hazard Based Event")) {
-        index = 2;
-    } else if ((type == QString("User Application")) ||
-               (type == QString("UserDefinedApplication"))) {
-        index = 3;
+        index = 2; 
     } else if (type == QString("Site Response") ||
                type == QString("SiteResponse")) {
-        index = 4;
+        index = 3;
     } else if (type == QString("Stochastic Ground Motion Model") ||
+	       type == QString("Stochastic Ground Motion") ||
+	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
+        index = 4;
+    } else if ((type == QString("User Application")) ||
+               (type == QString("UserDefinedApplication"))) {
         index = 5;
     } else {
         return false;
@@ -287,7 +288,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
     eventSelection->setCurrentIndex(index);
 
-
+    // invoke inputAppDataFromJSON on new type
     if (theCurrentEvent != 0 && !theEvent.isEmpty()) {
         return theCurrentEvent->inputAppDataFromJSON(theEvent);
     }

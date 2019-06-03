@@ -62,9 +62,16 @@ shutil.copy(workflowDriverName, templateDir)
 shutil.copy("{}/dpreproSimCenter".format(scriptDir), os.getcwd())
 shutil.copy(bimName, "bim.j")
 shutil.copy(evtName, "evt.j")
-shutil.copy(samName, "sam.j")
+exists = os.path.isfile(samName)
+if exists:
+    shutil.copy(samName, "sam.j")
+
 shutil.copy(edpName, "edp.j")
-shutil.copy(simName, "sim.j")
+
+exists = os.path.isfile(simName)
+if exists:
+    shutil.copy(simName, "sim.j")
+
 shutil.copy("dakota.in", "../")
 os.chdir("../")
 

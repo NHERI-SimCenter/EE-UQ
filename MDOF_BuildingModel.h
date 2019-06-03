@@ -81,6 +81,11 @@ public slots:
    void on_inKx_editingFinished();
    void on_inKy_editingFinished();
    void on_inDamping_editingFinished();
+   //TODO: This code is not maintainable, we need to switch to Model-View Architecture
+   void on_inFyx_editingFinished();
+   void on_inFyy_editingFinished();
+   void on_inBx_editingFinished();
+   void on_inBy_editingFinished();
 
    // for selected floor edits
    void on_inFloorWeight_editingFinished();
@@ -111,6 +116,11 @@ private:
     QLineEdit *inKx;
     QLineEdit *inKy;
     QLineEdit *inDamping;
+    //TODO: This code is not maintainable, we need to switch to Model-View Architecture
+    QLineEdit *inFyx;
+    QLineEdit *inFyy;
+    QLineEdit *inBx;
+    QLineEdit *inBy;
 
     // selected values for selectedfloors and stories
     QGroupBox *floorMassFrame;

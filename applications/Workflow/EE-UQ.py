@@ -5,9 +5,9 @@ from __future__ import division, print_function
 import sys
 if sys.version.startswith('2'): 
     range=xrange
-
-#else:
-#    from past.builtins import basestring
+    string_types = basestring
+else:
+    string_types = str
 
 import json
 import os
@@ -44,8 +44,6 @@ def main(run_type, inputFile, applicationsRegistry):
         with open(applicationsRegistry, 'r') as data_file:
             registryData = json.load(data_file)
             # convert all relative paths to full paths
-			#This is no longer needed if we are specify the applications folder and joining the paths
-            #relative2fullpath(registryData) 
 
         A = 'Applications'
         Applications = dict()
@@ -129,7 +127,7 @@ def main(run_type, inputFile, applicationsRegistry):
                                 eventAppExe = Applications['EventApplications'].get(eventApplication)
                                 workflow_log(remoteAppDir)
                                 workflow_log(eventAppExe)
-                                eventAppExeLocal = os.path.join(localAppDir,eventAppExe)
+                                eventAppExeLocal = posixpath.join(localAppDir,eventAppExe)
                                 eventAppExeRemote = posixpath.join(remoteAppDir,eventAppExe)
                                 workflow_log(eventAppExeRemote)
                             else:
@@ -162,7 +160,7 @@ def main(run_type, inputFile, applicationsRegistry):
                 modelingAppData = modelingApp['ApplicationData']
                 if modelingApplication in Applications['ModelingApplications'].keys():
                     modelingAppExe = Applications['ModelingApplications'].get(modelingApplication)
-                    modelingAppExeLocal = os.path.join(localAppDir,modelingAppExe)
+                    modelingAppExeLocal = posixpath.join(localAppDir,modelingAppExe)
                     modelingAppExeRemote = posixpath.join(remoteAppDir,modelingAppExe)
                 else:
                     raise WorkFlowInputError('Modeling application %s not in registry' % modelingApplication)
@@ -188,10 +186,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 edpAppData = edpApp['ApplicationData']
                 if edpApplication in Applications['EDPApplications'].keys():
                     edpAppExe = Applications['EDPApplications'].get(edpApplication)
-                    edpAppExeLocal = os.path.join(localAppDir,edpAppExe)
+                    edpAppExeLocal = posixpath.join(localAppDir,edpAppExe)
                     edpAppExeRemote = posixpath.join(remoteAppDir,edpAppExe)
                 else:
-                    raise WorkFlowInputError('EDP application %s not in registry', edpApplication)
+                    raise WorkFlowInputError('EDP application {} not in registry'.format(edpApplication))
                 
             else:
                 raise WorkFlowInputError('Need an EDPApplication in EDP data')
@@ -213,10 +211,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 simAppData = simulationApp['ApplicationData']
                 if simulationApplication in Applications['SimulationApplications'].keys():
                     simAppExe = Applications['SimulationApplications'].get(simulationApplication)
-                    simAppExeLocal = os.path.join(localAppDir,simAppExe)
+                    simAppExeLocal = posixpath.join(localAppDir,simAppExe)
                     simAppExeRemote = posixpath.join(remoteAppDir,simAppExe)
                 else:
-                    raise WorkFlowInputError('Simulation application %s not in registry', simulationApplication)
+                    raise WorkFlowInputError('Simulation application {} not in registry'.format(simulationApplication))
 
             else:
                 raise WorkFlowInputError('Need an SimulationApplication in Simulation data')
@@ -235,10 +233,10 @@ def main(run_type, inputFile, applicationsRegistry):
                 uqAppData = uqApp['ApplicationData']
                 if uqApplication in Applications['UQApplications'].keys():
                     uqAppExe = Applications['UQApplications'].get(uqApplication)
-                    uqAppExeLocal = os.path.join(localAppDir,uqAppExe)
+                    uqAppExeLocal = posixpath.join(localAppDir,uqAppExe)
                     uqAppExeRemote = posixpath.join(localAppDir,uqAppExe)
                 else:
-                    raise WorkFlowInputError('UQ application %s not in registry', uqApplication)
+                    raise WorkFlowInputError('UQ application {} not in registry'.format(uqApplication))
 
             else:
                 raise WorkFlowInputError('Need a UQApplication in UQ data')
@@ -273,17 +271,14 @@ def main(run_type, inputFile, applicationsRegistry):
         driverFILE = open(driverFile, 'w')
 
         # get RV for event
-        eventAppDataList = [eventAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
+        eventAppDataList = ['"{}"'.format(eventAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE]
         if (eventAppExe.endswith('.py')):
             eventAppDataList.insert(0, 'python')
 
         for key in eventAppData.keys():
-            eventAppDataList.append(u'--' + key)
+            eventAppDataList.append(u"--" + key)
             value = eventAppData.get(key)
-            #if (os.path.exists(value) and not os.path.isabs(value)):
-            #    value = os.path.abspath(value)
-            eventAppDataList.append(u'' + str(value))
-            
+            eventAppDataList.append(u"" + value)
             
         for item in eventAppDataList:
             driverFILE.write('%s ' % item)
@@ -291,15 +286,15 @@ def main(run_type, inputFile, applicationsRegistry):
 
         eventAppDataList.append('--getRV')
         if (eventAppExe.endswith('.py')):
-            eventAppDataList[1] = eventAppExeLocal
+            eventAppDataList[1] = u""+eventAppExeLocal
         else:
-            eventAppDataList[0] = eventAppExeLocal
+            eventAppDataList[0] = u""+eventAppExeLocal
 
         command, result, returncode = runApplication(eventAppDataList)
         log_output.append([command, result, returncode])
 
         # get RV for building model
-        modelAppDataList = [modelingAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
+        modelAppDataList = ['"{}"'.format(modelingAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM',
                             samFILE]
 
         if (modelingAppExe.endswith('.py')):
@@ -325,7 +320,7 @@ def main(run_type, inputFile, applicationsRegistry):
 
 
         # get RV for EDP!
-        edpAppDataList = [edpAppExeRemote, '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
+        edpAppDataList = ['"{}"'.format(edpAppExeRemote), '--filenameBIM', bimFILE, '--filenameEVENT', eventFILE, '--filenameSAM', samFILE,
                           '--filenameEDP', edpFILE]
 
         if (edpAppExe.endswith('.py')):
@@ -349,7 +344,7 @@ def main(run_type, inputFile, applicationsRegistry):
         log_output.append([command, result, returncode])
 
         # get RV for Simulation
-        simAppDataList = [simAppExeRemote, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+        simAppDataList = ['"{}"'.format(simAppExeRemote), '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
                           '--filenameEDP', edpFILE, '--filenameSIM', simFILE]
 
         if (simAppExe.endswith('.py')):
@@ -376,18 +371,19 @@ def main(run_type, inputFile, applicationsRegistry):
         # perform the simulation
         driverFILE.close()
 
-        uqAppDataList = [uqAppExeLocal, '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
+        uqAppDataList = ['"{}"'.format(uqAppExeLocal), '--filenameBIM', bimFILE, '--filenameSAM', samFILE, '--filenameEVENT', eventFILE,
                          '--filenameEDP', edpFILE, '--filenameSIM', simFILE, '--driverFile', driverFile]
 
         if (uqAppExe.endswith('.py')):
             uqAppDataList.insert(0, 'python')
+            uqAppDataList[1] = uqAppExeLocal
 
         uqAppDataList.append(run_type)
 
         for key in uqAppData.keys():
             uqAppDataList.append(u'--' + key)
-            value = uqAppData.get(key)
-            if type(value) == str:
+            value = uqAppData.get(key)            
+            if isinstance(value, string_types):
                 uqAppDataList.append(u'' + value)
             else:
                 uqAppDataList.append(u'' + str(value))
@@ -402,16 +398,16 @@ def main(run_type, inputFile, applicationsRegistry):
             workflow_log('Setup run only. No simulation performed.')
 
     except WorkFlowInputError as e:
+        print('workflow error: %s' % e.value)
         workflow_log('workflow error: %s' % e.value)
         workflow_log(divider)
         exit(1)
 
     # unhandled exceptions are handled here
-    except:
-        raise
+    except Exception as e:
+        print('workflow error: %s' % e.value)
         workflow_log('unhandled exception... exiting')
-        exit(1)
-
+        raise
 
 if __name__ == '__main__':
 

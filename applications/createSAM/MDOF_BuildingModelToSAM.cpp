@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <Units.h>
+#include <iostream>
 
 //#include <string>
 //#include <sstream>
@@ -56,9 +58,15 @@ main(int argc, char **argv) {
 
   // ensure this is correct type
   json_t *SIM = json_object_get(rootBIM,"StructuralInformation");  
+
   json_t *typeSIM = json_object_get(SIM,"type");  
   if ((typeSIM == 0) || (strcmp("MDOF_BuildingModel",json_string_value(typeSIM)) != 0)) {
-    fprintf(stderr, "ERROR - MDOF_BuildingModelToSAM - incorrect type\n");    
+    if (typeSIM != 0) 
+      fprintf(stderr, "type: %s\n", json_string_value(typeSIM));
+    else
+      fprintf(stderr, "type: NONE PROVIDED\n");
+
+    fprintf(stderr, "ERROR - MDOF_BuildingModel - incorrect type\n");    
   }
   
   //
@@ -73,15 +81,26 @@ main(int argc, char **argv) {
   // if no --getRV print out model, otherwise not needed 
   //
 
-  if (argc == 7) {
+  if (strcmp("--getRV", argv[argc-1]) != 0) {
+    //  if (argc == 7) { NOT WORKING if WIndows Python file for linux
 
     // get ModelData
     json_t *modelData = json_object_get(SIM,"ModelData");  
 
+    //ReadBIMUnits
+    json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+    json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+    json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+    json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+    Units::UnitSystem bimUnits;
+    bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+    bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+
     // initialize some variablles
     double height = 0;
     double weight = 0;
-    double G = 386.41;
+    double G = Units::GetGravity(bimUnits);//used to be 386.41 before converting the units
+    std::cout << "G: " << G << std::endl;
     int ndf = 2;
     double floorHeight = 0.0;
     double buildingWeight = 0.0;
@@ -177,7 +196,7 @@ main(int argc, char **argv) {
   //
 
   json_t *mappingArray = json_array();
-  int nodeTag = 1;
+  int nodeTag = 1; // node tags start at 0
   char floorString[16];
 
   fprintf(stderr, "NUM NODES: %d\n",numNodes);
@@ -186,7 +205,9 @@ main(int argc, char **argv) {
       json_t *nodeEntry = json_object();
       json_object_set(nodeEntry,"node",json_integer(nodeTag));
       json_object_set(nodeEntry,"cline",json_string("1"));
-      sprintf(floorString,"%d",nodeTag);
+
+      sprintf(floorString,"%d",nodeTag-1); // floors start at 0
+
       //  itoa(floor, floorString, floor); NOT IN STANDARD
       json_object_set(nodeEntry,"floor",json_string(floorString));
 

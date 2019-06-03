@@ -56,7 +56,6 @@ int main(int argc, char **argv)
       
       // check earthquake
 
-
       json_t *type = json_object_get(value,"type");  
       const char *eventType = json_string_value(type);
 
@@ -73,7 +72,7 @@ int main(int argc, char **argv)
 	json_t *existingEventsArray = json_object_get(value,"Events");
 	int numExisting = json_array_size(existingEventsArray);      
 
-	json_dump_file(existingEventsArray,"DEBUG-ONE",0);   
+	//	json_dump_file(existingEventsArray,"DEBUG-ONE",0);   
 
 	if (numExisting > 1) {
 
@@ -288,13 +287,13 @@ int createSimCenterEvent(json_t *peerEvent) {
 
     ifstream fileIn(fileName);
 
-
     // read dT and numPoints
 
     bool foundT = false;
     string word;
     string line;
     while(!fileIn.eof() && foundT == false && fileIn >> word) {
+
       if (word.compare("NPTS=") == 0) {
 	foundT = true;
 	string NPTS;

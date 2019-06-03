@@ -65,7 +65,7 @@ public:
     QRadioButton   *button; // used to mark if Event intended for deletion
     QLineEdit      *theName; // a QLineEdit with name of Event (filename minus path and extension)
     QLineEdit      *file;    // full path to file name
-    LineEditRV    *factor;  // load factor
+    LineEditRV     *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
@@ -95,6 +95,7 @@ public slots:
    void addEvent(void);
    void removeEvents(void);
    void clear(void);
+   void loadEventsFromDir(void);
 
 private:
     QVBoxLayout *verticalLayout;

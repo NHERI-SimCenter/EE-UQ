@@ -80,13 +80,26 @@ void processEDPs(const char* filenameEDP, const char* dakotaOUT, int numRV, int 
   int edp = 0;
   json_array_foreach(eventsArray, index1, value1) {
     json_t *responsesArray = json_object_get(value1,"responses");  
-    json_array_foreach(responsesArray, index2, value2) {
-      json_t *sType = json_object();
-      json_t *sResults = json_array();
-      for (int i=0; i<numSample; i++)
-	json_array_append(sResults,json_real(data[i*numEDP+edp]));
-      json_object_set(value2,"scalar_data",sResults);
-      edp++;
+    if (responsesArray != NULL) { 
+      json_array_foreach(responsesArray, index2, value2) {
+	json_t *sType = json_object();
+	json_t *sResults = json_array();
+	for (int i=0; i<numSample; i++)
+	  json_array_append(sResults,json_real(data[i*numEDP+edp]));
+	json_object_set(value2,"scalar_data",sResults);
+	edp++;
+      }
+    }
+    json_t *userResponsesArray = json_object_get(value1,"userSpecificResponses");  
+    if (userResponsesArray != NULL) {
+      json_array_foreach(userResponsesArray, index2, value2) {
+	json_t *sType = json_object();
+	json_t *sResults = json_array();
+	for (int i=0; i<numSample; i++)
+	  json_array_append(sResults,json_real(data[i*numEDP+edp]));
+	json_object_set(value2,"scalar_data",sResults);
+	edp++;
+      }
     }
   }
 

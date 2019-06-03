@@ -1,0 +1,30 @@
+/* ---   Styles for EE-UQ    --- */
+/* --- Written: charles.wang --- */
+
+
+QComboBox {
+    min-width: 6em;
+    font-size: 12px;
+    padding-left: 10px;
+    margin-top: 2px;
+}
+
+QComboBox#EDPSelectionComboBox {
+    min-width: 16em;
+}
+
+QComboBox#LoadingTypeCombox {
+    min-width: 16em;
+}
+
+QComboBox#StochasticLoadingModel {
+    min-width: 10em;
+}
+
+QComboBox#RecordDatabaseSelector {
+    min-width: 17em;
+}
+
+
+
+

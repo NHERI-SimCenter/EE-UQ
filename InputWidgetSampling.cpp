@@ -164,6 +164,7 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
     uq["method"]=samplingMethod->currentText();
     uq["samples"]=numSamples->text().toInt();
     uq["seed"]=randomSeed->text().toDouble();
+    uq["evalID"] = QString("RV.DAKOTA_EVAL_ID"); // put in so application can get id during analysis
   //  result = theEdpWidget->outputToJSON(uq);
     jsonObject["samplingMethodData"]=uq;
     return result;
@@ -173,6 +174,9 @@ InputWidgetSampling::outputToJSON(QJsonObject &jsonObject)
 bool
 InputWidgetSampling::inputFromJSON(QJsonObject &jsonObject)
 {
+
+    return 0; //fmk
+
     bool result = false;
     this->clear();
 
@@ -248,7 +252,7 @@ InputWidgetSampling::inputAppDataFromJSON(QJsonObject &jsonObject)
     // get sampleingMethodData, if not present it's an error
 
     if (jsonObject.contains("ApplicationData")) {
-        QJsonObject uq = jsonObject["samplingMethodData"].toObject();
+        QJsonObject uq = jsonObject["ApplicationData"].toObject();
 
         //
         // get method, #sample and seed, if not present an error
