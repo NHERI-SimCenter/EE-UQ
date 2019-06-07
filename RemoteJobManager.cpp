@@ -264,7 +264,11 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
                 QString inputDir = inputPath.toArray().at(0).toString();
                 inputDir.remove(htmlInputDirectory);
                 dirToRemove << inputDir;
-            }
+            } else if (inputPath.isString()) {
+                QString inputDir = inputPath.toString();
+                inputDir.remove(htmlInputDirectory);
+                dirToRemove << inputDir;
+	    }
         }
         emit deleteJob(jobIDRequest, dirToRemove);
     }
@@ -289,12 +293,17 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
               QJsonObject inputObject = inputs.toObject();
               QJsonValue inputPath = inputObject["inputDirectory"];
               if (inputPath.isArray()) {
-                  inputDir = inputPath.toArray().at(0).toString();
-                  inputDir.remove(htmlInputDirectory);
-              }
+		inputDir = inputPath.toArray().at(0).toString();
+		inputDir.remove(htmlInputDirectory);
+	      } else if (inputPath.isString()) {
+                inputDir = inputPath.toString();
+                inputDir.remove(htmlInputDirectory);
+	      }
          }
-
+	 
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
+
+	
 
         //
         // create 3 temp file names neede to store remote data files locally

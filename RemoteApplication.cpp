@@ -467,7 +467,8 @@ RemoteApplication::uploadDirReturn(bool result)
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;
       job["processorsPerNode"]=nodeCount*numProcessorsPerNode;
-      job["requestedTime"]=runtimeLineEdit->text();
+      job["processorsOnEachNode"]=numProcessorsPerNode;
+      job["maxRunTime"]=runtimeLineEdit->text();
       
       // defaults (possibly from a parameters file)
       //Dakota-6.6.0.0u1
@@ -476,7 +477,8 @@ RemoteApplication::uploadDirReturn(bool result)
       
       job["appId"]=appLineEdit->text();
       job["memoryPerNode"]= "1GB";
-      job["archive"]="true";
+      job["archive"]=true;
+      job["archivePath"]="";
       job["archiveSystem"]="designsafe.storage.default";
       
       QJsonObject parameters;
