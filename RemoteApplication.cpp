@@ -155,7 +155,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     layout->addWidget(appDirLabel1,7,0);
 
     remoteAppDirName = new QLineEdit();
-    remoteAppDirName->setText("/home1/00477/tg457427/SimCenter/EE-UQ-V1.1");
+    remoteAppDirName->setText("/home1/00477/tg457427/SimCenterBackendApplications/June-2019");
     remoteAppDirName->setToolTip(tr("Location on TACC Stampede 2 where the SimCenter workflow applications exist(For Advanced Users)"));
 
     layout->addWidget(remoteAppDirName,7,1);
