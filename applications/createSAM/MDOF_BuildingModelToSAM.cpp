@@ -196,7 +196,7 @@ main(int argc, char **argv) {
   //
 
   json_t *mappingArray = json_array();
-  int nodeTag = 1;
+  int nodeTag = 1; // node tags start at 0
   char floorString[16];
 
   fprintf(stderr, "NUM NODES: %d\n",numNodes);
@@ -205,7 +205,9 @@ main(int argc, char **argv) {
       json_t *nodeEntry = json_object();
       json_object_set(nodeEntry,"node",json_integer(nodeTag));
       json_object_set(nodeEntry,"cline",json_string("1"));
-      sprintf(floorString,"%d",nodeTag);
+
+      sprintf(floorString,"%d",nodeTag-1); // floors start at 0
+
       //  itoa(floor, floorString, floor); NOT IN STANDARD
       json_object_set(nodeEntry,"floor",json_string(floorString));
 

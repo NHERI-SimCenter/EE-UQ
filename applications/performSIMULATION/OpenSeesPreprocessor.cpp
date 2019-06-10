@@ -67,7 +67,6 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 				      const char *SIM,
 				      const char *filenameTCL)
 {
-
   json_error_t error;
   fileBIM = BIM;
 
@@ -118,9 +117,14 @@ OpenSeesPreprocessor::createInputFile(const char *BIM,
 
       json_t *ndm = json_object_get(rootSAM,"ndm");
       NDM = json_integer_value(ndm);
-      if (NDM == 1) NDF = 1;
-      if (NDM == 2) NDF = 2;
-      if (NDM == 3) NDF = 3;
+      json_t *ndf = json_object_get(rootSAM,"ndf");
+      if (ndf == NULL) {
+	if (NDM == 1) NDF = 1;
+	if (NDM == 2) NDF = 2;
+	if (NDM == 3) NDF = 3;
+      } else {
+	NDF = json_integer_value(ndf);
+      }
       processedSAM = true;
     }
   }
@@ -230,6 +234,7 @@ OpenSeesPreprocessor::processSections(ofstream &s) {
 
 int 
 OpenSeesPreprocessor::processNodes(ofstream &s){
+  std::cerr << "ProcessingNodes\n";
   int index;
   json_t *node;
 
@@ -272,7 +277,7 @@ OpenSeesPreprocessor::processNodes(ofstream &s){
     s << "\n";
   }
 
-  int nodeTag = getNode("1","1");
+  int nodeTag = getNode("1","0"); // floor 0 column line 1
   s << "fix " << nodeTag;
   for (int i=0; i<NDF; i++)
      s << " " << 1;
@@ -283,6 +288,7 @@ OpenSeesPreprocessor::processNodes(ofstream &s){
 
 int 
 OpenSeesPreprocessor::processElements(ofstream &s){
+  std::cerr << "ProcessingElements\n";
   int index;
   json_t *element;
 
@@ -337,7 +343,6 @@ OpenSeesPreprocessor::processElements(ofstream &s){
   return 0;
 }
 
-
 int
 OpenSeesPreprocessor::processDamping(ofstream &s){
 
@@ -347,8 +352,8 @@ OpenSeesPreprocessor::processDamping(ofstream &s){
       s << "set xDamp " << damping << ";\n"
 	<< "set MpropSwitch 1.0;\n"
 	<< "set KcurrSwitch 0.0;\n"
-	<< "set KinitSwitch 0.0;\n"
-	<< "set KcommSwitch 1.0;\n"
+	<< "set KinitSwitch 1.0;\n"
+	<< "set KcommSwitch 0.0;\n"
 	<< "set nEigenI 1;\n";
       
       json_t *geometry = json_object_get(rootSAM,"Geometry");
@@ -385,7 +390,7 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 
   //
   // foreach EVENT
-  //   create load pattern
+  //   create load pattern(s)
   //   add recorders
   //   add analysis script
   //
@@ -400,8 +405,9 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
   json_t *edps = json_object_get(rootEDP,"EngineeringDemandParameters");  
 
   int numEvents = json_array_size(events);
-
+  std::cerr << "numEvents: " << numEvents << "\n";
   int numEDPs = json_array_size(edps);
+  std::cerr << "numEDPs: " << numEDPs << "\n";
 
   s << "loadConst -time 0.0\n";
 
@@ -415,7 +421,13 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 
     json_t *event = json_array_get(events,i);
     processEvent(s,event,numPatterns,numTimeSeries);
+
     const char *eventName = json_string_value(json_object_get(event,"name"));
+    const char *eventType = json_string_value(json_object_get(event,"type"));
+
+    bool seismicEventType = true;
+    if (strcmp(eventType,"Wind") == 0)
+      seismicEventType = false;
 
     // create recorder foreach EDP
     // loop through EDPs and find corresponding EDP
@@ -423,13 +435,11 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
     char edpEventName[50];
     
     for (int j=0; j<numEDPs; j++) {
-      // printf("EDP: %d\n",j);
 
       json_t *eventEDPs = json_array_get(edps, j);
       //      const char *edpEventName = json_string_value(json_object_get(eventEDPs,"name"));
       //      if (strcmp(edpEventName, eventName) == 0) {
       sprintf(edpEventName,"%d",j);
-
       
       //
       // check for additionalInput
@@ -451,13 +461,14 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
       if (eventEDP != NULL) {
       
 	int numResponses = json_array_size(eventEDP);
-	
+	  std::cerr << "numResponse: " << numResponses <<"\n";	
 	for (int k=0; k<numResponses; k++) {
-	  
 	  
 	  json_t *response = json_array_get(eventEDP, k);
 	  const char *type = json_string_value(json_object_get(response, "type"));
-	  
+
+	  std::cerr << "type: " << type <<"\n";
+
 	  if (strcmp(type,"max_abs_acceleration") == 0) {
 	    
 	    const char *cline = json_string_value(json_object_get(response, "cline"));
@@ -482,9 +493,11 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
 
 	    int startTimeSeries = 101;
 	    s << "recorder EnvelopeNode -file " << fileName;
-	    s << " -timeSeries ";
-	    for (int ii=0; ii<sizeDOFs; ii++)
-	      s << ii+startTimeSeries << " " ;
+	    if (seismicEventType == true) {
+	      s << " -timeSeries ";
+	      for (int ii=0; ii<sizeDOFs; ii++)
+		s << ii+startTimeSeries << " " ;
+	    }
 	    s << " -node " << nodeTag << " -dof ";
 	    for (int ii=0; ii<sizeDOFs; ii++)
 	      s << dof[ii] << " " ;
@@ -590,7 +603,7 @@ OpenSeesPreprocessor::processEvents(ofstream &s){
       }
     }
    
-
+    std::cerr << "\nDONE RECORDERS\n";
     // create analysis
     if (analysisType == 1) {
       s << "\n# Perform the analysis\n";
@@ -640,13 +653,17 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
   json_t *pattern;
 
   const char *eventType = json_string_value(json_object_get(event,"type"));
-
   //  std::cerr << "Processing Event type: " << eventType << "\n";
 
-  if (strcmp(eventType,"Seismic") == 0) {
+  if (strcmp(eventType,"Seismic") == 0 || strcmp(eventType,"Wind") == 0) {
     analysisType = 1;
-    numSteps = json_integer_value(json_object_get(event,"numSteps"));
-    dT = json_number_value(json_object_get(event,"dT"));
+    json_t*numStepJO = json_object_get(event,"numSteps");
+    json_t*dtJO = json_object_get(event,"dT");
+    if (dtJO == NULL || numStepJO == NULL) {
+      std::cerr << "ERROR - no numSteps or dT key-pair\n";
+    }
+    numSteps = json_integer_value(numStepJO);
+    dT = json_number_value(dtJO);
   } else
     return -1;
 
@@ -660,18 +677,58 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       eventFactor = json_number_value(eventFactorObj);
   }
 
+  //First let's read units from bim
+  json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
+  json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
+  json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
+  json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
+
+  
+  //Parsing BIM Units
+  Units::UnitSystem bimUnits;
+  bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
+  bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
+
+  // loop over time series & create the time series
   int index = 0;
   json_t *timeSeriesArray = json_object_get(event,"timeSeries");
   int numSeriesArray = json_array_size(timeSeriesArray);
-  //  printf("NUM SERIES: %d\n",numSeriesArray);
-  //  json_array_foreach(timeSeriesArray, index, timeSeries) {
+
   for (int i=0; i<numSeriesArray; i++) {
     timeSeries = json_array_get(timeSeriesArray, i);
-					
-    //    if (index < NDM) {
-      const char *subType = json_string_value(json_object_get(timeSeries,"type"));        
-      if (strcmp(subType,"Value")  == 0) {
+    
+    //We need to check units for conversion
+    double unitConversionFactor = 1.0;
+    
+    json_t* evtUnitsJson = json_object_get(event, "units");
+    Units::UnitSystem eventUnits;
+    
+    if(NULL != evtUnitsJson)
+      {
+	json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
+	if(NULL != evtLengthJson)
+	  eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
+      
+	json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
+	if(NULL != evtTimeJson)
+	  eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
+	
+	unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
+      }
+    else
+      {
+	std::cerr << "Warning! Event file has no units!, assuming acceleration and units in g units" << std::endl;
+	eventUnits.lengthUnit = Units::LengthUnit::Meter;
+	eventUnits.timeUnit = Units::TimeUnit::Second;
+	
+	unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
+      }
+    
+    const char *subType = json_string_value(json_object_get(timeSeries,"type"));        
+    std::cerr << "subType: " << subType << "\n";
 
+    if (strcmp(subType,"Value")  == 0) {
+      
 	double seriesFactor = 1.0;
 	json_t *seriesFactorObj = json_object_get(timeSeries,"factor");
 	if (seriesFactorObj != NULL) {
@@ -683,54 +740,14 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
 	json_t *data = json_object_get(timeSeries,"data");
 
 	s << "timeSeries Path " << numSeries << " -dt " << dt << " -factor " << seriesFactor;
-	s << " -values \{ ";
-	
+	s << " -values \{ ";	
 
-	//We need to check units for conversion
-	double unitConversionFactor = 1.0;
-	
-	//First let's read units from bim
-	json_t* genInfoJson = json_object_get(rootBIM, "GeneralInformation");
-	json_t* bimUnitsJson = json_object_get(genInfoJson, "units");
-	json_t* bimLengthJson = json_object_get(bimUnitsJson, "length");
-	json_t* bimTimeJson = json_object_get(bimUnitsJson, "time");
-	
-	//Parsing BIM Units
-	Units::UnitSystem bimUnits;
-	bimUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(bimLengthJson));
-	bimUnits.timeUnit = Units::ParseTimeUnit(json_string_value(bimTimeJson));
-	
-	json_t* evtUnitsJson = json_object_get(event, "units");
-	Units::UnitSystem eventUnits;
-	
-	if(NULL != evtUnitsJson)
-	  {
-	    json_t* evtLengthJson = json_object_get(evtUnitsJson, "length");
-	    if(NULL != evtLengthJson)
-	      eventUnits.lengthUnit = Units::ParseLengthUnit(json_string_value(evtLengthJson));
-	    
-	    json_t* evtTimeJson = json_object_get(evtUnitsJson, "time");
-	    if(NULL != evtTimeJson)
-	      eventUnits.timeUnit = Units::ParseTimeUnit(json_string_value(evtTimeJson));
-	    
-	    unitConversionFactor = Units::GetAccelerationFactor(eventUnits, bimUnits);
-	  }
-	else
-	  {
-	    std::cerr << "Warning! Event file has no units!, assuming acceleration is in g units" << std::endl;
-	    eventUnits.lengthUnit = Units::LengthUnit::Meter;
-	    eventUnits.timeUnit = Units::TimeUnit::Second;
-	    
-	    unitConversionFactor = 9.81 * Units::GetAccelerationFactor(eventUnits, bimUnits);
-	  }
-	
 	json_t *dataV;
 	int dataIndex;
 
 	//
 	// write data to file, multiply it by conversion fcator and eventFactor
 	//
-
 
 	json_array_foreach(data, dataIndex, dataV) {
 	  s << json_number_value(dataV) * unitConversionFactor * eventFactor << " " ;
@@ -754,8 +771,8 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
   for (int i=0; i<numPatternArray; i++) {
     pattern = json_array_get(patternArray, i);
 
-    const char *subType = json_string_value(json_object_get(pattern,"type"));        
-    if (strcmp(subType,"UniformAcceleration")  == 0) {
+    const char *patternType = json_string_value(json_object_get(pattern,"type"));        
+    if (strcmp(patternType,"UniformAcceleration")  == 0) {
       int dirn = json_integer_value(json_object_get(pattern,"dof"));
             
       int series = 0;
@@ -772,10 +789,46 @@ OpenSeesPreprocessor::processEvent(ofstream &s,
       int seriesTag = timeSeriesList[name];
       s << "pattern UniformExcitation " << numPattern << " " << dirn;
       s << " -accel " << series << "\n";
+      
+      s << "set numStep " << numSteps << "\n";
+      s << "set dt " << dT << "\n";
+      
+      numPattern++;
+    }
+
+
+    else if (strcmp(patternType,"WindFloorLoad") == 0) {
+      std::cerr << "WINDFLOORLOAD\n";
+      int dof = json_integer_value(json_object_get(pattern,"dof"));
+      string floor = json_string_value(json_object_get(pattern,"floor"));
+
+      int series = 0;
+      string name(json_string_value(json_object_get(pattern,"timeSeries")));
+      it = timeSeriesList.find(name);
+      if (it != timeSeriesList.end())
+	series = it->second;
+      
+      if (series == 0) {
+	
+      }
+
+      int nodeTag = this->getNode("1",floor.c_str());	          
+
+      int seriesTag = timeSeriesList[name];
+      s << "pattern Plain " << numPattern << " " << series << " {\n";
+      s << "   load " << nodeTag << " ";
+      for (int i=0; i<NDF; i++) {
+	if (dof == (i+1)) //i+1 as OpenSees starts with 0 indexing
+	  s << " 1.0 ";
+	else
+	  s << " 0.0 ";
+      }
+	  
+      s << "\n}\n";
 
       s << "set numStep " << numSteps << "\n";
       s << "set dt " << dT << "\n";
-
+      
       numPattern++;
     }
   }
@@ -804,7 +857,6 @@ OpenSeesPreprocessor:: getNode(const char * cline,const char * floor){
   }
   return -1;
 }
-
 
 
 int main(int argc, char **argv)

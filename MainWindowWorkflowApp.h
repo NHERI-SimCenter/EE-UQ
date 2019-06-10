@@ -26,8 +26,10 @@ public:
     ~MainWindowWorkflowApp();
     void setCopyright(QString &copyright);
     void setVersion(QString &version);
+    void setDocumentationURL(QString &version);
     void setAbout(QString &about);
-    void setFeedback(QString &feedback);
+    void setFeedbackURL(QString &feedback);
+    void setFeatureURL(QString &featureRequest);
     void setCite(QString &cite);
 
  protected:
@@ -45,7 +47,9 @@ public:
     bool saveAs();
 
     void about();
+    void manual();
     void submitFeedback();
+    void submitFeatureRequest();
     void version();
     void copyright();
     void cite();
@@ -103,7 +107,9 @@ public:
     QString versionText;
     QString aboutText;
     QString copyrightText;
+    QString manualURL;
     QString feedbackURL;
+    QString featureRequestURL;
     QString citeText;
     bool isAutoLogin;
 };

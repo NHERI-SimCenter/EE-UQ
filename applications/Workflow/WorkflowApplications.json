@@ -49,6 +49,16 @@
         "ApplicationSpecificInputs":[]
       },
       {
+        "Name": "StochasticWindInput-KwonKareem2006",
+        "ExecutablePath": "applications/createEVENT/NOWS1",
+        "ApplicationSpecificInputs":[]
+      },
+      {
+        "Name": "DEDM_HRP",
+        "ExecutablePath": "applications/createEVENT/DEDM_HRP.py",
+        "ApplicationSpecificInputs":[]
+      },
+      {
         "Name": "StochasticGroundMotion",
         "ExecutablePath": "applications/createEVENT/StochasticGroundMotion",
         "ApplicationSpecificInputs":["modelName", "seed"]
@@ -136,6 +146,16 @@
         "ApplicationSpecificInputs": []
       },
       {
+        "Name": "StandardWindEDP",
+        "ExecutablePath": "applications/createEDP/StandardWindEDP",
+        "ApplicationSpecificInputs": []
+      },
+      {
+        "Name": "StandardGMT_EDP",
+        "ExecutablePath": "applications/createEDP/StandardGMT_EDP",
+        "ApplicationSpecificInputs": []
+      },
+      {
         "Name": "UserDefinedEDP",
         "ExecutablePath": "applications/createEDP/UserDefinedEDP",
         "ApplicationSpecificInputs": []
@@ -177,6 +197,10 @@
       {
         "Name": "OpenSees-Simulation",
         "ExecutablePath": "applications/performSIMULATION/OpenSeesSimulation.py"
+      },
+      {
+        "Name": "ExtractPGA",
+        "ExecutablePath": "applications/performSIMULATION/ExtractPGA"
       }
     ]
   },

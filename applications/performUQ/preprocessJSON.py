@@ -65,6 +65,9 @@ numDiscreteDesignSetString = 0
 discreteDesignSetStringName=[]
 discreteDesignSetStringValues =[]
 
+numResultFiles = 0
+outputResultFiles = []
+
 def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
     global numRandomVariables
@@ -76,6 +79,9 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     global numDiscreteDesignSetString
     global discreteDesignSetStringName
     global discreteDesignSetStringValues
+
+    global outputResultFiles
+    global numResultFiles
 
     #
     # get UQ method data
@@ -94,15 +100,25 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     numSamples=samplingData["samples"];
     seed = samplingData["seed"];
 
+    #
+    # get result files
+    #
+
+    if 'ResultFiles' in data:
+        numResultFiles = 1;
+        outputResultFiles.append("EVENT.json");
+    else:
+        numResultFiles = 0;
+
     # 
     # parse the data
     #
 
-    parseFileForRV(bimName)
-    parseFileForRV(evtName)
-    parseFileForRV(samName)
-    parseFileForRV(simName)
-    parseFileForRV(edpName)
+    bimExists = parseFileForRV(bimName)
+    evtExists = parseFileForRV(evtName)
+    samExists = parseFileForRV(samName)
+    simExists = parseFileForRV(simName)
+    edpExists = parseFileForRV(edpName)
 
     #Setting Workflow Driver Name
     workflowDriverName = 'workflow_driver'
@@ -321,7 +337,12 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
 
             elif(edp["type"] == "max_drift"):
                 edpAcronym = "PID"
-                floor = edp["floor1"]
+                floor = edp["floor2"]
+                known = True
+
+            elif(edp["type"] == "max_pressure"):
+                edpAcronym = "PSP"
+                floor = edp["floor2"]
                 known = True
 
             elif(edp["type"] == "max_rel_disp"):
@@ -348,10 +369,10 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
     f = open(workflowDriverName, 'w')
 
     # want to dprepro the files with the random variables
-    f.write('perl dpreproSimCenter params.in bim.j ' + bimName + '\n')
-    f.write('perl dpreproSimCenter params.in sam.j ' + samName + '\n')
-    f.write('perl dpreproSimCenter params.in evt.j ' + evtName + '\n')
-    f.write('perl dpreproSimCenter params.in edp.j ' + edpName + '\n')
+    if bimExists == True: f.write('perl dpreproSimCenter params.in bim.j ' + bimName + '\n')
+    if samExists == True: f.write('perl dpreproSimCenter params.in sam.j ' + samName + '\n')
+    if evtExists == True: f.write('perl dpreproSimCenter params.in evt.j ' + evtName + '\n')
+    if edpExists == True: f.write('perl dpreproSimCenter params.in edp.j ' + edpName + '\n')
 
     scriptDir = os.path.dirname(os.path.realpath(__file__))
 
@@ -364,11 +385,15 @@ def preProcessDakota(bimName, evtName, samName, edpName, simName, driverFile):
             print(line)
 
     f.write('#comment to fix a bug\n')
+    files = " "
+    files =  files + "".join([str(i) for i in outputResultFiles])
+    numR = str(numResultFiles)
     if (runType == "local"):
-        f.write('"{}'.format(scriptDir) + '/extractEDP" ' + edpName + ' results.out \n')
+        f.write('"{}'.format(scriptDir) + '/extractEDP" ' + edpName + ' results.out ' + bimName + ' ' + numR + ' ' + files + '\n')
+
     else:
         extractEDPCommand = posixpath.join(remoteDir, 'applications/performUQ/extractEDP')
-        f.write(extractEDPCommand + ' ' + edpName + ' results.out \n')
+        f.write(extractEDPCommand + ' ' + edpName + ' results.out ' + bimName + ' ' + numR + ' ' + files + '\n')
 
     # Run 
     #f.write('rm -f *.com *.done *.dat *.log *.sta *.msg')
@@ -430,7 +455,16 @@ def parseFileForRV(fileName):
     global normalDiscreteDesignSetName
     global normalDiscreteSetValues
 
-    print(fileName)
+
+    global numResultFiles
+    global outputResultFiles
+
+    exists = os.path.isfile(fileName)
+
+    print(exists)
+
+    if not exists:
+        return False
 
     with open(fileName,'r') as data_file:
         data = json.load(data_file)
@@ -498,4 +532,10 @@ def parseFileForRV(fileName):
                     numDiscreteDesignSetString += 1
                     numRandomVariables += 1
 
+        if data.get("resultFiles"):
+            for k in data["resultFiles"]:
+                outputResultFiles.append(k)
+                numResultFiles += 1
+                print(k)
 
+    return True

@@ -126,7 +126,7 @@ OpenSeesPostprocessor::processEDPs(){
 	const char *fileName = fileString.c_str();
 	
 	//
-	// opencfile & process data into a json array called: data
+	// open file & process data into a json array called: data
 	//
 
 	json_t *data = json_array();
@@ -285,7 +285,6 @@ OpenSeesPostprocessor::processEDPs(){
 	json_t *data = json_array();	
 	json_array_append(data, json_real(valueResults));
 	json_object_set(response,"scalar_data",data);	  
-
       }
     }
   }
