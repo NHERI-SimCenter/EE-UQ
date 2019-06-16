@@ -53,7 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QProcess>
 #include <QStringList>
 #include <QSettings>
-`
+
 //#include <AgaveInterface.h>
 #include <QDebug>
 #include <QDir>
