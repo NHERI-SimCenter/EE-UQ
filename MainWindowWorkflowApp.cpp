@@ -33,7 +33,7 @@
 #include <QLineEdit>
 
 #include <RemoteService.h>
-
+#include <SimCenterPreferences.h>
 
 MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget *theApp, RemoteService *theService, QWidget *parent)
   : QMainWindow(parent), theRemoteInterface(theService), inputWidget(theApp), loggedIn(false), isAutoLogin(false)
@@ -82,8 +82,6 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
     header->appendLayout(layoutLogin);
 
     layout->addWidget(inputWidget);
-
-    // layout->addStretch();
 
     //
     // add run, run-DesignSafe and exit buttons into a new widget for buttons
@@ -459,14 +457,18 @@ void MainWindowWorkflowApp::createActions() {
     fileMenu->addAction(exitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    QAction *aboutAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
-    QAction *infoAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
+    QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
+    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindowWorkflowApp::preferences);
     QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindowWorkflowApp::manual);
     QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
     QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindowWorkflowApp::submitFeatureRequest);
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
+
+    thePreferences = new SimCenterPreferences(this);
 }
+
 
 
 
@@ -620,6 +622,7 @@ void MainWindowWorkflowApp::cite()
     msgBox.exec();
 }
 
+
 void MainWindowWorkflowApp::about()
 {
     QMessageBox msgBox;
@@ -628,6 +631,11 @@ void MainWindowWorkflowApp::about()
     QGridLayout *layout = (QGridLayout*)msgBox.layout();
     layout->addItem(theSpacer, layout->rowCount(),0,1,layout->columnCount());
     msgBox.exec();
+}
+
+void MainWindowWorkflowApp::preferences()
+{
+  thePreferences->show();
 }
 
 void MainWindowWorkflowApp::submitFeedback()

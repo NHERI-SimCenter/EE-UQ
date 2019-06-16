@@ -53,6 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QSettings>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -362,7 +363,14 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QProcess *proc = new QProcess();
     QStringList args{pySCRIPT, "set_up",inputFile,registryFile};
-    proc->execute("python",args);
+    //    proc->execute("python",args);
+    QString python;
+    QSettings settings("SimCenter", "Common"); //These names will need to be constants to be shared
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) {
+      python = pythonLocationVariant.toString();
+    }
+    proc->execute(python,args);
 
     /*
 #ifdef Q_OS_WIN
