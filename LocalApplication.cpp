@@ -298,14 +298,16 @@ for (int i = 0; i < files.size(); i++) {
     // proc->execute("python",args);
 
 
-    QString python;
+    QString python = QString("python");
     QSettings settings("SimCenter", "Common"); //These names will need to be constants to be shared
-    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
     if (pythonLocationVariant.isValid()) {
       python = pythonLocationVariant.toString();
     }
 
 #ifdef Q_OS_WIN
+    python = QString("\"") + python + QString("\"");
+    qDebug() << python;
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
     proc->execute(python,args);
 
