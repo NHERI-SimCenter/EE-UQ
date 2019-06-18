@@ -52,6 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QCoreApplication>
 #include <QProcess>
 #include <QStringList>
+#include <QSettings>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -79,6 +80,7 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 
     QPushButton *workDirButton = new QPushButton();
     workDirButton->setText("Browse");
+
     workDirButton->setToolTip(tr("Select the Working Directory"));
     runLayout->addWidget(workDirButton,1,2);
 
@@ -296,14 +298,23 @@ for (int i = 0; i < files.size(); i++) {
     // proc->execute("python",args);
 
 
+    QString python = QString("python");
+    QSettings settings("SimCenter", "Common"); //These names will need to be constants to be shared
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
+    if (pythonLocationVariant.isValid()) {
+      python = pythonLocationVariant.toString();
+    }
+
 #ifdef Q_OS_WIN
+    python = QString("\"") + python + QString("\"");
+    qDebug() << python;
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
-    proc->execute("python",args);
+    proc->execute(python,args);
 
 #else
     // note the above not working under linux because basrc not being called so no env variables!!
 
-    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
+    QString command = QString("source $HOME/.bash_profile; \"") + python + QString("\" " ) + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
             registryFile;
 
     qDebug() << "PYTHON COMMAND: " << command;    

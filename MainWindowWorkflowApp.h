@@ -14,7 +14,7 @@ class WorkflowAppWidget;
 class SimCenterWidget;
 class QPushButton;
 class QLabel;
-
+class SimCenterPreferences;
 
 
 class MainWindowWorkflowApp : public QMainWindow
@@ -51,6 +51,7 @@ public:
     void submitFeedback();
     void submitFeatureRequest();
     void version();
+    void preferences();
     void copyright();
     void cite();
 
@@ -112,6 +113,8 @@ public:
     QString featureRequestURL;
     QString citeText;
     bool isAutoLogin;
+
+    SimCenterPreferences *thePreferences;
 };
 
 #endif // MAIN_WINDOW_WORKFLOW_APP_H

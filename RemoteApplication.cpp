@@ -53,6 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QSettings>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -155,7 +156,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     layout->addWidget(appDirLabel1,7,0);
 
     remoteAppDirName = new QLineEdit();
-    remoteAppDirName->setText("/home1/00477/tg457427/SimCenter/EE-UQ-V1.1");
+    remoteAppDirName->setText("/home1/00477/tg457427/SimCenterBackendApplications/June-2019");
     remoteAppDirName->setToolTip(tr("Location on TACC Stampede 2 where the SimCenter workflow applications exist(For Advanced Users)"));
 
     layout->addWidget(remoteAppDirName,7,1);
@@ -362,7 +363,14 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 
     QProcess *proc = new QProcess();
     QStringList args{pySCRIPT, "set_up",inputFile,registryFile};
-    proc->execute("python",args);
+    //    proc->execute("python",args);
+    QString python;
+    QSettings settings("SimCenter", "Common"); //These names will need to be constants to be shared
+    QVariant  pythonLocationVariant = settings.value("pythonLocation");
+    if (pythonLocationVariant.isValid()) {
+      python = pythonLocationVariant.toString();
+    }
+    proc->execute(python,args);
 
     /*
 #ifdef Q_OS_WIN
@@ -467,7 +475,8 @@ RemoteApplication::uploadDirReturn(bool result)
       int numProcessorsPerNode = numProcessorsLineEdit->text().toInt();
       job["nodeCount"]=nodeCount;
       job["processorsPerNode"]=nodeCount*numProcessorsPerNode;
-      job["requestedTime"]=runtimeLineEdit->text();
+      job["processorsOnEachNode"]=numProcessorsPerNode;
+      job["maxRunTime"]=runtimeLineEdit->text();
       
       // defaults (possibly from a parameters file)
       //Dakota-6.6.0.0u1
@@ -476,7 +485,8 @@ RemoteApplication::uploadDirReturn(bool result)
       
       job["appId"]=appLineEdit->text();
       job["memoryPerNode"]= "1GB";
-      job["archive"]="true";
+      job["archive"]=true;
+      job["archivePath"]="";
       job["archiveSystem"]="designsafe.storage.default";
       
       QJsonObject parameters;
