@@ -139,6 +139,7 @@ private:
 
     CURL *hnd;
     struct curl_slist *slist1;
+    struct curl_slist *slist2;
 
     QString tenantURL;
     QString appClient;
@@ -146,6 +147,7 @@ private:
     QString username;
     QString password;
     QString appDirName;
+    QString bearer;
 
     bool slotNeededLocally;
     bool slotResultBool;
