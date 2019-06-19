@@ -31,6 +31,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QSettings>
 
 #include <RemoteService.h>
 #include <SimCenterPreferences.h>
@@ -205,9 +206,26 @@ MainWindowWorkflowApp::MainWindowWorkflowApp(QString appName, WorkflowAppWidget 
 
     inputWidget->setMainWindow(this);
 
+    
+    //
+    // if have save login and passowrd fill in lineedits
+    //
+ 
+    QSettings settings("SimCenter", "Common");
+    QVariant  loginName = settings.value("loginAgave");
+    QVariant  loginPassword = settings.value("passwordAgave");
+    if (loginName.isValid()) {
+        nameLineEdit->setText(loginName.toString());      
+    }
+    if (loginPassword.isValid()) {
+        passwordLineEdit->setText(loginPassword.toString());      
+    }
+
+
     //
     // strings needed in about menu, use set methods to override
     //
+
     manualURL = QString("");
     feedbackURL = QString("https://docs.google.com/forms/d/e/1FAIpQLSfh20kBxDmvmHgz9uFwhkospGLCeazZzL770A2GuYZ2KgBZBA/viewform");
     featureRequestURL = QString("https://docs.google.com/forms/d/e/1FAIpQLScTLkSwDjPNzH8wx8KxkyhoIT7AI9KZ16Wg9TuW1GOhSYFOag/viewform");
@@ -466,7 +484,7 @@ void MainWindowWorkflowApp::createActions() {
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
 
-    thePreferences = new SimCenterPreferences(this);
+    thePreferences = SimCenterPreferences::getInstance(this);
 }
 
 
@@ -514,6 +532,12 @@ MainWindowWorkflowApp::attemptLoginReturn(bool ok){
         loginWindow->hide();
         loggedIn = true;
         loginButton->setText("Logout");
+
+
+	QSettings settings("SimCenter", "Common");
+	settings.setValue("loginAgave", nameLineEdit->text());
+	settings.setValue("passwordAgave", passwordLineEdit->text());
+
         //this->enableButtons();
 
         //theJobManager->up

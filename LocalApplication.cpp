@@ -53,8 +53,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QProcess>
 #include <QStringList>
 #include <QSettings>
-
-//#include <AgaveInterface.h>
+#include <SimCenterPreferences.h>
+#include <AgaveCurl.h>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
@@ -85,9 +85,11 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     runLayout->addWidget(workDirButton,1,2);
 
     //Workflow Applications Directory
+    /*
     QLabel *appDirLabel = new QLabel();
     appDirLabel->setText(QString("Applications Directory:"));
     runLayout->addWidget(appDirLabel,2,0);
+
 
     appDirName = new QLineEdit();
     appDirName->setText(QCoreApplication::applicationDirPath());
@@ -98,6 +100,7 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
     appsDirButton->setText("Browse");
     appsDirButton->setToolTip(tr("Select the Workflow Applications Directory"));
     runLayout->addWidget(appsDirButton,2,2);
+    */
 
     //Run Button
     QPushButton *pushButton = new QPushButton();
@@ -121,11 +124,13 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
         if (newValue.contains('\\'))
             workingDirName->setText(newValue.replace('\\','/'));
     });
-
+    
+    /*
     connect(appDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             appDirName->setText(newValue.replace('\\','/'));
     });
+    */
 
     //Browse buttons
     connect(workDirButton, &QPushButton::clicked, this, [this](){
@@ -143,8 +148,9 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
             workingDirName->setText(selectedDir);
     });
 
+    /*
     connect(appsDirButton, &QPushButton::clicked, this, [this](){
-        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        QString existingDir = QCoreApplication::applicationDirPath();
 
         if(QDir(appDirName->text()).exists())
             existingDir = appDirName->text();
@@ -157,6 +163,7 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
         if(!selectedDir.isEmpty())
             appDirName->setText(selectedDir);
     });
+    */
 
     /*
     this->setStyleSheet("QComboBox {background: #FFFFFF;} \
@@ -170,8 +177,11 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 bool
 LocalApplication::outputToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["localAppDir"]=appDirName->text();
-    jsonObject["remoteAppDir"]=appDirName->text();
+  //    jsonObject["localAppDir"]=appDirName->text();
+  //    jsonObject["remoteAppDir"]=appDirName->text();
+  jsonObject["localAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+  jsonObject["remoteAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+
     jsonObject["workingDir"]=workingDirName->text();
     jsonObject["runType"]=QString("local");
 
@@ -180,7 +190,8 @@ LocalApplication::outputToJSON(QJsonObject &jsonObject)
 
 bool
 LocalApplication::inputFromJSON(QJsonObject &dataObject) {
-
+  
+  /*
     if (dataObject.contains("localAppDir")) {
         QJsonValue theName = dataObject["localAppDir"];
         if(QDir(theName.toString()).exists())
@@ -190,6 +201,7 @@ LocalApplication::inputFromJSON(QJsonObject &dataObject) {
 
     } else
         return false;
+  */
 
     if (dataObject.contains("workingDir")) {
         QJsonValue theName = dataObject["workingDir"];
@@ -220,8 +232,11 @@ LocalApplication::onRunButtonPressed(void)
             emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
+    
 
-   QString appDir = appDirName->text();
+    //   QString appDir = appDirName->text();
+    QString appDir = SimCenterPreferences::getInstance()->getAppDir();
+
    QDir dirApp(appDir);
    if (!dirApp.exists()) {
        emit sendErrorMessage(QString("The application directory, ") + appDir +QString(" specified does not exist!"));
@@ -243,7 +258,8 @@ LocalApplication::onRunButtonPressed(void)
 bool
 LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
-    QString appDir = appDirName->text();
+  //    QString appDir = appDirName->text();
+  QString appDir = SimCenterPreferences::getInstance()->getAppDir();
 
     //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
     QString pySCRIPT;
@@ -314,8 +330,8 @@ for (int i = 0; i < files.size(); i++) {
 #else
     // note the above not working under linux because basrc not being called so no env variables!!
 
-    QString command = QString("source $HOME/.bash_profile; \"") + python + QString("\" " ) + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
-            registryFile;
+    QString command = QString("source $HOME/.bash_profile; \"") + python + QString("\" \"" ) + 
+      pySCRIPT + QString("\" run \"") + inputFile + QString("\" \"") + registryFile + QString("\"");
 
     qDebug() << "PYTHON COMMAND: " << command;    
     proc->execute("bash", QStringList() << "-c" <<  command);
