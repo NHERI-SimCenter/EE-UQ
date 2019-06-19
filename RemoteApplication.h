@@ -80,8 +80,8 @@ private:
     void submitJob(void);
 
     QLineEdit *workingDirName;
-    QLineEdit *localAppDirName;
-    QLineEdit *remoteAppDirName;
+    //    QLineEdit *localAppDirName;
+    //    QLineEdit *remoteAppDirName;
 
     QLineEdit *nameLineEdit;
     QLineEdit *numCPU_LineEdit;

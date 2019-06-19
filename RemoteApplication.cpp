@@ -54,6 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QCoreApplication>
 #include <QProcess>
 #include <QSettings>
+#include <SimCenterPreferences.h>
 
 //#include <AgaveInterface.h>
 #include <QDebug>
@@ -135,10 +136,12 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     workDirButton->setToolTip(tr("Select the Working Directory"));
     layout->addWidget(workDirButton,5,2);
 
+    /*
     //Local Workflow Applications Directory
     QLabel *appDirLabel = new QLabel();
     appDirLabel->setText(QString("Local Applications Directory:"));
     layout->addWidget(appDirLabel,6,0);
+
 
     localAppDirName = new QLineEdit();
     localAppDirName->setText(QCoreApplication::applicationDirPath());
@@ -155,16 +158,19 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     appDirLabel1->setText(QString("Remote Applications Directory:"));
     layout->addWidget(appDirLabel1,7,0);
 
+
     remoteAppDirName = new QLineEdit();
     remoteAppDirName->setText("/home1/00477/tg457427/SimCenterBackendApplications/June-2019");
     remoteAppDirName->setToolTip(tr("Location on TACC Stampede 2 where the SimCenter workflow applications exist(For Advanced Users)"));
 
     layout->addWidget(remoteAppDirName,7,1);
 
+    */
+
     pushButton = new QPushButton();
     pushButton->setText("Submit");
     pushButton->setToolTip(tr("Press to launch job on remote machine. After pressing, window closes when Job Starts"));
-    layout->addWidget(pushButton,8,1);
+    layout->addWidget(pushButton,6,1);
 
     this->setLayout(layout);
 
@@ -185,16 +191,18 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
     connect(this,SIGNAL(startJobCall(QJsonObject)),theService,SLOT(startJobCall(QJsonObject)));
     connect(theService,SIGNAL(startJobReturn(QString)), this, SLOT(startJobReturn(QString)));
 
+
     //Automatically changing to forward slash
     connect(workingDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             workingDirName->setText(newValue.replace('\\','/'));
     });
-
+    /*
     connect(localAppDirName, &QLineEdit::textChanged, this, [this](QString newValue){
         if (newValue.contains('\\'))
             localAppDirName->setText(newValue.replace('\\','/'));
     });
+    */
 
     //Browse buttons
     connect(workDirButton, &QPushButton::clicked, this, [this](){
@@ -212,6 +220,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
             workingDirName->setText(selectedDir);
     });
 
+    /*
     connect(localAppsDirButton, &QPushButton::clicked, this, [this](){
         QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
@@ -226,6 +235,7 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
         if(!selectedDir.isEmpty())
             localAppDirName->setText(selectedDir);
     });
+    */
 
     //
     // set up connections
@@ -244,9 +254,12 @@ RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QW
 bool
 RemoteApplication::outputToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["localAppDir"]=localAppDirName->text();
-    jsonObject["remoteAppDir"]=remoteAppDirName->text();
-    jsonObject["remoteAppWorkingDir"]=remoteAppDirName->text(); // we use this one so that default not overwritten if run local
+  jsonObject["localAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+  jsonObject["remoteAppDir"]=SimCenterPreferences::getInstance()->getRemoteAppDir();
+  jsonObject["remoteAppWorkingDir"]=SimCenterPreferences::getInstance()->getRemoteAppDir();
+  //jsonObject["localAppDir"]=localAppDirName->text();
+  //jsonObject["remoteAppDir"]=remoteAppDirName->text();
+  //jsonObject["remoteAppWorkingDir"]=remoteAppDirName->text(); // we use this one so that default not overwritten if run local
     jsonObject["workingDir"]=workingDirName->text();
     jsonObject["runType"]=QString("HPC");
 
@@ -256,6 +269,7 @@ RemoteApplication::outputToJSON(QJsonObject &jsonObject)
 bool
 RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
 
+  /*
     if (dataObject.contains("localAppDir")) {
         QJsonValue theName = dataObject["localAppDir"];
         if(QDir(theName.toString()).exists())
@@ -269,6 +283,7 @@ RemoteApplication::inputFromJSON(QJsonObject &dataObject) {
         QJsonValue theName = dataObject["remoteAppWorkingDir"];
         remoteAppDirName->setText(theName.toString());
     }
+  */
 
     if (dataObject.contains("workingDir")) {
         QJsonValue theName = dataObject["workingDir"];
@@ -299,8 +314,9 @@ RemoteApplication::onRunButtonPressed(void)
             return;
         }
 
-   QString appDir = localAppDirName->text();
-   QDir dirApp(appDir);
+    QString appDir = SimCenterPreferences::getInstance()->getAppDir();
+    //   QString appDir = localAppDirName->text();
+    QDir dirApp(appDir);
    if (!dirApp.exists()) {
        emit sendErrorMessage(QString("The application directory, ") + appDir +QString(" specified does not exist!"));
        return;
@@ -320,8 +336,8 @@ RemoteApplication::onRunButtonPressed(void)
 bool
 RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
-    QString appDir = localAppDirName->text();
-
+     //    QString appDir = localAppDirName->text();
+    QString appDir = SimCenterPreferences::getInstance()->getAppDir();
     qDebug() << "REMOTEAPP: setupDone " << tmpDirectory << " " << inputFile << " " << appDir;
     QString pySCRIPT;
 
@@ -389,7 +405,6 @@ RemoteApplication::setupDoneRunApplication(QString &tmpDirectory, QString &input
 #endif
     */
     proc->waitForStarted();
-
 
 
     //

@@ -224,7 +224,6 @@ LocalApplication::inputFromJSON(QJsonObject &dataObject) {
 void
 LocalApplication::onRunButtonPressed(void)
 {
-    int ok = 0;
     QString workingDir = workingDirName->text();
     QDir dirWork(workingDir);
     if (!dirWork.exists())

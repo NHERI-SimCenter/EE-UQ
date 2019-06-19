@@ -67,7 +67,7 @@ private:
     void submitJob(void);
 
     QLineEdit *workingDirName;
-    QLineEdit *appDirName;
+    //    QLineEdit *appDirName;
     QString workflowScript;
 };
 
