@@ -72,3 +72,8 @@ void
 Application::setNumTasks(int numTasks) {
   return;
 }
+
+void
+Application::displayed(void) {
+  return;
+}
