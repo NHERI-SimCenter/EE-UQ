@@ -73,6 +73,7 @@ InputWidgetUQ::~InputWidgetUQ()
   // 
 
   layout->removeWidget(rvGroupBox);
+  rvGroupBox->setParent(NULL);
 }
 
 
