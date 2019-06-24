@@ -79,7 +79,7 @@ public slots:
 private:
     void submitJob(void);
 
-    QLineEdit *workingDirName;
+    //    QLineEdit *workingDirName;
     //    QLineEdit *localAppDirName;
     //    QLineEdit *remoteAppDirName;
 
@@ -87,7 +87,7 @@ private:
     QLineEdit *numCPU_LineEdit;
     QLineEdit *numProcessorsLineEdit;
     QLineEdit *runtimeLineEdit;
-    QLineEdit *appLineEdit;
+    //    QLineEdit *appLineEdit;
 
     QString tempDirectory;
     QString remoteHomeDirPath;
