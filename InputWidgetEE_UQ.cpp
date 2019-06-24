@@ -320,7 +320,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
 
 
-    theGI->setDefaultProperties(2,288,360,360,-122.2585,37.8719);
+    theGI->setDefaultProperties(2,288,360,360,37.8716,-127.2717);
 }
 
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
