@@ -133,7 +133,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEvent=theExistingEvents;
+    theCurrentEvent=theStochasticMotionWidget;
 
     connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(eventSelectionChanged(QString)));
