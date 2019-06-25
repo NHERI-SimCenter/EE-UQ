@@ -280,7 +280,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 	       type == QString("Stochastic Ground Motion") ||
 	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
-        index = 1;
+        index = 0;
     } else if ((type == QString("User Application")) ||
                (type == QString("UserDefinedApplication"))) {
         index = 5;
