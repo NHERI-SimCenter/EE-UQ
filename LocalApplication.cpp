@@ -200,7 +200,9 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputF
     QString command = QString("source $HOME/.bash_profile; \"") + python + QString("\" \"" ) + 
       pySCRIPT + QString("\" run \"") + inputFile + QString("\" \"") + registryFile + QString("\"");
 
-    qDebug() << "PYTHON COMMAND: " << command;    
+    QDebug debug = qDebug();
+    debug.noquote();
+    debug << "PYTHON COMMAND: " << command;
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif

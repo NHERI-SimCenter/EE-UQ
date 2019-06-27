@@ -66,6 +66,7 @@ using namespace std;
 
 #include <math.h>
 
+#include <GeneralInformationWidget.h>
 #include <OpenSeesParser.h>
 #include <RandomVariablesContainer.h>
 #include <QTableWidget>
@@ -197,14 +198,14 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
 {
     numStories = 0; // originally set to 0, so that when setnumStories text later no seg fault
     floorW = "144";
-    storyH = "144";
+    storyH = "144.0";
     Kx = "100.0";
     Fyx = "10.0";
     bx = "0.1";
     Ky ="100.0";
     Fyy = "10.0";
     by = "0.1";
-    dampingRatio = "0.02";
+    K_theta = "1e6";
 
     QHBoxLayout *layout = new QHBoxLayout();
 
@@ -218,12 +219,12 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     //Building information
     QGroupBox* mainProperties = new QGroupBox("Building Information");
     QGridLayout *mainPropertiesLayout = new QGridLayout();
-    inFloors = createTextEntry(tr("Number Floors"), tr("number of floors or stories in building"),mainPropertiesLayout, 0, 0, 100, 100);
+    inFloors = createTextEntry(tr("Number Stories"), tr("number of stories in building"),mainPropertiesLayout, 0, 0, 100, 100);
     inWeight = createTextEntry(tr("Floor Weights"), tr("total building weight, each floor will have a weight given by weight/ number of floors"), mainPropertiesLayout, 1, 0, 100, 100);
-    inHeight = createTextEntry(tr("Story Heights"), tr("total height of building in inches, each floor will have a height given by total height / number of floors"),mainPropertiesLayout, 1, 3, 100, 100);
+    storyHeight = createTextEntry(tr("Story Heights"), tr("story heights, building height equals number of fstories * story heighyt"),mainPropertiesLayout, 1, 3, 100, 100);
     inKx = createTextEntry(tr("Story Stiffness X dirn"), tr("story stiffnesses, that force required to push the floor above unit distance, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 2, 0, 100, 100);
     inKy = createTextEntry(tr("Story Stiffness Y dirn"), tr("story stiffnesses, that force required to push the floor above unit distance, assuming all other stories have infinite stiffness"),mainPropertiesLayout, 2, 3, 100, 100);
-    inDamping = createTextEntry(tr("Damping Ratio"),tr("for each mode of vibraation a number that specifies how quickly the structure stops vibrating in that mode"), mainPropertiesLayout, 5, 0, 100, 100);
+    inK_theta = createTextEntry(tr("Rotational Story Stiffness"),tr("rotational story stiffness"), mainPropertiesLayout, 5, 0, 100, 100);
     inFyx = createTextEntry(tr("Yield Strength X dirn"),tr("The force in X direction at which the story yields"), mainPropertiesLayout,3,0, 100,100);
     inBx = createTextEntry(tr("Hardening Ratio X dirn"), tr("Hardening ratio defines ratio between original stiffness and current stiffness in X direction"), mainPropertiesLayout,4, 0);
     inFyy = createTextEntry(tr("Yield Strength Y dirn"),tr("The force in Y direction at which the story yields"), mainPropertiesLayout,3,3, 100,100);
@@ -231,30 +232,30 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
 
 
     inFloors->setValidator(new QIntValidator);
-    //inWeight->setValidator(new QDoubleValidator);
-    //inHeight->setValidator(new QDoubleValidator);
+    storyHeight->setValidator(new QDoubleValidator);
 
+    //inWeight->setValidator(new QDoubleValidator);
     //inKx->setValidator(new QDoubleValidator);
     //inKy->setValidator(new QDoubleValidator);
-    //inDamping->setValidator(new QDoubleValidator);
+    //inK_theta->setValidator(new QDoubleValidator);
 
     inFloors->setText(QString::number(1));
     inWeight->setText(floorW);
-    inHeight->setText(storyH);
+    storyHeight->setText(storyH);
     inKx->setText(Kx);
     inKy->setText(Ky);
-    inDamping->setText(dampingRatio);
+    inK_theta->setText(K_theta);
     inFyx->setText(Fyx);
     inFyy->setText(Fyy);
     inBx->setText(bx);
-    inBy->setText(by);
+    inBy->setText(by);   
 
     connect(inFloors,SIGNAL(editingFinished()), this, SLOT(on_inFloors_editingFinished()));
     connect(inWeight,SIGNAL(editingFinished()), this, SLOT(on_inWeight_editingFinished()));
-    connect(inHeight,SIGNAL(editingFinished()), this, SLOT(on_inHeight_editingFinished()));
+    connect(storyHeight,SIGNAL(editingFinished()), this, SLOT(on_storyHeight_editingFinished()));
     connect(inKx,SIGNAL(editingFinished()), this, SLOT(on_inKx_editingFinished()));
     connect(inKy,SIGNAL(editingFinished()), this, SLOT(on_inKy_editingFinished()));
-    connect(inDamping,SIGNAL(editingFinished()), this, SLOT(on_inDamping_editingFinished()));
+    connect(inK_theta,SIGNAL(editingFinished()), this, SLOT(on_inK_theta_editingFinished()));
     connect(inFyx,SIGNAL(editingFinished()), this, SLOT(on_inFyx_editingFinished()));
     connect(inFyy,SIGNAL(editingFinished()), this, SLOT(on_inFyy_editingFinished()));
     connect(inBx,SIGNAL(editingFinished()), this, SLOT(on_inBx_editingFinished()));
@@ -284,6 +285,8 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     storyPropertiesFrame->setObjectName(QString::fromUtf8("storyPropertiesFrame"));
     QGridLayout *storyPropertiesFrameLayout = new QGridLayout();
     inStoryHeight = createTextEntry(tr("Story Height"), tr("for stories selected sets story height, effects overall height if edited"), storyPropertiesFrameLayout,0,0,100,100);
+    inStoryHeight->setValidator(new QDoubleValidator);
+
     inStoryKx = createTextEntry(tr("Stiffness X dirn"), tr("for stories selected force required to push each floor 1 inch assuming all other floors infinite stiffness"), storyPropertiesFrameLayout,1,0, 100,100);
     inStoryFyx = createTextEntry(tr("Yield Strength X dirn"),tr("for stories selected force at which story yields, i.e. if aply more force floor will not return to original position assuming all other rigid"), storyPropertiesFrameLayout,2,0, 100,100);
     inStoryBx = createTextEntry(tr("Hardening Ratio X dirn"), tr("for stories selected the hardening ratio defines ratio between original stiffness and current stiffness"), storyPropertiesFrameLayout,3, 0);
@@ -310,7 +313,7 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
     //
 
     QStringList headings;
-    headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("zeta");
+    headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("K_theta");
     dataTypes << SIMPLESPREADSHEET_QDouble;
     dataTypes << SIMPLESPREADSHEET_QDouble;
     dataTypes << SIMPLESPREADSHEET_QDouble;
@@ -333,7 +336,7 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
 
     theView = new GlWidget2D();
     theView->setController(this);
-    theView->setMinimumHeight(300);
+    theView->setMinimumHeight(250);
     theView->setMinimumWidth(250);
     graphicLayout->addWidget(theView);
 
@@ -346,6 +349,16 @@ MDOF_BuildingModel::MDOF_BuildingModel(RandomVariablesContainer *theRandomVariab
 
     this->on_inFloors_editingFinished();
 
+
+    // add signal and slot connections with GI
+    GeneralInformationWidget *theGI = GeneralInformationWidget::getInstance();
+    /*    connect(this,SIGNAL(numFloorsChanged(int)), theGI, SLOT(setNumFloors(int)));
+    connect(this,SIGNAL(heightChanged(double)), theGI, SLOT(setHeight(double)));
+    connect(theGI,SIGNAL(numFloorsChanged(int)), this, SLOT(setNumFloors(int)));
+    connect(theGI,SIGNAL(buildingHeightChanged(double)), this, SLOT(setHeight(double)));
+    */
+    connect(this,SIGNAL(numStoriesOrHeightChanged(int, double)), theGI, SLOT(setNumStoriesAndHeight(int, double)));
+    connect(theGI,SIGNAL(numStoriesOrHeightChanged(int, double)), this, SLOT(setNumStoriesAndHeight(int, double)));
 }
 
 MDOF_BuildingModel::~MDOF_BuildingModel()
@@ -360,6 +373,8 @@ MDOF_BuildingModel::~MDOF_BuildingModel()
 void
 MDOF_BuildingModel::on_inFloors_editingFinished()
 {
+qDebug() << "on_inFloorsEditing";
+
     QString textFloors =  inFloors->text();
     int numStoriesText = textFloors.toInt();
 
@@ -405,7 +420,7 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
         //theSpreadsheet->setFixedWidth(344);
 
         QStringList headings;
-        headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("zeta");
+        headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("K_theta");
 
         // determine floor weights (only if building weight not RV);
         floorW = inWeight->text();
@@ -421,7 +436,6 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
             storyHeights[i] = buildingH/(1.*numStories);
         }
         floorHeights[numStories] = buildingH;
-
 
         //
         // create spreadsheet entries
@@ -464,18 +478,18 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
             item->setToolTip(QString("hardening ratio of story " + QString::number(i+1) + " in y dirn"));
             theSpreadsheet->setItem(i,7, item);
 
-            item = new QTableWidgetItem(dampingRatio);
-            item->setToolTip(QString("damping ratio of mode " + QString::number(i+1)));
+            item = new QTableWidgetItem(K_theta);
+            item->setToolTip(QString("rotational stiffness of floor  " + QString::number(i+1)));
             theSpreadsheet->setItem(i,8, item);
         }
 
         value = Kx.toDouble(&ok);
         if (!ok) {
              this->addRandomVariable(Kx,numStories);
-         }
+        }
 
-       // theSpreadsheet->resizeRowsToContents();
-       // theSpreadsheet->resizeColumnsToContents();
+        // theSpreadsheet->resizeRowsToContents();
+        // theSpreadsheet->resizeColumnsToContents();
         theSpreadsheet->setHorizontalHeaderLabels(headings);
         theSpreadsheet->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -485,12 +499,16 @@ MDOF_BuildingModel::on_inFloors_editingFinished()
 
         floorSelected = -1;
         storySelected = -1;
+
+        emit numStoriesOrHeightChanged(numStories, buildingH);
+	//        emit heightChanged(buildingH);
     }
 
     if (theView != 0) {
         this->draw(theView);
         theView->update();
     }
+
 }
 
 
@@ -538,13 +556,14 @@ MDOF_BuildingModel::on_inWeight_editingFinished()
 }
 
 void
-MDOF_BuildingModel::on_inHeight_editingFinished()
+MDOF_BuildingModel::on_storyHeight_editingFinished()
 {
-    QString text =  inHeight->text();
-    qDebug() << "inHeight: " << text;
+    QString text =  storyHeight->text();
+
+    qDebug() << "MDOF::on_storyHeight" << text;
 
     if (text.isNull()) {
-        inHeight->setText(storyH);
+        storyHeight->setText(storyH);
         return;
     }
 
@@ -552,10 +571,15 @@ MDOF_BuildingModel::on_inHeight_editingFinished()
 
     bool ok;
     double storyHeight = text.toDouble(&ok);
+
     if (ok != true)
         storyHeight = 100.0;
+
     updatingPropertiesTable = true;
     buildingH = numStories * storyHeight;
+
+    qDebug() << "MDOF::on_storyHeight" << text << " " << buildingH << " " << storyHeight;
+
     for (int i=0; i<numStories; i++) {
         QTableWidgetItem *item = theSpreadsheet->item(i,1);
         QString oldText=item->text();
@@ -571,8 +595,9 @@ MDOF_BuildingModel::on_inHeight_editingFinished()
         floorHeights[i] = i*storyHeight;
         storyHeights[i] = storyHeight;
     }
-    floorHeights[numStories] = buildingH;
 
+    floorHeights[numStories] = buildingH;
+    emit numStoriesOrHeightChanged(numStories, buildingH);
 
     if (theView != 0) {
         this->draw(theView);
@@ -669,18 +694,18 @@ MDOF_BuildingModel::on_inKy_editingFinished()
 }
 
 void
-MDOF_BuildingModel::on_inDamping_editingFinished()
+MDOF_BuildingModel::on_inK_theta_editingFinished()
 {
-    QString text =  inDamping->text();
+    QString text =  inK_theta->text();
 
     // if null, use old
     if (text.isNull()) {
-        inDamping->setText(dampingRatio);
+        inK_theta->setText(K_theta);
         return;
     }
 
     // set new Kx value
-    dampingRatio = text;
+    K_theta = text;
 
     //
     // update spreadsheet column with new value
@@ -911,6 +936,8 @@ void MDOF_BuildingModel::on_inStoryHeight_editingFinished()
     if (updatingPropertiesTable == true)
         return;
 
+    qDebug() << "onInStoryHEightChanged";
+
     QString text =  inStoryHeight->text();
     if (text.isNull())
         return;
@@ -944,15 +971,9 @@ void MDOF_BuildingModel::on_inStoryHeight_editingFinished()
     delete [] floorHeights;
     floorHeights = newFloorHeights;
 
-    // move focus, update graphic and set analysis flag
-    //  inStoryK->setFocus();
-    if (needReset == true) {
-        // delete old array and reset pointer
-        // this->updateSpreadsheet();
-        // delete old array and reset pointer
-        buildingH = newFloorHeights[numStories];
-        inHeight->setText(QString::number(buildingH));
-    }
+    buildingH = newFloorHeights[numStories];
+    qDebug() << "MDOF: newHeight" << floorHeights[numStories];
+    emit numStoriesOrHeightChanged(numStories, buildingH);
 }
 
 void MDOF_BuildingModel::on_inStoryKx_editingFinished()
@@ -1243,6 +1264,31 @@ void MDOF_BuildingModel::on_theSpreadsheet_cellChanged(int row, int column)
             value = text.toDouble(&ok);
             if (!ok) {
                 this->addRandomVariable(text);
+            } else {
+                if (column == 1) {
+                    double newHeight = 0.;
+                    storyHeights[row] = 0.;
+                    floorHeights[0] = 0;
+                    for (int row=0; row<numStories; row++) {
+                        QTableWidgetItem *item = theSpreadsheet->item(row,column);
+                        QString text = item->text();
+
+                        bool ok;
+                        double textToDouble = text.toDouble(&ok);
+                        storyHeights[row]=textToDouble;
+                        newHeight += textToDouble;
+                        floorHeights[row+1] = newHeight;
+                    }
+                    buildingH = newHeight;
+
+                    if (theView != 0) {
+                        this->draw(theView);
+                        theView->update();
+                    }
+
+
+                    emit numStoriesOrHeightChanged(numStories, buildingH);
+                }
             }
         }
     }
@@ -1265,7 +1311,7 @@ MDOF_BuildingModel::outputToJSON(QJsonObject &jsonObject)
     jsonObject["numStories"]= numStories;
 
     writeLineEditRV(jsonObject,"weight", inWeight);
-    writeLineEditRV(jsonObject,"height", inHeight);
+    writeLineEditRV(jsonObject,"height", storyHeight);
     writeLineEditRV(jsonObject,"Kx", inKx);
     writeLineEditRV(jsonObject,"Ky", inKy);
 
@@ -1280,7 +1326,7 @@ MDOF_BuildingModel::outputToJSON(QJsonObject &jsonObject)
         writeCellRV(floorData, "ky", theSpreadsheet->item(i,5));
         writeCellRV(floorData, "Fyy", theSpreadsheet->item(i,6));
         writeCellRV(floorData, "by", theSpreadsheet->item(i,7));
-        writeCellRV(floorData, "zeta", theSpreadsheet->item(i,8));
+        writeCellRV(floorData, "Ktheta", theSpreadsheet->item(i,8));
 
         theArray.append(floorData);
     }
@@ -1341,11 +1387,11 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
     }
 
    readLineEditRV(jsonObject,"weight", inWeight);
-   readLineEditRV(jsonObject,"height", inHeight);
+   readLineEditRV(jsonObject,"height", inStoryHeight);
    readLineEditRV(jsonObject,"Kx", inKx);
    readLineEditRV(jsonObject,"Ky", inKy);
 
-   QString typHeight =  inHeight->text();
+   QString typHeight =  inStoryHeight->text();
    bool ok;
    double height = typHeight.toDouble(&ok);
    if (ok == false) height = 1.0;
@@ -1358,7 +1404,7 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
    //theSpreadsheet->setFixedWidth(344);
 
    QStringList headings;
-   headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("zeta");
+   headings << tr("Weight") << tr("Height") << tr("K_x") << tr("Fy_x") << tr("b_x") << tr("K_y") << tr("Fy_y") << tr("b_y") << tr("K_theta");
    theSpreadsheet->setHorizontalHeaderLabels(headings);
 
 
@@ -1430,8 +1476,8 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
            theSpreadsheet->setItem(i, 7, item);
 
            item = new QTableWidgetItem();
-           readCellRV(floorData, "zeta", item);
-           item->setToolTip(QString("damping ratio of mode " + QString::number(i+1)));
+           readCellRV(floorData, "Ktheta", item);
+           item->setToolTip(QString("rotational stiffness of story " + QString::number(i+1) + " about z axis"));
            theSpreadsheet->setItem(i, 8, item);
        }
 
@@ -1457,7 +1503,6 @@ MDOF_BuildingModel::inputFromJSON(QJsonObject &jsonObject)
         this->draw(theView);
         theView->update();
     }
-
 
     return true;
 }
@@ -1520,7 +1565,6 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
              theView->drawPoint(i, 0.,floorHeights[i], 10, 0, 0, 1);
          }
      }
-
      theView->drawLine(0, -10., 0.0, 10., 0.0, 1.0, 0., 0., 0.);
 
     theView->drawBuffers();
@@ -1648,4 +1692,39 @@ MDOF_BuildingModel::inputAppDataFromJSON(QJsonObject &jsonObject) {
          qDebug() << "MDOF_BuildingModel - reomveRandomVariable:: no random variable with name " << text;
      }
 
+ }
+
+/*
+ void
+ MDOF_BuildingModel::setHeight(double newHeight) {
+   qDebug() << "MDOF - height changed" << newHeight;
+   if (newHeight > 0 && newHeight != buildingH) {
+     qDebug() << QString::number(newHeight/(numStories*1.0));
+     storyHeight->setText(QString::number(newHeight/(numStories*1.0)));
+     buildingH = newHeight;
+     this->on_storyHeight_editingFinished();
+   }
+ }
+
+ void
+ MDOF_BuildingModel::setNumFloors(int newFloors) {
+     if (newFloors > 0 && newFloors != numStories) {
+         inFloors->setText(QString::number(newFloors));
+         storyHeight->setText(QString::number(buildingH/(numStories*1.0)));
+         this->on_inFloors_editingFinished();
+     }
+ }
+*/
+
+ void
+ MDOF_BuildingModel::setNumStoriesAndHeight(int newFloors, double newHeight) {
+     if ((newFloors > 0 && newFloors != numStories) ||
+             (newHeight > 0 && newHeight != buildingH)) {
+         inFloors->setText(QString::number(newFloors));
+         storyHeight->setText(QString::number(newHeight/(newFloors*1.0)));
+         if (newFloors > 0 && newFloors != numStories)
+             this->on_inFloors_editingFinished();
+         if (newHeight > 0 && newHeight != buildingH)
+             this->on_storyHeight_editingFinished();
+     }
  }

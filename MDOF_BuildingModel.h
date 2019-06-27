@@ -71,16 +71,24 @@ public:
     void setSelectionBoundary(float y1, float y2);
 
 signals:
+    void numStoriesOrHeightChanged(int numFloors, double height);
 
+    //    void heightChanged(double newHeight);
+    //    void numFloorsChanged(int numFloors);
+      
 public slots:
    void clear(void);
+   void setNumStoriesAndHeight(int numFloors, double height);
+
+   //   void setNumFloors(int newNumFloors);
+   //   void setHeight(double newHeight);
 
    void on_inFloors_editingFinished();
    void on_inWeight_editingFinished();
-   void on_inHeight_editingFinished();
+   void on_storyHeight_editingFinished();
    void on_inKx_editingFinished();
    void on_inKy_editingFinished();
-   void on_inDamping_editingFinished();
+   void on_inK_theta_editingFinished();
    //TODO: This code is not maintainable, we need to switch to Model-View Architecture
    void on_inFyx_editingFinished();
    void on_inFyy_editingFinished();
@@ -112,10 +120,10 @@ private:
 
     QLineEdit *inFloors;
     QLineEdit *inWeight;
-    QLineEdit *inHeight;
+    QLineEdit *storyHeight;
     QLineEdit *inKx;
     QLineEdit *inKy;
-    QLineEdit *inDamping;
+    QLineEdit *inK_theta;
     //TODO: This code is not maintainable, we need to switch to Model-View Architecture
     QLineEdit *inFyx;
     QLineEdit *inFyy;
@@ -159,7 +167,7 @@ private:
     QString Ky;
     QString Fyy;
     QString by;
-    QString dampingRatio;
+    QString K_theta;
 
     double *floorHeights;
     double *storyHeights;
