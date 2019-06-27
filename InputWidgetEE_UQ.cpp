@@ -532,6 +532,10 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
+    if (jsonObject.contains("Simulation")) {
+        QJsonObject jsonObjSimInformation = jsonObject["Simulation"].toObject();
+        theAnalysis->inputFromJSON(jsonObjSimInformation);
+    }
 
     return true;
 }
