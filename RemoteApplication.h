@@ -47,6 +47,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Application.h>
 #include <QPushButton>
 #include <QJsonObject>
+#include <QMap>
+
 class RemoteService;
 
 class QLineEdit;
@@ -60,6 +62,8 @@ public:
     bool inputFromJSON(QJsonObject &rvObject);
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
     void setNumTasks(int numTasks);
+    void setExtraInputs(QMap<QString, QString> extraInputs);
+    void setExtraParameters(QMap<QString, QString> extraParameters);
 
 signals:
    void processResults(QString &, QString &);
@@ -98,6 +102,9 @@ private:
     RemoteService *theRemoteService;
     QString workflowScriptName;
     QString shortDirName;
+    QMap<QString, QString> extraInputs;
+    QMap<QString, QString> extraParameters;
+
 };
 
 #endif // REMOTE_APPLICATION_H
