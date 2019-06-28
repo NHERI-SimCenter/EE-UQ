@@ -341,6 +341,10 @@ RemoteApplication::uploadDirReturn(bool result)
       parameters["errorFile"]="dakota.err";
       parameters["driverFile"]="workflow_driver";
       parameters["modules"]="petsc";
+      for (auto parameterName : extraParameters.keys())
+      {
+          parameters[parameterName] = extraParameters[parameterName];
+      }
       job["parameters"]=parameters;
       
       QDir theDirectory(tempDirectory);
@@ -351,6 +355,10 @@ RemoteApplication::uploadDirReturn(bool result)
       QJsonObject inputs;
       
       inputs["inputDirectory"]=remoteDirectory;
+      for (auto inputName : extraInputs.keys())
+      {
+          inputs[inputName] = extraInputs[inputName];
+      }
       job["inputs"]=inputs;
       
       // disable the button while the job is being uploaded and started
@@ -392,5 +400,15 @@ void
 RemoteApplication::setNumTasks(int numTasks) {
     if (numTasks < 32)
         numProcessorsLineEdit->setText(QString::number(numTasks));
+}
+
+void RemoteApplication::setExtraInputs(QMap<QString, QString> extraInputs)
+{
+    this->extraInputs = extraInputs;
+}
+
+void RemoteApplication::setExtraParameters(QMap<QString, QString> extraParameters)
+{
+    this->extraParameters = extraParameters;
 }
 
