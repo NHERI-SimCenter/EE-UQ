@@ -130,11 +130,11 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theEDP = new EDP_Selection(theRVs);
 
     theResults = new DakotaResultsSampling();
-    localApp = new LocalApplication("EE-UQ workflow.py");
-    remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
+   localApp = new LocalApplication("EE-UQ workflow.py");
+   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
 
-    //localApp = new LocalApplication("EE-UQ.py");
-    //remoteApp = new RemoteApplication("EE-UQ.py", theService);
+   // localApp = new LocalApplication("EE-UQ.py");
+   // remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
     SimCenterWidget *theWidgets[1];// =0;
@@ -320,7 +320,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
 
 
-    theGI->setDefaultProperties(2,288,360,360,37.8716,-127.2717);
+    theGI->setDefaultProperties(1,144,360,360,37.8716,-127.2717);
 }
 
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
