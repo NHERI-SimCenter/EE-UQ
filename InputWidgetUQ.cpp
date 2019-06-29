@@ -45,24 +45,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *RV, QWidget *parent)
     :QWidget(parent),theRVs(RV),theUQ(UQ)
 {
-    QVBoxLayout *layout = new QVBoxLayout();
+    layout = new QVBoxLayout();
 
-    // place in tab widget
-    /*
-    theTab = new QTabWidget();
-    theTab->addTab(theUQ,"Sampling Methods");
-    theTab->addTab(theRVs,"Random Variables");
-    theTab->setCurrentIndex(1);
-
-    layout->addWidget(theTab);
-    */
     QGroupBox* methodGroupBox = new QGroupBox("Sampling Method", this);
     QVBoxLayout *methodLayout = new QVBoxLayout();
     methodLayout->addWidget(UQ);
     methodGroupBox->setLayout(methodLayout);
     layout->addWidget(methodGroupBox);
 
-    QGroupBox* rvGroupBox = new QGroupBox("Random Variables", this);
+    rvGroupBox = new QGroupBox("Random Variables", this);
     QVBoxLayout *rvLayout = new QVBoxLayout();
     rvLayout->addWidget(RV);
     rvGroupBox->setLayout(rvLayout);
@@ -76,7 +67,13 @@ InputWidgetUQ::InputWidgetUQ(InputWidgetSampling *UQ, RandomVariablesContainer *
 
 InputWidgetUQ::~InputWidgetUQ()
 {
+  //
+  // remove the widget before destructor as causing seg faults on shutdown .. no control over when Qt deletes the things
+  // this is a  memory leak BUT constructor in running pogram is only called once and desctructor once
+  // 
 
+  layout->removeWidget(rvGroupBox);
+  rvGroupBox->setParent(NULL);
 }
 
 

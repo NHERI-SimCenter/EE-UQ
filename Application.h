@@ -55,6 +55,7 @@ public:
 
    virtual void setNumTasks(int numTasks);
    virtual bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
+   virtual void displayed(void);
 
 signals:
     void setupForRun(QString &, QString &);

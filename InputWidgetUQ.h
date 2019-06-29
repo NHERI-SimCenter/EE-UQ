@@ -44,6 +44,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class QTabWidget;
 class RandomVariablesContainer;
 class InputWidgetSampling;
+class QVBoxLayout;
+class QGroupBox;
 
 // this class is just a tabbed widget for GI and SIM widgets
 //
@@ -67,6 +69,9 @@ private:
     QTabWidget *theTab;
     RandomVariablesContainer *theRVs;
     InputWidgetSampling *theUQ;
+
+    QVBoxLayout *layout;
+    QGroupBox *rvGroupBox;
 } ; 
 
 #endif

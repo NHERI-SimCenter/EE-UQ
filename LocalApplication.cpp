@@ -52,8 +52,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QCoreApplication>
 #include <QProcess>
 #include <QStringList>
-
-//#include <AgaveInterface.h>
+#include <QSettings>
+#include <SimCenterPreferences.h>
+#include <AgaveCurl.h>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
@@ -62,144 +63,34 @@ LocalApplication::LocalApplication(QString workflowScriptName, QWidget *parent)
 : Application(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout();
-    QGridLayout *runLayout = new QGridLayout();
-
-    //Working Directory
-    QLabel *workingDirLabel = new QLabel();
-    workingDirLabel->setText(QString("Working Directory:"));
-
-    runLayout->addWidget(workingDirLabel,1,0);
-
-    workingDirName = new QLineEdit();
-    QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-
-    workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/LocalWorkDir"));
-    workingDirName->setToolTip(tr("Location on your system we need to use to store tmp files"));
-    runLayout->addWidget(workingDirName,1,1);
-
-    QPushButton *workDirButton = new QPushButton();
-    workDirButton->setText("Browse");
-    workDirButton->setToolTip(tr("Select the Working Directory"));
-    runLayout->addWidget(workDirButton,1,2);
-
-    //Workflow Applications Directory
-    QLabel *appDirLabel = new QLabel();
-    appDirLabel->setText(QString("Applications Directory:"));
-    runLayout->addWidget(appDirLabel,2,0);
-
-    appDirName = new QLineEdit();
-    appDirName->setText(QCoreApplication::applicationDirPath());
-    appDirName->setToolTip(tr("Location on your system where our applications exist. Only edit if you know what you are doing."));
-    runLayout->addWidget(appDirName,2,1);
-
-    QPushButton *appsDirButton = new QPushButton();
-    appsDirButton->setText("Browse");
-    appsDirButton->setToolTip(tr("Select the Workflow Applications Directory"));
-    runLayout->addWidget(appsDirButton,2,2);
-
-    //Run Button
-    QPushButton *pushButton = new QPushButton();
-    pushButton->setText("Submit");
-    pushButton->setToolTip(tr("Press to launch job on local machine"));
-    runLayout->addWidget(pushButton,3,1);
-
-   // layout->addWidget(theUQ);
-    layout->addLayout(runLayout);
+    messageLabel = new QLabel();
+    messageLabel->setText(QString("The quick brown fox jumps over the lazy moon"));
+    layout->addStretch();
+    layout->addWidget(messageLabel);
+    layout->addStretch();
 
     this->setLayout(layout);
-
-    //
-    // set up connections
-    //
-
-    connect(pushButton,SIGNAL(clicked()), this, SLOT(onRunButtonPressed()));
-
-    //Automatically changing paths to forward slash
-    connect(workingDirName, &QLineEdit::textChanged, this, [this](QString newValue){
-        if (newValue.contains('\\'))
-            workingDirName->setText(newValue.replace('\\','/'));
-    });
-
-    connect(appDirName, &QLineEdit::textChanged, this, [this](QString newValue){
-        if (newValue.contains('\\'))
-            appDirName->setText(newValue.replace('\\','/'));
-    });
-
-    //Browse buttons
-    connect(workDirButton, &QPushButton::clicked, this, [this](){
-        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-
-        if(QDir(workingDirName->text()).exists())
-            existingDir = workingDirName->text();
-
-        QString selectedDir = QFileDialog::getExistingDirectory(this,
-                                                                tr("Select Working Directory for Local Simulation"),
-                                                                existingDir,
-                                                                QFileDialog::ShowDirsOnly);
-
-        if(!selectedDir.isEmpty())
-            workingDirName->setText(selectedDir);
-    });
-
-    connect(appsDirButton, &QPushButton::clicked, this, [this](){
-        QString existingDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-
-        if(QDir(appDirName->text()).exists())
-            existingDir = appDirName->text();
-
-        QString selectedDir = QFileDialog::getExistingDirectory(this,
-                                                                tr("Select SimCenter Workflow Applications Directory for Local Simulation"),
-                                                                existingDir,
-                                                                QFileDialog::ShowDirsOnly);
-
-        if(!selectedDir.isEmpty())
-            appDirName->setText(selectedDir);
-    });
-
-    /*
-    this->setStyleSheet("QComboBox {background: #FFFFFF;} \
-  QGroupBox {font-weight: bold;}\
-  QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
-  QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
-  */
+    
     this->workflowScript = workflowScriptName;
 }
 
 bool
 LocalApplication::outputToJSON(QJsonObject &jsonObject)
 {
-    jsonObject["localAppDir"]=appDirName->text();
-    jsonObject["remoteAppDir"]=appDirName->text();
-    jsonObject["workingDir"]=workingDirName->text();
-    jsonObject["runType"]=QString("local");
+  //    jsonObject["localAppDir"]=appDirName->text();
+  //    jsonObject["remoteAppDir"]=appDirName->text();
+  //    jsonObject["workingDir"]=workingDirName->text();
+  jsonObject["localAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+  jsonObject["remoteAppDir"]=SimCenterPreferences::getInstance()->getAppDir();
+  jsonObject["workingDir"]=SimCenterPreferences::getInstance()->getLocalWorkDir();
+
+  jsonObject["runType"]=QString("local");
 
     return true;
 }
 
 bool
 LocalApplication::inputFromJSON(QJsonObject &dataObject) {
-
-    if (dataObject.contains("localAppDir")) {
-        QJsonValue theName = dataObject["localAppDir"];
-        if(QDir(theName.toString()).exists())
-            appDirName->setText(theName.toString());
-        else
-            appDirName->setText(QCoreApplication::applicationDirPath());
-
-    } else
-        return false;
-
-    if (dataObject.contains("workingDir")) {
-        QJsonValue theName = dataObject["workingDir"];
-        if(QDir(theName.toString()).exists())
-            workingDirName->setText(theName.toString());
-        else {
-            QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-            workingDirName->setText(workingDir.filePath(QCoreApplication::applicationName() + "/LocalWorkDir"));
-        }
-
-    } else
-        return false;
 
     return true;
 }
@@ -210,16 +101,20 @@ LocalApplication::inputFromJSON(QJsonObject &dataObject) {
 void
 LocalApplication::onRunButtonPressed(void)
 {
-    int ok = 0;
-    QString workingDir = workingDirName->text();
+  messageLabel->setText("Setting up temporary directory");
+
+  QString workingDir = SimCenterPreferences::getInstance()->getLocalWorkDir();
     QDir dirWork(workingDir);
     if (!dirWork.exists())
         if (!dirWork.mkpath(workingDir)) {
             emit sendErrorMessage(QString("Could not create Working Dir: ") + workingDir + QString(" . Try using an existing directory or make sure you have permission to create the working directory."));
             return;
         }
+    
 
-   QString appDir = appDirName->text();
+    //   QString appDir = appDirName->text();
+    QString appDir = SimCenterPreferences::getInstance()->getAppDir();
+
    QDir dirApp(appDir);
    if (!dirApp.exists()) {
        emit sendErrorMessage(QString("The application directory, ") + appDir +QString(" specified does not exist!"));
@@ -227,7 +122,7 @@ LocalApplication::onRunButtonPressed(void)
    }
 
     QString templateDir("templatedir");
-
+    messageLabel->setText("Gathering files to local workdir"); messageLabel->repaint();
     emit sendStatusMessage("Gathering Files to local workdir");
     emit setupForRun(workingDir, templateDir);
 }
@@ -241,7 +136,8 @@ LocalApplication::onRunButtonPressed(void)
 bool
 LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputFile) {
 
-    QString appDir = appDirName->text();
+
+  QString appDir = SimCenterPreferences::getInstance()->getAppDir();
 
     //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
     QString pySCRIPT;
@@ -271,42 +167,42 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputF
     QStringList files;
     files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
 
-
-    //emit sendStatusMessage("Running the Simulations");
-
-    /************************************************************************
-for (int i = 0; i < files.size(); i++) {
-    QString copy = files.at(i);
-    QFile file(destinationDir + copy);
-    file.remove();
-}
-***********************************************************************/
-
     //emit sendStatusMessage("Running Dakota .. either run remotely or patience!");
-    qDebug() << "Running the Simulation Workflow... ";
-    emit sendStatusMessage("Running the Simulation Workflow... ");
+    messageLabel->setText("Starting UQ engine .. this may take awhile!"); messageLabel->repaint();
+    qDebug() << "Running the UQ engine ... ";
+    emit sendStatusMessage("Running the UQ engine ... ");
 
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
 
-
     QProcess *proc = new QProcess();
+    // keeping old python code call
     // QStringList args{pySCRIPT, "run",inputFile,registryFile};
     // proc->execute("python",args);
 
+    QString python = QString("python");
+    QSettings settings("SimCenter", "Common"); //These names will need to be constants to be shared
+    QVariant  pythonLocationVariant = settings.value("pythonExePath");
+    if (pythonLocationVariant.isValid()) {
+      python = pythonLocationVariant.toString();
+    }
 
 #ifdef Q_OS_WIN
+    python = QString("\"") + python + QString("\"");
+    qDebug() << python;
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
-    proc->execute("python",args);
+    proc->execute(python,args);
 
 #else
     // note the above not working under linux because basrc not being called so no env variables!!
 
-    QString command = QString("source $HOME/.bash_profile; python ") + pySCRIPT + QString(" run ") + inputFile + QString(" ") +
-            registryFile;
+    QString command = QString("source $HOME/.bash_profile; \"") + python + QString("\" \"" ) + 
+      pySCRIPT + QString("\" run \"") + inputFile + QString("\" \"") + registryFile + QString("\"");
 
-    qDebug() << "PYTHON COMMAND: " << command;    
+    QDebug debug = qDebug();
+    debug.noquote();
+    debug << "PYTHON COMMAND: " << command;
     proc->execute("bash", QStringList() << "-c" <<  command);
 
 #endif
@@ -327,12 +223,12 @@ for (int i = 0; i < files.size(); i++) {
     QString filenameOUT = tmpDirectory + QDir::separator() +  QString("dakota.out");
     QString filenameTAB = tmpDirectory + QDir::separator() +  QString("dakotaTab.out");
 
-
     emit processResults(filenameOUT, filenameTAB, inputFile);
-    
-    // will leave the tmp.SimCenter directory
-    //QDir tmpDIR(tmpDirectory);
-    //tmpDIR.removeRecursively();
 
     return 0;
+}
+
+void
+LocalApplication::displayed(void){
+   this->onRunButtonPressed();
 }

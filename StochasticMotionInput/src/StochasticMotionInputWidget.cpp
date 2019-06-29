@@ -160,6 +160,7 @@ bool StochasticMotionInputWidget::inputAppDataFromJSON(QJsonObject& jsonObject) 
 void StochasticMotionInputWidget::modelSelectionChanged(const QString& model) {
   // Switch the model description and form layout based on model selection
   if (model == "Vlachos et al. (2018)") {
+    delete stochastic_model_;
     stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
   } else {
     qDebug() << "ERROR: In StochasticMotionInputWidget::modelSelectionChanged: "

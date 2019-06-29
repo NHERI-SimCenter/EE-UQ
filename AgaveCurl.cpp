@@ -122,14 +122,10 @@ AgaveCurl::~AgaveCurl()
         QString user_passwd = username + QString(":") + password;
 
         // note should not use emit as object which was sending deleted before this one
-        qDebug() << "STATUS: contacting Agave to delete remote client app";
-
         curl_easy_setopt(hnd, CURLOPT_URL, url.toStdString().c_str());
         curl_easy_setopt(hnd, CURLOPT_USERPWD, user_passwd.toStdString().c_str());
         curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "DELETE");
         bool ok = this->invokeCurl();
-
-        qDebug() << "STATUS: deleted client app at Agave";
 
     }
 
@@ -331,7 +327,6 @@ AgaveCurl::login(QString uname, QString upassword)
         QJsonObject jsonObj = doc.object();
         if (jsonObj.contains("access_token")) {
             accessToken = jsonObj["access_token"].toString();
-            qDebug() << "accessToken" << accessToken;
             bearer = QString("Authorization: Bearer ") + accessToken;
             slist1 = curl_slist_append(slist1, bearer.toStdString().c_str());
             loggedInFlag = true;
@@ -1294,7 +1289,7 @@ AgaveCurl::invokeCurl(void) {
   curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYPEER, 0L);
   curl_easy_setopt(hnd, CURLOPT_SSL_VERIFYHOST, 0L);
   curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
-  curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
+  //  curl_easy_setopt(hnd, CURLOPT_VERBOSE, 1L);
 
   // we send the result of curl request to a file > uniqueFileName1
   FILE *pagefile = fopen(uniqueFileName1.toStdString().c_str(), "wb");
