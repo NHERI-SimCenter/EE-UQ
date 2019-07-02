@@ -46,7 +46,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SimCenterWidget.h>
 #include <Application.h>
 
-class QLineEdit;
+class QLabel;
 
 class LocalApplication : public Application
 {
@@ -56,6 +56,7 @@ public:
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
     bool setupDoneRunApplication(QString &tmpDirectory, QString &inputFile);
+    void displayed(void);
 
 signals:
     void processResults(QString , QString, QString);
@@ -65,9 +66,7 @@ public slots:
 
 private:
     void submitJob(void);
-
-    QLineEdit *workingDirName;
-    QLineEdit *appDirName;
+    QLabel *messageLabel;
     QString workflowScript;
 };
 

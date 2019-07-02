@@ -83,11 +83,11 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection = new QComboBox();
     eventSelection->setObjectName("LoadingTypeCombox");
     //    eventSelection->addItem(tr("Existing"));
-    eventSelection->addItem(tr("Multiple Existing"));
-    eventSelection->addItem(tr("Multiple PEER"));
-    eventSelection->addItem(tr("Hazard Based Event"));    
-    eventSelection->addItem(tr("Site Response"));
     eventSelection->addItem(tr("Stochastic Ground Motion"));
+    eventSelection->addItem(tr("Multiple PEER"));
+    eventSelection->addItem(tr("Hazard Based Event"));
+    eventSelection->addItem(tr("Site Response"));
+    eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("User Application"));
 
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
@@ -108,8 +108,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     //theExistingEventsWidget = new InputWidgetExistingEvent(theRandomVariablesContainer);
     //theStackedWidget->addWidget(theExistingEventsWidget);
-    theExistingEvents = new ExistingSimCenterEvents(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theExistingEvents);
+
+    // Adding stochastic ground motion model widget
+    theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theStochasticMotionWidget);
 
     theExistingPeerEvents = new ExistingPEER_Events(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingPeerEvents);
@@ -123,15 +125,15 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theStackedWidget->addWidget(theRockOutcrop);
 
     // Adding stochastic ground motion model widget
-    theStochasticMotionWidget = new StochasticMotionInputWidget(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theStochasticMotionWidget);
+    theExistingEvents = new ExistingSimCenterEvents(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theExistingEvents);
 
     theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
     theStackedWidget->addWidget(theUserDefinedApplication);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
-    theCurrentEvent=theExistingEvents;
+    theCurrentEvent=theStochasticMotionWidget;
 
     connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this,
             SLOT(eventSelectionChanged(QString)));
@@ -191,7 +193,7 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     //
 
     if (arg1 == "Multiple Existing") {
-        theStackedWidget->setCurrentIndex(0);
+        theStackedWidget->setCurrentIndex(4);
         theCurrentEvent = theExistingEvents;
     }
 
@@ -211,7 +213,7 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     }
 
     else if (arg1 == "Stochastic Ground Motion") {
-      theStackedWidget->setCurrentIndex(4);
+      theStackedWidget->setCurrentIndex(0);
       theCurrentEvent = theStochasticMotionWidget;
     }
 
@@ -265,7 +267,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     int index = 0;
     if ((type == QString("Existing Events")) ||
             (type == QString("ExistingSimCenterEvents"))) {
-        index = 0;
+        index = 4;
     } else if ((type == QString("Existing PEER Events")) ||
                (type == QString("ExistingPEER_Events"))) {
         index = 1;
@@ -278,7 +280,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 	       type == QString("Stochastic Ground Motion") ||
 	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
-        index = 4;
+        index = 0;
     } else if ((type == QString("User Application")) ||
                (type == QString("UserDefinedApplication"))) {
         index = 5;

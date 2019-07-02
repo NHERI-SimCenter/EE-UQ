@@ -130,14 +130,14 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theEDP = new EDP_Selection(theRVs);
 
     theResults = new DakotaResultsSampling();
-    localApp = new LocalApplication("EE-UQ.py");
-    remoteApp = new RemoteApplication("EE-UQ.py", theService);
+   localApp = new LocalApplication("EE-UQ workflow.py");
+   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
+
+   // localApp = new LocalApplication("EE-UQ.py");
+   // remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
-   // theRunLocalWidget = new RunLocalWidget(theUQ_Method);
     SimCenterWidget *theWidgets[1];// =0;
-    //theWidgets[0] = theAnalysis;
-    //theWidgets[1] = theUQ_Method;
     theRunWidget = new RunWidget(localApp, remoteApp, theWidgets, 0);
 
     //
@@ -252,7 +252,6 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
 
     treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
 
-
     //
     // customize the apperance of the menu on the left
     //
@@ -320,6 +319,8 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/bfm/use.php")));
     //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
 
+
+    theGI->setDefaultProperties(1,144,360,360,37.8716,-127.2717);
 }
 
 InputWidgetEE_UQ::~InputWidgetEE_UQ()
@@ -531,6 +532,10 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
+    if (jsonObject.contains("Simulation")) {
+        QJsonObject jsonObjSimInformation = jsonObject["Simulation"].toObject();
+        theAnalysis->inputFromJSON(jsonObjSimInformation);
+    }
 
     return true;
 }
