@@ -64,6 +64,8 @@ public:
     void setNumTasks(int numTasks);
     void setExtraInputs(QMap<QString, QString> extraInputs);
     void setExtraParameters(QMap<QString, QString> extraParameters);
+    void clearExtraInputs();
+    void clearExtraParameters();
 
 signals:
    void processResults(QString &, QString &);
