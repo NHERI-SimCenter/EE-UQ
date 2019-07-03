@@ -412,3 +412,13 @@ void RemoteApplication::setExtraParameters(QMap<QString, QString> extraParameter
     this->extraParameters = extraParameters;
 }
 
+void RemoteApplication::clearExtraInputs()
+{
+    this->extraInputs.clear();
+}
+
+void RemoteApplication::clearExtraParameters()
+{
+    this->extraParameters.clear();
+}
+
