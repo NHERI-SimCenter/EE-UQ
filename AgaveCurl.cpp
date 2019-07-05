@@ -743,7 +743,7 @@ AgaveCurl::uploadFile(const QString &local, const QString &remote) {
 
 
 void
-AgaveCurl::downloadFilesCall(const QStringList &remoteFiles, const QStringList &localFiles) {
+AgaveCurl::downloadFilesCall(const QStringList &remoteFiles, const QStringList &localFiles, QObject* sender) {
     bool result = true;
     for (int i=0; i<remoteFiles.size(); i++) {
         QString remote = remoteFiles.at(i);
@@ -751,11 +751,11 @@ AgaveCurl::downloadFilesCall(const QStringList &remoteFiles, const QStringList &
 
         result = this->downloadFile(remote, local);
         if (result == false) {
-            emit downloadFilesReturn(result);
+            emit downloadFilesReturn(result, sender);
         }
     }
 
-  emit downloadFilesReturn(result);
+  emit downloadFilesReturn(result, sender);
 }
 
 bool
@@ -816,10 +816,10 @@ AgaveCurl::downloadFile(const QString &remoteFile, const QString &localFile)
 }
 
 
-QJsonObject
+QJsonArray
 AgaveCurl::remoteLS(const QString &remotePath)
 {
-    QJsonObject result;
+    QJsonArray result;
     // this method does not invoke the invokeCurl() as want to write to local file directtly
 
 
@@ -867,7 +867,7 @@ AgaveCurl::remoteLS(const QString &remotePath)
             return result;
         } else if (status == "success") {
             if (theObj.contains("result")) {
-                result = theObj["result"].toObject();
+                result = theObj["result"].toArray();
                 QString message = QString("Succesfully obtained lising: ") + remoteName;
                 emit statusMessage(message);
                 return result;
@@ -1190,6 +1190,12 @@ void
 AgaveCurl::deleteJobCall(const QString &jobID, const QStringList &dirToRemove) {
   bool result = this->deleteJob(jobID, dirToRemove);
   emit deleteJobReturn(result);
+}
+
+void AgaveCurl::remoteLSCall(const QString &remotePath)
+{
+    QJsonArray dirList = this->remoteLS(remotePath);
+    emit remoteLSReturn(dirList);
 }
 
 bool

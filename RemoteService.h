@@ -54,6 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QString>
 #include <QJsonObject>
+#include <QJsonArray>
 
 class RemoteService: public QObject
 {
@@ -72,7 +73,7 @@ public slots:
     // file system
     virtual void mkdirCall(const QString &remoteName, const QString &remotePath) =0;
     virtual void uploadFileCall(const QString &local, const QString &remote) =0;
-    virtual void downloadFilesCall(const QStringList &remote, const QStringList &local) =0;
+    virtual void downloadFilesCall(const QStringList &remote, const QStringList &local, QObject* sender=nullptr) =0;
     virtual void uploadDirectoryCall(const QString &local, const QString &remote) =0;
     // void downloaDirectoryCall(const QString &remote, const QString &local) =0;
     virtual void removeDirectoryCall(const QString &remote) =0;
@@ -84,6 +85,7 @@ public slots:
     virtual void getJobDetailsCall(const QString &jobID) =0;
     virtual void getJobStatusCall(const QString &jobID) =0;
     virtual void deleteJobCall(const QString &jobID, const QStringList &dirToRemove) =0;
+    virtual void remoteLSCall(const QString &remotePath)=0;
 
 signals:
     void statusMessage(QString) ;
@@ -97,7 +99,7 @@ signals:
     // filesystem
     void mkdirReturn(bool) ;
     void uploadFileReturn(bool) ;
-    void downloadFilesReturn(bool) ;
+    void downloadFilesReturn(bool, QObject* sender) ;
     void uploadDirectoryReturn(bool) ;
     void downloaDirectoryReturn(bool) ;
     void removeDirectoryReturn(bool) ;
@@ -109,6 +111,7 @@ signals:
     void getJobDetailsReturn(QJsonObject) ;
     void getJobStatusReturn(QString) ;
     void deleteJobReturn(bool) ;
+    void remoteLSReturn(QJsonArray dirList);
 
 private:
 
