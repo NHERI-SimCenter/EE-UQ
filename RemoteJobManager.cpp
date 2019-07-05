@@ -303,47 +303,6 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
 	 
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
-	
-
-        //
-        // create 3 temp file names neede to store remote data files locally
-        //
-
-        /* name1 in following keeps failing .. just use same file names
-        QTemporaryFile tmpFile1;
-       // QString name1, name2, name3;
-
-        if (tmpFile1.open()) {
-            name1 = tmpFile1.fileName();
-            tmpFile1.close();
-        } else {
-             // will have to overwrite any local dakota.in
-             name1 = "dakota.json";
-        }
-
-        QTemporaryFile tmpFile2;
-        if (tmpFile2.open()) {
-            name2 = tmpFile2.fileName();
-            tmpFile2.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name2 = "dakota.out";
-        }
-
-        QTemporaryFile tmpFile3;
-        if (tmpFile3.open()) {
-            name3 = tmpFile3.fileName();
-            tmpFile3.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name3 = "dakotaTab.out";
-        }
-        */
-
-        name1="dakota.json";
-        name2="dakota.out";
-        name3="dakotaTab.out";
-
 	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
 	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
 	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
@@ -366,6 +325,8 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         filesToDownload.append(dakotaJSON);
         filesToDownload.append(dakotaOUT);
         filesToDownload.append(dakotaTAB);
+
+	qDebug() << "remote out: " << dakotaOUT;
 
         emit downloadFiles(filesToDownload, localFiles);
      }
