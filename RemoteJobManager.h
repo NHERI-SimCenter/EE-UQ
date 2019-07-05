@@ -91,7 +91,7 @@ public slots:
 
     // void deleteDirectoryReturn(bool);
     // void jobDetailsReturn(QJsonObject);
-    void downloadFilesReturn(bool);
+    void downloadFilesReturn(bool, QObject* sender);
 
 public slots:
     void bringUpJobActionMenu(int row, int col);

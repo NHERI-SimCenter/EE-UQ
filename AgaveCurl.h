@@ -79,7 +79,7 @@ public:
 
     // methods needed atomic file/dir operations
     // methods needed for file/dir operations
-    QJsonObject remoteLS(const QString &remotePath);
+    QJsonArray remoteLS(const QString &remotePath);
     bool mkdir(const QString &remoteName, const     QString &remotePath);
     bool uploadFile(const QString &local, const QString &remote);
     bool downloadFile(const QString &remote, const QString &local);
@@ -109,7 +109,7 @@ public slots:
     // file system
     void mkdirCall(const QString &remoteName, const QString &remotePath);
     void uploadFileCall(const QString &local, const QString &remote);
-    void downloadFilesCall(const QStringList &remote, const QStringList &local);
+    void downloadFilesCall(const QStringList &remote, const QStringList &local, QObject* sender=nullptr);
     void uploadDirectoryCall(const QString &local, const QString &remote);
     // void downloaDirectoryCall(const QString &remote, const QString &local);
     void removeDirectoryCall(const QString &remote);
@@ -121,6 +121,7 @@ public slots:
     void getJobDetailsCall(const QString &jobID);
     void getJobStatusCall(const QString &jobID);
     void deleteJobCall(const QString &jobID, const QStringList &dirToRemove);
+    void remoteLSCall(const QString& remotePath);
 
 private:
     // private methods
