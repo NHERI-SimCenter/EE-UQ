@@ -93,9 +93,20 @@ OpenSeesBuildingModel::OpenSeesBuildingModel(RandomVariablesContainer *theRandom
     layout->addWidget(label3,2,0);
     layout->addWidget(ndm,2,1);
 
+    QLabel *label4 = new QLabel();
+    label4->setText("# DOF at Nodes:");
+    ndf = new QLineEdit();
+    ndf->setText("3");
+    ndf->setMaximumWidth(50);
+    layout->addWidget(label4,3,0);
+    layout->addWidget(ndf,3,1);
+
+    ndf->setValidator(new QIntValidator());
+    ndm->setValidator(new QIntValidator());
+
     QWidget *dummyR = new QWidget();
-    layout->addWidget(dummyR,3,0);
-    layout->setRowStretch(4,1);
+    layout->addWidget(dummyR,4,0);
+    layout->setRowStretch(5,1);
     //layout->setColumnStretch(3,1);
 
     this->setLayout(layout);
@@ -138,8 +149,8 @@ OpenSeesBuildingModel::outputToJSON(QJsonObject &jsonObject)
     }
 
     jsonObject["nodes"]=nodeTags;
-
     jsonObject["ndm"]=ndm->text().toInt();
+    jsonObject["ndf"]=ndf->text().toInt();
 
     QJsonArray rvArray;
     for (int i=0; i<varNamesAndValues.size()-1; i+=2) {
@@ -185,9 +196,18 @@ OpenSeesBuildingModel::inputFromJSON(QJsonObject &jsonObject)
     }
 
     int theNDM = jsonObject["ndm"].toInt();
-    qDebug() << "NDM: " << theNDM;
+    int theNDF = 1;
+    if (theNDM == 2)
+      theNDF = 3;
+    else if (theNDM == 3)
+      theNDF = 6;
+      
+    if (jsonObject.contains("ndf")) {    
+      theNDF = jsonObject["ndf"].toInt();
+    }
 
     ndm->setText(QString::number(theNDM));
+    ndf->setText(QString::number(theNDF));
 
     return true;
 }
