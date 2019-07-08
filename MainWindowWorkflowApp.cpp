@@ -466,6 +466,12 @@ void MainWindowWorkflowApp::createActions() {
     connect(saveAsAction, &QAction::triggered, this, &MainWindowWorkflowApp::saveAs);
     fileMenu->addAction(saveAsAction);
 
+    thePreferences = SimCenterPreferences::getInstance(this);    
+    QAction *preferenceAction = new QAction(tr("&Preferences"), this);
+    preferenceAction->setStatusTip(tr("Set application preferences"));
+    connect(preferenceAction, &QAction::triggered, this, &MainWindowWorkflowApp::preferences);
+    fileMenu->addAction(preferenceAction);    
+
     // strangely, this does not appear in menu (at least on a mac)!! ..
     // does Qt not allow as in tool menu by default?
     // check for yourself by changing Quit to drivel and it works
@@ -477,14 +483,11 @@ void MainWindowWorkflowApp::createActions() {
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     QAction *versionAct = helpMenu->addAction(tr("&Version"), this, &MainWindowWorkflowApp::version);
     QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindowWorkflowApp::about);
-    QAction *preferencesAct = helpMenu->addAction(tr("&Preferences"), this, &MainWindowWorkflowApp::preferences);
     QAction *manualAct = helpMenu->addAction(tr("&Manual"), this, &MainWindowWorkflowApp::manual);
     QAction *submitAct = helpMenu->addAction(tr("&Provide Feedback"), this, &MainWindowWorkflowApp::submitFeedback);
     QAction *submitFeature = helpMenu->addAction(tr("&Submit Feature Request"), this, &MainWindowWorkflowApp::submitFeatureRequest);
     QAction *citeAct = helpMenu->addAction(tr("&How to Cite"), this, &MainWindowWorkflowApp::cite);
     QAction *copyrightAct = helpMenu->addAction(tr("&License"), this, &MainWindowWorkflowApp::copyright);
-
-    thePreferences = SimCenterPreferences::getInstance(this);
 }
 
 
