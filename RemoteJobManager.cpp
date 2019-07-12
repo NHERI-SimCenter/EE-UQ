@@ -114,8 +114,12 @@ RemoteJobManager::RemoteJobManager(RemoteService *theRemoteInterface, QWidget *p
     connect(theRemoteInterface,SIGNAL(deleteJobReturn(bool)), this,SLOT(deleteJobReturn(bool)));
 
     // download files
-    connect(this,SIGNAL(downloadFiles(QStringList,QStringList)), theRemoteInterface,SLOT(downloadFilesCall(QStringList,QStringList)));
-    connect(theRemoteInterface,SIGNAL(downloadFilesReturn(bool)),this,SLOT(downloadFilesReturn(bool)));
+    connect(this,&RemoteJobManager::downloadFiles, theRemoteInterface,
+            [this, theRemoteInterface](QStringList remoteFiles, QStringList localFiles)
+    {
+        theRemoteInterface->downloadFilesCall(remoteFiles, localFiles, this);
+    });
+    connect(theRemoteInterface,SIGNAL(downloadFilesReturn(bool, QObject*)),this,SLOT(downloadFilesReturn(bool, QObject*)));
 }
 
 void
@@ -303,47 +307,6 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
 	 
         archiveDir = archiveDir + QString("/") + inputDir.remove(QRegExp(".*\/")); // regex to remove up till last /
 
-	
-
-        //
-        // create 3 temp file names neede to store remote data files locally
-        //
-
-        /* name1 in following keeps failing .. just use same file names
-        QTemporaryFile tmpFile1;
-       // QString name1, name2, name3;
-
-        if (tmpFile1.open()) {
-            name1 = tmpFile1.fileName();
-            tmpFile1.close();
-        } else {
-             // will have to overwrite any local dakota.in
-             name1 = "dakota.json";
-        }
-
-        QTemporaryFile tmpFile2;
-        if (tmpFile2.open()) {
-            name2 = tmpFile2.fileName();
-            tmpFile2.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name2 = "dakota.out";
-        }
-
-        QTemporaryFile tmpFile3;
-        if (tmpFile3.open()) {
-            name3 = tmpFile3.fileName();
-            tmpFile3.close();
-        } else {
-            // will have to overwrite any local dakotaTab.out;
-            name3 = "dakotaTab.out";
-        }
-        */
-
-        name1="dakota.json";
-        name2="dakota.out";
-        name3="dakotaTab.out";
-
 	name1 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.json");;
 	name2 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakota.out");;
 	name3 = QCoreApplication::applicationDirPath() + QDir::separator() + QString("dakotaTab.out");;
@@ -367,12 +330,14 @@ RemoteJobManager::getJobDetailsReturn(QJsonObject job)  {
         filesToDownload.append(dakotaOUT);
         filesToDownload.append(dakotaTAB);
 
+	qDebug() << "remote out: " << dakotaOUT;
+
         emit downloadFiles(filesToDownload, localFiles);
      }
 }
 
 void
-RemoteJobManager::downloadFilesReturn(bool result)
+RemoteJobManager::downloadFilesReturn(bool result, QObject* sender)
 {
     //
     // this method called only during the loading of a remote job
@@ -380,13 +345,16 @@ RemoteJobManager::downloadFilesReturn(bool result)
     //    which itself was a result of the getJobData methid and it's emit getJobDetails signal
     //
 
-    if (result == true) {
-      emit loadFile(name1);
-      emit processResults(name2, name3, name1);
-      this->hide();
-    } else {
-        emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
-   }
+    if (sender == this)
+    {
+        if (result == true) {
+          emit loadFile(name1);
+          emit processResults(name2, name3, name1);
+          this->hide();
+        } else {
+            emit errorMessage("ERROR - Failed to download File - did Job finish successfully?");
+       }
+    }
 }
 
 void

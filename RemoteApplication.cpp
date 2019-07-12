@@ -62,14 +62,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QUuid>
 #include <QFileDialog>
 #include <ZipUtils.h>
+#include <QCoreApplication>
 
 RemoteApplication::RemoteApplication(QString name, RemoteService *theService, QWidget *parent)
 : Application(parent), theRemoteService(theService)
 {
     workflowScriptName = name;
-    shortDirName = workflowScriptName;
+    shortDirName = QCoreApplication::applicationName() + QString(": ");
+
+    //    shortDirName = workflowScriptName;
     //shortDirName = name.chopped(3); // remove .py
-    shortDirName.chop(3);
+    //shortDirName.chop(3);
 
     QGridLayout *layout = new QGridLayout();
     QLabel *nameLabel = new QLabel();

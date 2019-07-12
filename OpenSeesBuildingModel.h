@@ -84,6 +84,7 @@ private:
     QLineEdit *nodes;
     QLineEdit *elements;
     QLineEdit *ndm;
+    QLineEdit *ndf;
 
     RandomVariablesContainer *theRandomVariablesContainer;
     QStringList varNamesAndValues;
