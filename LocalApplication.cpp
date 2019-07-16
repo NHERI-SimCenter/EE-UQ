@@ -192,8 +192,38 @@ LocalApplication::setupDoneRunApplication(QString &tmpDirectory, QString &inputF
     python = QString("\"") + python + QString("\"");
     qDebug() << python;
     QStringList args{pySCRIPT, "run",inputFile,registryFile};
-    proc->execute(python,args);
+    qDebug() << args;
 
+    proc->setProcessChannelMode(QProcess::SeparateChannels);
+    proc->start(python,args);
+
+    if (!proc->waitForStarted(-1))
+    {
+        qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString().split('\n');
+        emit sendStatusMessage("Failed to start the workflow!!!");
+        return false;
+    }
+
+    if(!proc->waitForFinished(-1))
+    {
+        qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit sendStatusMessage("Failed to finish running the workflow!!!");
+        return false;
+    }
+
+
+    if(0 != proc->exitCode())
+    {
+        qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
+        qDebug() << proc->errorString();
+        emit sendStatusMessage("Failed to run the workflow!!!");
+        return false;
+    }
+
+    qDebug().noquote() << proc->readAllStandardOutput();
+    qDebug().noquote() << proc->readAllStandardError();
 #else
     // note the above not working under linux because basrc not being called so no env variables!!
 
