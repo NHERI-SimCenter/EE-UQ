@@ -37,7 +37,7 @@ features and applications they would like to see in this
 application. If you want it, chances are many of your colleagues also
 would benefit from it.
 
-Please see the [EE-UQ Research Tool webpage](https://simcenter.designsafe-ci.org/research-tools/ee-uq-application/)
+Please visit the [EE-UQ Research Tool webpage](https://simcenter.designsafe-ci.org/research-tools/ee-uq-application/)
 for more resources related to this tool. Additionally, this page
 provides more information on the NHERI SimCenter, including other SimCenter
 applications, FAQ, and how to collaborate.
