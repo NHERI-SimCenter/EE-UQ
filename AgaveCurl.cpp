@@ -822,14 +822,19 @@ AgaveCurl::remoteLS(const QString &remotePath)
     QJsonArray result;
     // this method does not invoke the invokeCurl() as want to write to local file directtly
 
-
     QFileInfo remoteFileInfo(remotePath);
+    if(remotePath.isEmpty())
+        remoteFileInfo.setFile(username);
+
+
     QString remoteName = remoteFileInfo.fileName();
     QString message = QString("Contacting ") + tenant + QString(" to get dir listing ") + remoteName;
     emit statusMessage(message);
 
     // set up the call
     QString url = tenantURL + QString("files/v2/listings/") + remotePath;
+    if(remotePath.isEmpty())
+        url.append(username);
 
     curl_easy_setopt(hnd, CURLOPT_URL, url.toStdString().c_str());
     if (this->invokeCurl() == false) {
