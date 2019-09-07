@@ -45,7 +45,7 @@ applications, FAQ, and how to collaborate.
 ## How to Cite
 You can cite this software as follows:
 
-Frank McKenna, Wael Elhaddad, Michael Gardner, & Charles Wang. (2019, March 31). NHERI-SimCenter/EE-UQ v1.1.0 (Version v1.1.0). Zenodo. http://doi.org/10.5281/zenodo.2619616
+Frank McKenna, Wael Elhaddad, Michael Gardner, & Charles Wang. (2019, March 31). NHERI-SimCenter/EE-UQ v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.2619616
 
 ## Acknowledgements
 This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
