@@ -12,6 +12,7 @@ SOURCES += \
     $$PWD/EarthquakeEventSelection.cpp \
     $$PWD/ExistingPEER_Events.cpp \
     $$PWD/SHAMotionWidget.cpp \
+    $$PWD/EDP_Selection.cpp \
     $$PWD/EarthquakeRecord.cpp \
     $$PWD/StandardEarthquakeEDP.cpp \
     $$PWD/StochasticMotionInput/src/StochasticMotionInputWidget.cpp \
@@ -23,6 +24,7 @@ HEADERS  += \
     $$PWD/EarthquakeEventSelection.h \
     $$PWD/SHAMotionWidget.h \
     $$PWD/EarthquakeRecord.h \
+    $$PWD/EDP_Selection.h \
     $$PWD/StandardEarthquakeEDP.h \
     $$PWD/ExistingPEER_Events.h \
     $$PWD/StochasticMotionInput/include/StochasticMotionInputWidget.h \
