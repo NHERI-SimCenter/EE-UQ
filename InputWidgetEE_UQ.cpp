@@ -129,12 +129,12 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theUQ_Method = new InputWidgetSampling();
     theEDP = new EDP_Selection(theRVs);
 
-    theResults = new DakotaResultsSampling();
-   localApp = new LocalApplication("EE-UQ workflow.py");
-   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
+    theResults = new DakotaResultsSampling(theRVs);
+    localApp = new LocalApplication("EE-UQ workflow.py");
+    remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
 
-   // localApp = new LocalApplication("EE-UQ.py");
-   // remoteApp = new RemoteApplication("EE-UQ.py", theService);
+    // localApp = new LocalApplication("EE-UQ.py");
+    // remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
     SimCenterWidget *theWidgets[1];// =0;
@@ -438,7 +438,7 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
  void
  InputWidgetEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
 
-      theResults->processResults(dakotaOut, dakotaTab, inputFile);
+      theResults->processResults(dakotaOut, dakotaTab);
       theRunWidget->hide();
       treeView->setCurrentIndex(infoItemIdx);
       theStackedWidget->setCurrentIndex(6);

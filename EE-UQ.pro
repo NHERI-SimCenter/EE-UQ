@@ -29,6 +29,7 @@ win32:LIBS += "..\jansson\build\lib\release\jansson.lib"
 
 include(./EE-UQ.pri)
 include(../SimCenterCommon/Common/Common.pri)
+include(../SimCenterCommon/Workflow/Workflow.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
