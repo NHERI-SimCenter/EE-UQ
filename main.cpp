@@ -11,12 +11,12 @@
 #include <AgaveCurl.h>
 #include <InputWidgetEE_UQ.h>
 
-
 #include <QApplication>
 #include <QFile>
 #include <QTime>
 #include <QTextStream>
 #include <GoogleAnalytics.h>
+#include <QOpenGLWidget>
 
  // customMessgaeOutput code from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
     QCoreApplication::setApplicationVersion("1.2.0");
-    GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    //GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
@@ -78,6 +78,13 @@ int main(int argc, char *argv[])
 
   // window scaling for mac
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+
+  QSurfaceFormat glFormat;
+  glFormat.setVersion(3, 3);
+  glFormat.setProfile(QSurfaceFormat::CoreProfile);
+  QSurfaceFormat::setDefaultFormat(glFormat);
+
 
   QApplication a(argc, argv);
 
@@ -153,6 +160,7 @@ int main(int argc, char *argv[])
   // show the main window & start the event loop
   //
 
+
   w.show();
 
 
@@ -165,7 +173,6 @@ int main(int argc, char *argv[])
     file.close();
     fileEEUQ.close();
   }
-
 
 
 /*
