@@ -10,6 +10,7 @@
 
 #include <AgaveCurl.h>
 #include <InputWidgetEE_UQ.h>
+#include <QCoreApplication>
 
 #include <QApplication>
 #include <QFile>
@@ -17,12 +18,17 @@
 #include <QTextStream>
 #include <GoogleAnalytics.h>
 #include <QOpenGLWidget>
+#include <QStandardPaths>
+#include <QDir>
 
- // customMessgaeOutput code from web:
+
+
+static QString logFilePath;
+static bool logToFile = false;
+
+
+ // customMessgaeOutput code taken from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
-
-const QString logFilePath = "debug.log";
-bool logToFile = false;
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -66,7 +72,13 @@ int main(int argc, char *argv[])
   //
 
   // remove old log file
-  QFile debugFile("debug.log");
+  //QDir workingDir(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+  logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+           + QDir::separator() + QCoreApplication::applicationName()
+          + QDir::separator() + QString("debug.log");
+
+  qDebug() << "LOG FILE: " << logFilePath;
+  QFile debugFile(logFilePath);
   debugFile.remove();
 
   QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
@@ -76,15 +88,18 @@ int main(int argc, char *argv[])
   
   qInstallMessageHandler(customMessageOutput);
 
-  // window scaling for mac
+  //
+  // window scaling 
+  //
+
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-
+  /******************  code to reset openGL version .. keep around in case need again
   QSurfaceFormat glFormat;
   glFormat.setVersion(3, 3);
   glFormat.setProfile(QSurfaceFormat::CoreProfile);
   QSurfaceFormat::setDefaultFormat(glFormat);
-
+  ***********************************************************************************/
 
   QApplication a(argc, argv);
 
@@ -102,6 +117,7 @@ int main(int argc, char *argv[])
   //
   // create the main window
   //
+
   WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
   MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
@@ -157,13 +173,13 @@ int main(int argc, char *argv[])
   thread->start();
 
   //
-  // show the main window & start the event loop
+  // show the main window, set styles & start the event loop
   //
 
 
   w.show();
 
-
+  // set style sheet
   QFile file(":/styleCommon/common_experimental.qss");
   QFile fileEEUQ(":/styles/stylesheet_eeuq.qss");
   if(file.open(QFile::ReadOnly) && fileEEUQ.open(QFile::ReadOnly)) {
@@ -174,19 +190,6 @@ int main(int argc, char *argv[])
     fileEEUQ.close();
   }
 
-
-/*
-  theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
-QGroupBox {font-weight: bold;}\
-QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
-QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
-*/
-
-
-//QTQTabWidget::pane{
-//                             border: 1px solid rgb(239, 239, 239);
-//                             background: rgb(239, 239, 239);
-//                         }abWidget::pane {background-color: #ECECEC;}");
 
   int res = a.exec();
 
