@@ -123,6 +123,8 @@ EDP_Selection::inputFromJSON(QJsonObject &jsonObject) {
 
   if (theCurrentEDP != 0) {
     return theCurrentEDP->inputFromJSON(jsonObject);
+  } else {
+      emit sendErrorMessage("EDP_SElection no current EDP selected");
   }
 
   return false;
@@ -172,7 +174,6 @@ EDP_Selection::inputAppDataFromJSON(QJsonObject &jsonObject)
     emit sendErrorMessage("EDP_Selection - no Application key found");
     return false;
   }
-
 
   // based on application name value set edp type
   int index = 0;

@@ -373,24 +373,14 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     QJsonObject jsonObjStructural;
     theSIM->outputToJSON(jsonObjStructural);
+
     jsonObjectTop["StructuralInformation"] = jsonObjStructural;
     QJsonObject appsSIM;
     theSIM->outputAppDataToJSON(appsSIM);
+
     apps["Modeling"]=appsSIM;
 
-    // FMK - note to self, random varaibales need to be changed
-    //QJsonObject jsonObjectRVs;
-    //theRVs->outputToJSON(jsonObjectRVs);
-    //jsonObjectTop["RandomVariables"] = jsonObjectRVs;
     theRVs->outputToJSON(jsonObjectTop);
-
-    /*
-    QJsonObject appsEDP;
-    appsEDP["Application"] = "StandardEarthquakeEDP";
-    QJsonObject dataObj;
-    appsEDP["ApplicationData"] = dataObj;
-    apps["EDP"] = appsEDP;
-    */
 
     QJsonObject jsonObjectEDP;
     theEDP->outputToJSON(jsonObjectEDP);
@@ -421,15 +411,11 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     theEvent->outputToJSON(jsonObjectTop);
     theEvent->outputAppDataToJSON(apps);
 
-
-
-
     theRunWidget->outputToJSON(jsonObjectTop);
 
     jsonObjectTop["Applications"]=apps;
 
     //theRunLocalWidget->outputToJSON(jsonObjectTop);
-
 
     return true;
 }
@@ -454,22 +440,19 @@ InputWidgetEE_UQ::clear(void)
 bool
 InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 {
-
     //
     // get each of the main widgets to input themselves
     //
 
     if (jsonObject.contains("GeneralInformation")) {
         QJsonObject jsonObjGeneralInformation = jsonObject["GeneralInformation"].toObject();
-        theGI->inputFromJSON(jsonObjGeneralInformation);
-    } else
+        if (theGI->inputFromJSON(jsonObjGeneralInformation) == false) {
+            emit errorMessage("EE_UQ: failed to read GeneralInformation");
+        }
+    } else {
+        emit errorMessage("EE_UQ: failed to find GeneralInformation");
         return false;
-
-    if (jsonObject.contains("StructuralInformation")) {
-        QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
-        theSIM->inputFromJSON(jsonObjStructuralInformation);
-    } else
-        return false;
+    }
 
     if (jsonObject.contains("Applications")) {
 
@@ -477,35 +460,54 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         if (theApplicationObject.contains("Modeling")) {
             QJsonObject theObject = theApplicationObject["Modeling"].toObject();
-            theSIM->inputAppDataFromJSON(theObject);
-        } else
+            if (theSIM->inputAppDataFromJSON(theObject) == false) {
+                emit errorMessage("EE_UQ: failed to read Modeling Application");
+            }
+        } else {
+            emit errorMessage("EE_UQ: failed to find Modeling Application");
             return false;
+        }
 
         // note: Events is different because the object is an Array
         if (theApplicationObject.contains("Events")) {
-	  //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
-            theEvent->inputAppDataFromJSON(theApplicationObject);
-        } else
-            return false;
+            //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
+            if (theEvent->inputAppDataFromJSON(theApplicationObject) == false) {
+                emit errorMessage("EE_UQ: failed to read Event Application");
+            }
 
+        } else {
+            emit errorMessage("EE_UQ: failed to find Event Application");
+            return false;
+        }
 
         if (theApplicationObject.contains("UQ")) {
             QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            theUQ_Method->inputAppDataFromJSON(theObject);
-        } else
+            if (theUQ_Method->inputAppDataFromJSON(theObject) == false)
+                emit errorMessage("EE_UQ: failed to read UQ application");
+        } else {
+            emit errorMessage("EE_UQ: failed to find UQ application");
             return false;
+        }
 
         if (theApplicationObject.contains("Simulation")) {
             QJsonObject theObject = theApplicationObject["Simulation"].toObject();
-            theAnalysis->inputAppDataFromJSON(theObject);
-        } else
+            if (theAnalysis->inputAppDataFromJSON(theObject) == false)
+                emit errorMessage("EE_UQ: failed to read Simulation Application");
+        } else {
+            emit errorMessage("EE_UQ: failed to find Simulation Application");
             return false;
+        }
+
 
         if (theApplicationObject.contains("EDP")) {
             QJsonObject theObject = theApplicationObject["EDP"].toObject();
-            theEDP->inputAppDataFromJSON(theObject);
-        } else
+            if (theEDP->inputAppDataFromJSON(theObject) == false) {
+                emit errorMessage("EE_UQ: failed to read EDP application");
+            }
+        } else {
+            emit errorMessage("EE_UQ: failed to find EDP application");
             return false;
+        }
 
     } else
         return false;
@@ -518,23 +520,41 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
 
+    if (jsonObject.contains("StructuralInformation")) {
+        QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
+        if (theSIM->inputFromJSON(jsonObjStructuralInformation) == false) {
+            emit errorMessage("EE_UQ: failed to read StructuralInformation");
+        }
+    } else {
+        emit errorMessage("EE_UQ: failed to find StructuralInformation");
+        return false;
+    }
 
     if (jsonObject.contains("EDP")) {
         QJsonObject edpObj = jsonObject["EDP"].toObject();
-         qDebug() << "HELLO" << edpObj;
-        theEDP->inputFromJSON(edpObj);
-    } else
+        if (theEDP->inputFromJSON(edpObj) == false)
+            emit errorMessage("EE_UQ: failed to read EDP data");
+    } else {
+        emit errorMessage("EE_UQ: failed to find EDP data");
         return false;
+    }
 
     if (jsonObject.contains("UQ_Method")) {
         QJsonObject jsonObjUQInformation = jsonObject["UQ_Method"].toObject();
-        theUQ_Method->inputFromJSON(jsonObjUQInformation);
-    } else
+        if (theUQ_Method->inputFromJSON(jsonObjUQInformation) == false)
+            emit errorMessage("EE_UQ: failed to read UQ Method data");
+    } else {
+        emit errorMessage("EE_UQ: failed to find UQ Method data");
         return false;
+    }
 
     if (jsonObject.contains("Simulation")) {
         QJsonObject jsonObjSimInformation = jsonObject["Simulation"].toObject();
-        theAnalysis->inputFromJSON(jsonObjSimInformation);
+        if (theAnalysis->inputFromJSON(jsonObjSimInformation) == false)
+            emit errorMessage("EE_UQ: failed to read Simulation data");
+    } else {
+        emit errorMessage("EE_UQ: failed to find Simulation data");
+        return false;
     }
 
     return true;
