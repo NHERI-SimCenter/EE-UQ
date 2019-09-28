@@ -10,6 +10,7 @@
 
 #include <AgaveCurl.h>
 #include <InputWidgetEE_UQ.h>
+#include <QCoreApplication>
 
 #include <QApplication>
 #include <QFile>
@@ -17,12 +18,17 @@
 #include <QTextStream>
 #include <GoogleAnalytics.h>
 #include <QOpenGLWidget>
+#include <QStandardPaths>
+#include <QDir>
 
- // customMessgaeOutput code from web:
+
+
+static QString logFilePath;
+static bool logToFile = false;
+
+
+ // customMessgaeOutput code taken from web:
  // https://stackoverflow.com/questions/4954140/how-to-redirect-qdebug-qwarning-qcritical-etc-output
-
-const QString logFilePath = "debug.log";
-bool logToFile = false;
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -47,7 +53,7 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
     }
 
     if (type == QtFatalMsg)
-        abort();
+         abort();
 }
 
 
@@ -56,114 +62,144 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("1.2.0");
+    QCoreApplication::setApplicationVersion("2.0.0");
     //GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
-  //
-  // set up logging of output messages for user debugging
-  //
-
-  // remove old log file
-  QFile debugFile("debug.log");
-  debugFile.remove();
-
-  QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-  
-  if (envVar.isEmpty())
-    logToFile = true;
-  
-  qInstallMessageHandler(customMessageOutput);
-
-  // window scaling for mac
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //
+    // set up logging of output messages for user debugging
+    //
 
 
-  QSurfaceFormat glFormat;
-  glFormat.setVersion(3, 3);
-  glFormat.setProfile(QSurfaceFormat::CoreProfile);
-  QSurfaceFormat::setDefaultFormat(glFormat);
+    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + QDir::separator() + QCoreApplication::applicationName()
+            + QDir::separator() + QString("debug.log");
 
 
-  QApplication a(argc, argv);
+    // remove old log file
+    QFile debugFile(logFilePath);
+    debugFile.remove();
 
-  //
-  // create a remote interface
-  //
+    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
 
-  QString tenant("designsafe");
-  QString storage("agave://designsafe.storage.default/");
-  QString dirName("EE-UQ");
+    if (envVar.isEmpty())
+        logToFile = true;
 
-  AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+    qInstallMessageHandler(customMessageOutput);
 
+    //
+    // window scaling
+    //
 
-  //
-  // create the main window
-  //
-  WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
-  MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    /******************  code to reset openGL version .. keep around in case need again
+    QSurfaceFormat glFormat;
+    glFormat.setVersion(3, 3);
+    glFormat.setProfile(QSurfaceFormat::CoreProfile);
+    QSurfaceFormat::setDefaultFormat(glFormat);
+    ***********************************************************************************/
 
-  QString textAboutEE_UQ = "\
-          <p> \
-          This is the Earthquake Engineering with Uncertainty Quantification (EE-UQ) application.\
-          <p>\
-          This open-source research application, https://github.com/NHERI-SimCenter/EE-UQ, provides an application \
-      researchers can use to predict the response of a building to earthquake events. The application is focused on \
-      quantifying the uncertainties in the predicted response, given the that the properties of the buildings and the earthquake \
-      events are not known exactly, and that the simulation software and the user make simplifying assumptions in the numerical \
-      modeling of that structure. In the application the user is required to characterize the uncertainties in the input, the \
-      application will after utilizing the selected sampling method, provide information that characterizes the uncertainties in \
-      the response. The computations to make these determinations can be prohibitively expensive. To overcome this impedement the \
-      user has the option to perform the computations on the Stampede2 supercomputer. Stampede2 is located at the Texas Advanced \
-      Computing Center and is made available to the user through NHERI DesignSafe, the cyberinfrastructure provider for the distributed \
-      NSF funded Natural Hazards in Engineering Research Infrastructure, NHERI, facility.\
-      <p>\
-      The computations are performed in a workflow application. That is, the numerical simulations are actually performed by a \
-      number of different applications. The EE-UQ backend software runs these different applications for the user, taking the \
-      outputs from some programs and providing them as inputs to others. The design of the EE-UQ application is such that \
-      researchers are able to modify the backend application to utilize their own application in the workflow computations. \
-      This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
-      their own applications for others to use.\
-      <p>\
-      This is Version 1.2.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
-      features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
-      also would benefit from it.\
-      <p>";
+    QApplication a(argc, argv);
 
-     w.setAbout(textAboutEE_UQ);
+    //
+    // create a remote interface
+    //
 
-     QString version("Version 1.2.0");
-     w.setVersion(version);
+    QString tenant("designsafe");
+    QString storage("agave://designsafe.storage.default/");
+    QString dirName("EE-UQ");
 
-     QString citeText("Frank McKenna, Wael Elhaddad, Adam Zsarnoczay, Michael Gardner, & Charles Wang. (2019, June 29). NHERI-SimCenter/EE-UQ: Release v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.3262287");
-  w.setCite(citeText);
-
-     QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
-     w.setDocumentationURL(manualURL);
- 
-  //
-  // move remote interface to a thread
-  //
-
-  QThread *thread = new QThread();
-  theRemoteService->moveToThread(thread);
-
-  QWidget::connect(thread, SIGNAL(finished()), theRemoteService, SLOT(deleteLater()));
-  QWidget::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-  thread->start();
-
-  //
-  // show the main window & start the event loop
-  //
+    AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
 
 
-  w.show();
+    //
+    // create the main window
+    //
+
+    WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
+    MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
 
+    QString textAboutEE_UQ = "\
+            <p> \
+            This is the Earthquake Engineering with Uncertainty Quantification (EE-UQ) application.\
+            <p>\
+            This open-source research application, https://github.com/NHERI-SimCenter/EE-UQ, provides an application \
+        researchers can use to predict the response of a building to earthquake events. The application is focused on \
+        quantifying the uncertainties in the predicted response, given the that the properties of the buildings and the earthquake \
+        events are not known exactly, and that the simulation software and the user make simplifying assumptions in the numerical \
+        modeling of that structure. In the application the user is required to characterize the uncertainties in the input, the \
+        application will after utilizing the selected sampling method, provide information that characterizes the uncertainties in \
+        the response. The computations to make these determinations can be prohibitively expensive. To overcome this impedement the \
+        user has the option to perform the computations on the Stampede2 supercomputer. Stampede2 is located at the Texas Advanced \
+        Computing Center and is made available to the user through NHERI DesignSafe, the cyberinfrastructure provider for the distributed \
+        NSF funded Natural Hazards in Engineering Research Infrastructure, NHERI, facility.\
+        <p>\
+        The computations are performed in a workflow application. That is, the numerical simulations are actually performed by a \
+        number of different applications. The EE-UQ backend software runs these different applications for the user, taking the \
+        outputs from some programs and providing them as inputs to others. The design of the EE-UQ application is such that \
+        researchers are able to modify the backend application to utilize their own application in the workflow computations. \
+        This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
+        their own applications for others to use.\
+        <p>\
+        This is Version 1.2.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
+        features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
+        also would benefit from it.\
+        <p>";
+
+        w.setAbout(textAboutEE_UQ);
+
+    QString version("Version 1.2.0");
+    w.setVersion(version);
+
+    QString citeText("Frank McKenna, Wael Elhaddad, Adam Zsarnoczay, Michael Gardner, & Charles Wang. (2019, June 29). NHERI-SimCenter/EE-UQ: Release v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.3262287");
+    w.setCite(citeText);
+
+    QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
+    w.setDocumentationURL(manualURL);
+
+    //
+    // move remote interface to a thread
+    //
+
+    QThread *thread = new QThread();
+    theRemoteService->moveToThread(thread);
+
+    QWidget::connect(thread, SIGNAL(finished()), theRemoteService, SLOT(deleteLater()));
+    QWidget::connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    thread->start();
+
+    //
+    // show the main window, set styles & start the event loop
+    //
+
+    w.show();
+
+#ifdef Q_OS_WIN
+    QFile file(":/styleCommon/stylesheetWIN.qss");
+#endif
+
+#ifdef Q_OS_MACOS
+    QFile file(":/styleCommon/stylesheetMAC.qss");
+#endif
+
+#ifdef Q_OS_LINUX
+    QFile file(":/styleCommon/stylesheetMAC.qss");
+#endif
+
+
+    if(file.open(QFile::ReadOnly)) {
+        a.setStyleSheet(file.readAll());
+        file.close();
+    } else {
+        qDebug() << "could not open stylesheet";
+    }
+
+    /* ********* old style .. keeping till sure this works on windows
+  // set style sheet
   QFile file(":/styleCommon/common_experimental.qss");
   QFile fileEEUQ(":/styles/stylesheet_eeuq.qss");
   if(file.open(QFile::ReadOnly) && fileEEUQ.open(QFile::ReadOnly)) {
@@ -173,31 +209,18 @@ int main(int argc, char *argv[])
     file.close();
     fileEEUQ.close();
   }
+    *****************************************************************/
 
+    int res = a.exec();
 
-/*
-  theInputApp->setStyleSheet("QComboBox {background: #FFFFFF;} \
-QGroupBox {font-weight: bold;}\
-QLineEdit {background-color: #FFFFFF; border: 2px solid darkgray;} \
-QTabWidget::pane {background-color: #ECECEC; border: 1px solid rgb(239, 239, 239);}");
-*/
+    //
+    // on done with event loop, logout & stop the thread
+    //
 
+    theRemoteService->logout();
+    thread->quit();
 
-//QTQTabWidget::pane{
-//                             border: 1px solid rgb(239, 239, 239);
-//                             background: rgb(239, 239, 239);
-//                         }abWidget::pane {background-color: #ECECEC;}");
-
-  int res = a.exec();
-
-  //
-  // on done with event loop, logout & stop the thread
-  //
-
-  theRemoteService->logout();
-  thread->quit();
-
-  GoogleAnalytics::EndSession();
-  // done
-  return res;
+    GoogleAnalytics::EndSession();
+    // done
+    return res;
 }
