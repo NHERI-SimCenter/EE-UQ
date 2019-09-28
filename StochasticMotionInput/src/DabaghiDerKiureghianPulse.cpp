@@ -113,7 +113,9 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   QHBoxLayout* seed_layout = new QHBoxLayout();
   QHBoxLayout* truncate_layout = new QHBoxLayout();  
   QHBoxLayout* parameters_layout = new QHBoxLayout();
-
+  QHBoxLayout* faulting_layout = new QHBoxLayout();
+  QHBoxLayout* sim_type_layout = new QHBoxLayout();  
+  
   // Add widgets to layouts and layouts to this
   seed_layout->addWidget(use_seed_);
   seed_layout->addWidget(seed_);
@@ -122,7 +124,13 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   truncate_layout->addStretch();  
   parameters_layout->addLayout(parameters_);
   parameters_layout->addStretch();
+  faulting_layout->addWidget(faulting_);
+  faulting_layout->addStretch();
+  sim_type_layout->addWidget(sim_type_);
+  sim_type_layout->addStretch();
   layout->addWidget(model_description_);
+  layout->addLayout(faulting_layout);
+  layout->addLayout(sim_type_layout);
   layout->addLayout(parameters_layout);
   layout->addLayout(truncate_layout);
   layout->addLayout(seed_layout);
@@ -137,9 +145,22 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
 bool DabaghiDerKiureghianPulse::outputToJSON(QJsonObject& jsonObject) {
   bool result = true;
 
-  jsonObject.insert("faultType", faulting_->currentText());
-  jsonObject.insert("simulationType", sim_type_->currentText());
+  auto fault_type = faulting_->currentText();
+  if (fault_type == "Strike-Slip") {
+    jsonObject.insert("faultType", "StrikeSlip");
+  } else if (fault_type == "Reverse and Reverse-Oblique") {
+    jsonObject.insert("faultType", "ReverseAndRevObliq");
+  }
 
+  auto simulation_type = sim_type_->currentText();
+  if (simulation_type == "Pulse-like and no pulse-like") {
+    jsonObject.insert("simulationType", "PulseAndNoPulse");
+  } else if (simulation_type == "Only pulse-like") {
+    jsonObject.insert("simulationType", "Pulse");
+  } else if (simulation_type == "No pulse-like") {
+    jsonObject.insert("simulationType", "NoPulse");
+  }  
+  
   moment_magnitude_->outputToJSON(jsonObject, QString("momentMagnitude"));
   depth_to_rupt_->outputToJSON(jsonObject, QString("depthToRupt"));
   rupture_dist_->outputToJSON(jsonObject, QString("ruptureDist"));
@@ -162,9 +183,24 @@ bool DabaghiDerKiureghianPulse::inputFromJSON(QJsonObject& jsonObject) {
   bool result = true;
 
   QString fault_type = jsonObject["faultType"].toString();
-  faulting_->setCurrentIndex(faulting_->findText(fault_type));
   QString sim_type = jsonObject["simulationType"].toString();
-  sim_type_->setCurrentIndex(sim_type_->findText(sim_type));
+
+  if (fault_type == "StrikeSlip") {
+    faulting_->setCurrentIndex(faulting_->findText("Strike-Slip"));
+  } else if (fault_type == "ReverseAndRevObliq") {
+    faulting_->setCurrentIndex(
+        faulting_->findText("Reverse and Reverse-Oblique"));
+  }
+
+  auto simulation_type = sim_type_->currentText();
+  if (simulation_type == "PulseAndNoPulse") {
+    sim_type_->setCurrentIndex(
+        sim_type_->findText("Pulse-like proportion of motions"));
+  } else if (simulation_type == "Pulse") {
+    sim_type_->setCurrentIndex(sim_type_->findText("Only pulse-like"));
+  } else if (simulation_type == "NoPulse") {
+    sim_type_->setCurrentIndex(sim_type_->findText("No pulse-like"));
+  }
 
   moment_magnitude_->inputFromJSON(jsonObject, QString("momentMagnitude"));
   depth_to_rupt_->inputFromJSON(jsonObject, QString("depthToRupt"));
