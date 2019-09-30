@@ -51,7 +51,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "StochasticModelWidget.h"
 #include "StochasticMotionInputWidget.h"
 #include "VlachosEtAlModel.h"
-
+#include "DabaghiDerKiureghianPulse.h"
 
 StochasticMotionInputWidget::StochasticMotionInputWidget(
     RandomVariablesContainer* random_variables, QWidget* parent)
@@ -68,10 +68,10 @@ StochasticMotionInputWidget::StochasticMotionInputWidget(
   model_selection_ = new QComboBox();
   model_selection_->setObjectName("StochasticLoadingModel");
   model_selection_->addItem(tr("Vlachos et al. (2018)"));
+  model_selection_->addItem(tr("Dabaghi & Der Kiureghian (2018)"));  
   stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
   
   // Add widgets to layouts and layouts to this
-
   model_layout->addWidget(model_selection_);
   model_layout->addStretch();
   parameters_layout_->addWidget(stochastic_model_);
@@ -124,6 +124,18 @@ bool StochasticMotionInputWidget::inputFromJSON(QJsonObject& jsonObject) {
       parameters_layout_->addStretch();
       delete temp_model;
       temp_model = nullptr;
+    } else if (app_data["modelName"].toString() ==
+               "Dabaghi & Der Kiureghian (2018)") {
+      model_selection_->setCurrentText(app_data["modelName"].toString());      
+      // Assign current model to temporary pointer and create new model
+      auto temp_model = stochastic_model_;
+      stochastic_model_ = new DabaghiDerKiureghianPulse(rv_input_widget_, this);
+      stochastic_model_->inputFromJSON(jsonObject);
+      // Replace current widget with new one and delete current one
+      parameters_layout_->replaceWidget(temp_model, stochastic_model_);
+      parameters_layout_->addStretch();
+      delete temp_model;
+      temp_model = nullptr;
     }
   } else {
     result = false;
@@ -146,6 +158,13 @@ bool StochasticMotionInputWidget::outputAppDataToJSON(QJsonObject& jsonObject) {
 
     jsonObject["ApplicationData"] = app_data;
     jsonObject["EventClassification"] = "Earthquake";
+  } else if (model_selection_->currentText() ==
+             "Dabaghi & Der Kiureghian (2018)") {
+    app_data.insert("modelName", "DabaghiDerKiureghianNFGM");
+    app_data.insert("seed", model_data.value("seed"));
+
+    jsonObject["ApplicationData"] = app_data;
+    jsonObject["EventClassification"] = "Earthquake";    
   } else {
     result = false;
   }
@@ -160,8 +179,21 @@ bool StochasticMotionInputWidget::inputAppDataFromJSON(QJsonObject& jsonObject) 
 void StochasticMotionInputWidget::modelSelectionChanged(const QString& model) {
   // Switch the model description and form layout based on model selection
   if (model == "Vlachos et al. (2018)") {
-    delete stochastic_model_;
+    auto temp_model = stochastic_model_;
     stochastic_model_ = new VlachosEtAlModel(rv_input_widget_, this);
+    // Replace current widget with new one and delete current one
+    parameters_layout_->replaceWidget(temp_model, stochastic_model_);
+    parameters_layout_->addStretch();
+    delete temp_model;
+    temp_model = nullptr;
+  } else if (model == "Dabaghi & Der Kiureghian (2018)") {
+    auto temp_model = stochastic_model_;
+    stochastic_model_ = new DabaghiDerKiureghianPulse(rv_input_widget_, this);
+    // Replace current widget with new one and delete current one
+    parameters_layout_->replaceWidget(temp_model, stochastic_model_);
+    parameters_layout_->addStretch();
+    delete temp_model;
+    temp_model = nullptr;
   } else {
     qDebug() << "ERROR: In StochasticMotionInputWidget::modelSelectionChanged: "
                 "Unknown selection: "

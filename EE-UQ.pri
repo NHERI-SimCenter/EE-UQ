@@ -17,7 +17,8 @@ SOURCES += \
     $$PWD/StandardEarthquakeEDP.cpp \
     $$PWD/StochasticMotionInput/src/StochasticMotionInputWidget.cpp \
     $$PWD/StochasticMotionInput/src/StochasticModelWidget.cpp \
-    $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp 
+    $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp \
+    $$PWD/StochasticMotionInput/src/DabaghiDerKiureghianPulse.cpp     
 
 HEADERS  += \
     $$PWD/UniformMotionInput.h \
@@ -29,7 +30,8 @@ HEADERS  += \
     $$PWD/ExistingPEER_Events.h \
     $$PWD/StochasticMotionInput/include/StochasticMotionInputWidget.h \
     $$PWD/StochasticMotionInput/include/StochasticModelWidget.h \    
-    $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h 
+    $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h \
+    $$PWD/StochasticMotionInput/include/DabaghiDerKiureghianPulse.h     
 
 RESOURCES += \
     images.qrc \
