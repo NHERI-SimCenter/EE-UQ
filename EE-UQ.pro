@@ -39,11 +39,13 @@ include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp \
     InputWidgetEE_UQ.cpp \
+    PeerNga/PeerLoginDialog.cpp \
     PeerNga/PeerNgaWest2Client.cpp \
     RunWidget.cpp
 
 HEADERS  += \
     InputWidgetEE_UQ.h\
+    PeerNga/PeerLoginDialog.h \
     PeerNga/PeerNgaWest2Client.h \
     RunWidget.h 
 
