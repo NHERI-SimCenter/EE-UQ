@@ -67,6 +67,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UserDefinedApplication.h>
 #include "StochasticMotionInputWidget.h"
 #include "RockOutcrop.h"
+#include "PeerNga/PeerNgaRecordsWidget.h"
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
@@ -89,6 +90,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Site Response"));
     eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("User Application"));
+    eventSelection->addItem(tr("PEER NGA Records"));
 
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -130,6 +132,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
     theStackedWidget->addWidget(theUserDefinedApplication);
+
+    //Adding SHA based ground motion widget
+    peerNgaRecords = new PeerNgaRecordsWidget(theRandomVariablesContainer);
+    theStackedWidget->addWidget(peerNgaRecords);
 
     layout->addWidget(theStackedWidget);
     this->setLayout(layout);
@@ -220,6 +226,11 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     else if(arg1 == "User Application") {
         theStackedWidget->setCurrentIndex(5);
         theCurrentEvent = theUserDefinedApplication;
+    }
+
+    else if(arg1 == "PEER NGA Records") {
+        theStackedWidget->setCurrentIndex(6);
+        theCurrentEvent = peerNgaRecords;
     }
     else {
         qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;

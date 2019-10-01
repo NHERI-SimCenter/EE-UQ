@@ -79,6 +79,7 @@ private:
    SimCenterAppWidget *theUserDefinedApplication;
    SimCenterAppWidget *theStochasticMotionWidget;
    SimCenterAppWidget *theRockOutcrop;
+   SimCenterAppWidget* peerNgaRecords;
 
    RandomVariablesContainer *theRandomVariablesContainer;
 };
