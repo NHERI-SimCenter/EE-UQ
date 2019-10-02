@@ -98,8 +98,11 @@ void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
     if(!resultFolder.exists())
         return;
 
+    clearSpectra();
+
     currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
     setRecordsTable(currentRecords);
+    plotSpectra();
 }
 
 void PeerNgaRecordsWidget::setRecordsTable(QList<PeerScaledRecord> records)
@@ -119,6 +122,24 @@ void PeerNgaRecordsWidget::setRecordsTable(QList<PeerScaledRecord> records)
         row++;
     }
     recordsTable->resizeColumnsToContents();
+}
+
+void PeerNgaRecordsWidget::clearSpectra()
+{
+    periods.clear();
+    meanSpectrum.clear();
+    meanPlusSigmaSpectrum.clear();
+    meanMinusSigmaSpectrum.clear();
+    targetSpectrum.clear();
+    scaledSelectedSpectra.clear();
+}
+
+void PeerNgaRecordsWidget::plotSpectra()
+{
+    //Spectra can be plotted here using the data in
+    //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+
+
 }
 
 QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchResultsFilePath)
@@ -156,6 +177,30 @@ QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchR
                 record.VerticalFile = values[21].trimmed();
 
                 records.push_back(record);
+                line = searchResultsStream.readLine();
+            }
+        }
+
+        if(line.contains("Scaled Spectra used in Search & Scaling"))
+        {
+            //skip header
+            searchResultsStream.readLine();
+            line = searchResultsStream.readLine();
+
+            while(!line.isEmpty())
+            {
+                auto values = line.split(',');
+                periods.push_back(values[0].toDouble());
+                targetSpectrum.push_back(values[1].toDouble());
+                meanSpectrum.push_back(values[2].toDouble());
+                meanPlusSigmaSpectrum.push_back(values[3].toDouble());
+                meanMinusSigmaSpectrum.push_back(values[4].toDouble());
+
+                scaledSelectedSpectra.resize(values.size() - 5);
+                for (int i = 5; i < values.size(); i++)
+                {
+                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble());
+                }
                 line = searchResultsStream.readLine();
             }
         }

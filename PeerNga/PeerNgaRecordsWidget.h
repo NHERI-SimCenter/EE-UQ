@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QTableWidget>
 #include <QTemporaryDir>
+#include <QVector>
 
 struct PeerScaledRecord
 {
@@ -49,12 +50,20 @@ private:
     QTableWidget* recordsTable;
     QTemporaryDir groundMotionsFolder;
     QList<PeerScaledRecord> currentRecords;
+    QVector<QVector<double>> scaledSelectedSpectra;
+    QVector<double> periods;
+    QVector<double> meanSpectrum;
+    QVector<double> meanPlusSigmaSpectrum;
+    QVector<double> meanMinusSigmaSpectrum;
+    QVector<double> targetSpectrum;
 
     void setupUI();
     void setupConnections();
     void processPeerRecords(QDir resultFolder);
     QList<PeerScaledRecord> parseSearchResults(QString searchResultsFilePath);
     void setRecordsTable(QList<PeerScaledRecord>);
+    void clearSpectra();
+    void plotSpectra();
 
 
 };
