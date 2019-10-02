@@ -18,6 +18,10 @@ SOURCES += \
     $$PWD/StochasticMotionInput/src/StochasticMotionInputWidget.cpp \
     $$PWD/StochasticMotionInput/src/StochasticModelWidget.cpp \
     $$PWD/StochasticMotionInput/src/VlachosEtAlModel.cpp \
+    $$PWD/PeerNga/PeerLoginDialog.cpp \
+    $$PWD/PeerNga/PeerNgaRecordsWidget.cpp \
+    $$PWD/PeerNga/PeerNgaWest2Client.cpp \
+    $$PWD/SimCenterGraphPlot.cpp \
     $$PWD/StochasticMotionInput/src/DabaghiDerKiureghianPulse.cpp     
 
 HEADERS  += \
@@ -31,7 +35,12 @@ HEADERS  += \
     $$PWD/StochasticMotionInput/include/StochasticMotionInputWidget.h \
     $$PWD/StochasticMotionInput/include/StochasticModelWidget.h \    
     $$PWD/StochasticMotionInput/include/VlachosEtAlModel.h \
-    $$PWD/StochasticMotionInput/include/DabaghiDerKiureghianPulse.h     
+    $$PWD/StochasticMotionInput/include/DabaghiDerKiureghianPulse.h \
+    $$PWD/PeerNga/PeerLoginDialog.h \
+    $$PWD/PeerNga/PeerNgaRecordsWidget.h \
+    $$PWD/PeerNga/PeerNgaWest2Client.h \
+    $$PWD/SimCenterGraphPlot.h 
+
 
 RESOURCES += \
     images.qrc \

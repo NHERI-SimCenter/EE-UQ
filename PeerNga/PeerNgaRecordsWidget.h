@@ -12,6 +12,8 @@
 #include <QTemporaryDir>
 #include <QVector>
 
+class SimCenterGraphPlot;
+
 struct PeerScaledRecord
 {
     int RSN;
@@ -48,6 +50,8 @@ private:
     QLineEdit* tlEditBox;
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
+    SimCenterGraphPlot *thePlottingWindow;
+
     QTemporaryDir groundMotionsFolder;
     QList<PeerScaledRecord> currentRecords;
     QVector<QVector<double>> scaledSelectedSpectra;

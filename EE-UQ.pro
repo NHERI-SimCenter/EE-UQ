@@ -33,22 +33,17 @@ include(../SimCenterCommon/Workflow/Workflow.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
-#include(../SiteResponseTool/SiteResponseTool.pri)
 include(../s3hark/s3hark.pri)
 include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp \
     InputWidgetEE_UQ.cpp \
-    PeerNga/PeerLoginDialog.cpp \
-    PeerNga/PeerNgaRecordsWidget.cpp \
-    PeerNga/PeerNgaWest2Client.cpp \
+    qcustomplot.cpp \
     RunWidget.cpp
 
 HEADERS  += \
     InputWidgetEE_UQ.h\
-    PeerNga/PeerLoginDialog.h \
-    PeerNga/PeerNgaRecordsWidget.h \
-    PeerNga/PeerNgaWest2Client.h \
+    qcustomplot.h \
     RunWidget.h 
 
 RESOURCES += \

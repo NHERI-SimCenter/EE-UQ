@@ -10,6 +10,7 @@
 #include <QStandardPaths>
 #include<QJsonObject>
 #include<QJsonArray>
+#include <SimCenterGraphPlot.h>
 
 PeerNgaRecordsWidget::PeerNgaRecordsWidget(QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -61,6 +62,8 @@ void PeerNgaRecordsWidget::setupUI()
 
     layout->addWidget(recordsTable, 1, 0, 1, 2);
 
+    thePlottingWindow = new SimCenterGraphPlot(QString("Period"), QString("Something"));
+    layout->addWidget(thePlottingWindow, 0,3,2,2);
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
 }
@@ -102,6 +105,8 @@ void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
 
     currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
     setRecordsTable(currentRecords);
+
+    thePlottingWindow->clear();
     plotSpectra();
 }
 
@@ -139,6 +144,16 @@ void PeerNgaRecordsWidget::plotSpectra()
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
 
+
+    for (auto i : scaledSelectedSpectra) {
+        thePlottingWindow->addLine(periods, i, 1, 125, 125, 125);
+    }
+
+    thePlottingWindow->addLine(periods, meanSpectrum, 2, 255, 0, 0);
+    thePlottingWindow->addLine(periods, meanMinusSigmaSpectrum, 1, 0, 255, 0);
+    thePlottingWindow->addLine(periods, meanPlusSigmaSpectrum, 1, 0, 255, 0);
+
+    thePlottingWindow->addLine(periods, targetSpectrum, 2, 255, 255, 0);
 
 }
 
