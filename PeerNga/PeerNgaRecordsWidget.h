@@ -11,6 +11,7 @@
 #include <QTableWidget>
 #include <QTemporaryDir>
 #include <QVector>
+#include <QCheckBox>
 
 class SimCenterGraphPlot;
 
@@ -52,7 +53,24 @@ private:
     QTableWidget* recordsTable;
     SimCenterGraphPlot *thePlottingWindow;
 
+
+    //Magnitude Range
+    QCheckBox* magnitudeCheckBox;
+    QLineEdit* magnitudeMin;
+    QLineEdit* magnitudeMax;
+
+    //Distance Range
+    QCheckBox* distanceCheckBox;
+    QLineEdit* distanceMin;
+    QLineEdit* distanceMax;
+
+    //Vs30 Range
+    QCheckBox* vs30CheckBox;
+    QLineEdit* vs30Min;
+    QLineEdit* vs30Max;
     QTemporaryDir groundMotionsFolder;
+
+    //Record Selection Members
     QList<PeerScaledRecord> currentRecords;
     QVector<QVector<double>> scaledSelectedSpectra;
     QVector<double> periods;
@@ -68,7 +86,8 @@ private:
     void setRecordsTable(QList<PeerScaledRecord>);
     void clearSpectra();
     void plotSpectra();
-
+    void updateStatus(QString status);
+    void selectRecords();
 
 };
 

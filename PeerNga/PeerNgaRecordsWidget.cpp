@@ -10,13 +10,18 @@
 #include <QStandardPaths>
 #include<QJsonObject>
 #include<QJsonArray>
+#include <QPair>
 #include <SimCenterGraphPlot.h>
+#include <QApplication>
+#include <QStatusBar>
+#include <QMainWindow>
+#include <QThread>
 
 PeerNgaRecordsWidget::PeerNgaRecordsWidget(QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setupUI();
 
-    setupConnections();    
+    setupConnections();
 }
 
 void PeerNgaRecordsWidget::setupUI()
@@ -50,8 +55,40 @@ void PeerNgaRecordsWidget::setupUI()
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("10");
     recordSelectionLayout->addWidget(nRecordsEditBox, 0, 1);
+
+    //Magnitude Range
+    magnitudeCheckBox = new QCheckBox("Magnitude");
+    recordSelectionLayout->addWidget(magnitudeCheckBox, 1, 0);
+    magnitudeMin = new QLineEdit("0.0");
+    magnitudeMin->setEnabled(false);
+    recordSelectionLayout->addWidget(magnitudeMin, 1, 1);
+    magnitudeMax = new QLineEdit("8.0");
+    magnitudeMax->setEnabled(false);
+    recordSelectionLayout->addWidget(magnitudeMax, 1, 2);
+
+    distanceCheckBox = new QCheckBox("Distance");
+    recordSelectionLayout->addWidget(distanceCheckBox, 2, 0);
+    distanceMin = new QLineEdit("0.0");
+    distanceMin->setEnabled(false);
+    recordSelectionLayout->addWidget(distanceMin, 2, 1);
+    distanceMax = new QLineEdit("50.0");
+    distanceMax->setEnabled(false);
+    recordSelectionLayout->addWidget(distanceMax, 2, 2);
+    recordSelectionLayout->addWidget(new QLabel("km"), 2, 3);
+
+    vs30CheckBox = new QCheckBox("Vs30");
+    recordSelectionLayout->addWidget(vs30CheckBox, 3, 0);
+    vs30Min = new QLineEdit("150");
+    vs30Min->setEnabled(false);
+    recordSelectionLayout->addWidget(vs30Min, 3, 1);
+    vs30Max = new QLineEdit("300.0");
+    vs30Max->setEnabled(false);
+    recordSelectionLayout->addWidget(vs30Max, 3, 2);
+    recordSelectionLayout->addWidget(new QLabel("m/s"), 3, 3);
+
     selectRecordsButton = new QPushButton("Select Records");
-    recordSelectionLayout->addWidget(selectRecordsButton, 1, 0, 1, 2);
+    recordSelectionLayout->addWidget(selectRecordsButton, 4, 0, 1, 4);
+
     recordSelectionLayout->setRowStretch(recordSelectionLayout->rowCount(), 1);
 
     //Records Table
@@ -62,8 +99,8 @@ void PeerNgaRecordsWidget::setupUI()
 
     layout->addWidget(recordsTable, 1, 0, 1, 2);
 
-    thePlottingWindow = new SimCenterGraphPlot(QString("Period"), QString("Something"));
-    layout->addWidget(thePlottingWindow, 0,3,2,2);
+    thePlottingWindow = new SimCenterGraphPlot(QString("Period (sec.)"), QString("Spectral Acceleration (g)"));
+    layout->addWidget(thePlottingWindow, 0,3,2,1);
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
 }
@@ -82,10 +119,7 @@ void PeerNgaRecordsWidget::setupConnections()
                 return;
         }
 
-        peerClient.selectRecords(sdsEditBox->text().toDouble(),
-                                 sd1EditBox->text().toDouble(),
-                                 tlEditBox->text().toDouble(),
-                                 nRecordsEditBox->text().toInt());
+        selectRecords();
     });
 
     connect(&peerClient, &PeerNgaWest2Client::recordsDownloaded, this, [this](QString recordsFile)
@@ -94,6 +128,22 @@ void PeerNgaRecordsWidget::setupConnections()
         processPeerRecords(QDir(groundMotionsFolder.path()));
     });
 
+    connect(magnitudeCheckBox, &QCheckBox::clicked, this, [this](bool checked){
+        magnitudeMin->setEnabled(checked);
+        magnitudeMax->setEnabled(checked);
+    });
+
+    connect(distanceCheckBox, &QCheckBox::clicked, this, [this](bool checked){
+        distanceMin->setEnabled(checked);
+        distanceMax->setEnabled(checked);
+    });
+
+    connect(vs30CheckBox, &QCheckBox::clicked, this, [this](bool checked){
+        vs30Min->setEnabled(checked);
+        vs30Max->setEnabled(checked);
+    });
+
+    connect(&peerClient, &PeerNgaWest2Client::statusUpdated, this, &PeerNgaRecordsWidget::updateStatus);
 }
 
 void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
@@ -149,12 +199,45 @@ void PeerNgaRecordsWidget::plotSpectra()
         thePlottingWindow->addLine(periods, i, 1, 125, 125, 125);
     }
 
-    thePlottingWindow->addLine(periods, meanSpectrum, 2, 255, 0, 0);
-    thePlottingWindow->addLine(periods, meanMinusSigmaSpectrum, 1, 0, 255, 0);
-    thePlottingWindow->addLine(periods, meanPlusSigmaSpectrum, 1, 0, 255, 0);
+    thePlottingWindow->addLine(periods, meanSpectrum, 3, 255, 0, 0);
+    thePlottingWindow->addLine(periods, meanMinusSigmaSpectrum, 1, 255, 0, 0);
+    thePlottingWindow->addLine(periods, meanPlusSigmaSpectrum, 1, 255, 0, 0);
 
-    thePlottingWindow->addLine(periods, targetSpectrum, 2, 255, 255, 0);
+    thePlottingWindow->addLine(periods, targetSpectrum, 3, 0, 0, 255);
 
+}
+
+void PeerNgaRecordsWidget::updateStatus(QString status)
+{
+    if(this->parent())
+    {
+        auto topWidget = this->parent();
+        while(topWidget->parent()) topWidget = topWidget->parent();
+
+        auto statusBar = static_cast<QMainWindow*>(topWidget)->statusBar();
+        if (statusBar)
+            statusBar->showMessage(status, 5000);
+    }
+}
+
+void PeerNgaRecordsWidget::selectRecords()
+{
+    QVariant magnitudeRange;
+    if(magnitudeCheckBox->checkState() == Qt::Checked)
+        magnitudeRange.setValue(qMakePair(magnitudeMin->text().toDouble(), magnitudeMax->text().toDouble()));
+
+    QVariant distanceRange;
+    if(distanceCheckBox->checkState() == Qt::Checked)
+        distanceRange.setValue(qMakePair(distanceMin->text().toDouble(), distanceMax->text().toDouble()));
+
+    QVariant vs30Range;
+    if(vs30CheckBox->checkState() == Qt::Checked)
+        vs30Range.setValue(qMakePair(vs30Min->text().toDouble(), vs30Max->text().toDouble()));
+
+    peerClient.selectRecords(sdsEditBox->text().toDouble(),
+                             sd1EditBox->text().toDouble(),
+                             tlEditBox->text().toDouble(),
+                             nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
 }
 
 QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchResultsFilePath)
@@ -173,6 +256,7 @@ QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchR
     {
         QString line = searchResultsStream.readLine();
 
+        //Parsing selected records information
         if(line.contains("Metadata of Selected Records"))
         {
             //skip header
@@ -196,6 +280,7 @@ QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchR
             }
         }
 
+        //Parsing scaled spectra
         if(line.contains("Scaled Spectra used in Search & Scaling"))
         {
             //skip header
