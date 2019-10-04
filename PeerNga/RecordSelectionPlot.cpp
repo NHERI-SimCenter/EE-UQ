@@ -68,7 +68,6 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
 
     this->setMinimumWidth(500);
     this->setMinimumHeight(500);
-
 }
 
 void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
@@ -122,7 +121,7 @@ void RecordSelectionPlot::setTargetSpectrum(QVector<double> periods, QVector<dou
 
 void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QVector<double> > spectra)
 {
-    for(auto oldSeries: currentSelectSeries)
+    for(auto oldSeries: currentSelectedSeries)
     {
         spectraChart.removeSeries(oldSeries);
 
@@ -133,7 +132,7 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
     {
         auto series = new QtCharts::QLineSeries(this);
         spectraChart.addSeries(series);
-        currentSelectSeries.push_back(series);
+        currentSelectedSeries.push_back(series);
 
         for(int i = 0; i < periods.size(); i++)
         {
@@ -143,10 +142,10 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
         series->attachAxis(&xAxis);
         series->attachAxis(&yAxis);
         series->setOpacity(0.5);
-        QPen bluePen;
-        bluePen.setColor(Qt::gray);
-        bluePen.setWidth(2);
-        series->setPen(bluePen);
+        QPen grayPen;
+        grayPen.setColor(Qt::gray);
+        grayPen.setWidth(2);
+        series->setPen(grayPen);
 
         if(firstLegendShown)
         {
@@ -158,5 +157,26 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
             firstLegendShown = true;
             series->setName("Selected");
         }
+    }
+}
+
+void RecordSelectionPlot::highlightSpectra(QList<int> indices)
+{
+    QPen grayPen;
+    grayPen.setColor(Qt::gray);
+    grayPen.setWidth(2);
+    for(auto series:currentSelectedSeries)
+        series->setPen(grayPen);
+
+
+    for (auto index: indices)
+    {
+        if(index >= currentSelectedSeries.size())
+            continue;
+
+        auto series = currentSelectedSeries[index];
+        auto pen = series->pen();
+        pen.setColor(Qt::green);
+        series->setPen(pen);
     }
 }

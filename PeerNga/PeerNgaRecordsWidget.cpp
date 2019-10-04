@@ -210,6 +210,20 @@ void PeerNgaRecordsWidget::setupConnections()
         this->selectRecordsButton->setEnabled(true);
         this->selectRecordsButton->setDown(false);
     });
+
+    connect(recordsTable, &QTableWidget::itemSelectionChanged, this, [this]()
+    {
+        QList<int> selectedRows;
+
+        auto selectedRanges = recordsTable->selectedRanges();
+        for (auto range: selectedRanges)
+        {
+            for (int i = range.topRow(); i <= range.bottomRow(); i++)
+                selectedRows << i;
+        }
+
+        recordSelectionPlot.highlightSpectra(selectedRows);
+    });
 }
 
 void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
@@ -504,6 +518,7 @@ bool PeerNgaRecordsWidget::outputAppDataToJSON(QJsonObject &jsonObject)
 {
     jsonObject["EventClassification"]="Earthquake";
     jsonObject["Application"] = "ExistingPEER_Events";
+    jsonObject["subtype"] = "PEER NGA Records";
     QJsonObject dataObj;
     jsonObject["ApplicationData"] = dataObj;
     return true;

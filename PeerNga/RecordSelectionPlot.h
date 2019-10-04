@@ -16,6 +16,7 @@ public:
     void setMeanMinusSigma(QVector<double> periods, QVector<double> sa);
     void setTargetSpectrum(QVector<double> periods, QVector<double> sa);
     void setSelectedSpectra(QVector<double> periods, QVector<QVector<double>> spectra);
+    void highlightSpectra(QList<int> indices);
 
 signals:
 
@@ -30,7 +31,7 @@ private:
     QtCharts::QLogValueAxis xAxis;
     QtCharts::QLogValueAxis yAxis;
 
-    QList<QtCharts::QLineSeries*> currentSelectSeries;
+    QList<QtCharts::QLineSeries*> currentSelectedSeries;
 };
 
 #endif // RECORDSELECTIONPLOT_H
