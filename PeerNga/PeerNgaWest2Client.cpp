@@ -163,7 +163,7 @@ void PeerNgaWest2Client::processPostSpectrumReply()
 {
     if(postSpectraReply->error() != QNetworkReply::NoError)
     {
-        if(retries <= 5)
+        if(retries < 5)
         {
             retries++;
             emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database, retrying");
@@ -171,7 +171,7 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         }
         else
         {
-            emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries");
+            emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
             retries = 0;
             emit selectionFinished();
             retrySignIn();
