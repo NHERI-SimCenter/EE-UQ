@@ -108,6 +108,13 @@ void PeerNgaRecordsWidget::setupUI()
     recordsTable->setMinimumHeight(400);
     groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
     groundMotionsLayout->setRowStretch(1, 1);
+    progressBar = new QProgressBar();
+    progressBar->setRange(0,0);
+    progressBar->setAlignment(Qt::AlignCenter);
+    progressBar->setHidden(true);
+
+    groundMotionsLayout->addWidget(progressBar, 2, 0, 1, 2);
+
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
     layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
@@ -173,6 +180,7 @@ void PeerNgaRecordsWidget::setupConnections()
 
     connect(&peerClient, &PeerNgaWest2Client::selectionStarted, this, [this]()
     {
+        this->progressBar->setHidden(false);
         this->selectRecordsButton->setEnabled(false);
         this->selectRecordsButton->setDown(true);
     });
@@ -181,6 +189,7 @@ void PeerNgaRecordsWidget::setupConnections()
 
     connect(&peerClient, &PeerNgaWest2Client::selectionFinished, this, [this]()
     {
+        this->progressBar->setHidden(true);
         this->selectRecordsButton->setEnabled(true);
         this->selectRecordsButton->setDown(false);
     });

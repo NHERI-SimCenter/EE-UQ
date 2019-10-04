@@ -13,6 +13,7 @@
 #include <QVector>
 #include <QCheckBox>
 #include "RecordSelectionPlot.h"
+#include <QProgressBar>
 
 
 struct PeerScaledRecord
@@ -62,6 +63,7 @@ private:
     QTableWidget* recordsTable;
     QComboBox* groundMotionsComponentsBox;
     RecordSelectionPlot recordSelectionPlot;
+    QProgressBar* progressBar;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;
