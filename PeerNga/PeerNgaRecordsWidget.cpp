@@ -58,7 +58,7 @@ void PeerNgaRecordsWidget::setupUI()
     tlEditBox = new QLineEdit("12.0");
     tlEditBox->setValidator(positiveDoubleValidator);
     targetSpectrumLayout->addWidget(tlEditBox, 3, 1);
-    targetSpectrumLayout->addWidget(new QLabel("g"), 3, 2);
+    targetSpectrumLayout->addWidget(new QLabel("sec."), 3, 2);
     targetSpectrumLayout->setRowStretch(targetSpectrumLayout->rowCount(), 1);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
