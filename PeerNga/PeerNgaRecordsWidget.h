@@ -64,6 +64,7 @@ private:
     QComboBox* groundMotionsComponentsBox;
     RecordSelectionPlot recordSelectionPlot;
     QProgressBar* progressBar;
+    QComboBox* spectrumTypeComboBox;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;

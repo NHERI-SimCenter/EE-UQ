@@ -31,7 +31,7 @@ void PeerNgaRecordsWidget::setupUI()
 
     auto targetSpectrumLayout = new QGridLayout(targetSpectrumGroup);
     targetSpectrumLayout->addWidget(new QLabel("Type"), 0, 0);
-    auto spectrumTypeComboBox = new QComboBox();
+    spectrumTypeComboBox = new QComboBox();
     spectrumTypeComboBox->addItem("ASCE 7-10");
     targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1);
 
@@ -379,7 +379,6 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
     jsonObject["EventClassification"]="Earthquake";
     jsonObject["type"] = "ExistingPEER_Events";
 
-    bool result = true;
     QJsonArray eventsArray;
     for (auto& record:currentRecords)
     {
@@ -430,11 +429,52 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
 
     jsonObject["Events"] = eventsArray;
 
-    return result;
+    jsonObject["TargetSpectrum"] = spectrumTypeComboBox->currentText();
+    jsonObject["Sds"] = sdsEditBox->text();
+    jsonObject["Sd1"] = sd1EditBox->text();
+    jsonObject["Tl"] = tlEditBox->text();
+
+    jsonObject["components"] = groundMotionsComponentsBox->currentText();
+
+    jsonObject["records"] = nRecordsEditBox->text();
+
+    jsonObject["magnitudeRange"] = magnitudeCheckBox->isChecked();
+    jsonObject["magnitudeMin"] = magnitudeMin->text();
+    jsonObject["magnitudeMax"] = magnitudeMax->text();
+
+    jsonObject["distanceRange"] = distanceCheckBox->isChecked();
+    jsonObject["distanceMin"] = distanceMin->text();
+    jsonObject["distanceMax"] = distanceMax->text();
+
+    jsonObject["vs30Range"] = vs30CheckBox->isChecked();
+    jsonObject["vs30Min"] = vs30Min->text();
+    jsonObject["vs30Max"] = vs30Max->text();
+
+    return true;
 }
 
 bool PeerNgaRecordsWidget::inputFromJSON(QJsonObject &jsonObject)
 {
+    spectrumTypeComboBox->setCurrentText(jsonObject["TargetSpectrum"].toString());
+    sdsEditBox->setText(jsonObject["Sds"].toString());
+    sd1EditBox->setText(jsonObject["Sd1"].toString());
+    tlEditBox->setText(jsonObject["Tl"].toString());
+
+    groundMotionsComponentsBox->setCurrentText(jsonObject["components"].toString());
+
+    nRecordsEditBox->setText(jsonObject["records"].toString());
+
+    magnitudeCheckBox->setChecked(jsonObject["magnitudeRange"].toBool());
+    magnitudeMin->setText(jsonObject["magnitudeMin"].toString());
+    magnitudeMax->setText(jsonObject["magnitudeMax"].toString());
+
+    distanceCheckBox->setChecked(jsonObject["distanceRange"].toBool());
+    distanceMin->setText(jsonObject["distanceMin"].toString());
+    distanceMax->setText(jsonObject["distanceMax"].toString());
+
+    vs30CheckBox->setChecked(jsonObject["vs30Range"].toBool());
+    vs30Min->setText(jsonObject["vs30Min"].toString());
+    vs30Max->setText(jsonObject["vs30Max"].toString());
 
     return true;
 }
