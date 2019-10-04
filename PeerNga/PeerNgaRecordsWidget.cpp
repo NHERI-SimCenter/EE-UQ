@@ -499,16 +499,25 @@ bool PeerNgaRecordsWidget::inputFromJSON(QJsonObject &jsonObject)
 
     nRecordsEditBox->setText(jsonObject["records"].toString());
 
-    magnitudeCheckBox->setChecked(jsonObject["magnitudeRange"].toBool());
+    auto magnitudeRange = jsonObject["magnitudeRange"].toBool();
+    magnitudeCheckBox->setChecked(magnitudeRange);
     magnitudeMin->setText(jsonObject["magnitudeMin"].toString());
+    magnitudeMin->setEnabled(magnitudeMin);
     magnitudeMax->setText(jsonObject["magnitudeMax"].toString());
+    magnitudeMax->setEnabled(magnitudeMin);
 
-    distanceCheckBox->setChecked(jsonObject["distanceRange"].toBool());
+    auto distanceRange = jsonObject["distanceRange"].toBool();
+    distanceCheckBox->setChecked(distanceRange);
+    distanceMin->setEnabled(distanceRange);
     distanceMin->setText(jsonObject["distanceMin"].toString());
+    distanceMax->setEnabled(distanceRange);
     distanceMax->setText(jsonObject["distanceMax"].toString());
 
-    vs30CheckBox->setChecked(jsonObject["vs30Range"].toBool());
+    auto vs30Range = jsonObject["vs30Range"].toBool();
+    vs30CheckBox->setChecked(vs30Range);
+    vs30Min->setEnabled(distanceRange);
     vs30Min->setText(jsonObject["vs30Min"].toString());
+    vs30Max->setEnabled(distanceRange);
     vs30Max->setText(jsonObject["vs30Max"].toString());
 
     return true;
