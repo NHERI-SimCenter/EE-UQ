@@ -219,17 +219,16 @@ void PeerNgaRecordsWidget::setRecordsTable(QList<PeerScaledRecord> records)
                                                          "Horizontal 1 File", "Horizontal 2 File", "Vertical File"}));
     for(auto& record: records)
     {
-        recordsTable->setItem(row, 0, new QTableWidgetItem(QString::number(record.RSN)));
-        recordsTable->setItem(row, 1, new QTableWidgetItem(QString::number(record.Scale)));
-        recordsTable->setItem(row, 2, new QTableWidgetItem(record.Earthquake));
-        recordsTable->setItem(row, 3, new QTableWidgetItem(record.Station));
-        recordsTable->setItem(row, 4, new QTableWidgetItem(QString::number(record.Magnitude)));
-        recordsTable->setItem(row, 5, new QTableWidgetItem(QString::number(record.Distance)));
-        recordsTable->setItem(row, 6, new QTableWidgetItem(QString::number(record.Vs30)));
-        recordsTable->setItem(row, 7, new QTableWidgetItem(record.Horizontal1File));
-        recordsTable->setItem(row, 8, new QTableWidgetItem(record.Horizontal2File));
-        recordsTable->setItem(row, 9, new QTableWidgetItem(record.VerticalFile));
-
+        addTableItem(row, 0, QString::number(record.RSN));
+        addTableItem(row, 1, QString::number(record.Scale));
+        addTableItem(row, 2, record.Earthquake);
+        addTableItem(row, 3, record.Station);
+        addTableItem(row, 4, QString::number(record.Magnitude));
+        addTableItem(row, 5, QString::number(record.Distance));
+        addTableItem(row, 6, QString::number(record.Vs30));
+        addTableItem(row, 7, record.Horizontal1File);
+        addTableItem(row, 8, record.Horizontal2File);
+        addTableItem(row, 9, record.VerticalFile);
         row++;
     }
     recordsTable->resizeColumnsToContents();
@@ -291,6 +290,13 @@ void PeerNgaRecordsWidget::selectRecords()
                              sd1EditBox->text().toDouble(),
                              tlEditBox->text().toDouble(),
                              nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+}
+
+void PeerNgaRecordsWidget::addTableItem(int row, int column, QString value)
+{
+    auto item = new QTableWidgetItem(value);
+    item->setFlags(item->flags() ^ Qt::ItemIsEditable);
+    recordsTable->setItem(row, column, item);
 }
 
 QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchResultsFilePath)

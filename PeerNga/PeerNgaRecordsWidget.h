@@ -99,6 +99,7 @@ private:
     void plotSpectra();
     void updateStatus(QString status);
     void selectRecords();
+    void addTableItem(int row, int Column, QString value);
 
 };
 
