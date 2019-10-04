@@ -61,8 +61,8 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
 
     auto chartView = new QtCharts::QChartView(&spectraChart, this);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setMinimumWidth(400);
-    chartView->setMinimumHeight(400);
+    chartView->setMinimumWidth(500);
+    chartView->setMinimumHeight(500);
 
     layout->addWidget(chartView);
 

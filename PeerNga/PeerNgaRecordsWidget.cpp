@@ -196,18 +196,22 @@ void PeerNgaRecordsWidget::setRecordsTable(QList<PeerScaledRecord> records)
     recordsTable->clear();
     int row = 0;
     recordsTable->setRowCount(records.size());
-    recordsTable->setColumnCount(7);
+    recordsTable->setColumnCount(10);
     recordsTable->setHorizontalHeaderLabels(QStringList({"RSN","Scale", "Earthquake", "Station",
+                                                         "Magnitude", "Distance", "Vs30",
                                                          "Horizontal 1 File", "Horizontal 2 File", "Vertical File"}));
     for(auto& record: records)
     {
         recordsTable->setItem(row, 0, new QTableWidgetItem(QString::number(record.RSN)));
-        recordsTable->setItem(row, 1, new QTableWidgetItem(QString::number(record.scale)));
+        recordsTable->setItem(row, 1, new QTableWidgetItem(QString::number(record.Scale)));
         recordsTable->setItem(row, 2, new QTableWidgetItem(record.Earthquake));
         recordsTable->setItem(row, 3, new QTableWidgetItem(record.Station));
-        recordsTable->setItem(row, 4, new QTableWidgetItem(record.Horizontal1File));
-        recordsTable->setItem(row, 5, new QTableWidgetItem(record.Horizontal2File));
-        recordsTable->setItem(row, 6, new QTableWidgetItem(record.VerticalFile));
+        recordsTable->setItem(row, 4, new QTableWidgetItem(QString::number(record.Magnitude)));
+        recordsTable->setItem(row, 5, new QTableWidgetItem(QString::number(record.Distance)));
+        recordsTable->setItem(row, 6, new QTableWidgetItem(QString::number(record.Vs30)));
+        recordsTable->setItem(row, 7, new QTableWidgetItem(record.Horizontal1File));
+        recordsTable->setItem(row, 8, new QTableWidgetItem(record.Horizontal2File));
+        recordsTable->setItem(row, 9, new QTableWidgetItem(record.VerticalFile));
 
         row++;
     }
@@ -232,12 +236,11 @@ void PeerNgaRecordsWidget::plotSpectra()
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
 
     recordSelectionPlot.setHidden(false);
+    recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
     recordSelectionPlot.setMean(periods, meanSpectrum);
     recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
     recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
     recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
-
-    recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
 }
 
 void PeerNgaRecordsWidget::updateStatus(QString status)
@@ -303,7 +306,11 @@ QList<PeerScaledRecord> PeerNgaRecordsWidget::parseSearchResults(QString searchR
                 record.RSN = values[2].toInt();
                 record.Earthquake = values[9].trimmed().remove('\"');
                 record.Station = values[11].trimmed().remove('\"');
-                record.scale = values[4].toDouble();
+                record.Magnitude = values[12].trimmed().toDouble();
+                record.Distance = values[15].trimmed().toDouble();
+                record.Vs30 = values[16].trimmed().toDouble();
+
+                record.Scale = values[4].toDouble();
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
@@ -361,7 +368,7 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
         recordH1Json["fileName"] = record.Horizontal1File;
         recordH1Json["filePath"] = groundMotionsFolder.path();
         recordH1Json["dirn"] = 1;
-        recordH1Json["factor"] = record.scale;
+        recordH1Json["factor"] = record.Scale;
 
         recordsJsonArray.append(recordH1Json);
 
@@ -373,7 +380,7 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
             recordH2Json["fileName"] = record.Horizontal2File;
             recordH2Json["filePath"] = groundMotionsFolder.path();
             recordH2Json["dirn"] = 2;
-            recordH2Json["factor"] = record.scale;
+            recordH2Json["factor"] = record.Scale;
 
             recordsJsonArray.append(recordH2Json);
         }
@@ -385,7 +392,7 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
             recordH3Json["fileName"] = record.VerticalFile;
             recordH3Json["filePath"] = groundMotionsFolder.path();
             recordH3Json["dirn"] = 3;
-            recordH3Json["factor"] = record.scale;
+            recordH3Json["factor"] = record.Scale;
 
             recordsJsonArray.append(recordH3Json);
         }

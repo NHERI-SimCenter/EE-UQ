@@ -39,14 +39,21 @@ PeerLoginDialog::PeerLoginDialog(PeerNgaWest2Client* peerClient, QWidget *parent
     auto loginButton = new QPushButton("Log In");
     layout->addWidget(loginButton, 4, 0, 1, 2);
 
-    connect(loginButton, &QPushButton::clicked, this, [this](){
+    connect(loginButton, &QPushButton::clicked, this, [this, loginButton](){
+        loginButton->setEnabled(false);
+        loginButton->setDown(true);
         QSettings settings;
         settings.setValue("PeerUsername", usernameEditBox->text());
         this->peerClient->signIn(usernameEditBox->text(), passwordEditBox->text());
     });
 
-    connect(this->peerClient, &PeerNgaWest2Client::loginFinished, this, [this](bool result){
+    connect(this->peerClient, &PeerNgaWest2Client::loginFinished, this, [this, loginButton](bool result){
         if (result)
             this->accept();
+        else
+        {
+            loginButton->setEnabled(true);
+            loginButton->setDown(false);
+        }
     });
 }

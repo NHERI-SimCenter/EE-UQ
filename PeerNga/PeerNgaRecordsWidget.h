@@ -23,7 +23,11 @@ struct PeerScaledRecord
     QString Horizontal1File;
     QString Horizontal2File;
     QString VerticalFile;
-    double scale;
+    double Scale;
+    double Magnitude;
+    double Distance;
+    double Vs30;
+
 };
 
 class PeerNgaRecordsWidget : public SimCenterAppWidget
