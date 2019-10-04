@@ -112,6 +112,14 @@ void PeerNgaRecordsWidget::setupUI()
     layout->addWidget(recordSelectionGroup, 0, 1);
     layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
 
+    auto peerCitation = new QLabel("This tools uses PEER NGA West 2 Ground Motions Database. "
+    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
+    "Timothy D. Ancheta, Robert B. Darragh, Jonathan P. Stewart, Emel Seyhan, Walter J. Silva, "
+    "Brian S.J. Chiou, Katie E. Wooddell, Robert W. Graves, Albert R. Kottke, "
+    "David M. Boore, Tadahiro Kishida, and Jennifer L. Donahue.");
+
+    peerCitation->setWordWrap(true);
+    layout->addWidget(peerCitation, 2, 0, 1, 3);
 
     //layout->addWidget(thePlottingWindow, 0,3,2,1);
     layout->addWidget(&recordSelectionPlot, 0,3,2,1);
