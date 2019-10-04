@@ -128,6 +128,7 @@ class DabaghiDerKiureghianPulse : public StochasticModelWidget {
   QRadioButton* use_seed_;   /**< Radio button to indicate whether specific seed
                                 value should be used */
   QFormLayout* parameters_;  /**< Widget for inputting model parameters */
+  QLabel* directivity_params_; /**< Image showing directivity parameters */
 };
 
 #endif  // _DABAGHI_DER_KIUREGHIAN_PULSE_H

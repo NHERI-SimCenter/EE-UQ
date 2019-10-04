@@ -108,13 +108,22 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
          "motion for specified\nearthquake source and site characteristics\""));
   //model_description_->setStyleSheet("QLabel { color : gray; }");
 
+  // Add image of directivity params
+  directivity_params_ = new QLabel(
+      "Geometric directivity parameters (Dabaghi & Der Kiureghian, 2018)");
+  QPixmap directivity_image(":resources/directivityParameters.png");
+  directivity_params_->setPixmap(directivity_image);
+  directivity_params_->show();
+
   // Construct required layouts
-  QVBoxLayout* layout = new QVBoxLayout();
+  QHBoxLayout* layout = new QHBoxLayout();
+  QVBoxLayout* inputs_layout = new QVBoxLayout;
   QHBoxLayout* seed_layout = new QHBoxLayout();
   QHBoxLayout* truncate_layout = new QHBoxLayout();  
   QHBoxLayout* parameters_layout = new QHBoxLayout();
   QHBoxLayout* faulting_layout = new QHBoxLayout();
-  QHBoxLayout* sim_type_layout = new QHBoxLayout();  
+  QHBoxLayout* sim_type_layout = new QHBoxLayout();
+  QHBoxLayout* image_layout = new QHBoxLayout();    
   
   // Add widgets to layouts and layouts to this
   seed_layout->addWidget(use_seed_);
@@ -128,13 +137,22 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   faulting_layout->addStretch();
   sim_type_layout->addWidget(sim_type_);
   sim_type_layout->addStretch();
-  layout->addWidget(model_description_);
-  layout->addLayout(faulting_layout);
-  layout->addLayout(sim_type_layout);
-  layout->addLayout(parameters_layout);
-  layout->addLayout(truncate_layout);
-  layout->addLayout(seed_layout);
-  layout->addStretch();
+  image_layout->addWidget(directivity_params_);
+  image_layout->addStretch();  
+  inputs_layout->addWidget(model_description_);
+  inputs_layout->addLayout(faulting_layout);
+  inputs_layout->addLayout(sim_type_layout);
+  inputs_layout->addLayout(parameters_layout);
+  inputs_layout->addLayout(truncate_layout);
+  inputs_layout->addLayout(seed_layout);
+  inputs_layout->addStretch();
+  
+  layout->addLayout(inputs_layout);
+  layout->addLayout(image_layout);
+  layout->setStretch(0, 2);
+  layout->setStretch(1, 3);
+  layout->setSpacing(10);
+  
   this->setLayout(layout);
 
   // Connect slots
