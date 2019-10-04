@@ -49,11 +49,12 @@ void PeerNgaRecordsWidget::setupUI()
     tlEditBox = new QLineEdit("12.0");
     targetSpectrumLayout->addWidget(tlEditBox, 3, 1);
     targetSpectrumLayout->addWidget(new QLabel("g"), 3, 2);
+    targetSpectrumLayout->setRowStretch(targetSpectrumLayout->rowCount(), 1);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     auto recordSelectionLayout = new QGridLayout(recordSelectionGroup);
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
-    nRecordsEditBox = new QLineEdit("10");
+    nRecordsEditBox = new QLineEdit("16");
     recordSelectionLayout->addWidget(nRecordsEditBox, 0, 1);
 
     //Magnitude Range
@@ -93,16 +94,33 @@ void PeerNgaRecordsWidget::setupUI()
 
     //Records Table
     recordsTable = new QTableWidget();
+    recordsTable->setHidden(true);
 
+    //Ground Motions
+    auto groundMotionsGroup = new QGroupBox("Ground Motions");
+    auto groundMotionsLayout = new QGridLayout(groundMotionsGroup);
+    groundMotionsComponentsBox = new QComboBox();
+    groundMotionsComponentsBox->addItem("One (Horizontal)", GroundMotionComponents::One);
+    groundMotionsComponentsBox->addItem("Two (Horizontal)", GroundMotionComponents::Two);
+    groundMotionsComponentsBox->addItem("Three (Horizontal & Vertical)", GroundMotionComponents::Three);
+    groundMotionsLayout->addWidget(new QLabel("Acceleration Components"), 0, 0);
+    groundMotionsLayout->addWidget(groundMotionsComponentsBox, 0, 1);
+    recordsTable->setMinimumHeight(400);
+    groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
+    groundMotionsLayout->setRowStretch(1, 1);
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
+    layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
 
-    layout->addWidget(recordsTable, 1, 0, 1, 2);
 
-    thePlottingWindow = new SimCenterGraphPlot(QString("Period (sec.)"), QString("Spectral Acceleration (g)"));
-    layout->addWidget(thePlottingWindow, 0,3,2,1);
+    //layout->addWidget(thePlottingWindow, 0,3,2,1);
+    layout->addWidget(&recordSelectionPlot, 0,3,2,1);
+
+    recordSelectionPlot.setHidden(true);
+
     layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
+
 }
 
 void PeerNgaRecordsWidget::setupConnections()
@@ -144,6 +162,20 @@ void PeerNgaRecordsWidget::setupConnections()
     });
 
     connect(&peerClient, &PeerNgaWest2Client::statusUpdated, this, &PeerNgaRecordsWidget::updateStatus);
+
+    connect(&peerClient, &PeerNgaWest2Client::selectionStarted, this, [this]()
+    {
+        this->selectRecordsButton->setEnabled(false);
+        this->selectRecordsButton->setDown(true);
+    });
+
+
+
+    connect(&peerClient, &PeerNgaWest2Client::selectionFinished, this, [this]()
+    {
+        this->selectRecordsButton->setEnabled(true);
+        this->selectRecordsButton->setDown(false);
+    });
 }
 
 void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
@@ -156,7 +188,6 @@ void PeerNgaRecordsWidget::processPeerRecords(QDir resultFolder)
     currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
     setRecordsTable(currentRecords);
 
-    thePlottingWindow->clear();
     plotSpectra();
 }
 
@@ -165,18 +196,24 @@ void PeerNgaRecordsWidget::setRecordsTable(QList<PeerScaledRecord> records)
     recordsTable->clear();
     int row = 0;
     recordsTable->setRowCount(records.size());
-    recordsTable->setColumnCount(4);
-    recordsTable->setHorizontalHeaderLabels(QStringList({"RSN","Scale", "Earthquake", "Station"}));
+    recordsTable->setColumnCount(7);
+    recordsTable->setHorizontalHeaderLabels(QStringList({"RSN","Scale", "Earthquake", "Station",
+                                                         "Horizontal 1 File", "Horizontal 2 File", "Vertical File"}));
     for(auto& record: records)
     {
         recordsTable->setItem(row, 0, new QTableWidgetItem(QString::number(record.RSN)));
         recordsTable->setItem(row, 1, new QTableWidgetItem(QString::number(record.scale)));
         recordsTable->setItem(row, 2, new QTableWidgetItem(record.Earthquake));
         recordsTable->setItem(row, 3, new QTableWidgetItem(record.Station));
+        recordsTable->setItem(row, 4, new QTableWidgetItem(record.Horizontal1File));
+        recordsTable->setItem(row, 5, new QTableWidgetItem(record.Horizontal2File));
+        recordsTable->setItem(row, 6, new QTableWidgetItem(record.VerticalFile));
 
         row++;
     }
     recordsTable->resizeColumnsToContents();
+    recordsTable->setHidden(false);
+
 }
 
 void PeerNgaRecordsWidget::clearSpectra()
@@ -194,17 +231,13 @@ void PeerNgaRecordsWidget::plotSpectra()
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
 
+    recordSelectionPlot.setHidden(false);
+    recordSelectionPlot.setMean(periods, meanSpectrum);
+    recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
+    recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
+    recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
 
-    for (auto i : scaledSelectedSpectra) {
-        thePlottingWindow->addLine(periods, i, 1, 125, 125, 125);
-    }
-
-    thePlottingWindow->addLine(periods, meanSpectrum, 3, 255, 0, 0);
-    thePlottingWindow->addLine(periods, meanMinusSigmaSpectrum, 1, 255, 0, 0);
-    thePlottingWindow->addLine(periods, meanPlusSigmaSpectrum, 1, 255, 0, 0);
-
-    thePlottingWindow->addLine(periods, targetSpectrum, 3, 0, 0, 255);
-
+    recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
 }
 
 void PeerNgaRecordsWidget::updateStatus(QString status)
@@ -331,6 +364,31 @@ bool PeerNgaRecordsWidget::outputToJSON(QJsonObject &jsonObject)
         recordH1Json["factor"] = record.scale;
 
         recordsJsonArray.append(recordH1Json);
+
+        auto components = groundMotionsComponentsBox->currentData().value<GroundMotionComponents>();
+        if(components == GroundMotionComponents::Two || components == GroundMotionComponents::Three)
+        {
+            QJsonObject recordH2Json;
+            //Adding Horizontal2 in dof 2 direction
+            recordH2Json["fileName"] = record.Horizontal2File;
+            recordH2Json["filePath"] = groundMotionsFolder.path();
+            recordH2Json["dirn"] = 2;
+            recordH2Json["factor"] = record.scale;
+
+            recordsJsonArray.append(recordH2Json);
+        }
+
+        if(components == GroundMotionComponents::Three)
+        {
+            QJsonObject recordH3Json;
+            //Adding Horizontal3 in dof 3 direction
+            recordH3Json["fileName"] = record.VerticalFile;
+            recordH3Json["filePath"] = groundMotionsFolder.path();
+            recordH3Json["dirn"] = 3;
+            recordH3Json["factor"] = record.scale;
+
+            recordsJsonArray.append(recordH3Json);
+        }
 
         eventJson["Records"] = recordsJsonArray;
         eventJson["type"] = "PeerEvent";

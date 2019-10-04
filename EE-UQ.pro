@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui charts concurrent network sql qml webenginewidgets uitools webengine webchannel 3dcore 3drender 3dextras
+QT += core gui charts concurrent network sql qml webenginewidgets uitools webengine webchannel 3dcore 3drender 3dextras charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,12 +38,10 @@ include(./MiniZip/MiniZip.pri)
 
 SOURCES += main.cpp \
     InputWidgetEE_UQ.cpp \
-    qcustomplot.cpp \
     RunWidget.cpp
 
 HEADERS  += \
     InputWidgetEE_UQ.h\
-    qcustomplot.h \
     RunWidget.h 
 
 RESOURCES += \

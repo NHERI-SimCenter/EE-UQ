@@ -12,8 +12,8 @@
 #include <QTemporaryDir>
 #include <QVector>
 #include <QCheckBox>
+#include "RecordSelectionPlot.h"
 
-class SimCenterGraphPlot;
 
 struct PeerScaledRecord
 {
@@ -29,6 +29,8 @@ struct PeerScaledRecord
 class PeerNgaRecordsWidget : public SimCenterAppWidget
 {
     Q_OBJECT
+
+
 public:
     explicit PeerNgaRecordsWidget(QWidget *parent = nullptr);
 
@@ -38,6 +40,9 @@ public:
     bool outputAppDataToJSON(QJsonObject &jsonObject) override;
     bool inputAppDataFromJSON(QJsonObject &jsonObject) override;
     bool copyFiles(QString &destDir) override;
+
+    enum GroundMotionComponents{One, Two, Three};
+    Q_ENUM(GroundMotionComponents)
 
 signals:
 
@@ -51,8 +56,8 @@ private:
     QLineEdit* tlEditBox;
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
-    SimCenterGraphPlot *thePlottingWindow;
-
+    QComboBox* groundMotionsComponentsBox;
+    RecordSelectionPlot recordSelectionPlot;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;

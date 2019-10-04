@@ -39,6 +39,7 @@ void PeerNgaWest2Client::signIn(QString username, QString password)
 
 void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range)
 {
+    emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
 
     this->nRecords = nRecords;
@@ -138,8 +139,10 @@ void PeerNgaWest2Client::processSignInReply()
             isLoggedIn = true;
             emit loginFinished(true);
 
-            retryPostSpectra();
-
+            if(retries > 0 && retries <= 5)
+            {
+                retryPostSpectra();
+            }
             return;
         }
     }
@@ -170,9 +173,8 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         {
             emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries");
             retries = 0;
-
-            QNetworkRequest peerSignInPageRequest(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
-            signInPageReply = networkManager.get(peerSignInPageRequest);
+            emit selectionFinished();
+            retrySignIn();
         }
     }
     else
@@ -244,6 +246,7 @@ void PeerNgaWest2Client::processGetRecordsReply()
 
 void PeerNgaWest2Client::processDownloadRecordsReply()
 {
+    emit selectionFinished();
     auto cacheLocation = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
 
     //TODO: we might need to use temporary files
@@ -265,7 +268,6 @@ void PeerNgaWest2Client::retryPostSpectra()
 
 void PeerNgaWest2Client::retrySignIn()
 {
-    signInParameters.removeQueryItem("authenticity_token");
-    signInParameters.addQueryItem("authenticity_token", authenticityToken);
-    signInReply = networkManager.post(peerSignInRequest, signInParameters.query().toUtf8());
+    QNetworkRequest peerSignInPageRequest(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
+    signInPageReply = networkManager.get(peerSignInPageRequest);
 }

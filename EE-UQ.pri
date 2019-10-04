@@ -8,6 +8,7 @@ INCLUDEPATH += $$PWD \
 INCLUDEPATH += "../EE-UQ"
 
 SOURCES += \
+    $$PWD/PeerNga/RecordSelectionPlot.cpp \
     $$PWD/UniformMotionInput.cpp \
     $$PWD/EarthquakeEventSelection.cpp \
     $$PWD/ExistingPEER_Events.cpp \
@@ -21,10 +22,10 @@ SOURCES += \
     $$PWD/PeerNga/PeerLoginDialog.cpp \
     $$PWD/PeerNga/PeerNgaRecordsWidget.cpp \
     $$PWD/PeerNga/PeerNgaWest2Client.cpp \
-    $$PWD/SimCenterGraphPlot.cpp \
     $$PWD/StochasticMotionInput/src/DabaghiDerKiureghianPulse.cpp     
 
 HEADERS  += \
+    $$PWD/PeerNga/RecordSelectionPlot.h \
     $$PWD/UniformMotionInput.h \
     $$PWD/EarthquakeEventSelection.h \
     $$PWD/SHAMotionWidget.h \
@@ -38,9 +39,7 @@ HEADERS  += \
     $$PWD/StochasticMotionInput/include/DabaghiDerKiureghianPulse.h \
     $$PWD/PeerNga/PeerLoginDialog.h \
     $$PWD/PeerNga/PeerNgaRecordsWidget.h \
-    $$PWD/PeerNga/PeerNgaWest2Client.h \
-    $$PWD/SimCenterGraphPlot.h 
-
+    $$PWD/PeerNga/PeerNgaWest2Client.h
 
 RESOURCES += \
     images.qrc \

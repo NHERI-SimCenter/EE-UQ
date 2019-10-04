@@ -22,6 +22,8 @@ signals:
     void loginFinished(bool result);
     void recordsDownloaded(QString recordsPath);
     void statusUpdated(QString status);
+    void selectionStarted();
+    void selectionFinished();
 
 public slots:
 
