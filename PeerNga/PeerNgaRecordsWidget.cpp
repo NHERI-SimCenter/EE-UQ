@@ -257,6 +257,10 @@ void PeerNgaRecordsWidget::plotSpectra()
     recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
     recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
     recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
+
+    auto size = recordSelectionPlot.size();
+    size.setWidth(size.height());
+    recordSelectionPlot.setMinimumSize(size);
 }
 
 void PeerNgaRecordsWidget::updateStatus(QString status)
