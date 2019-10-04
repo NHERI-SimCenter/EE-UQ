@@ -445,9 +445,26 @@ bool PeerNgaRecordsWidget::copyFiles(QString &destDir)
     QDir destinationFolder(destDir);
     for (auto& record:currentRecords)
     {
-        //Copying Horizontal1 in dof 1 direction
+        //Copying Horizontal1 file
         if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File)))
             return false;
+
+        auto components = groundMotionsComponentsBox->currentData().value<GroundMotionComponents>();
+
+        if(components == GroundMotionComponents::Two || components == GroundMotionComponents::Three)
+        {
+
+            //Copying Horizontal2 file
+            if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File)))
+                return false;
+        }
+
+        if(components == GroundMotionComponents::Three)
+        {
+            //Copying Vertical file
+            if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile)))
+                return false;
+        }
     }
 
     return true;
