@@ -195,8 +195,8 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
         params.addQueryItem("search[scale_flag]", "1");
-        params.addQueryItem("search[period]", "0.1,1,10.0");
-        params.addQueryItem("search[weight]", "1.0,1.0,1.0");
+        params.addQueryItem("search[period]", "0.01,0.05,0.1,0.5,1,5,10.0");
+        params.addQueryItem("search[weight]", "1.0,1.0,1.0,1.0,1.0,1.0,1.0");
         params.addQueryItem("search[output_num]", QString::number(nRecords));
 
         if(magnitudeRange.isValid() && !magnitudeRange.isNull())
