@@ -124,8 +124,9 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
     for(auto oldSeries: currentSelectedSeries)
     {
         spectraChart.removeSeries(oldSeries);
-
     }
+
+    currentSelectedSeries.clear();
 
     bool firstLegendShown = false;
     for(auto spectrum: spectra)
