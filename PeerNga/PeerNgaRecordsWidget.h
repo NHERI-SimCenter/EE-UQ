@@ -11,8 +11,10 @@
 #include <QTableWidget>
 #include <QTemporaryDir>
 #include <QVector>
+#include <QCheckBox>
+#include "RecordSelectionPlot.h"
+#include <QProgressBar>
 
-class SimCenterGraphPlot;
 
 struct PeerScaledRecord
 {
@@ -22,12 +24,18 @@ struct PeerScaledRecord
     QString Horizontal1File;
     QString Horizontal2File;
     QString VerticalFile;
-    double scale;
+    double Scale;
+    double Magnitude;
+    double Distance;
+    double Vs30;
+
 };
 
 class PeerNgaRecordsWidget : public SimCenterAppWidget
 {
     Q_OBJECT
+
+
 public:
     explicit PeerNgaRecordsWidget(QWidget *parent = nullptr);
 
@@ -37,6 +45,9 @@ public:
     bool outputAppDataToJSON(QJsonObject &jsonObject) override;
     bool inputAppDataFromJSON(QJsonObject &jsonObject) override;
     bool copyFiles(QString &destDir) override;
+
+    enum GroundMotionComponents{One, Two, Three};
+    Q_ENUM(GroundMotionComponents)
 
 signals:
 
@@ -50,9 +61,28 @@ private:
     QLineEdit* tlEditBox;
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
-    SimCenterGraphPlot *thePlottingWindow;
+    QComboBox* groundMotionsComponentsBox;
+    RecordSelectionPlot recordSelectionPlot;
+    QProgressBar* progressBar;
+    QComboBox* spectrumTypeComboBox;
 
+    //Magnitude Range
+    QCheckBox* magnitudeCheckBox;
+    QLineEdit* magnitudeMin;
+    QLineEdit* magnitudeMax;
+
+    //Distance Range
+    QCheckBox* distanceCheckBox;
+    QLineEdit* distanceMin;
+    QLineEdit* distanceMax;
+
+    //Vs30 Range
+    QCheckBox* vs30CheckBox;
+    QLineEdit* vs30Min;
+    QLineEdit* vs30Max;
     QTemporaryDir groundMotionsFolder;
+
+    //Record Selection Members
     QList<PeerScaledRecord> currentRecords;
     QVector<QVector<double>> scaledSelectedSpectra;
     QVector<double> periods;
@@ -68,7 +98,9 @@ private:
     void setRecordsTable(QList<PeerScaledRecord>);
     void clearSpectra();
     void plotSpectra();
-
+    void updateStatus(QString status);
+    void selectRecords();
+    void addTableItem(int row, int Column, QString value);
 
 };
 

@@ -255,6 +255,7 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 
     QJsonObject theEvent;
     QString type;
+    QString subtype;
 
     // from Events get the single event
 
@@ -268,6 +269,8 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
         if (theEvent.contains("Application")) {
             QJsonValue theName = theEvent["Application"];
             type = theName.toString();
+            if(theEvent.contains("subtype"))
+                subtype = theEvent["subtype"].toString();
         } else
             return false;
     } else
@@ -281,7 +284,10 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
         index = 4;
     } else if ((type == QString("Existing PEER Events")) ||
                (type == QString("ExistingPEER_Events"))) {
-        index = 1;
+        if(!subtype.isEmpty() && subtype == "PEER NGA Records")
+            index = 6;
+        else
+            index = 1;
     } else if (type == QString("Hazard Based Event")) {
         index = 2; 
     } else if (type == QString("Site Response") ||
