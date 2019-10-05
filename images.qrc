@@ -5,4 +5,7 @@
     <qresource prefix="/images">
         <file>ElCentro.json</file>
     </qresource>
+    <qresource>
+        <file>./resources/directivityParameters.png</file>
+    </qresource>
 </RCC>
