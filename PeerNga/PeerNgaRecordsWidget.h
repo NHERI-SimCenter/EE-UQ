@@ -15,6 +15,7 @@
 #include "RecordSelectionPlot.h"
 #include <QProgressBar>
 
+class QComboBox;
 
 struct PeerScaledRecord
 {
