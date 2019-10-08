@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QStatusBar>
+#include <QDir>
 
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     nRecords(3), isLoggedIn(false), retries(0)
@@ -247,12 +248,23 @@ void PeerNgaWest2Client::processGetRecordsReply()
 void PeerNgaWest2Client::processDownloadRecordsReply()
 {
     emit selectionFinished();
-    auto cacheLocation = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
+    auto tempLocation = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
 
+    if(!QDir(tempLocation).exists())
+    {
+        if(!QDir(tempLocation).mkpath("."))
+        {
+            emit statusUpdated("Ground Motions Download Failed!");
+        }
+    }
     //TODO: we might need to use temporary files
-    QString recordsPath = cacheLocation.append("/PeerRecords.zip");
+    QString recordsPath = tempLocation.append("/PeerRecords.zip");
     QFile file(recordsPath);
-    file.open(QIODevice::WriteOnly);
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        emit statusUpdated("Ground Motions Download Failed!");
+        return;
+    }
     file.write(downloadRecordsReply->readAll());
     file.close();
     emit statusUpdated("Ground Motions Downloaded Sucessfully");

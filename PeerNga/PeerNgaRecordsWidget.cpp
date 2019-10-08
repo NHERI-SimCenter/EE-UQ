@@ -174,8 +174,12 @@ void PeerNgaRecordsWidget::setupConnections()
 
     connect(&peerClient, &PeerNgaWest2Client::recordsDownloaded, this, [this](QString recordsFile)
     {
-        ZipUtils::UnzipFile(recordsFile, QDir(groundMotionsFolder.path()));
-        processPeerRecords(QDir(groundMotionsFolder.path()));
+        auto tempRecordsDir = QDir(groundMotionsFolder.path());
+        //Cleaning up previous search results
+        if(tempRecordsDir.exists("_SearchResults.csv"))
+            tempRecordsDir.remove("_SearchResults.csv");
+        ZipUtils::UnzipFile(recordsFile, tempRecordsDir);
+        processPeerRecords(tempRecordsDir);
     });
 
     connect(magnitudeCheckBox, &QCheckBox::clicked, this, [this](bool checked){
