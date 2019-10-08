@@ -22,7 +22,6 @@
 #include <QDir>
 
 
-
 static QString logFilePath;
 static bool logToFile = false;
 
@@ -101,6 +100,10 @@ int main(int argc, char *argv[])
     QSurfaceFormat::setDefaultFormat(glFormat);
     ***********************************************************************************/
 
+    //
+    // regular Qt startup
+    //
+
     QApplication a(argc, argv);
 
     //
@@ -151,7 +154,7 @@ int main(int argc, char *argv[])
 
         w.setAbout(textAboutEE_UQ);
 
-    QString version("Version 1.2.0");
+    QString version("Version 2.0.0");
     w.setVersion(version);
 
     QString citeText("Frank McKenna, Wael Elhaddad, Adam Zsarnoczay, Michael Gardner, & Charles Wang. (2019, June 29). NHERI-SimCenter/EE-UQ: Release v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.3262287");
