@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
         This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
         their own applications for others to use.\
         <p>\
-        This is Version 1.2.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
+        This is Version 2.0.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
         features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
         also would benefit from it.\
         <p>";
