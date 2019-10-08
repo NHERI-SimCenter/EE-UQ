@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
     QCoreApplication::setApplicationVersion("2.0.0");
-    //GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    //    GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
     QString version("Version 2.0.0");
     w.setVersion(version);
 
-    QString citeText("Frank McKenna, Wael Elhaddad, Adam Zsarnoczay, Michael Gardner, & Charles Wang. (2019, June 29). NHERI-SimCenter/EE-UQ: Release v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.3262287");
+    QString citeText("Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, & Charles Wang. (2019, October 8). NHERI-SimCenter/EE-UQ: Version 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3475642");
     w.setCite(citeText);
 
     QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
