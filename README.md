@@ -58,11 +58,11 @@ Again placing this repo in the same directory that you placed the EE-UQ repo.
 
 ##### 3. Install Qt: https://www.qt.io/
 
-Qt is free for open source developers. Download it and start the Qt Creator application. From Qt Creator open the WE-UQ.pro file located in the directory the EE-UQ repo was downloaded into and select build to build it. For detailed instructions on using Qt, browse their website.
+Qt is free for open source developers. Download it and start the Qt Creator application. From Qt Creator open the EE-UQ.pro file located in the directory the EE-UQ repo was downloaded into and select build to build it. For detailed instructions on using Qt, browse their website.
 
 #### 4. To run locally you will need to install and build the SimCenterBackendApplications repo: https://github.com/NHERI-SimCenter/SimCenterBackendApplications
 
-SimCenterBackendApplications contains a number of applications written in C++, C and Python. Follow the build instructions on the SimCenterBackendApplications githib page to build them. Once built inside the WE-UQ applicationss preferences set the applications directory entry to point to the applications folder that the build process creates.
+SimCenterBackendApplications contains a number of applications written in C++, C and Python. Follow the build instructions on the SimCenterBackendApplications githib page to build them. Once built inside the EE-UQ applicationss preferences set the applications directory entry to point to the applications folder that the build process creates.
 
 ### Acknowledgement
 
