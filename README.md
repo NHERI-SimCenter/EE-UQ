@@ -1,6 +1,6 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2619616.svg)](https://doi.org/10.5281/zenodo.2619616)
-
 # EE-UQ
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3475642.svg)](https://doi.org/10.5281/zenodo.3475642)
 
 This open-source research application provides an application
 researchers can use to predict the response of a building subjected to
@@ -42,10 +42,28 @@ for more resources related to this tool. Additionally, this page
 provides more information on the NHERI SimCenter, including other SimCenter
 applications, FAQ, and how to collaborate.
 
-## How to Cite
-You can cite this software as follows:
+### How to Build
 
-Frank McKenna, Wael Elhaddad, Michael Gardner, & Charles Wang. (2019, March 31). NHERI-SimCenter/EE-UQ v1.2.0 (Version v1.2.0). Zenodo. http://doi.org/10.5281/zenodo.2619616
+##### 1. Download this repo.
 
-## Acknowledgements
+##### 2. Download the SimCenterCommon repo: https://github.com/NHERI-SimCenter/SimCenterCommon
+
+Place the SimCenterCommon Repo in the same directory that you placed the EE-UQ repo.
+
+##### 3. Download the s3hark repo: https://github.com/NHERI-SimCenter/s3hark
+Also place this repo in the same directory that you placed the EE-UQ repo.
+
+##### 4. Download the GroundMotionUtilities repo: https://github.com/NHERI-SimCenter/GroundMotionUtilities
+Again placing this repo in the same directory that you placed the EE-UQ repo.
+
+##### 5. Install Qt: https://www.qt.io/
+
+Qt is free for open source developers. Download it and start the Qt Creator application. From Qt Creator open the EE-UQ.pro file located in the directory the EE-UQ repo was downloaded into and select build to build it. For detailed instructions on using Qt, browse their website.
+
+#### 6. To run locally you will need to install and build the SimCenterBackendApplications repo: https://github.com/NHERI-SimCenter/SimCenterBackendApplications
+
+SimCenterBackendApplications contains a number of applications written in C++, C and Python. Follow the build instructions on the SimCenterBackendApplications githib page to build them. Once built inside the EE-UQ applicationss preferences set the applications directory entry to point to the applications folder that the build process creates.
+
+### Acknowledgement
+
 This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
