@@ -68,7 +68,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetOpenSeesAnalysis.h>
 #include <QDir>
 #include <QFile>
-#include <DakotaResultsSampling.h>
+#include <UQ_EngineSelection.h>
 #include <LocalApplication.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
@@ -86,6 +86,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
+#include <DakotaResultsSampling.h>
 
 #include <GoogleAnalytics.h>
 
@@ -124,12 +125,14 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theRVs = new RandomVariablesContainer();
     theGI = GeneralInformationWidget::getInstance();
     theSIM = new SIM_Selection(theRVs);
-    theEvent = new EarthquakeEventSelection(theRVs);
+    theEventSelection = new EarthquakeEventSelection(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
-    theUQ_Method = new InputWidgetSampling();
-    theEDP = new EDP_Selection(theRVs);
+    theUQ_Selection = new UQ_EngineSelection(theRVs);
+    theEDP_Selection = new EDP_Selection(theRVs);
 
-    theResults = new DakotaResultsSampling(theRVs);
+    //theResults = new DakotaResultsSampling(theRVs);
+    theResults = theUQ_Selection->getResults();
+
     localApp = new LocalApplication("EE-UQ workflow.py");
     remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
 
@@ -145,9 +148,11 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     // error messages and signals
-    connect(theResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    /*
+     * connect(theResults, SIGNAL(), this,SLOT(errorMessage(QString)));
     connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(theResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+*/
 
     connect(theGI,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(theGI,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
@@ -157,9 +162,9 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     connect(theSIM,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(theSIM,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
 
-    connect(theEvent,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(theEvent,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theEvent,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
+    connect(theEventSelection,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    connect(theEventSelection,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    connect(theEventSelection,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
 
     connect(theRunWidget,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(theRunWidget,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
@@ -193,7 +198,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
    // theBIM = new InputWidgetBIM(theGI, theSIM);
-    theUQ = new InputWidgetUQ(theUQ_Method,theRVs);
+    theUQ = new InputWidgetUQ(theUQ_Selection, theRVs);
 
     //
     //
@@ -288,10 +293,10 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theStackedWidget = new QStackedWidget();
     theStackedWidget->addWidget(theGI);
     theStackedWidget->addWidget(theSIM);
-    theStackedWidget->addWidget(theEvent);
+    theStackedWidget->addWidget(theEventSelection);
     theStackedWidget->addWidget(theAnalysis);
     theStackedWidget->addWidget(theUQ);
-    theStackedWidget->addWidget(theEDP);
+    theStackedWidget->addWidget(theEDP_Selection);
     // theStackedWidget->addWidget(theUQ_Method);
     theStackedWidget->addWidget(theResults);
 
@@ -383,20 +388,27 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     theRVs->outputToJSON(jsonObjectTop);
 
     QJsonObject jsonObjectEDP;
-    theEDP->outputToJSON(jsonObjectEDP);
+    theEDP_Selection->outputToJSON(jsonObjectEDP);
     jsonObjectTop["EDP"] = jsonObjectEDP;
 
     QJsonObject appsEDP;
-    theEDP->outputAppDataToJSON(appsEDP);
+    theEDP_Selection->outputAppDataToJSON(appsEDP);
     apps["EDP"]=appsEDP;
 
+    /*
     QJsonObject jsonObjectUQ;
-    theUQ_Method->outputToJSON(jsonObjectUQ);
+    theUQ_Selection->outputToJSON(jsonObjectUQ);
     jsonObjectTop["UQ_Method"] = jsonObjectUQ;
+    */
+    theUQ_Selection->outputToJSON(jsonObjectTop);
 
+    /*
     QJsonObject appsUQ;
-    theUQ_Method->outputAppDataToJSON(appsUQ);
+    theUQ_Selection->outputAppDataToJSON(appsUQ);
     apps["UQ"]=appsUQ;
+    */
+
+    theUQ_Selection->outputAppDataToJSON(apps);
 
     QJsonObject jsonObjectAna;
     theAnalysis->outputToJSON(jsonObjectAna);
@@ -408,8 +420,8 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
    // NOTE: Events treated differently, due to array nature of objects
-    theEvent->outputToJSON(jsonObjectTop);
-    theEvent->outputAppDataToJSON(apps);
+    theEventSelection->outputToJSON(jsonObjectTop);
+    theEventSelection->outputAppDataToJSON(apps);
 
     theRunWidget->outputToJSON(jsonObjectTop);
 
@@ -423,6 +435,11 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
  void
  InputWidgetEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+
+       theStackedWidget->removeWidget(theResults);
+       delete theResults;
+       theResults=theUQ_Selection->getResults();
+       theStackedWidget->addWidget(theResults);
 
       theResults->processResults(dakotaOut, dakotaTab);
       theRunWidget->hide();
@@ -471,7 +488,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         // note: Events is different because the object is an Array
         if (theApplicationObject.contains("Events")) {
             //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
-            if (theEvent->inputAppDataFromJSON(theApplicationObject) == false) {
+            if (theEventSelection->inputAppDataFromJSON(theApplicationObject) == false) {
                 emit errorMessage("EE_UQ: failed to read Event Application");
             }
 
@@ -480,14 +497,19 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
             return false;
         }
 
+        /*
         if (theApplicationObject.contains("UQ")) {
             QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            if (theUQ_Method->inputAppDataFromJSON(theObject) == false)
+            if (theUQ_Selection->inputAppDataFromJSON(theObject) == false)
                 emit errorMessage("EE_UQ: failed to read UQ application");
         } else {
             emit errorMessage("EE_UQ: failed to find UQ application");
             return false;
         }
+        */
+
+        if (theUQ_Selection->inputAppDataFromJSON(theApplicationObject) == false)
+            emit errorMessage("EE_UQ: failed to read UQ application");
 
         if (theApplicationObject.contains("Simulation")) {
             QJsonObject theObject = theApplicationObject["Simulation"].toObject();
@@ -501,7 +523,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         if (theApplicationObject.contains("EDP")) {
             QJsonObject theObject = theApplicationObject["EDP"].toObject();
-            if (theEDP->inputAppDataFromJSON(theObject) == false) {
+            if (theEDP_Selection->inputAppDataFromJSON(theObject) == false) {
                 emit errorMessage("EE_UQ: failed to read EDP application");
             }
         } else {
@@ -516,7 +538,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     ** Note to me - RVs and Events treated differently as both use arrays .. rethink API!
     */
 
-    theEvent->inputFromJSON(jsonObject);
+    theEventSelection->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
 
@@ -532,21 +554,26 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
     if (jsonObject.contains("EDP")) {
         QJsonObject edpObj = jsonObject["EDP"].toObject();
-        if (theEDP->inputFromJSON(edpObj) == false)
+        if (theEDP_Selection->inputFromJSON(edpObj) == false)
             emit errorMessage("EE_UQ: failed to read EDP data");
     } else {
         emit errorMessage("EE_UQ: failed to find EDP data");
         return false;
     }
 
+    /* object gets to add own tag
     if (jsonObject.contains("UQ_Method")) {
         QJsonObject jsonObjUQInformation = jsonObject["UQ_Method"].toObject();
-        if (theUQ_Method->inputFromJSON(jsonObjUQInformation) == false)
+        if (theUQ_Selection->inputFromJSON(jsonObjUQInformation) == false)
             emit errorMessage("EE_UQ: failed to read UQ Method data");
     } else {
         emit errorMessage("EE_UQ: failed to find UQ Method data");
         return false;
     }
+    */
+
+    if (theUQ_Selection->inputFromJSON(jsonObject) == false)
+        emit errorMessage("EE_UQ: failed to read UQ Method data");
 
     if (jsonObject.contains("Simulation")) {
         QJsonObject jsonObjSimInformation = jsonObject["Simulation"].toObject();
@@ -646,10 +673,10 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 
     // copyPath(path, tmpDirectory, false);
     theSIM->copyFiles(templateDirectory);
-    theEvent->copyFiles(templateDirectory);
+    theEventSelection->copyFiles(templateDirectory);
     theAnalysis->copyFiles(templateDirectory);
-    theUQ_Method->copyFiles(templateDirectory);
-    theEDP->copyFiles(templateDirectory);
+    theUQ_Selection->copyFiles(templateDirectory);
+    theEDP_Selection->copyFiles(templateDirectory);
 
     //
     // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
@@ -715,5 +742,5 @@ InputWidgetEE_UQ::loadFile(const QString fileName){
 
 int
 InputWidgetEE_UQ::getMaxNumParallelTasks() {
-    return theUQ_Method->getNumParallelTasks();
+    return theUQ_Selection->getNumParallelTasks();
 }

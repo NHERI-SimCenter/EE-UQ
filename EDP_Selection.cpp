@@ -119,8 +119,6 @@ EDP_Selection::outputToJSON(QJsonObject &jsonObject)
 bool
 EDP_Selection::inputFromJSON(QJsonObject &jsonObject) {
 
-  qDebug() << "EDP_SELECTION - " << jsonObject;
-
   if (theCurrentEDP != 0) {
     return theCurrentEDP->inputFromJSON(jsonObject);
   } else {

@@ -53,7 +53,7 @@ class InputWidgetBIM;
 class InputWidgetUQ;
 
 class SIM_Selection;
-class InputWidgetSampling;
+class UQ_EngineSelection;
 
 class InputWidgetOpenSeesAnalysis;
 class UQOptions;
@@ -61,7 +61,7 @@ class ResultsWidget;
 class GeneralInformationWidget;
 class EarthquakeEventSelection;
 class QStackedWidget;
-class DakotaResults;
+class UQ_Results;
 
 class RunLocalWidget;
 class RunWidget;
@@ -116,11 +116,11 @@ private:
 
     // the AppWidgets .. not all displayed in main UI
     SIM_Selection *theSIM;
-    InputWidgetSampling *theUQ_Method;
-    EarthquakeEventSelection *theEvent;
+    UQ_EngineSelection *theUQ_Selection;
+    EarthquakeEventSelection *theEventSelection;
     InputWidgetOpenSeesAnalysis *theAnalysis;
-    EDP_Selection *theEDP;
-    DakotaResults *theResults;
+    EDP_Selection *theEDP_Selection;
+    UQ_Results *theResults;
 
     // other widgets appearing in UI
     InputWidgetBIM *theBIM; // contains GI and SIM
