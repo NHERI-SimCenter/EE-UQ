@@ -28,6 +28,8 @@
     "uncertainty quantification",
     "ground motions",
   ],
-  "license": "BSD-2.0",
-  "upload_type": "software"
+  "license": "BSD 2-Clause \"Simplified\" License",
+  "upload_type": "software",
+  "notes" : "This work is funded by the National Science Foundation under grant CMMI 1612843",
+  "communities" : "NHERI SimCenter"
 }
