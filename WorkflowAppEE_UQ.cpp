@@ -36,7 +36,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "InputWidgetEE_UQ.h"
+#include "WorkflowAppEE_UQ.h"
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -76,7 +76,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetBIM.h>
 #include <InputWidgetUQ.h>
 
-#include <EDP_Selection.h>
+#include <EDP_EarthquakeSelection.h>
 
 #include "CustomizedItemModel.h"
 
@@ -91,14 +91,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <GoogleAnalytics.h>
 
 // static pointer for global procedure set in constructor
-static InputWidgetEE_UQ *theApp = 0;
+static WorkflowAppEE_UQ *theApp = 0;
 
 // global procedure
 int getNumParallelTasks() {
     return theApp->getMaxNumParallelTasks();
 }
 
-InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
+WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     : WorkflowAppWidget(theService, parent)
 {
     // set static pointer for global procedure
@@ -128,7 +128,7 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theEventSelection = new EarthquakeEventSelection(theRVs);
     theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
     theUQ_Selection = new UQ_EngineSelection(theRVs);
-    theEDP_Selection = new EDP_Selection(theRVs);
+    theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
 
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
@@ -328,18 +328,18 @@ InputWidgetEE_UQ::InputWidgetEE_UQ(RemoteService *theService, QWidget *parent)
     theGI->setDefaultProperties(1,144,360,360,37.8716,-127.2717);
 }
 
-InputWidgetEE_UQ::~InputWidgetEE_UQ()
+WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
 {
 
 }
 
-void InputWidgetEE_UQ::replyFinished(QNetworkReply *pReply)
+void WorkflowAppEE_UQ::replyFinished(QNetworkReply *pReply)
 {
     return;
 }
 
 void
-InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
+WorkflowAppEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
 
     //get the text of the selected item
     const QModelIndex index = treeView->selectionModel()->currentIndex();
@@ -365,7 +365,7 @@ InputWidgetEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, 
 
 
 bool
-InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
+WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     //
     // get each of the main widgets to output themselves
     //
@@ -434,7 +434,7 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
  void
- InputWidgetEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+ WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
 
        theStackedWidget->removeWidget(theResults);
        delete theResults;
@@ -448,14 +448,14 @@ InputWidgetEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
  }
 
 void
-InputWidgetEE_UQ::clear(void)
+WorkflowAppEE_UQ::clear(void)
 {
     theGI->clear();
     theSIM->clear();
 }
 
 bool
-InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
+WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 {
     //
     // get each of the main widgets to input themselves
@@ -589,7 +589,7 @@ InputWidgetEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 
 void
-InputWidgetEE_UQ::onRunButtonClicked() {
+WorkflowAppEE_UQ::onRunButtonClicked() {
     theRunWidget->hide();
     theRunWidget->setMinimumWidth(this->width()*0.5);
     theRunWidget->showLocalApplication();
@@ -597,7 +597,7 @@ InputWidgetEE_UQ::onRunButtonClicked() {
 }
 
 void
-InputWidgetEE_UQ::onRemoteRunButtonClicked(){
+WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
     emit errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
@@ -615,7 +615,7 @@ InputWidgetEE_UQ::onRemoteRunButtonClicked(){
 }
 
 void
-InputWidgetEE_UQ::onRemoteGetButtonClicked(){
+WorkflowAppEE_UQ::onRemoteGetButtonClicked(){
 
     emit errorMessage("");
 
@@ -633,12 +633,12 @@ InputWidgetEE_UQ::onRemoteGetButtonClicked(){
 }
 
 void
-InputWidgetEE_UQ::onExitButtonClicked(){
+WorkflowAppEE_UQ::onExitButtonClicked(){
 
 }
 
 void
-InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
+WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 
     errorMessage("");
 
@@ -708,7 +708,7 @@ InputWidgetEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 }
 
 void
-InputWidgetEE_UQ::loadFile(const QString fileName){
+WorkflowAppEE_UQ::loadFile(const QString fileName){
 
     //
     // open file
@@ -741,6 +741,6 @@ InputWidgetEE_UQ::loadFile(const QString fileName){
 }
 
 int
-InputWidgetEE_UQ::getMaxNumParallelTasks() {
+WorkflowAppEE_UQ::getMaxNumParallelTasks() {
     return theUQ_Selection->getNumParallelTasks();
 }

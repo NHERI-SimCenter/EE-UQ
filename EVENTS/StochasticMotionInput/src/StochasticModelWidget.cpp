@@ -17,7 +17,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -34,72 +34,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+// Written: mhgardner
 
-#include "StandardEarthquakeEDP.h"
+#include <QString>
+#include <QWidget>
 #include <RandomVariablesContainer.h>
+#include "StochasticModelWidget.h"
 
-//#include <InputWidgetParameters.h>
+StochasticModelWidget::StochasticModelWidget(
+    RandomVariablesContainer* random_variables, QWidget* parent)
+    : SimCenterWidget(parent),
+      rv_input_widget_(random_variables)
+{}
 
-StandardEarthquakeEDP::StandardEarthquakeEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
-    : SimCenterAppWidget(parent), theRandomVariablesContainer(theRandomVariableIW)
-{
-
+void StochasticModelWidget::errorMessage(QString message) {
+  emit sendErrorMessage(message);
 }
-
-StandardEarthquakeEDP::~StandardEarthquakeEDP()
-{
-
-}
-
-
-void
-StandardEarthquakeEDP::clear(void)
-{
-
-}
-
-
-
-bool
-StandardEarthquakeEDP::outputToJSON(QJsonObject &jsonObject)
-{
-    // just need to send the class type here.. type needed in object in case user screws up
-    jsonObject["type"]="StandardEarthquakeEDP";
-
-    return true;
-}
-
-
-bool
-StandardEarthquakeEDP::inputFromJSON(QJsonObject &jsonObject)
-{
-    return true;
-}
-
-
-bool
-StandardEarthquakeEDP::outputAppDataToJSON(QJsonObject &jsonObject) {
-
-    //
-    // per API, need to add name of application to be called in AppLication
-    // and all data to be used in ApplicationDate
-    //
-
-    jsonObject["Application"] = "StandardEarthquakeEDP";
-    QJsonObject dataObj;
-    jsonObject["ApplicationData"] = dataObj;
-
-    return true;
-}
-bool
-StandardEarthquakeEDP::inputAppDataFromJSON(QJsonObject &jsonObject) {
-    return true;
-}
-
-
-bool
-StandardEarthquakeEDP::copyFiles(QString &dirName) {
-    return true;
-}
-

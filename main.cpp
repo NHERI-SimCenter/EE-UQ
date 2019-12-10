@@ -9,7 +9,7 @@
 #include <QObject>
 
 #include <AgaveCurl.h>
-#include <InputWidgetEE_UQ.h>
+#include <WorkflowAppEE_UQ.h>
 #include <QCoreApplication>
 
 #include <QApplication>
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     // create the main window
     //
 
-    WorkflowAppWidget *theInputApp = new InputWidgetEE_UQ(theRemoteService);
+    WorkflowAppWidget *theInputApp = new WorkflowAppEE_UQ(theRemoteService);
     MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
 

@@ -1,5 +1,5 @@
-#ifndef STANDARD_EARTHQUAKE_EDP_H
-#define STANDARD_EARTHQUAKE_EDP_H
+#ifndef EXISTING_PEER_RECORDS_H
+#define EXISTING_PEER_RECORDS_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,38 +39,101 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
+#include <SimCenterWidget.h>
 #include <SimCenterAppWidget.h>
+
+class RandomVariablesContainer;
+class InputWidgetExistingEvent;
+class QRadioButton;
+class QLineEdit;
+class QSpinBox;
+class LineEditRV;
 
 #include <QGroupBox>
 #include <QVector>
-#include <QGridLayout>
-#include <QComboBox>
+#include <QVBoxLayout>
 
-class InputWidgetParameters;
-class RandomVariablesContainer;
-
-class StandardEarthquakeEDP : public SimCenterAppWidget
+class PeerRecord : public SimCenterWidget
 {
     Q_OBJECT
 public:
-    explicit StandardEarthquakeEDP(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
-    ~StandardEarthquakeEDP();
+    explicit PeerRecord(RandomVariablesContainer *theRV, QWidget *parent = 0);
+    ~PeerRecord();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
+
+    QRadioButton *button;  // used to mark if Event intended for deletion
+    QLineEdit    *file;    // full path to file name
+    QSpinBox     *dirn;
+    LineEditRV    *factor;  // load factor
+
+public slots:
+    void chooseFileName(void);
+    void onRemoveRecord(bool);
+
+signals:
+    void removeRecord();
+
+private:
+     RandomVariablesContainer *theRandVariableIW;
+     QString lastFactor;
+};
+
+// an event can hold multiple PeerRecord, different one for diff directions
+class PeerEvent : public SimCenterWidget
+{
+    Q_OBJECT
+public:
+    explicit PeerEvent(RandomVariablesContainer *theRV, QWidget *parent = 0);
+    ~PeerEvent();
+
+    bool outputToJSON(QJsonObject &rvObject);
+    bool inputFromJSON(QJsonObject &rvObject);
+
+    QVBoxLayout *recordLayout;
+
+    QRadioButton *button; // used to mark if Event intended for deletion
+    QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
+    QVector<PeerRecord  *>theRecords;
+
+public slots:
+    void onRemoveRecord(bool);
+    void onAddRecord(bool);
+
+private:
+     RandomVariablesContainer *theRandVariableIW;
+};
+
+
+class ExistingPEER_Records : public SimCenterAppWidget
+{
+    Q_OBJECT
+public:
+    explicit ExistingPEER_Records(RandomVariablesContainer *theRandomVariableIW, QWidget *parent = 0);
+
+    ~ExistingPEER_Records();
+
+    bool inputFromJSON(QJsonObject &rvObject);
+    bool outputToJSON(QJsonObject &rvObject);
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
     bool copyFiles(QString &dirName);
 
-    void clear(void);
-
-signals:
-
 public slots:
+   void errorMessage(QString message);
+   void addEvent(void);
+   void removeEvents(void);
+   void clear(void);
+   void loadEventsFromDir(void);
 
 
 private:
-    RandomVariablesContainer *theRandomVariablesContainer;
+    QVBoxLayout *verticalLayout;
+    QVBoxLayout *eventLayout;
+
+    QVector<PeerEvent *>theEvents;
+    RandomVariablesContainer *theRandVariableIW;
 };
 
-#endif // STANDARD_EARTHQUAKE_EDP_H
+#endif // EXISTING_PEER_RECORDS_H
