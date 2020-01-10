@@ -41,21 +41,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QWidget>
 
-#include <QItemSelection>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QHBoxLayout>
 #include "MainWindow.h"
 #include <WorkflowAppWidget.h>
+
+class SimCenterComponentSelection;
 
 class RandomVariablesContainer;
 class InputWidgetBIM;
 class InputWidgetUQ;
-
 class SIM_Selection;
 class UQ_EngineSelection;
-
-class InputWidgetOpenSeesAnalysis;
+class FEM_Selection;
 class UQOptions;
 class ResultsWidget;
 class GeneralInformationWidget;
@@ -95,7 +91,6 @@ signals:
     void sendLoadFile(QString filename);
 
 public slots:  
-    void selectionChangedSlot(const QItemSelection &, const QItemSelection &);
 
     void setUpForApplicationRun(QString &, QString &);
     void processResults(QString dakotaOut, QString dakotaTab, QString inputFile);
@@ -105,39 +100,27 @@ public slots:
 
 private:
 
-    //MainWindow* window;
-    QHBoxLayout *horizontalLayout;
-    QTreeView *treeView;
-    QStandardItemModel *standardModel;
-    QStandardItem *rootNode;
+    // sidebar container selection
+    SimCenterComponentSelection *theComponentSelection;
 
+    // objects that go in sidebar
     GeneralInformationWidget *theGI;
     RandomVariablesContainer *theRVs;
-
-    // the AppWidgets .. not all displayed in main UI
     SIM_Selection *theSIM;
     UQ_EngineSelection *theUQ_Selection;
     EarthquakeEventSelection *theEventSelection;
-    InputWidgetOpenSeesAnalysis *theAnalysis;
+    FEM_Selection *theAnalysisSelection;
     EDP_EarthquakeSelection *theEDP_Selection;
     UQ_Results *theResults;
 
-    // other widgets appearing in UI
-    InputWidgetBIM *theBIM; // contains GI and SIM
-    InputWidgetUQ *theUQ;
-
+    // objects for running the workflow and obtaining results
     RunWidget *theRunWidget;
     Application *localApp;
     Application *remoteApp;
     RemoteJobManager *theJobManager;
 
-    QModelIndex infoItemIdx;
-    SimCenterWidget  *currentWidget;
     QJsonObject *jsonObjOrig;
-
-    QStackedWidget *theStackedWidget;
     QNetworkAccessManager *manager;
-
 };
 
 #endif // WORKFLOW_APP_EE_UQ_H

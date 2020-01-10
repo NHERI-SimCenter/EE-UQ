@@ -45,10 +45,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLabel>
 #include <QDebug>
 #include <QHBoxLayout>
-#include <QTreeView>
-#include <QStandardItemModel>
-#include <QItemSelectionModel>
-#include <QModelIndex>
 #include <QStackedWidget>
 #include <EarthquakeEventSelection.h>
 #include <RunLocalWidget.h>
@@ -61,11 +57,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHostInfo>
 #include <QUuid>
 
+#include <SimCenterComponentSelection.h>
 #include "GeneralInformationWidget.h"
 #include <SIM_Selection.h>
 #include <RandomVariablesContainer.h>
 #include <InputWidgetSampling.h>
-#include <InputWidgetOpenSeesAnalysis.h>
+#include <FEM_Selection.h>
 #include <QDir>
 #include <QFile>
 #include <UQ_EngineSelection.h>
@@ -105,20 +102,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     theApp = this;
 
     //
-    // user settings
-    //
-
-    /* remove user uuid saving .. goes against what google permits
-    QSettings settings("SimCenter", "uqFEM");
-    QVariant savedValue = settings.value("uuid");
-    QUuid uuid;
-    if (savedValue.isNull()) {
-        uuid = QUuid::createUuid();
-        settings.setValue("uuid",uuid);
-    } else
-        uuid =savedValue.toUuid();
-     */
-    //
     // create the various widgets
     //
 
@@ -126,7 +109,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     theGI = GeneralInformationWidget::getInstance();
     theSIM = new SIM_Selection(theRVs);
     theEventSelection = new EarthquakeEventSelection(theRVs);
-    theAnalysis = new InputWidgetOpenSeesAnalysis(theRVs);
+    theAnalysisSelection = new FEM_Selection(theRVs);
     theUQ_Selection = new UQ_EngineSelection(theRVs);
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
 
@@ -148,11 +131,9 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     //
 
     // error messages and signals
-    /*
-     * connect(theResults, SIGNAL(), this,SLOT(errorMessage(QString)));
+    connect(theResults, SIGNAL(), this,SLOT(errorMessage(QString)));
     connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(theResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-*/
 
     connect(theGI,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(theGI,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
@@ -169,7 +150,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     connect(theRunWidget,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(theRunWidget,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
     connect(theRunWidget,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
 
     connect(localApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(localApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
@@ -194,118 +174,30 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
 
     //
-    // some of above widgets are inside some tabbed widgets
+    // create layout to hold component selectio
     //
 
-   // theBIM = new InputWidgetBIM(theGI, theSIM);
-    theUQ = new InputWidgetUQ(theUQ_Selection, theRVs);
 
-    //
-    //
-    //  NOTE: for displaying the widgets we will use a QTree View to label the widgets for selection
-    //  and we will use a QStacked widget for displaying the widget. Which of widgets displayed in StackedView depends on
-    //  item selected in tree view.
-    //
-
-    //
-    // create layout to hold tree view and stackedwidget
-    //
-
-    horizontalLayout = new QHBoxLayout();
+    QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
 
     //
-    // create a TreeView widget & provide items for each widget to be displayed & add to layout
+    // create the component selection & add the components to it
     //
 
-    treeView = new QTreeView();
-    standardModel = new CustomizedItemModel; //QStandardItemModel ;
-    QStandardItem *rootNode = standardModel->invisibleRootItem();
+    theComponentSelection = new SimCenterComponentSelection();
+    horizontalLayout->addWidget(theComponentSelection);
 
-    //defining bunch of items for inclusion in model
-    //QStandardItem *giItem    = new QStandardItem("GEN");
-    //
+    theComponentSelection->addComponent(QString("UQ"),  theUQ_Selection);
+    theComponentSelection->addComponent(QString("GI"),  theGI);
+    theComponentSelection->addComponent(QString("SIM"), theSIM);
+    theComponentSelection->addComponent(QString("EVT"), theEventSelection);
+    theComponentSelection->addComponent(QString("FEM"), theAnalysisSelection);
+    theComponentSelection->addComponent(QString("EDP"), theEDP_Selection);
+    theComponentSelection->addComponent(QString("RV"),  theRVs);
+    theComponentSelection->addComponent(QString("RES"), theResults);
 
-    QStandardItem *giItem = new QStandardItem("GI");
-    QStandardItem *bimItem = new QStandardItem("SIM");
-    QStandardItem *evtItem = new QStandardItem("EVT");
-    QStandardItem *uqItem   = new QStandardItem("UQ");
-    QStandardItem *femItem = new QStandardItem("FEM");
-    QStandardItem *edpItem = new QStandardItem("EDP");
-    //QStandardItem *uqItem = new QStandardItem("UQM");
-    QStandardItem *resultsItem = new QStandardItem("RES");
-
-    //building up the hierarchy of the model
-    rootNode->appendRow(giItem);
-    rootNode->appendRow(bimItem);
-    rootNode->appendRow(evtItem);
-    rootNode->appendRow(femItem);
-    rootNode->appendRow(uqItem);
-    rootNode->appendRow(edpItem);
-    //rootNode->appendRow(uqItem);
-    rootNode->appendRow(resultsItem);
-
-    infoItemIdx = rootNode->index();
-
-    //register the model
-    treeView->setModel(standardModel);
-    treeView->expandAll();
-    treeView->setHeaderHidden(true);
-    treeView->setMinimumWidth(100);
-    treeView->setMaximumWidth(100);
-    treeView->setMinimumWidth(100);
-
-    treeView->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);//Disable Edit for the TreeView
-
-    //
-    // customize the apperance of the menu on the left
-    //
-
-    treeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff ); // hide the horizontal scroll bar
-    treeView->setObjectName("treeViewOnTheLeft");
-    treeView->setIndentation(0);
-    QFile file(":/styles/menuBar.qss");
-    if(file.open(QFile::ReadOnly)) {
-        treeView->setStyleSheet(file.readAll());
-        file.close();
-    }
-    else
-        qDebug() << "Open Style File Failed!";
-
-
-    //
-    // set up so that a slection change triggers the selectionChanged slot
-    //
-
-    QItemSelectionModel *selectionModel= treeView->selectionModel();
-    connect(selectionModel,
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this,
-            SLOT(selectionChangedSlot(const QItemSelection &, const QItemSelection &)));
-
-    // add the TreeView widget to the layout
-    horizontalLayout->addWidget(treeView);
-
-    //
-    // create the staked widget, and add to it the widgets to be displayed, and add the stacked widget itself to layout
-    //
-
-    theStackedWidget = new QStackedWidget();
-    theStackedWidget->addWidget(theGI);
-    theStackedWidget->addWidget(theSIM);
-    theStackedWidget->addWidget(theEventSelection);
-    theStackedWidget->addWidget(theAnalysis);
-    theStackedWidget->addWidget(theUQ);
-    theStackedWidget->addWidget(theEDP_Selection);
-    // theStackedWidget->addWidget(theUQ_Method);
-    theStackedWidget->addWidget(theResults);
-
-    // add stacked widget to layout
-    horizontalLayout->addWidget(theStackedWidget);
-
-    // set current selection to GI
-    treeView->setCurrentIndex( infoItemIdx );
-    infoItemIdx = resultsItem->index();
+    theComponentSelection->displayComponent("UQ");
 
     // access a web page which will increment the usage count for this tool
     manager = new QNetworkAccessManager(this);
@@ -315,15 +207,10 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
 
-    // access a web page which will increment the usage count for this tool
-    manager = new QNetworkAccessManager(this);
 
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
-
-    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/bfm/use.php")));
-    //  manager->get(QNetworkRequest(QUrl("https://simcenter.designsafe-ci.org/multiple-degrees-freedom-analytics/")));
-
+    //
+    // set the defults in the General Info
+    //
 
     theGI->setDefaultProperties(1,144,360,360,37.8716,-127.2717);
 }
@@ -336,31 +223,6 @@ WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
 void WorkflowAppEE_UQ::replyFinished(QNetworkReply *pReply)
 {
     return;
-}
-
-void
-WorkflowAppEE_UQ::selectionChangedSlot(const QItemSelection & /*newSelection*/, const QItemSelection &/*oldSelection*/) {
-
-    //get the text of the selected item
-    const QModelIndex index = treeView->selectionModel()->currentIndex();
-    QString selectedText = index.data(Qt::DisplayRole).toString();
-
-    if (selectedText == "GI")
-        theStackedWidget->setCurrentIndex(0);
-    if (selectedText == "SIM")
-        theStackedWidget->setCurrentIndex(1);
-    else if (selectedText == "EVT")
-        theStackedWidget->setCurrentIndex(2);
-    else if (selectedText == "FEM")
-        theStackedWidget->setCurrentIndex(3);
-    else if (selectedText == "UQ")
-        theStackedWidget->setCurrentIndex(4);
-    else if (selectedText == "EDP")
-        theStackedWidget->setCurrentIndex(5);
-    // else if (selectedText == "UQM")
-    //   theStackedWidget->setCurrentIndex(5);
-    else if (selectedText == "RES")
-        theStackedWidget->setCurrentIndex(6);
 }
 
 
@@ -400,24 +262,13 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     theUQ_Selection->outputToJSON(jsonObjectUQ);
     jsonObjectTop["UQ_Method"] = jsonObjectUQ;
     */
-    theUQ_Selection->outputToJSON(jsonObjectTop);
 
-    /*
-    QJsonObject appsUQ;
-    theUQ_Selection->outputAppDataToJSON(appsUQ);
-    apps["UQ"]=appsUQ;
-    */
 
     theUQ_Selection->outputAppDataToJSON(apps);
+    theUQ_Selection->outputToJSON(jsonObjectTop);
 
-    QJsonObject jsonObjectAna;
-    theAnalysis->outputToJSON(jsonObjectAna);
-    jsonObjectTop["Simulation"] = jsonObjectAna;
-
-    QJsonObject appsAna;
-    theAnalysis->outputAppDataToJSON(appsAna);
-    apps["Simulation"]=appsAna;
-
+    theAnalysisSelection->outputAppDataToJSON(apps);
+    theAnalysisSelection->outputToJSON(jsonObjectTop);
 
    // NOTE: Events treated differently, due to array nature of objects
     theEventSelection->outputToJSON(jsonObjectTop);
@@ -433,19 +284,48 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 }
 
 
- void
- WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+void
+WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
 
-       theStackedWidget->removeWidget(theResults);
-       delete theResults;
-       theResults=theUQ_Selection->getResults();
-       theStackedWidget->addWidget(theResults);
 
-      theResults->processResults(dakotaOut, dakotaTab);
-      theRunWidget->hide();
-      treeView->setCurrentIndex(infoItemIdx);
-      theStackedWidget->setCurrentIndex(6);
- }
+  //
+  // get results widget fr currently selected UQ option
+  //
+
+  theResults=theUQ_Selection->getResults();
+  if (theResults == NULL) {
+    this->errorMessage("FATAL - UQ option selected not returning results widget");
+    return;
+  }
+
+  //
+  // connect signals for results widget
+  //
+
+  connect(theResults, SIGNAL(), this,SLOT(errorMessage(QString)));
+  connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+  connect(theResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));  
+
+  //
+  // swap current results with existing one in selection & disconnect signals
+  //
+
+  QWidget *oldResults = theComponentSelection->swapComponent(QString("RES"), theResults);
+  if (oldResults != NULL) {
+    disconnect(oldResults, SIGNAL(), this,SLOT(errorMessage(QString)));
+    disconnect(oldResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    disconnect(oldResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));  
+    delete oldResults;
+  }
+
+  //
+  // proess results
+  // 
+
+  theResults->processResults(dakotaOut, dakotaTab);
+  theRunWidget->hide();
+  theComponentSelection->displayComponent("RES");
+}
 
 void
 WorkflowAppEE_UQ::clear(void)
@@ -497,29 +377,11 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
             return false;
         }
 
-        /*
-        if (theApplicationObject.contains("UQ")) {
-            QJsonObject theObject = theApplicationObject["UQ"].toObject();
-            if (theUQ_Selection->inputAppDataFromJSON(theObject) == false)
-                emit errorMessage("EE_UQ: failed to read UQ application");
-        } else {
-            emit errorMessage("EE_UQ: failed to find UQ application");
-            return false;
-        }
-        */
-
         if (theUQ_Selection->inputAppDataFromJSON(theApplicationObject) == false)
             emit errorMessage("EE_UQ: failed to read UQ application");
 
-        if (theApplicationObject.contains("Simulation")) {
-            QJsonObject theObject = theApplicationObject["Simulation"].toObject();
-            if (theAnalysis->inputAppDataFromJSON(theObject) == false)
-                emit errorMessage("EE_UQ: failed to read Simulation Application");
-        } else {
-            emit errorMessage("EE_UQ: failed to find Simulation Application");
-            return false;
-        }
-
+        if (theAnalysisSelection->inputAppDataFromJSON(theApplicationObject) == false)
+            emit errorMessage("EE_UQ: failed to read FEM application");
 
         if (theApplicationObject.contains("EDP")) {
             QJsonObject theObject = theApplicationObject["EDP"].toObject();
@@ -561,28 +423,12 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         return false;
     }
 
-    /* object gets to add own tag
-    if (jsonObject.contains("UQ_Method")) {
-        QJsonObject jsonObjUQInformation = jsonObject["UQ_Method"].toObject();
-        if (theUQ_Selection->inputFromJSON(jsonObjUQInformation) == false)
-            emit errorMessage("EE_UQ: failed to read UQ Method data");
-    } else {
-        emit errorMessage("EE_UQ: failed to find UQ Method data");
-        return false;
-    }
-    */
 
     if (theUQ_Selection->inputFromJSON(jsonObject) == false)
         emit errorMessage("EE_UQ: failed to read UQ Method data");
 
-    if (jsonObject.contains("Simulation")) {
-        QJsonObject jsonObjSimInformation = jsonObject["Simulation"].toObject();
-        if (theAnalysis->inputFromJSON(jsonObjSimInformation) == false)
-            emit errorMessage("EE_UQ: failed to read Simulation data");
-    } else {
-        emit errorMessage("EE_UQ: failed to find Simulation data");
-        return false;
-    }
+    if (theAnalysisSelection->inputFromJSON(jsonObject) == false)
+        emit errorMessage("EE_UQ: failed to read FEM Method data");
 
     return true;
 }
@@ -674,7 +520,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // copyPath(path, tmpDirectory, false);
     theSIM->copyFiles(templateDirectory);
     theEventSelection->copyFiles(templateDirectory);
-    theAnalysis->copyFiles(templateDirectory);
+    theAnalysisSelection->copyFiles(templateDirectory);
     theUQ_Selection->copyFiles(templateDirectory);
     theEDP_Selection->copyFiles(templateDirectory);
 
