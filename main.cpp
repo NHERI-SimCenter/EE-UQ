@@ -170,6 +170,9 @@ int main(int argc, char *argv[])
     QString manualURL("https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community//SimCenter/Software/EE_UQ");
     w.setDocumentationURL(manualURL);
 
+    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=6.0");
+    w.setFeedbackURL(messageBoardURL);
+
     //
     // move remote interface to a thread
     //
@@ -208,18 +211,6 @@ int main(int argc, char *argv[])
         qDebug() << "could not open stylesheet";
     }
 
-    /* ********* old style .. keeping till sure this works on windows
-  // set style sheet
-  QFile file(":/styleCommon/common_experimental.qss");
-  QFile fileEEUQ(":/styles/stylesheet_eeuq.qss");
-  if(file.open(QFile::ReadOnly) && fileEEUQ.open(QFile::ReadOnly)) {
-    QString styleSheet = QLatin1String(file.readAll());
-    QString styleSheetEEUQ = QLatin1String(fileEEUQ.readAll());
-    a.setStyleSheet(styleSheet+styleSheetEEUQ);
-    file.close();
-    fileEEUQ.close();
-  }
-    *****************************************************************/
 
     int res = a.exec();
 
