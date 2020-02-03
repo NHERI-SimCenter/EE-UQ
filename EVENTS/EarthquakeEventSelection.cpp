@@ -85,7 +85,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     eventSelection = new QComboBox();
     eventSelection->setObjectName("LoadingTypeCombox");
-    //    eventSelection->addItem(tr("Existing"));
+
     eventSelection->addItem(tr("Stochastic Ground Motion"));
     eventSelection->addItem(tr("PEER NGA Records"));
     eventSelection->addItem(tr("Multiple PEER"));
@@ -93,7 +93,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Site Response"));
     eventSelection->addItem(tr("Multiple Existing"));
     eventSelection->addItem(tr("User Application"));
-
+    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
