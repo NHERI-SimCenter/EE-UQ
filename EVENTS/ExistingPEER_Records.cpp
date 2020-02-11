@@ -504,7 +504,7 @@ bool
 ExistingPEER_Records::outputToJSON(QJsonObject &jsonObject)
 {
     jsonObject["EventClassification"]="Earthquake";
-    jsonObject["type"] = "ExistingPEER_Records";
+    jsonObject["type"] = "ExistingPEER_Events";
 
     bool result = true;
     QJsonArray theArray;
@@ -567,7 +567,7 @@ ExistingPEER_Records::outputAppDataToJSON(QJsonObject &jsonObject) {
     //
 
     jsonObject["EventClassification"]="Earthquake";
-    jsonObject["Application"] = "ExistingPEER_Records";
+    jsonObject["Application"] = "ExistingPEER_Events";
     QJsonObject dataObj;
     jsonObject["ApplicationData"] = dataObj;
     return true;
