@@ -270,6 +270,7 @@ PeerEvent::inputFromJSON(QJsonObject &jsonObject) {
                     theRecords.append(theRecord);
                     recordLayout->addWidget(theRecord);
                 } else {
+                    delete theRecord;
                     return false;
                 }
             }
@@ -289,7 +290,7 @@ void
 PeerEvent::onRemoveRecord(bool) {
     // find the ones selected & remove them
     int numRecords = theRecords.size();
-    for (int i = theRecords.size()-1; i >= 0; i--) {
+    for (int i = numRecords-1; i >= 0; i--) {
       PeerRecord *theRecord = theRecords.at(i);
       if (theRecord->button->isChecked()) {
           theRecord->close();
@@ -375,7 +376,6 @@ ExistingPEER_Records::~ExistingPEER_Records()
 
 void ExistingPEER_Records::addEvent(void)
 {
-   InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
    PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
    theEvents.append(theEvent);
    eventLayout->insertWidget(eventLayout->count()-1, theEvent);
@@ -414,7 +414,7 @@ void ExistingPEER_Records::loadEventsFromDir(void) {
                     QFileInfo checkName(directory.filePath(fileName));
                     if (checkName.exists() && checkName.isFile()) {
 
-                        InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
+
                         PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
 
                         QString name(fileName);
@@ -447,7 +447,7 @@ void ExistingPEER_Records::loadEventsFromDir(void) {
 
         QStringList fileList= directory.entryList(QStringList() << "*.AT2",QDir::Files);
         foreach(QString fileName, fileList) {
-            InputWidgetExistingEvent *theExisting = new InputWidgetExistingEvent(theRandVariableIW);
+
             PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
             QString name = fileName;
             name.chop(4); // remove .AT2
@@ -548,6 +548,7 @@ ExistingPEER_Records::inputFromJSON(QJsonObject &jsonObject)
                     theEvents.append(theEvent);
                     eventLayout->insertWidget(eventLayout->count()-1, theEvent);
                 } else {
+                    delete theEvent;
                     result = false;
                 }
             }
