@@ -217,7 +217,12 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
 {
+    // hack to get around a sometimes occuring seg fault
+    // as some classes in destructur remove RV from the RVCOntainer
+    // which may already have been destructed .. so removing so no destructor called
 
+    QWidget *newUQ = new QWidget();
+    theComponentSelection->swapComponent("RV",newUQ);
 }
 
 void WorkflowAppEE_UQ::replyFinished(QNetworkReply *pReply)
@@ -228,6 +233,7 @@ void WorkflowAppEE_UQ::replyFinished(QNetworkReply *pReply)
 
 bool
 WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
+
     //
     // get each of the main widgets to output themselves
     //
