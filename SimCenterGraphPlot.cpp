@@ -12,6 +12,8 @@
 SimCenterGraphPlot::SimCenterGraphPlot(
                                QString xLabel,
                                QString yLabel,
+                               int width = 0,
+                               int height = 0,
                                QWidget *parent)
     : QWidget(parent), numGraphs(0)
 {
@@ -32,8 +34,8 @@ SimCenterGraphPlot::SimCenterGraphPlot(
 
     QRect rec = QApplication::desktop()->screenGeometry();
 
-    int height = 0.2*rec.height();
-    int width = 0.5*rec.width();
+    height = (height > 0) ? height : 0.2*rec.height();
+    width = (width > 0) ? width : 0.5*rec.width();
 
     thePlot->setMinimumWidth(width);
     thePlot->setMinimumHeight(height);
