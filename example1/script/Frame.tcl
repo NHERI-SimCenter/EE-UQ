@@ -1,52 +1,32 @@
 # Create ModelBuilder (with two-dimensions and 3 DOF/node)
 
 model basic -ndm 2 -ndf 3
-# Create nodes
-# ------------
 
-# Set parameters for overall model geometry
 set width    360
 set height   144
 
-# Create nodes
-#    tag        X       Y 
 node  1       0.0     0.0 
 node  2    $width     0.0 
 node  3       0.0 $height
 node  4    $width $height
 
-# Fix supports at base of columns
-#    tag   DX   DY   RZ
 fix   1     1    1    1
 fix   2     1    1    1
 
+# Concrete
 pset fc 6.0
-# Core concrete (confined)
 uniaxialMaterial Concrete01  1  -$fc  -0.004   -5.0     -0.014
-
-# Cover concrete (unconfined)
 uniaxialMaterial Concrete01  2  -5.0   -0.002   0.0     -0.006
 
 # STEEL
-# Reinforcing steel 
-
 pset fy 60.0;      # Yield stress
 pset E 30000.0;    # Young's modulus
-
-#                        tag  fy E0    b
 uniaxialMaterial Steel01  3  $fy $E 0.01
 
-# Define cross-section for nonlinear columns
-# ------------------------------------------
-
-# set some paramaters
 set colWidth 15
 set colDepth 24 
-
 set cover  1.5
 set As    0.60;     # area of no. 7 bars
-
-# some variables derived from the parameters
 set y1 [expr $colDepth/2.0]
 set z1 [expr $colWidth/2.0]
 
