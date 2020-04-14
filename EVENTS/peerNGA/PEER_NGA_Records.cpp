@@ -136,7 +136,7 @@ void PEER_NGA_Records::setupUI()
     layout->addWidget(recordSelectionGroup, 0, 1);
     layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
 
-    auto peerCitation = new QLabel("This tools uses PEER NGA West 2 Ground Motions Database. "
+    auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
     "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
     "Timothy D. Ancheta, Robert B. Darragh, Jonathan P. Stewart, Emel Seyhan, Walter J. Silva, "
     "Brian S.J. Chiou, Katie E. Wooddell, Robert W. Graves, Albert R. Kottke, "
