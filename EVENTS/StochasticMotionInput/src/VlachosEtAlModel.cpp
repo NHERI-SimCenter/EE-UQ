@@ -57,16 +57,16 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
     : StochasticModelWidget(random_variables, parent)
 {
   // Initialize member variables
-  moment_magnitude_ = new LineEditRV(random_variables);
-  rupture_dist_ = new LineEditRV(random_variables);
-  vs30_ = new LineEditRV(random_variables);
+  moment_magnitude_ = new LineEditRV(random_variables); moment_magnitude_->setText("7.0");
+  rupture_dist_ = new LineEditRV(random_variables); rupture_dist_->setText("40.0");
+  vs30_ = new LineEditRV(random_variables); vs30_->setText("500.0");
   seed_ = new QSpinBox();
   seed_->setMinimum(1);
   seed_->setMaximum(2147483647);
   seed_->setValue(500);  
   seed_->setEnabled(false);
   use_seed_ = new QRadioButton("Provide seed value");
-  use_seed_->setChecked(false);
+  use_seed_->setChecked(true);
   parameters_ = new QFormLayout();
   parameters_->addRow(new QLabel(tr("Moment Magnitude")), moment_magnitude_);
   parameters_->addRow(new QLabel(tr("Closest-to-Site Rupture Distance [km]")),
