@@ -42,6 +42,11 @@ for more resources related to this tool. Additionally, this page
 provides more information on the NHERI SimCenter, including other SimCenter
 applications, FAQ, and how to collaborate.
 
+### Documentation
+
+Tool documentation can be found: https://nheri-simcenter.github.io/EE-UQ-Documentation/
+
+
 ### How to Build
 
 ##### 1. Download this repo.
