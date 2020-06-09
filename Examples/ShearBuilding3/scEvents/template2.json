@@ -1,0 +1,33 @@
+{"Events": [
+    {"name": "template", 
+     "type": "Seismic", 
+     "dT": 0.01, 
+     "numSteps": 3, 
+     "timeSeries": [
+         {"name": 
+          "accel_X", 
+          "type": "Value", 
+          "dT": 0.01, 
+          "data": [0.0, 0.1, 0.2]
+         }, 
+	 {"name": 
+	  "accel_Y", 
+	  "type": "Value", 
+          "dT": 0.01
+          "data": [0.0, 0.1, 0.2]
+         }
+     ], 
+     "pattern": [
+        {"type": "UniformAcceleration", 
+         "timeSeries": 
+         "accel_X", 
+         "dof": 1
+        }, 
+        {"type": "UniformAcceleration", 
+         "timeSeries": "accel_Y", 
+         "dof": 2
+        }
+     ]
+    }
+ ]
+}
