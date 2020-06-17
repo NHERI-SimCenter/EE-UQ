@@ -3,6 +3,7 @@
 #include <QGridLayout>
 #include <QHeaderView>
 #include <QJsonArray>
+#include <QPushButton>
 
 UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(parent)
 {
@@ -11,9 +12,22 @@ UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(pa
     auto table = new QTableView(this);
     model = new UserSpectrumModel(this);
     table->setModel(model);
-    layout->addWidget(table);
+    layout->addWidget(table, 0, 0, 1, 2);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    auto addButton = new QPushButton("Add");
+    layout->addWidget(addButton, 1, 0);
+    connect(addButton, &QPushButton::clicked, this, [this, table](){
+        model->addPoint(table->currentIndex().row());
+    });
+
+    auto removeButton = new QPushButton("Remove");
+    layout->addWidget(removeButton, 1, 1);
+    connect(removeButton, &QPushButton::clicked, this, [this, table](){
+        model->removePoint(table->currentIndex().row());
+    });
 }
+
 
 
 QJsonObject UserSpectrumWidget::serialize() const

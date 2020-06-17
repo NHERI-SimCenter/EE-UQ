@@ -114,7 +114,7 @@ void USGSTargetWidget::deserialize(const QJsonObject &json)
         riskCategoryBox->setCurrentText(json["RiskCategory"].toString());
 }
 
-QList<QPair<double, double> > USGSTargetWidget::spectrum() const
+QList<QPair<double, double>> USGSTargetWidget::spectrum() const
 {
     QList<QPair<double, double>> spectrum;
     QUrl usgswsUrl("https://earthquake.usgs.gov/ws/designmaps/" + designStandardBox->currentText().toLower() +".json");
@@ -122,7 +122,8 @@ QList<QPair<double, double> > USGSTargetWidget::spectrum() const
     parameters.addQueryItem("latitude", latitudeBox->text());
     parameters.addQueryItem("longitude", longitudeBox->text());
     parameters.addQueryItem("siteClass", siteClassBox->currentText());
-    parameters.addQueryItem("riskCategory", riskCategoryBox->currentText());
+    if(!designStandardBox->currentText().startsWith("ASCE41"))
+        parameters.addQueryItem("riskCategory", riskCategoryBox->currentText());
     parameters.addQueryItem("title", "EEUQ");
 
     usgswsUrl.setQuery(parameters);

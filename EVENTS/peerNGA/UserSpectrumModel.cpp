@@ -79,6 +79,25 @@ void UserSpectrumModel::set(QList<QPair<double, double>> spectrum)
     endResetModel();
 }
 
+void UserSpectrumModel::addPoint(int index)
+{
+    beginResetModel();
+    if (index < 0)
+            index = 0;
+    m_spectrum.insert(index, m_spectrum[index]);
+    endResetModel();
+}
+
+void UserSpectrumModel::removePoint(int index)
+{
+    if (index < 0 || index >= m_spectrum.size())
+        return;
+
+    beginResetModel();
+    m_spectrum.removeAt(index);
+    endResetModel();
+}
+
 
 bool UserSpectrumModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {

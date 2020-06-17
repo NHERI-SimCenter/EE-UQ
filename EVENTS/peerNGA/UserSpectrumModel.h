@@ -23,6 +23,8 @@ private:
 public:
     QList<QPair<double, double>> spectrum();
     void set(QList<QPair<double, double>> spectrum);
+    void addPoint(int index);
+    void removePoint(int index);
 
 
 };
