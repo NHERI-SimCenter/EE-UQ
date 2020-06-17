@@ -14,10 +14,10 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
     spectraChart.addSeries(&minusSigmaSeries);
     spectraChart.addSeries(&targetSeries);
 
-    QPen blackPen;
-    blackPen.setColor(Qt::black);
-    blackPen.setWidth(2);
-    meanSeries.setPen(blackPen);
+    QPen meanPen;
+    meanPen.setColor(Qt::blue);
+    meanPen.setWidth(2);
+    meanSeries.setPen(meanPen);
 
     QPen redPen;
     redPen.setColor(Qt::darkRed);
@@ -66,8 +66,8 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
 
     layout->addWidget(chartView);
 
-    this->setMinimumWidth(500);
-    this->setMinimumHeight(500);
+    this->setMinimumWidth(200);
+    this->setMinimumHeight(200);
 }
 
 void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
@@ -143,10 +143,10 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
         series->attachAxis(&xAxis);
         series->attachAxis(&yAxis);
         series->setOpacity(0.5);
-        QPen grayPen;
-        grayPen.setColor(Qt::gray);
-        grayPen.setWidth(2);
-        series->setPen(grayPen);
+        QPen selectionPen;
+        selectionPen.setColor(Qt::gray);
+        selectionPen.setWidth(2);
+        series->setPen(selectionPen);
 
         if(firstLegendShown)
         {

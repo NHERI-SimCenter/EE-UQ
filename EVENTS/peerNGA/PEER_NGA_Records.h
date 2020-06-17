@@ -14,6 +14,7 @@
 #include <QCheckBox>
 #include "RecordSelectionPlot.h"
 #include <QProgressBar>
+#include <QStackedWidget>
 
 class QComboBox;
 
@@ -57,15 +58,13 @@ public slots:
 private:
     PeerNgaWest2Client peerClient;
     QPushButton* selectRecordsButton;
-    QLineEdit* sdsEditBox;
-    QLineEdit* sd1EditBox;
-    QLineEdit* tlEditBox;
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
     QComboBox* groundMotionsComponentsBox;
     RecordSelectionPlot recordSelectionPlot;
     QProgressBar* progressBar;
     QComboBox* spectrumTypeComboBox;
+    QStackedWidget* targetSpectrumDetails;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;

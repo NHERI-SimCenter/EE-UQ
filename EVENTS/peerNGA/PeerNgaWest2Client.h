@@ -17,6 +17,7 @@ public:
     bool loggedIn();
     void signIn(QString username, QString password);
     void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range);
+    void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range);
 
 signals:
     void loginFinished(bool result);
@@ -37,13 +38,13 @@ private:
     QNetworkReply* postSearchReply;
     QNetworkReply* getRecordsReply;
     QNetworkReply* downloadRecordsReply;
+    QNetworkReply* uploadFileReply;
 
     QString authenticityToken;
     QString username;
     QString password;
     int nRecords;
     bool isLoggedIn;
-
     QVariant magnitudeRange;
     QVariant distanceRange;
     QVariant vs30Range;
@@ -55,18 +56,21 @@ private:
     QUrlQuery postSpectraParameters;
     QNetworkRequest peerSignInRequest;
     QUrlQuery signInParameters;
+    QNetworkRequest uploadFileRequest;
 
     void setupConnection();
     void processNetworkReply(QNetworkReply *reply);
 
     void processSignInPageReply();
     void processSignInReply();
+    void processUploadFileReply();
     void processPostSpectrumReply();
     void processPostSearchReply();
     void processGetRecordsReply();
     void processDownloadRecordsReply();
     void retryPostSpectra();
     void retrySignIn();
+    void retry();
 
 
 };

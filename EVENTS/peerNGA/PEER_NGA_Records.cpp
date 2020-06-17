@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include "PeerLoginDialog.h"
-#include "MiniZip/ZipUtils.h"
+#include "ZipUtils.h"
 #include <QTextStream>
 #include <QDebug>
 #include <QStandardPaths>
@@ -16,6 +16,8 @@
 #include <QStatusBar>
 #include <QMainWindow>
 #include <QThread>
+#include "ASCE710Target.h"
+#include "UserSpectrumWidget.h"
 
 PEER_NGA_Records::PEER_NGA_Records(QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -39,27 +41,18 @@ void PEER_NGA_Records::setupUI()
     auto targetSpectrumLayout = new QGridLayout(targetSpectrumGroup);
     targetSpectrumLayout->addWidget(new QLabel("Type"), 0, 0);
     spectrumTypeComboBox = new QComboBox();
-    spectrumTypeComboBox->addItem("ASCE 7-10");
+
     targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1);
+    spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
+    spectrumTypeComboBox->addItem("User Specified");
+    targetSpectrumLayout->setColumnMinimumWidth(2, 30);
+    targetSpectrumDetails = new QStackedWidget(this);
+    targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
+    auto asce710Target = new ASCE710Target(this);
+    targetSpectrumDetails->addWidget(asce710Target);
+    auto userSpectrumTarget = new UserSpectrumWidget(this);
+    targetSpectrumDetails->addWidget(userSpectrumTarget);
 
-    targetSpectrumLayout->addWidget(new QLabel("S<sub>DS</sub>"), 1, 0);
-    sdsEditBox = new QLineEdit("1.0");
-    sdsEditBox->setValidator(positiveDoubleValidator);
-    targetSpectrumLayout->addWidget(sdsEditBox, 1, 1);
-    targetSpectrumLayout->addWidget(new QLabel("g"), 1, 2);
-
-    targetSpectrumLayout->addWidget(new QLabel("S<sub>D1</sub>"), 2, 0);
-    sd1EditBox = new QLineEdit("0.75");
-    sd1EditBox->setValidator(positiveDoubleValidator);
-    targetSpectrumLayout->addWidget(sd1EditBox, 2, 1);
-    targetSpectrumLayout->addWidget(new QLabel("g"), 2, 2);
-
-    targetSpectrumLayout->addWidget(new QLabel("T<sub>L</sub>"), 3, 0);
-    tlEditBox = new QLineEdit("12.0");
-    tlEditBox->setValidator(positiveDoubleValidator);
-    targetSpectrumLayout->addWidget(tlEditBox, 3, 1);
-    targetSpectrumLayout->addWidget(new QLabel("sec."), 3, 2);
-    targetSpectrumLayout->setRowStretch(targetSpectrumLayout->rowCount(), 1);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     auto recordSelectionLayout = new QGridLayout(recordSelectionGroup);
@@ -71,7 +64,7 @@ void PEER_NGA_Records::setupUI()
     //Magnitude Range
     magnitudeCheckBox = new QCheckBox("Magnitude");
     recordSelectionLayout->addWidget(magnitudeCheckBox, 1, 0);
-    magnitudeMin = new QLineEdit("0.0");
+    magnitudeMin = new QLineEdit("5.0");
     magnitudeMin->setEnabled(false);
     magnitudeMin->setValidator(positiveDoubleValidator);
     recordSelectionLayout->addWidget(magnitudeMin, 1, 1);
@@ -122,7 +115,7 @@ void PEER_NGA_Records::setupUI()
     groundMotionsComponentsBox->addItem("Three (Horizontal & Vertical)", GroundMotionComponents::Three);
     groundMotionsLayout->addWidget(new QLabel("Acceleration Components"), 0, 0);
     groundMotionsLayout->addWidget(groundMotionsComponentsBox, 0, 1);
-    recordsTable->setMinimumHeight(400);
+    recordsTable->setMinimumHeight(200);
     groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
     groundMotionsLayout->setRowStretch(1, 1);
     progressBar = new QProgressBar();
@@ -228,6 +221,13 @@ void PEER_NGA_Records::setupConnections()
 
         recordSelectionPlot.highlightSpectra(selectedRows);
     });
+
+    connect(spectrumTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
+        targetSpectrumDetails->setCurrentIndex(index);
+
+        return;
+    });
+
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -331,10 +331,19 @@ void PEER_NGA_Records::selectRecords()
     if(vs30CheckBox->checkState() == Qt::Checked)
         vs30Range.setValue(qMakePair(vs30Min->text().toDouble(), vs30Max->text().toDouble()));
 
-    peerClient.selectRecords(sdsEditBox->text().toDouble(),
-                             sd1EditBox->text().toDouble(),
-                             tlEditBox->text().toDouble(),
-                             nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+    if(targetSpectrumDetails->currentIndex() == 0)
+    {
+        auto asce710widget = reinterpret_cast<ASCE710Target*>(targetSpectrumDetails->currentWidget());
+        peerClient.selectRecords(asce710widget->sds(),
+                                 asce710widget->sd1(),
+                                 asce710widget->tl(),
+                                 nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+    }
+    else
+    {
+        auto userTargetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->currentWidget());
+        peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+    }
 }
 
 void PEER_NGA_Records::addTableItem(int row, int column, QString value)
@@ -474,10 +483,9 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 
     jsonObject["Events"] = eventsArray;
 
-    jsonObject["TargetSpectrum"] = spectrumTypeComboBox->currentText();
-    jsonObject["Sds"] = sdsEditBox->text();
-    jsonObject["Sd1"] = sd1EditBox->text();
-    jsonObject["Tl"] = tlEditBox->text();
+    auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
+    spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
+    jsonObject["TargetSpectrum"] = spectrumJson;
 
     jsonObject["components"] = groundMotionsComponentsBox->currentText();
 
@@ -500,10 +508,12 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 
 bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
 {
-    spectrumTypeComboBox->setCurrentText(jsonObject["TargetSpectrum"].toString());
-    sdsEditBox->setText(jsonObject["Sds"].toString());
-    sd1EditBox->setText(jsonObject["Sd1"].toString());
-    tlEditBox->setText(jsonObject["Tl"].toString());
+    if(jsonObject["TargetSpectrum"].isObject() && jsonObject["TargetSpectrum"].toObject().keys().contains("SpectrumType"))
+    {
+        auto targetSpectrumJson = jsonObject["TargetSpectrum"].toObject();
+        spectrumTypeComboBox->setCurrentText(jsonObject["TargetSpectrum"].toObject()["SpectrumType"].toString());
+        dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
+    }
 
     groundMotionsComponentsBox->setCurrentText(jsonObject["components"].toString());
 
