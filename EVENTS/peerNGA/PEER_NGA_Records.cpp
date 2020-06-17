@@ -18,6 +18,7 @@
 #include <QThread>
 #include "ASCE710Target.h"
 #include "UserSpectrumWidget.h"
+#include "USGSTargetWidget.h"
 
 PEER_NGA_Records::PEER_NGA_Records(QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -45,6 +46,8 @@ void PEER_NGA_Records::setupUI()
     targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1);
     spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
     spectrumTypeComboBox->addItem("User Specified");
+    spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
+
     targetSpectrumLayout->setColumnMinimumWidth(2, 30);
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
@@ -52,7 +55,8 @@ void PEER_NGA_Records::setupUI()
     targetSpectrumDetails->addWidget(asce710Target);
     auto userSpectrumTarget = new UserSpectrumWidget(this);
     targetSpectrumDetails->addWidget(userSpectrumTarget);
-
+    auto usgsSpectrumTarget = new USGSTargetWidget(this);
+    targetSpectrumDetails->addWidget(usgsSpectrumTarget);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     auto recordSelectionLayout = new QGridLayout(recordSelectionGroup);

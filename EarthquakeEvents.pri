@@ -23,6 +23,7 @@ SOURCES +=  \
     $$PWD/EVENTS/peerNGA/PEER_NGA_Records.cpp \
     $$PWD/EVENTS/peerNGA/RecordSelectionPlot.cpp \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.cpp \
+    $$PWD/EVENTS/peerNGA/USGSTargetWidget.cpp \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.cpp \
     $$PWD/EVENTS/peerNGA/UserSpectrumWidget.cpp
 
@@ -41,6 +42,7 @@ HEADERS +=  \
     $$PWD/EVENTS/peerNGA/PEER_NGA_Records.h \
     $$PWD/EVENTS/peerNGA/RecordSelectionPlot.h \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.h \
+    $$PWD/EVENTS/peerNGA/USGSTargetWidget.h \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.h \
     $$PWD/EVENTS/peerNGA/UserSpectrumWidget.h
 

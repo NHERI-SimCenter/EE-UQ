@@ -7,6 +7,7 @@
 class AbstractTargetWidget : public QWidget, public AbstractJsonSerializable
 {
     Q_OBJECT
+
 public:
     explicit AbstractTargetWidget(QWidget *parent = nullptr):QWidget(parent){};
 
