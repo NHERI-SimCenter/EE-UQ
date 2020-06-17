@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QLabel>
+#include <GeneralInformationWidget.h>
 
 
 class USGSTargetWidget : public AbstractTargetWidget
@@ -14,7 +15,7 @@ class USGSTargetWidget : public AbstractTargetWidget
     Q_OBJECT
 
 public:
-    explicit USGSTargetWidget(QWidget* parent = nullptr);
+    explicit USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent = nullptr);
 
     // AbstractJsonSerializable interface
 public:

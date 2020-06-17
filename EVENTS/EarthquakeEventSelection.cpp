@@ -69,7 +69,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "PeerNga/PEER_NGA_Records.h"
 
 
-EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, QWidget *parent)
+EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
 {
     QVBoxLayout *layout = new QVBoxLayout();
@@ -121,7 +121,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theStackedWidget->addWidget(theStochasticMotionWidget);
 
     //Adding PEER NGA Records ground motion widget
-    peerNgaRecords = new PEER_NGA_Records(theRandomVariablesContainer);
+    peerNgaRecords = new PEER_NGA_Records(generalInfoWidget, this);
     theStackedWidget->addWidget(peerNgaRecords);
 
     theExistingPeerEvents = new ExistingPEER_Records(theRandomVariablesContainer);

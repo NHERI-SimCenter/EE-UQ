@@ -20,14 +20,14 @@
 #include "UserSpectrumWidget.h"
 #include "USGSTargetWidget.h"
 
-PEER_NGA_Records::PEER_NGA_Records(QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
+PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
-    setupUI();
+    setupUI(generalInfoWidget);
 
     setupConnections();
 }
 
-void PEER_NGA_Records::setupUI()
+void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 {
     auto layout = new QGridLayout(this);
 
@@ -40,6 +40,9 @@ void PEER_NGA_Records::setupUI()
     auto targetSpectrumGroup = new QGroupBox("Target Spectrum");
 
     auto targetSpectrumLayout = new QGridLayout(targetSpectrumGroup);
+    targetSpectrumLayout->setColumnMinimumWidth(1, 100);
+    targetSpectrumLayout->setColumnMinimumWidth(2, 30);
+
     targetSpectrumLayout->addWidget(new QLabel("Type"), 0, 0);
     spectrumTypeComboBox = new QComboBox();
 
@@ -48,14 +51,13 @@ void PEER_NGA_Records::setupUI()
     spectrumTypeComboBox->addItem("User Specified");
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
 
-    targetSpectrumLayout->setColumnMinimumWidth(2, 30);
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
     auto asce710Target = new ASCE710Target(this);
     targetSpectrumDetails->addWidget(asce710Target);
     auto userSpectrumTarget = new UserSpectrumWidget(this);
     targetSpectrumDetails->addWidget(userSpectrumTarget);
-    auto usgsSpectrumTarget = new USGSTargetWidget(this);
+    auto usgsSpectrumTarget = new USGSTargetWidget(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(usgsSpectrumTarget);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");

@@ -28,8 +28,6 @@ UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(pa
     });
 }
 
-
-
 QJsonObject UserSpectrumWidget::serialize() const
 {
     QJsonObject json;

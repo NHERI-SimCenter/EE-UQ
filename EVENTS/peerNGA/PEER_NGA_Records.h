@@ -15,6 +15,8 @@
 #include "RecordSelectionPlot.h"
 #include <QProgressBar>
 #include <QStackedWidget>
+#include <GeneralInformationWidget.h>
+
 
 class QComboBox;
 
@@ -39,7 +41,7 @@ class PEER_NGA_Records : public SimCenterAppWidget
 
 
 public:
-    explicit PEER_NGA_Records(QWidget *parent = nullptr);
+    explicit PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent = nullptr);
 
     bool outputToJSON(QJsonObject &jsonObject) override;
     bool inputFromJSON(QJsonObject &jsonObject) override;
@@ -91,7 +93,7 @@ private:
     QVector<double> meanMinusSigmaSpectrum;
     QVector<double> targetSpectrum;
 
-    void setupUI();
+    void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();
     void processPeerRecords(QDir resultFolder);
     QList<PeerScaledRecord> parseSearchResults(QString searchResultsFilePath);

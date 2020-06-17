@@ -9,18 +9,22 @@
 #include <QJsonArray>
 #include <QDebug>
 
-USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
+USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent)
 {
     auto layout = new QGridLayout(this);
     layout->setColumnMinimumWidth(2, 30);
 
+    double latitude, longitude;
+    generalInfoWidget->getBuildingLocation(latitude, longitude);
     layout->addWidget(new QLabel(tr("Latitude")), 0, 0);
     latitudeBox = new QLineEdit("37.8719");
     layout->addWidget(latitudeBox, 0, 1);
+    latitudeBox->setText(QString::number(latitude));
 
     layout->addWidget(new QLabel(tr("Longitude")), 1, 0);
     longitudeBox = new QLineEdit("-122.2585");
     layout->addWidget(longitudeBox, 1, 1);
+    longitudeBox->setText(QString::number(longitude));
 
     layout->addWidget(new QLabel(tr("Standard")), 2, 0);
     designStandardBox = new QComboBox();
@@ -86,6 +90,18 @@ USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
 
     });
 
+    connect(generalInfoWidget, &GeneralInformationWidget::buildingLocationChanged, this, [this](double latitude, double longitude){
+        latitudeBox->setText(QString::number(latitude));
+        longitudeBox->setText(QString::number(longitude));
+    });
+
+    connect(latitudeBox, &QLineEdit::editingFinished, this, [this, generalInfoWidget](){
+        generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
+    });
+
+    connect(longitudeBox, &QLineEdit::editingFinished, this, [this, generalInfoWidget](){
+        generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
+    });
 }
 
 
