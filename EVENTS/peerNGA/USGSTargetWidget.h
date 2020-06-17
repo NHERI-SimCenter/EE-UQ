@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QtNetwork/QNetworkAccessManager>
+#include <QLabel>
 
 
 class USGSTargetWidget : public AbstractTargetWidget
@@ -30,6 +31,9 @@ private:
     QComboBox* designStandardBox;
     QComboBox* siteClassBox;
     QComboBox* riskCategoryBox;
+    QLabel* riskCategoryLabel;
+    QComboBox* performanceObjectiveBox;
+    QLabel* performanceObjectiveLabel;
 
     mutable QNetworkAccessManager networkManager;
 };

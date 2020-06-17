@@ -1,7 +1,6 @@
 #include "USGSTargetWidget.h"
 #include <QJsonObject>
 #include <QGridLayout>
-#include <QLabel>
 #include <QtNetwork/QNetworkReply>
 #include <QUrl>
 #include <QUrlQuery>
@@ -13,6 +12,7 @@
 USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
 {
     auto layout = new QGridLayout(this);
+    layout->setColumnMinimumWidth(2, 30);
 
     layout->addWidget(new QLabel(tr("Latitude")), 0, 0);
     latitudeBox = new QLineEdit("37.8719");
@@ -22,12 +22,14 @@ USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
     longitudeBox = new QLineEdit("-122.2585");
     layout->addWidget(longitudeBox, 1, 1);
 
-    layout->addWidget(new QLabel(tr("Design Standard")), 2, 0);
+    layout->addWidget(new QLabel(tr("Standard")), 2, 0);
     designStandardBox = new QComboBox();
     layout->addWidget(designStandardBox, 2, 1);
     designStandardBox->addItem("ASCE7-16");
     designStandardBox->addItem("ASCE7-10");
     designStandardBox->addItem("ASCE7-05");
+    designStandardBox->addItem("ASCE41-17");
+    designStandardBox->addItem("ASCE41-13");
     designStandardBox->addItem("IBC-2015");
     designStandardBox->addItem("IBC-2012");
     designStandardBox->addItem("NEHRP-2020");
@@ -43,7 +45,8 @@ USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
     siteClassBox->addItem("D");
     siteClassBox->addItem("E");
 
-    layout->addWidget(new QLabel(tr("Risk Category")), 4, 0);
+    riskCategoryLabel = new QLabel(tr("Risk Category"));
+    layout->addWidget(riskCategoryLabel, 4, 0);
     riskCategoryBox = new QComboBox();
     layout->addWidget(riskCategoryBox, 4, 1);
     riskCategoryBox->addItem("I");
@@ -51,7 +54,37 @@ USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
     riskCategoryBox->addItem("III");
     riskCategoryBox->addItem("IV");
 
+    performanceObjectiveLabel = new QLabel(tr("Performance"));
+    layout->addWidget(performanceObjectiveLabel, 5, 0);
+    performanceObjectiveBox = new QComboBox();
+    layout->addWidget(performanceObjectiveBox, 5, 1);
+    performanceObjectiveBox->addItem("BSE-1E");
+    performanceObjectiveBox->addItem("BSE-2E");
+    performanceObjectiveBox->addItem("BSE-1N");
+    performanceObjectiveBox->addItem("BSE-2N");
+    performanceObjectiveBox->setVisible(false);
+    performanceObjectiveLabel->setVisible(false);
+
     layout->setRowStretch(layout->rowCount(), 1);
+
+    connect(designStandardBox, &QComboBox::currentTextChanged, this, [this](const QString standard){
+
+        if (standard.startsWith("ASCE41"))
+        {
+            performanceObjectiveBox->setVisible(true);
+            performanceObjectiveLabel->setVisible(true);
+            riskCategoryBox->setVisible(false);
+            riskCategoryLabel->setVisible(false);
+        }
+        else
+        {
+            performanceObjectiveBox->setVisible(false);
+            performanceObjectiveLabel->setVisible(false);
+            riskCategoryBox->setVisible(true);
+            riskCategoryLabel->setVisible(true);
+        }
+
+    });
 
 }
 
@@ -59,12 +92,26 @@ USGSTargetWidget::USGSTargetWidget(QWidget* parent):AbstractTargetWidget(parent)
 QJsonObject USGSTargetWidget::serialize() const
 {
     QJsonObject json;
+
+    json["DesignStandard"] = designStandardBox->currentText();
+    json["SiteClass"] = siteClassBox->currentText();
+    if (designStandardBox->currentText().startsWith("ASCE41"))
+        json["PerformanceObjective"] = performanceObjectiveBox->currentText();
+    else
+        json["RiskCategory"] = riskCategoryBox->currentText();
+
     return json;
 }
 
 void USGSTargetWidget::deserialize(const QJsonObject &json)
 {
+    designStandardBox->setCurrentText(json["DesignStandard"].toString());
+    siteClassBox->setCurrentText(json["SiteClass"].toString());
 
+    if (designStandardBox->currentText().startsWith("ASCE41"))
+        performanceObjectiveBox->setCurrentText(json["PerformanceObjective"].toString());
+    else
+        riskCategoryBox->setCurrentText(json["RiskCategory"].toString());
 }
 
 QList<QPair<double, double> > USGSTargetWidget::spectrum() const
@@ -90,7 +137,16 @@ QList<QPair<double, double> > USGSTargetWidget::spectrum() const
     QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
 
     //auto designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodMCErSpectrum"].toArray();
-    auto designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodDesignSpectrum"].toArray();
+
+    QJsonArray designSpectrum;
+    if(designStandardBox->currentText().startsWith("ASCE41"))
+    {
+        for (auto hazardLevelObjective: replyJson["response"].toObject()["data"].toArray())
+            if(hazardLevelObjective.toObject()["hazardLevel"].toString().compare(performanceObjectiveBox->currentText()) == 0)
+                designSpectrum = hazardLevelObjective.toObject()["horizontalSpectrum"].toArray();
+    }
+    else
+        designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodDesignSpectrum"].toArray();
 
     for (auto point: designSpectrum)
         spectrum.append({point.toArray()[0].toDouble(), point.toArray()[1].toDouble()});
