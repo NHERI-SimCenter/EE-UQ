@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QtNetwork/QNetworkReply>
+#include <GoogleAnalytics.h>
 
 NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -126,6 +127,7 @@ void NSHMPTarget::deserialize(const QJsonObject &json)
 
 QList<QPair<double, double>> NSHMPTarget::spectrum() const
 {
+    GoogleAnalytics::Report("RecordSelection", "USGS-UHS");
 
     QString url("https://earthquake.usgs.gov/nshmp-haz-ws/hazard");
     url.append("/E" + editionBox->currentText());

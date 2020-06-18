@@ -20,6 +20,7 @@
 #include "UserSpectrumWidget.h"
 #include "USGSTargetWidget.h"
 #include "NSHMPTarget.h"
+#include <GoogleAnalytics.h>
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -329,6 +330,8 @@ void PEER_NGA_Records::updateStatus(QString status)
 
 void PEER_NGA_Records::selectRecords()
 {
+    GoogleAnalytics::Report("RecordSelection", "PEER");
+
     QVariant magnitudeRange;
     if(magnitudeCheckBox->checkState() == Qt::Checked)
         magnitudeRange.setValue(qMakePair(magnitudeMin->text().toDouble(), magnitudeMax->text().toDouble()));
