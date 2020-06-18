@@ -14,6 +14,9 @@
 #include <QCheckBox>
 #include "RecordSelectionPlot.h"
 #include <QProgressBar>
+#include <QStackedWidget>
+#include <GeneralInformationWidget.h>
+
 
 class QComboBox;
 
@@ -38,7 +41,7 @@ class PEER_NGA_Records : public SimCenterAppWidget
 
 
 public:
-    explicit PEER_NGA_Records(QWidget *parent = nullptr);
+    explicit PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent = nullptr);
 
     bool outputToJSON(QJsonObject &jsonObject) override;
     bool inputFromJSON(QJsonObject &jsonObject) override;
@@ -57,15 +60,13 @@ public slots:
 private:
     PeerNgaWest2Client peerClient;
     QPushButton* selectRecordsButton;
-    QLineEdit* sdsEditBox;
-    QLineEdit* sd1EditBox;
-    QLineEdit* tlEditBox;
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
     QComboBox* groundMotionsComponentsBox;
     RecordSelectionPlot recordSelectionPlot;
     QProgressBar* progressBar;
     QComboBox* spectrumTypeComboBox;
+    QStackedWidget* targetSpectrumDetails;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;
@@ -92,7 +93,7 @@ private:
     QVector<double> meanMinusSigmaSpectrum;
     QVector<double> targetSpectrum;
 
-    void setupUI();
+    void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();
     void processPeerRecords(QDir resultFolder);
     QList<PeerScaledRecord> parseSearchResults(QString searchResultsFilePath);

@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QStatusBar>
 #include <QDir>
+#include<QHttpMultiPart>
 
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     nRecords(3), isLoggedIn(false), retries(0)
@@ -36,6 +37,50 @@ void PeerNgaWest2Client::signIn(QString username, QString password)
 
     QNetworkRequest peerSignInPageRequest(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
     signInPageReply = networkManager.get(peerSignInPageRequest);
+}
+
+void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range)
+{
+    emit selectionStarted();
+    emit statusUpdated("Performing Record Selection...");
+
+    this->nRecords = nRecords;
+    this->magnitudeRange = magnitudeRange;
+    this->distanceRange = distanceRange;
+    this->vs30Range = vs30Range;
+
+    uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
+    QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
+    //Token part
+    QHttpPart tokenPart;
+    tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"authenticity_token\""));
+    tokenPart.setBody(authenticityToken.toUtf8());
+    multiPart->append(tokenPart);
+
+    //Spectrum File part
+    QHttpPart filePart;
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"upload[datafile]\"; filename=\"UserSpectrum.csv\""));
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/vnd.ms-excel"));
+
+    QString userSpectrum;
+    userSpectrum.append("User Defined Spectrum\r\n");
+    userSpectrum.append("\r\n");
+    userSpectrum.append("T (s),Sa (g)\r\n");
+
+    for(auto& point: spectrum)
+        userSpectrum.append(QString::number(point.first) + ',' + QString::number(point.second) + "\r\n");
+
+    filePart.setBody(userSpectrum.toUtf8());
+    multiPart->append(filePart);
+
+    //Commit part
+    QHttpPart commitPart;
+    commitPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"commit\""));
+    commitPart.setBody("Upload");
+    multiPart->append(commitPart);
+
+    uploadFileReply = networkManager.post(uploadFileRequest, multiPart);
 }
 
 void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range)
@@ -84,6 +129,9 @@ void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
 
     else if(reply == signInReply)
         processSignInReply();
+
+    else if(reply == uploadFileReply)
+        processUploadFileReply();
 
     else if(reply == postSpectraReply)
         processPostSpectrumReply();
@@ -160,26 +208,55 @@ void PeerNgaWest2Client::processSignInReply()
 
 }
 
+void PeerNgaWest2Client::processUploadFileReply()
+{
+    QNetworkCookie cookie("SpectrumModel_Dropdown", "0");
+    cookie.setDomain("ngawest2.berkeley.edu");
+    networkManager.cookieJar()->insertCookie(cookie);
+
+    postSpectraRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras"));
+    postSpectraRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    postSpectraParameters.clear();
+    postSpectraParameters.addQueryItem("authenticity_token", authenticityToken);
+    postSpectraParameters.addQueryItem("spectra[NGAInputData_NGAModelSelection]", "0");//0 user spectrum
+    postSpectraParameters.addQueryItem("model[AS]", "0");
+    postSpectraParameters.addQueryItem("model[BA]", "0");
+    postSpectraParameters.addQueryItem("model[CY]", "0");
+    postSpectraParameters.addQueryItem("model[CB]", "0");
+    postSpectraParameters.addQueryItem("model[ID]", "0");
+    postSpectraParameters.addQueryItem("spectra[menu_Mechanism]", "1");
+
+    for (auto cookie: networkManager.cookieJar()->cookiesForUrl(QUrl("https://ngawest2.berkeley.edu")))
+        if (0 == cookie.name().compare("upload_file"))
+            postSpectraParameters.addQueryItem("spectra[filename]", cookie.value());
+
+
+    postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
+}
+
 void PeerNgaWest2Client::processPostSpectrumReply()
 {
     if(postSpectraReply->error() != QNetworkReply::NoError)
     {
-        if(retries < 5)
-        {
-            retries++;
-            emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database, retrying");
-            retrySignIn();
-        }
-        else
-        {
-            emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
-            retries = 0;
-            emit selectionFinished();
-            retrySignIn();
-        }
+        //if it fails we will retry
+        retry();
+        return;
     }
     else
     {
+        int statusCode = postSpectraReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+        //if we get redirected to sign in we will retry
+        if(statusCode == 302) {
+            QUrl redirectUrl = postSpectraReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+            if (0 == redirectUrl.toString().compare("/users/sign_in?unauthenticated=true"))
+            {
+                retry();
+                return;
+            }
+        }
+
         retries = 0;
         auto url = postSpectraReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
         auto searchPost = url.toString().remove("/new").remove("/edit").append("/searches");
@@ -282,4 +359,21 @@ void PeerNgaWest2Client::retrySignIn()
 {
     QNetworkRequest peerSignInPageRequest(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
     signInPageReply = networkManager.get(peerSignInPageRequest);
+}
+
+void PeerNgaWest2Client::retry()
+{
+    if(retries < 5)
+    {
+        retries++;
+        emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database, retrying");
+        retrySignIn();
+    }
+    else
+    {
+        emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
+        retries = 0;
+        emit selectionFinished();
+        retrySignIn();
+    }
 }
