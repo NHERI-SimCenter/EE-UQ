@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include <QDebug>
 
-USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent)
+USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
     auto layout = new QGridLayout(this);
     layout->setColumnMinimumWidth(2, 30);
@@ -128,6 +128,11 @@ void USGSTargetWidget::deserialize(const QJsonObject &json)
         performanceObjectiveBox->setCurrentText(json["PerformanceObjective"].toString());
     else
         riskCategoryBox->setCurrentText(json["RiskCategory"].toString());
+
+    double latitude, longitude;
+    generalInfoWidget->getBuildingLocation(latitude, longitude);
+    latitudeBox->setText(QString::number(latitude));
+    longitudeBox->setText(QString::number(longitude));
 }
 
 QList<QPair<double, double>> USGSTargetWidget::spectrum() const

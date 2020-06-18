@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QtNetwork/QNetworkReply>
 
-NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent)
+NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
     auto layout = new QGridLayout(this);
     layout->setColumnMinimumWidth(2, 30);
@@ -104,11 +104,24 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
 QJsonObject NSHMPTarget::serialize() const
 {
     QJsonObject json;
+
+    json["Vs30"] = vs30Box->currentText();
+    json["Edition"] = editionBox->currentText();
+    json["ReturnPeriod"] = returnPeriod->currentText();
+
     return json;
 }
 
 void NSHMPTarget::deserialize(const QJsonObject &json)
 {
+    vs30Box->setCurrentText(json["Vs30"].toString());
+    editionBox->setCurrentText(json["Edition"].toString());
+    returnPeriod->setCurrentText(json["ReturnPeriod"].toString());
+
+    double latitude, longitude;
+    generalInfoWidget->getBuildingLocation(latitude, longitude);
+    latitudeBox->setText(QString::number(latitude));
+    longitudeBox->setText(QString::number(longitude));
 }
 
 QList<QPair<double, double>> NSHMPTarget::spectrum() const

@@ -35,6 +35,7 @@ private:
     QLabel* riskCategoryLabel;
     QComboBox* performanceObjectiveBox;
     QLabel* performanceObjectiveLabel;
+    GeneralInformationWidget* generalInfoWidget;
 
     mutable QNetworkAccessManager networkManager;
 };

@@ -20,6 +20,7 @@ private:
     QComboBox* vs30Box;
     QComboBox* editionBox;
     QComboBox* returnPeriod;
+    GeneralInformationWidget* generalInfoWidget;
 
     mutable QNetworkAccessManager networkManager;
 
