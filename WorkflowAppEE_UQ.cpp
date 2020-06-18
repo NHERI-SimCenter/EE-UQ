@@ -212,7 +212,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // set the defults in the General Info
     //
 
-    theGI->setDefaultProperties(1,144,360,360,37.8716,-127.2717);
+    theGI->setDefaultProperties(1,144,360,360,37.8715,-122.2730);
 }
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()

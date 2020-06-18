@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QDebug>
+#include <GoogleAnalytics.h>
 
 USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -137,6 +138,7 @@ void USGSTargetWidget::deserialize(const QJsonObject &json)
 
 QList<QPair<double, double>> USGSTargetWidget::spectrum() const
 {
+    GoogleAnalytics::Report("RecordSelection", "USGS-DesignMaps");
     QList<QPair<double, double>> spectrum;
     QUrl usgswsUrl("https://earthquake.usgs.gov/ws/designmaps/" + designStandardBox->currentText().toLower() +".json");
     QUrlQuery parameters;
