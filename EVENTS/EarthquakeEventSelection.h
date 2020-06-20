@@ -75,10 +75,10 @@ private:
    QStackedWidget *theStackedWidget;
    SimCenterAppWidget *theCurrentEvent;
 
-   SimCenterAppWidget *theSHA_MotionWidget;
+   //   SimCenterAppWidget *theSHA_MotionWidget;
    SimCenterAppWidget *theExistingEvents;
    SimCenterAppWidget *theExistingPeerEvents;
-   SimCenterAppWidget *theUserDefinedApplication;
+   //SimCenterAppWidget *theUserDefinedApplication;
    SimCenterAppWidget *theStochasticMotionWidget;
    SimCenterAppWidget *theRockOutcrop;
    SimCenterAppWidget* peerNgaRecords;

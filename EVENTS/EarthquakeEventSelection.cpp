@@ -89,11 +89,11 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     eventSelection->addItem(tr("Stochastic Ground Motion"));
     eventSelection->addItem(tr("PEER NGA Records"));
-    eventSelection->addItem(tr("Multiple PEER"));
-    eventSelection->addItem(tr("Hazard Based Event"));
     eventSelection->addItem(tr("Site Response"));
-    eventSelection->addItem(tr("Multiple Existing"));
-    eventSelection->addItem(tr("User Application"));
+    eventSelection->addItem(tr("Multiple PEER"));
+    eventSelection->addItem(tr("Multiple SimCenter"));
+    //    eventSelection->addItem(tr("Hazard Based Event"));
+    // eventSelection->addItem(tr("User Application"));
     eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
@@ -124,23 +124,25 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     peerNgaRecords = new PEER_NGA_Records(generalInfoWidget, this);
     theStackedWidget->addWidget(peerNgaRecords);
 
-    theExistingPeerEvents = new ExistingPEER_Records(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theExistingPeerEvents);
-
     //Adding SHA based ground motion widget
+    /*
     theSHA_MotionWidget = new SHAMotionWidget(theRandomVariablesContainer);
     theStackedWidget->addWidget(theSHA_MotionWidget);
+    */
 
     // Adding SRT widget
     theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
     theStackedWidget->addWidget(theRockOutcrop);
 
+    theExistingPeerEvents = new ExistingPEER_Records(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theExistingPeerEvents);
+
     // Adding stochastic ground motion model widget
     theExistingEvents = new ExistingSimCenterEvents(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingEvents);
 
-    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theUserDefinedApplication);
+    //    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
+    //theStackedWidget->addWidget(theUserDefinedApplication);
 
 
     layout->addWidget(theStackedWidget);
@@ -161,9 +163,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     connect(theRockOutcrop, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(theRockOutcrop, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
-    connect(theSHA_MotionWidget, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
-    connect(theSHA_MotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
-    connect(theSHA_MotionWidget, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
+    //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
+    //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
+    //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
     connect(theExistingEvents, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     connect(theExistingEvents, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
@@ -231,23 +233,25 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     // note type output in json and name in pull down are not the same and hence the ||
     //
 
-    if (arg1 == "Multiple Existing") {
-        theStackedWidget->setCurrentIndex(5);
+    if (arg1 == "Multiple SimCenter") {
+        theStackedWidget->setCurrentIndex(4);
         theCurrentEvent = theExistingEvents;
     }
 
     else if(arg1 == "Multiple PEER") {
-        theStackedWidget->setCurrentIndex(2);
+        theStackedWidget->setCurrentIndex(3);
         theCurrentEvent = theExistingPeerEvents;
     }
-
+    
+    /*
     else if(arg1 == "Hazard Based Event") {
         theStackedWidget->setCurrentIndex(3);
         theCurrentEvent = theSHA_MotionWidget;
     }
+    */
 
     else if (arg1 == "Site Response") {
-      theStackedWidget->setCurrentIndex(4);
+      theStackedWidget->setCurrentIndex(2);
       theCurrentEvent = theRockOutcrop;
     }
 
@@ -256,10 +260,12 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
       theCurrentEvent = theStochasticMotionWidget;
     }
 
+    /*
     else if(arg1 == "User Application") {
         theStackedWidget->setCurrentIndex(6);
         theCurrentEvent = theUserDefinedApplication;
     }
+    */
 
     else if(arg1 == "PEER NGA Records") {
         theStackedWidget->setCurrentIndex(1);
@@ -285,7 +291,6 @@ EarthquakeEventSelection::outputAppDataToJSON(QJsonObject &jsonObject)
 bool
 EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
-
     QJsonObject theEvent;
     QString type;
     QString subtype;
@@ -309,32 +314,32 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     } else
         return false;
 
-    // based on application name value set event type
 
     int index = 0;
     if ((type == QString("Existing Events")) ||
-            (type == QString("ExistingSimCenterEvents"))) {
-        index = 5;
+	(type == QString("Existing SimCenter Events")) ||
+	(type == QString("ExistingSimCenterEvents"))) {
+        index = 4;
     } else if ((type == QString("Existing PEER Records")) ||
                (type == QString("ExistingPEER_Events"))  ||
                (type == QString("ExistingPEER_Records"))) {
         if(!subtype.isEmpty() && subtype == "PEER NGA Records")
             index = 1;
         else
-            index = 2;
-    } else if (type == QString("Hazard Based Event")) {
-        index = 3;
+            index = 3;
+  //  } else if (type == QString("Hazard Based Event")) {
+  //      index = 3;
     } else if (type == QString("Site Response") ||
                type == QString("SiteResponse")) {
-        index = 4;
+        index = 2;
     } else if (type == QString("Stochastic Ground Motion Model") ||
 	       type == QString("Stochastic Ground Motion") ||
 	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
         index = 0;
-    } else if ((type == QString("User Application")) ||
-               (type == QString("UserDefinedApplication"))) {
-        index = 6;
+   // } else if ((type == QString("User Application")) ||
+   //            (type == QString("UserDefinedApplication"))) {
+   //     index = 6;
     } else {
         return false;
     }
