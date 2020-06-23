@@ -366,6 +366,8 @@ void PEER_NGA_Records::selectRecords()
         progressBar->setHidden("False");
         selectRecordsButton->setEnabled(false);
         selectRecordsButton->setDown(true);
+
+        updateStatus("Retrieving Target Spectrum...");
         auto spectrum = userTargetWidget->spectrum();
 
 

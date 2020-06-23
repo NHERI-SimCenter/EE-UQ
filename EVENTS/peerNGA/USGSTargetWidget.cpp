@@ -30,16 +30,16 @@ USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, 
     layout->addWidget(new QLabel(tr("Standard")), 2, 0);
     designStandardBox = new QComboBox();
     layout->addWidget(designStandardBox, 2, 1);
-    designStandardBox->addItem("ASCE7-16");
-    designStandardBox->addItem("ASCE7-10");
-    designStandardBox->addItem("ASCE7-05");
-    designStandardBox->addItem("ASCE41-17");
-    designStandardBox->addItem("ASCE41-13");
-    designStandardBox->addItem("IBC-2015");
-    designStandardBox->addItem("IBC-2012");
-    designStandardBox->addItem("NEHRP-2020");
-    designStandardBox->addItem("NEHRP-2015");
-    designStandardBox->addItem("NEHRP-2009");
+    designStandardBox->addItem("ASCE 7-16", "asce7-16");
+    designStandardBox->addItem("ASCE 7-10", "asce7-10");
+    designStandardBox->addItem("ASCE 7-05", "asce7-05");
+    designStandardBox->addItem("ASCE 41-17", "asce41-17");
+    designStandardBox->addItem("ASCE 41-13", "asce41-13");
+    designStandardBox->addItem("IBC 2015", "ibc-2015");
+    designStandardBox->addItem("IBC 2012", "ibc-2012");
+    designStandardBox->addItem("NEHRP 2020", "nehrp-2020");
+    designStandardBox->addItem("NEHRP 2015", "nehrp-2015");
+    designStandardBox->addItem("NEHRP 2009", "nehrp-2009");
 
     layout->addWidget(new QLabel(tr("Site Class")), 3, 0);
     siteClassBox = new QComboBox();
@@ -54,10 +54,10 @@ USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, 
     layout->addWidget(riskCategoryLabel, 4, 0);
     riskCategoryBox = new QComboBox();
     layout->addWidget(riskCategoryBox, 4, 1);
-    riskCategoryBox->addItem("I");
-    riskCategoryBox->addItem("II");
-    riskCategoryBox->addItem("III");
-    riskCategoryBox->addItem("IV");
+    riskCategoryBox->addItem("I (Low Hazard)", "I");
+    riskCategoryBox->addItem("II", "II");
+    riskCategoryBox->addItem("III (Substantial Hazard)", "III");
+    riskCategoryBox->addItem("IV (Essential Facilities)", "IV");
 
     performanceObjectiveLabel = new QLabel(tr("Performance"));
     layout->addWidget(performanceObjectiveLabel, 5, 0);
@@ -74,7 +74,8 @@ USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, 
 
     connect(designStandardBox, &QComboBox::currentTextChanged, this, [this](const QString standard){
 
-        if (standard.startsWith("ASCE41"))
+        Q_UNUSED(standard)
+        if (designStandardBox->currentData().toString().startsWith("asce41"))
         {
             performanceObjectiveBox->setVisible(true);
             performanceObjectiveLabel->setVisible(true);
@@ -112,7 +113,7 @@ QJsonObject USGSTargetWidget::serialize() const
 
     json["DesignStandard"] = designStandardBox->currentText();
     json["SiteClass"] = siteClassBox->currentText();
-    if (designStandardBox->currentText().startsWith("ASCE41"))
+    if (designStandardBox->currentData().toString().startsWith("asce41"))
         json["PerformanceObjective"] = performanceObjectiveBox->currentText();
     else
         json["RiskCategory"] = riskCategoryBox->currentText();
@@ -125,7 +126,7 @@ void USGSTargetWidget::deserialize(const QJsonObject &json)
     designStandardBox->setCurrentText(json["DesignStandard"].toString());
     siteClassBox->setCurrentText(json["SiteClass"].toString());
 
-    if (designStandardBox->currentText().startsWith("ASCE41"))
+    if (designStandardBox->currentData().toString().startsWith("asce41"))
         performanceObjectiveBox->setCurrentText(json["PerformanceObjective"].toString());
     else
         riskCategoryBox->setCurrentText(json["RiskCategory"].toString());
@@ -140,13 +141,13 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
 {
     GoogleAnalytics::Report("RecordSelection", "USGS-DesignMaps");
     QList<QPair<double, double>> spectrum;
-    QUrl usgswsUrl("https://earthquake.usgs.gov/ws/designmaps/" + designStandardBox->currentText().toLower() +".json");
+    QUrl usgswsUrl("https://earthquake.usgs.gov/ws/designmaps/" + designStandardBox->currentData().toString() +".json");
     QUrlQuery parameters;
     parameters.addQueryItem("latitude", latitudeBox->text());
     parameters.addQueryItem("longitude", longitudeBox->text());
     parameters.addQueryItem("siteClass", siteClassBox->currentData().toString());
-    if(!designStandardBox->currentText().startsWith("ASCE41"))
-        parameters.addQueryItem("riskCategory", riskCategoryBox->currentText());
+    if(!designStandardBox->currentData().toString().startsWith("asce41"))
+        parameters.addQueryItem("riskCategory", riskCategoryBox->currentData().toString());
     parameters.addQueryItem("title", "EEUQ");
 
     usgswsUrl.setQuery(parameters);
@@ -163,7 +164,7 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
     //auto designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodMCErSpectrum"].toArray();
 
     QJsonArray designSpectrum;
-    if(designStandardBox->currentText().startsWith("ASCE41"))
+    if(designStandardBox->currentData().toString().startsWith("asce41"))
     {
         for (auto hazardLevelObjective: replyJson["response"].toObject()["data"].toArray())
             if(hazardLevelObjective.toObject()["hazardLevel"].toString().compare(performanceObjectiveBox->currentText()) == 0)
