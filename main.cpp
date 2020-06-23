@@ -20,7 +20,7 @@
 #include <QOpenGLWidget>
 #include <QStandardPaths>
 #include <QDir>
-
+#include <QStatusBar>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -190,6 +190,7 @@ int main(int argc, char *argv[])
     //
 
     w.show();
+    w.statusBar()->showMessage("Ready", 5000);
 
 #ifdef Q_OS_WIN
     QFile file(":/styleCommon/stylesheetWIN.qss");

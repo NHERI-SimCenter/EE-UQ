@@ -321,9 +321,8 @@ void PEER_NGA_Records::plotSpectra()
 void PEER_NGA_Records::updateStatus(QString status)
 {
     emit sendStatusMessage(status);
-    return;
 
-    // keeping old code for now ..
+    // Showing status in status bar
     if(this->parent())
     {
         auto topWidget = this->parent();
@@ -333,6 +332,7 @@ void PEER_NGA_Records::updateStatus(QString status)
         if (statusBar)
             statusBar->showMessage(status, 5000);
     }
+    return;
 }
 
 void PEER_NGA_Records::selectRecords()
