@@ -159,6 +159,12 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
 
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: Failed to retrieve design spectrum with the inputs provided");
+        return spectrum;
+    }
+
     QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
 
     //auto designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodMCErSpectrum"].toArray();
@@ -175,6 +181,10 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
 
     for (auto point: designSpectrum)
         spectrum.append({point.toArray()[0].toDouble(), point.toArray()[1].toDouble()});
+
+    if(spectrum.empty())
+        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: Failed to retrieve design spectrum with the inputs provided");
+
 
     return spectrum;
 }
