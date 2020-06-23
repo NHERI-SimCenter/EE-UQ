@@ -58,6 +58,11 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#endif
+
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
