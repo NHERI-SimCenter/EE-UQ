@@ -239,6 +239,13 @@ void PEER_NGA_Records::setupConnections()
         return;
     });
 
+
+    for(int i = 0; i < targetSpectrumDetails->count(); i++)
+    {
+        auto targetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->widget(i));
+        connect(targetWidget, &AbstractTargetWidget::statusUpdated, this, &PEER_NGA_Records::updateStatus);
+    }
+
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -355,7 +362,21 @@ void PEER_NGA_Records::selectRecords()
     else
     {
         auto userTargetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->currentWidget());
-        peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+
+        progressBar->setHidden("False");
+        selectRecordsButton->setEnabled(false);
+        selectRecordsButton->setDown(true);
+        auto spectrum = userTargetWidget->spectrum();
+
+
+        if (spectrum.size() > 0)
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+        else
+        {
+            progressBar->setHidden("True");
+            selectRecordsButton->setEnabled(true);
+            selectRecordsButton->setDown(false);
+        }
     }
 }
 
