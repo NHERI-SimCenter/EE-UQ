@@ -157,7 +157,16 @@ QList<QPair<double, double>> NSHMPTarget::spectrum() const
 
     QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
 
-
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        return QList<QPair<double, double>>();
+    }
+    else if(!replyJson.keys().contains("response"))
+    {
+        if (replyJson.keys().contains("status") && replyJson["status"].toString() == "busy")
+            const_cast<NSHMPTarget*>(this)->emit statusUpdated("USGS NSHMP Error: " + replyJson["message"].toString());
+        return QList<QPair<double, double>>();
+    }
 
     return getUHS(replyJson);
 }
