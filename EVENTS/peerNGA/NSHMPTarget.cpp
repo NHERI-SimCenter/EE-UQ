@@ -36,7 +36,6 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     editionBox->addItem("2008 v3.1.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2008R2/COUS0P05");
 
 
-
     layout->addWidget(new QLabel(tr("Vs30")), 3, 0);
     vs30Box = new QComboBox();
     layout->addWidget(vs30Box, 3, 1);
@@ -77,6 +76,16 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
 
     connect(longitudeBox, &QLineEdit::editingFinished, this, [this, generalInfoWidget](){
         generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
+    });
+
+    connect(editionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
+        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/hazws/staticcurve"))
+        {
+            vs30Box->setEnabled(false);
+            vs30Box->setCurrentIndex(4);
+        }
+        else
+            vs30Box->setEnabled(true);
     });
 }
 
