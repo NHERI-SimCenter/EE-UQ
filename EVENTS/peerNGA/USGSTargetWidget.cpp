@@ -44,11 +44,11 @@ USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, 
     layout->addWidget(new QLabel(tr("Site Class")), 3, 0);
     siteClassBox = new QComboBox();
     layout->addWidget(siteClassBox, 3, 1);
-    siteClassBox->addItem("A");
-    siteClassBox->addItem("B");
-    siteClassBox->addItem("C");
-    siteClassBox->addItem("D");
-    siteClassBox->addItem("E");
+    siteClassBox->addItem("Hard Rock (A)", "A");
+    siteClassBox->addItem("Rock (B)", "B");
+    siteClassBox->addItem("Very Dense Soil/Soft Rock (C)", "C");
+    siteClassBox->addItem("Stiff Soil (D)", "D");
+    siteClassBox->addItem("Soft Soil (E)", "E");
 
     riskCategoryLabel = new QLabel(tr("Risk Category"));
     layout->addWidget(riskCategoryLabel, 4, 0);
@@ -144,7 +144,7 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
     QUrlQuery parameters;
     parameters.addQueryItem("latitude", latitudeBox->text());
     parameters.addQueryItem("longitude", longitudeBox->text());
-    parameters.addQueryItem("siteClass", siteClassBox->currentText());
+    parameters.addQueryItem("siteClass", siteClassBox->currentData().toString());
     if(!designStandardBox->currentText().startsWith("ASCE41"))
         parameters.addQueryItem("riskCategory", riskCategoryBox->currentText());
     parameters.addQueryItem("title", "EEUQ");
