@@ -17,6 +17,8 @@ public:
 
 signals:
     virtual void targetChanged();
+    void statusUpdated(QString status);
+
 };
 
 #endif // ABSTRACTTARGETWIDGET_H

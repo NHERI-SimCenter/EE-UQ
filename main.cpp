@@ -20,7 +20,7 @@
 #include <QOpenGLWidget>
 #include <QStandardPaths>
 #include <QDir>
-
+#include <QStatusBar>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -58,6 +58,11 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#endif
+
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
@@ -190,6 +195,7 @@ int main(int argc, char *argv[])
     //
 
     w.show();
+    w.statusBar()->showMessage("Ready", 5000);
 
 #ifdef Q_OS_WIN
     QFile file(":/styleCommon/stylesheetWIN.qss");

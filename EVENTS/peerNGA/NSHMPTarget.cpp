@@ -28,27 +28,37 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     layout->addWidget(new QLabel(tr("Edition")), 2, 0);
     editionBox = new QComboBox();
     layout->addWidget(editionBox, 2, 1);
-    editionBox->addItem("2014");
-    editionBox->addItem("2008");
+    editionBox->addItem("2014 v4.2.0 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2014B/COUS");
+    editionBox->addItem("2014 v4.1.4 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2014/COUS");
+    editionBox->addItem("2014 v4.0.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2014R1/COUS0P05");
+    editionBox->addItem("2008 v3.3.3 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2008/COUS");
+    editionBox->addItem("2008 v3.2.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2008R3/COUS0P05");
+    editionBox->addItem("2008 v3.1.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2008R2/COUS0P05");
 
 
     layout->addWidget(new QLabel(tr("Vs30")), 3, 0);
     vs30Box = new QComboBox();
     layout->addWidget(vs30Box, 3, 1);
-    vs30Box->addItem("180");
-    vs30Box->addItem("259");
-    vs30Box->addItem("360");
-    vs30Box->addItem("537");
-    vs30Box->addItem("760");
-    vs30Box->addItem("1150");
-    vs30Box->addItem("2000");
+    vs30Box->addItem("180 (Stiff/Soft Soil D/E)", "180");
+    vs30Box->addItem("259 (Stiff Soil D)", "259");
+    vs30Box->addItem("360 (C/D)", "360");
+    vs30Box->addItem("537 (Very Dense Soil/Soft Rock - C)", "537");
+    vs30Box->addItem("760 (B/C)", "760");
+    vs30Box->addItem("1150 (Rock - B)", "1150");
+    vs30Box->addItem("2000 (Hard Rock - A)", "2000");
+    layout->addWidget(new QLabel(tr("m/s")), 3, 2);
+    vs30Box->setCurrentIndex(4);
 
     layout->addWidget(new QLabel(tr("Return Period")), 4, 0);
     returnPeriod = new QComboBox();
     layout->addWidget(returnPeriod, 4, 1);
     returnPeriod->addItem("500");
+    returnPeriod->setItemData(0, "10% exceedance in 50 years", Qt::ToolTipRole);
     returnPeriod->addItem("1000");
+    returnPeriod->setItemData(1, "5% exceedance in 50 years", Qt::ToolTipRole);
     returnPeriod->addItem("2500");
+    returnPeriod->setItemData(2, "2% exceedance in 50 years", Qt::ToolTipRole);
+    returnPeriod->setCurrentIndex(2);
     layout->addWidget(new QLabel(tr("years")), 4, 2);
 
 
@@ -67,6 +77,16 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     connect(longitudeBox, &QLineEdit::editingFinished, this, [this, generalInfoWidget](){
         generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
     });
+
+    connect(editionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
+        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/hazws/staticcurve"))
+        {
+            vs30Box->setEnabled(false);
+            vs30Box->setCurrentIndex(4);
+        }
+        else
+            vs30Box->setEnabled(true);
+    });
 }
 
 QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
@@ -82,8 +102,16 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
         if (imt.startsWith("SA"))
             period = imt.remove("SA").replace('P', '.').toDouble();
 
-        auto y = hazardCurve.toObject()["data"].toArray()[0].toObject()["yvalues"].toArray();
-        auto x = hazardCurve.toObject()["metadata"].toObject()["xvalues"].toArray();
+        QJsonArray x, y;
+        if(hazardCurve.toObject()["data"].toArray()[0].toObject().keys().contains("yvalues"))
+            y = hazardCurve.toObject()["data"].toArray()[0].toObject()["yvalues"].toArray();
+        else
+            y = hazardCurve.toObject()["data"].toArray()[0].toObject()["yvals"].toArray();
+
+        if(hazardCurve.toObject()["metadata"].toObject().keys().contains("xvalues"))
+            x = hazardCurve.toObject()["metadata"].toObject()["xvalues"].toArray();
+        else
+            x = hazardCurve.toObject()["metadata"].toObject()["xvals"].toArray();
 
         for(int i = y.size()-1; i > 0; i--)
         {
@@ -97,6 +125,8 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
         }
     }
 
+    if(spectrum.empty())
+        const_cast<NSHMPTarget*>(this)->emit statusUpdated("USGS NSHMP Error: Failed to retrieve uniform hazard spectrum with the inputs provided");
 
     return spectrum;
 }
@@ -129,23 +159,12 @@ QList<QPair<double, double>> NSHMPTarget::spectrum() const
 {
     GoogleAnalytics::Report("RecordSelection", "USGS-UHS");
 
-    QString url("https://earthquake.usgs.gov/nshmp-haz-ws/hazard");
-    url.append("/E" + editionBox->currentText());
-    if(editionBox->currentText().compare("2014") == 0)
-    url.append('B');
-
-    double longitude = longitudeBox->text().toDouble();
-    if (longitude <= -100.0 && longitude >= -125.0)
-        url.append("/WUS");
-    else if (longitude <= -65.0 && longitude >= -115.0)
-        url.append("/CEUS");
-    else
-        url.append("/COUS");
+    QString url(editionBox->currentData().toString());
 
     url.append("/" + longitudeBox->text());
     url.append("/" + latitudeBox->text());
-    url.append("/ANY");
-    url.append("/" + vs30Box->currentText());
+    url.append("/any");
+    url.append("/" + vs30Box->currentData().toString());
 
     QNetworkRequest request(url);
 
@@ -157,7 +176,16 @@ QList<QPair<double, double>> NSHMPTarget::spectrum() const
 
     QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
 
-
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        return QList<QPair<double, double>>();
+    }
+    else if(!replyJson.keys().contains("response"))
+    {
+        if (replyJson.keys().contains("status") && replyJson["status"].toString() == "busy")
+            const_cast<NSHMPTarget*>(this)->emit statusUpdated("USGS NSHMP Error: " + replyJson["message"].toString());
+        return QList<QPair<double, double>>();
+    }
 
     return getUHS(replyJson);
 }
