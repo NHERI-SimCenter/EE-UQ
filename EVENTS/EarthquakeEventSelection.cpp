@@ -62,7 +62,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <InputWidgetExistingEvent.h>
 #include <ExistingSimCenterEvents.h>
 #include <ExistingPEER_Records.h>
-#include "SHAMotionWidget.h"
 #include <UserDefinedApplication.h>
 #include "StochasticMotionInput.h"
 #include "RockOutcrop.h"

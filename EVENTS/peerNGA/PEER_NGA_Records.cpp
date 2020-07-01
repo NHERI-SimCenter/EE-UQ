@@ -239,6 +239,13 @@ void PEER_NGA_Records::setupConnections()
         return;
     });
 
+
+    for(int i = 0; i < targetSpectrumDetails->count(); i++)
+    {
+        auto targetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->widget(i));
+        connect(targetWidget, &AbstractTargetWidget::statusUpdated, this, &PEER_NGA_Records::updateStatus);
+    }
+
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -314,9 +321,8 @@ void PEER_NGA_Records::plotSpectra()
 void PEER_NGA_Records::updateStatus(QString status)
 {
     emit sendStatusMessage(status);
-    return;
 
-    // keeping old code for now ..
+    // Showing status in status bar
     if(this->parent())
     {
         auto topWidget = this->parent();
@@ -326,6 +332,7 @@ void PEER_NGA_Records::updateStatus(QString status)
         if (statusBar)
             statusBar->showMessage(status, 5000);
     }
+    return;
 }
 
 void PEER_NGA_Records::selectRecords()
@@ -355,7 +362,23 @@ void PEER_NGA_Records::selectRecords()
     else
     {
         auto userTargetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->currentWidget());
-        peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+
+        progressBar->setHidden("False");
+        selectRecordsButton->setEnabled(false);
+        selectRecordsButton->setDown(true);
+
+        updateStatus("Retrieving Target Spectrum...");
+        auto spectrum = userTargetWidget->spectrum();
+
+
+        if (spectrum.size() > 0)
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+        else
+        {
+            progressBar->setHidden("True");
+            selectRecordsButton->setEnabled(true);
+            selectRecordsButton->setDown(false);
+        }
     }
 }
 
