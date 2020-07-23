@@ -1,11 +1,13 @@
 <RCC>
     <qresource prefix="/images">
         <file>Rinaldi.json</file>
-    </qresource>
-    <qresource prefix="/images">
         <file>ElCentro.json</file>
     </qresource>
-    <qresource>
-        <file>./resources/directivityParameters.png</file>
+    <qresource prefix="/">
+        <file>resources/directivityParameters.png</file>
+        <file>icons/NHERI-EEUQ-Icon.icns</file>
+        <file>icons/NHERI-EEUQ-Icon.ico</file>
+        <file>icons/NHERI-EEUQ-Icon.png</file>
+        <file>resources/docs/textAboutEEUQ.html</file>
     </qresource>
 </RCC>
