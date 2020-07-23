@@ -11,7 +11,9 @@ class EEUQ(ConanFile):
     generators = "qmake"
     requires = "jansson/2.11@bincrafters/stable", \
                "libcurl/7.64.1@bincrafters/stable", \
-               "lapack/3.7.1@conan/stable"
+               "s3hark/1.1.2@simcenter/testing", \
+               "lapack/3.7.1@conan/stable", \
+               "SimCenterCommonQt/0.1.7@simcenter/stable"
 
     build_policy = "missing"
 
@@ -27,3 +29,4 @@ class EEUQ(ConanFile):
         if self.settings.os == "Windows":
             output = './%s' % self.settings.build_type
             self.copy("lib*.dll", dst=output, src="bin")
+            self.copy("*", dst='{}/resources'.format(output), src="resources")
