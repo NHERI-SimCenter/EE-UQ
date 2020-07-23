@@ -9,7 +9,6 @@ INCLUDEPATH += "../EE-UQ"
 
 SOURCES += \
     $$PWD/MainWindowWorkflowApp.cpp \
-    $$PWD/InputWidgetSampling.cpp \
     $$PWD/OpenSeesBuildingModel.cpp \
     $$PWD/MDOF_BuildingModel.cpp \
     $$PWD/InputWidgetOpenSeesAnalysis.cpp \
@@ -29,8 +28,6 @@ SOURCES += \
     $$PWD/UserDefinedEDP.cpp \
     $$PWD/ExistingSimCenterEvents.cpp \
     $$PWD/CustomizedItemModel.cpp\
-    $$PWD/DakotaResults.cpp\
-    $$PWD/DakotaResultsSampling.cpp\
     $$PWD/UserDefinedApplication.cpp \
     $$PWD/StochasticMotionInput/src/StochasticModelWidget.cpp \
     $$PWD/SIM_Selection.cpp \
@@ -42,7 +39,6 @@ SOURCES += \
 
 HEADERS  += \
     $$PWD/MainWindowWorkflowApp.h \
-    $$PWD/InputWidgetSampling.h \
     $$PWD/OpenSeesBuildingModel.h \
     $$PWD/MDOF_BuildingModel.h \
     $$PWD/InputWidgetOpenSeesAnalysis.h \
@@ -62,11 +58,9 @@ HEADERS  += \
     $$PWD/UserDefinedEDP.h \
     $$PWD/ExistingSimCenterEvents.h \
     $$PWD/CustomizedItemModel.h \
-    $$PWD/DakotaResults.h\
-    $$PWD/DakotaResultsSampling.h\
     $$PWD/CustomizedItemModel.h \
     $$PWD/UserDefinedApplication.h \
-    $$PWD/StochasticMotionInput/include/StochasticModelWidget.h \
+    $$PWD/StochasticModelWidget.h \
     $$PWD/SIM_Selection.h \
     $$PWD/InputWidgetBIM.h \
     $$PWD/InputWidgetUQ.h \

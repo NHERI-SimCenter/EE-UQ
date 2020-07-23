@@ -3,6 +3,9 @@
         <file>Rinaldi.json</file>
         <file>ElCentro.json</file>
     </qresource>
+    <qresource>
+        <file>./resources/directivityParameters.png</file>
+    </qresource>
     <qresource prefix="/">
         <file>icons/NHERI-EEUQ-Icon.icns</file>
         <file>icons/NHERI-EEUQ-Icon.ico</file>

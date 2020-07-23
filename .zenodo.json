@@ -1,0 +1,35 @@
+{
+  "creators": [
+    {
+      "name": "McKenna, Frank",
+      "affiliation": "UC Berkeley",
+      "orcid": "0000-0002-0308-302X"
+    },
+    {
+      "name": "Wael Elhaddad",
+      "affiliation": "UC Berkeley"
+    },
+    {
+      "name": "Michael Gardner",
+      "affiliation": "UC Berkeley"
+    },
+    {
+      "name": "Adam Zsarnoczay",
+      "affiliation": "UC Berkeley"
+    },
+    {
+      "name": "Charles Wang",
+      "affiliation": "UC Berkeley"
+    }
+  ],
+  "keywords": [
+    "earthquake engineering",
+    "performance based design",
+    "uncertainty quantification",
+    "ground motions",
+  ],
+  "license": "BSD 2-Clause \"Simplified\" License",
+  "upload_type": "software",
+  "notes" : "This work is funded by the National Science Foundation under grant CMMI 1612843",
+  "communities" : "NHERI SimCenter"
+}
