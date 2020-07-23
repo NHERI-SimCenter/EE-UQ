@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     WorkflowAppWidget *theInputApp = new WorkflowAppEE_UQ(theRemoteService);
     MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
-
+    /*
     QString textAboutEE_UQ = "\
             <p> \
             This is the Earthquake Engineering with Uncertainty Quantification (EE-UQ) application.\
@@ -165,6 +165,12 @@ int main(int argc, char *argv[])
         <p>";
 
         w.setAbout(textAboutEE_UQ);
+    */
+
+
+    QString aboutTitle = "About the SimCenter EE-UQ Application"; // this is the title displayed in the on About dialog
+    QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
+    w.setAbout(aboutTitle, aboutSource);
 
     QString version("Version 2.1.0");
     w.setVersion(version);
