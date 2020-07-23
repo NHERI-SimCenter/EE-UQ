@@ -26,6 +26,10 @@ win32{
     LIBS += -llapacke.dll -llapack.dll -lblas.dll -lcblas.dll -lAdvapi32
 }
 
+linux{
+    CONFIG += no_lflags_merge
+    LIBS += -llapack -lgfortran 
+}
 
 win32 {
     RC_ICONS = icons/NHERI-EEUQ-Icon.ico
