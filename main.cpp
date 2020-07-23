@@ -71,6 +71,10 @@ int main(int argc, char *argv[])
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
+    //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
+    Q_INIT_RESOURCE(images1);
+    Q_INIT_RESOURCE(resources);
+
     //
     // set up logging of output messages for user debugging
     //
@@ -117,7 +121,6 @@ int main(int argc, char *argv[])
     //
 
     QApplication a(argc, argv);
-
     //
     // create a remote interface
     //
