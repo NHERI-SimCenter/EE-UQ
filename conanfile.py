@@ -13,7 +13,10 @@ class EEUQ(ConanFile):
                "libcurl/7.64.1@bincrafters/stable", \
                "s3hark/1.1.2@simcenter/testing", \
                "lapack/3.7.1@conan/stable", \
-               "SimCenterCommonQt/0.1.7@simcenter/stable"
+               "SimCenterCommonQt/0.1.9@simcenter/stable",\
+               "SimCenterBackendApplications/1.2.2@simcenter/stable",\
+               "opensees/3.2.2@simcenter/testing",\
+               "dakota/6.12.0@simcenter/testing"
 
     build_policy = "missing"
 
@@ -30,3 +33,21 @@ class EEUQ(ConanFile):
             output = './%s' % self.settings.build_type
             self.copy("lib*.dll", dst=output, src="bin")
             self.copy("*", dst='{}/resources'.format(output), src="resources")
+
+        appsDestination = "./applications"
+        if self.settings.os == "Windows":
+            appsDestination = './%s/applications' % self.settings.build_type
+        elif self.settings.os == "Macos":
+            appsDestination = './EE_UQ.app/Contents/MacOS/applications'
+
+        self.copy("createEVENT/multiple*", dst=appsDestination, src="bin")
+        self.copy("createEVENT/siteRes*", dst=appsDestination, src="bin")
+        self.copy("createEVENT/stochasticGr*", dst=appsDestination, src="bin")
+
+        self.copy("createSAM/*", dst=appsDestination, src="bin")
+        self.copy("createEDP/*", dst=appsDestination, src="bin")
+        self.copy("performSIMULATION/*", dst=appsDestination, src="bin")
+        self.copy("performUQ/*", dst=appsDestination, src="bin")
+        self.copy("Workflow/*", dst=appsDestination, src="bin")
+        self.copy("*", dst="{}/opensees".format(appsDestination), src="opensees")
+        self.copy("*", dst="{}/dakota".format(appsDestination), src="dakota")
