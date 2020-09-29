@@ -19,6 +19,8 @@ PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
 
+    searchScaleFlag = -1;
+
     setupConnection();
 }
 
@@ -272,9 +274,25 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         params.addQueryItem("search[SRkey]", "1");
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
-        params.addQueryItem("search[scale_flag]", "1");
-        params.addQueryItem("search[period]", "0.01,0.05,0.1,0.5,1,5,10.0");
-        params.addQueryItem("search[weight]", "1.0,1.0,1.0,1.0,1.0,1.0,1.0");
+
+        if(searchScaleFlag == 0)
+        {
+            params.addQueryItem("search[scale_flag]", "0");
+        }
+        else if(searchScaleFlag == 1)
+        {
+            params.addQueryItem("search[scale_flag]", "1");
+            params.addQueryItem("search[period]", searchPeriodPoints);
+            params.addQueryItem("search[weight]", searchWeightPoints);
+        }
+        else if(searchScaleFlag == 2)
+        {
+            params.addQueryItem("search[scale_flag]", "2");
+            params.addQueryItem("search[SinglePeriodScalingT]", searchSinglePeriodScalingT);
+            params.addQueryItem("search[period]", searchPeriodPoints);
+            params.addQueryItem("search[weight]", searchWeightPoints);
+        }
+
         params.addQueryItem("search[output_num]", QString::number(nRecords));
 
         if(magnitudeRange.isValid() && !magnitudeRange.isNull())
@@ -321,6 +339,7 @@ void PeerNgaWest2Client::processGetRecordsReply()
     QNetworkRequest downloadRecordsRequest(url);
     downloadRecordsReply = networkManager.get(downloadRecordsRequest);
 }
+
 
 void PeerNgaWest2Client::processDownloadRecordsReply()
 {
@@ -376,4 +395,16 @@ void PeerNgaWest2Client::retry()
         emit selectionFinished();
         retrySignIn();
     }
+}
+
+
+void PeerNgaWest2Client::setScalingParameters(const int scaleFlag,
+                                              const QString& periodPoints,
+                                              const QString& weightPoints,
+                                              const QString& scalingPeriod)
+{
+    searchScaleFlag = scaleFlag;
+    searchPeriodPoints = periodPoints;
+    searchWeightPoints = weightPoints;
+    searchSinglePeriodScalingT = scalingPeriod;
 }

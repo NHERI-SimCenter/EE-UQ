@@ -66,7 +66,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(nshmpTarget);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
-    auto recordSelectionLayout = new QGridLayout(recordSelectionGroup);
+    recordSelectionLayout = new QGridLayout(recordSelectionGroup);
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
     nRecordsEditBox->setValidator(positiveIntegerValidator);
@@ -98,7 +98,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     vs30CheckBox = new QCheckBox("Vs30");
     recordSelectionLayout->addWidget(vs30CheckBox, 3, 0);
-    vs30Min = new QLineEdit("150");
+    vs30Min = new QLineEdit("150.0");
     vs30Min->setEnabled(false);
     vs30Min->setValidator(positiveDoubleValidator);
     recordSelectionLayout->addWidget(vs30Min, 3, 1);
@@ -108,10 +108,54 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionLayout->addWidget(vs30Max, 3, 2);
     recordSelectionLayout->addWidget(new QLabel("m/s"), 3, 3);
 
-    selectRecordsButton = new QPushButton("Select Records");
-    recordSelectionLayout->addWidget(selectRecordsButton, 4, 0, 1, 4);
+    targetSpectrumGroup->setMaximumHeight(200);
+    recordSelectionGroup->setMaximumHeight(200);
 
-    recordSelectionLayout->setRowStretch(recordSelectionLayout->rowCount(), 1);
+    auto scalingGroup = new QGroupBox("Scaling");
+    auto scalingLayout = new QGridLayout(scalingGroup);
+
+    scalingComboBox = new QComboBox();
+    scalingComboBox->addItem("No Scaling");
+    scalingComboBox->addItem("Minimize MSE");
+    scalingComboBox->addItem("Single Period");
+
+    scalingLayout->addWidget(new QLabel("Scaling Method:"), 0, 0);
+    scalingLayout->addWidget(scalingComboBox, 0, 1);
+
+    scalingPeriodLabel1 = new QLabel("Scaling Period (sec):");
+    scalingPeriodLineEdit = new QLineEdit("1.0");
+    scalingPeriodLabel2  = new QLabel("(Ti)");
+    scalingLayout->addWidget(scalingPeriodLabel1, 0, 2);
+    scalingLayout->addWidget(scalingPeriodLineEdit, 0, 3);
+    scalingLayout->addWidget(scalingPeriodLabel2, 0, 4);
+
+    weightFunctionHeadingLabel = new QLabel("Weight Function");
+    weightFunctionHeadingLabel->setStyleSheet("font-weight: bold;");
+
+    weightFunctionLabel = new QLabel("Weight function is used in both search and scaling when computing MSE. Values can be updated for rescaling. Intermediate points are interpolated with W = fxn(log(T))");
+    weightFunctionLabel->setWordWrap(true);
+
+    periodPointsLabel1 = new QLabel("Period Points :");
+    periodPointsLineEdit = new QLineEdit("0.01,0.05,0.1,0.5,1,5,10.0");
+    periodPointsLabel2 = new QLabel("(T1,T2, ... Tn)");
+
+    weightsLabel1 = new QLabel("Weights :");
+    weightsLineEdit = new QLineEdit("1.0,1.0,1.0,1.0,1.0,1.0,1.0");
+    weightsLabel2 = new QLabel("(W1,W2, ... Wn)");
+
+    scalingLayout->addWidget(weightFunctionHeadingLabel, 1, 0);
+    scalingLayout->addWidget(weightFunctionLabel, 1, 3, 4, 2);
+    scalingLayout->addWidget(periodPointsLabel1, 2, 0);
+    scalingLayout->addWidget(periodPointsLineEdit, 2, 1);
+    scalingLayout->addWidget(periodPointsLabel2, 2, 2);
+    scalingLayout->addWidget(weightsLabel1, 3, 0);
+    scalingLayout->addWidget(weightsLineEdit, 3, 1);
+    scalingLayout->addWidget(weightsLabel2, 3, 2);
+
+    selectRecordsButton = new QPushButton("Select Records");
+    scalingLayout->addWidget(selectRecordsButton, 4, 0, 1, 2);
+
+    this->onScalingComboBoxChanged(0);
 
     //Records Table
     recordsTable = new QTableWidget();
@@ -138,19 +182,20 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
-    layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
+    layout->addWidget(scalingGroup, 1, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
-    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
-    "Timothy D. Ancheta, Robert B. Darragh, Jonathan P. Stewart, Emel Seyhan, Walter J. Silva, "
-    "Brian S.J. Chiou, Katie E. Wooddell, Robert W. Graves, Albert R. Kottke, "
-    "David M. Boore, Tadahiro Kishida, and Jennifer L. Donahue.");
+                                   "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
+                                   "Timothy D. Ancheta, Robert B. Darragh, Jonathan P. Stewart, Emel Seyhan, Walter J. Silva, "
+                                   "Brian S.J. Chiou, Katie E. Wooddell, Robert W. Graves, Albert R. Kottke, "
+                                   "David M. Boore, Tadahiro Kishida, and Jennifer L. Donahue.");
 
     peerCitation->setWordWrap(true);
-    layout->addWidget(peerCitation, 2, 0, 1, 3);
+    layout->addWidget(peerCitation, 3, 0, 1, 3);
 
     //layout->addWidget(thePlottingWindow, 0,3,2,1);
-    layout->addWidget(&recordSelectionPlot, 0,3,2,1);
+    layout->addWidget(&recordSelectionPlot, 0,3,4,1);
 
     recordSelectionPlot.setHidden(true);
 
@@ -163,6 +208,7 @@ void PEER_NGA_Records::setupConnections()
 {
     connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
     {
+
         if(!peerClient.loggedIn())
         {
             PeerLoginDialog loginDialog(&peerClient, this);
@@ -246,6 +292,8 @@ void PEER_NGA_Records::setupConnections()
         connect(targetWidget, &AbstractTargetWidget::statusUpdated, this, &PEER_NGA_Records::updateStatus);
     }
 
+
+    connect(scalingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onScalingComboBoxChanged(int)));
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -337,6 +385,17 @@ void PEER_NGA_Records::updateStatus(QString status)
 
 void PEER_NGA_Records::selectRecords()
 {
+
+    // Set the search scaling parameters
+    // 0 is not scaling
+    // 1 is minimize MSE
+    // 2 is single period scaling
+    auto scaleFlag = scalingComboBox->currentIndex();
+    auto periodPoints = periodPointsLineEdit->text();
+    auto weightPoints = weightsLineEdit->text();
+    auto scalingPeriod = scalingPeriodLineEdit->text();
+    peerClient.setScalingParameters(scaleFlag,periodPoints,weightPoints,scalingPeriod);
+
     GoogleAnalytics::Report("RecordSelection", "PEER");
 
     QVariant magnitudeRange;
@@ -625,3 +684,60 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
 
     return true;
 }
+
+void PEER_NGA_Records::onScalingComboBoxChanged(const int index)
+{
+    if(index == 0)
+    {
+        weightFunctionHeadingLabel->hide();
+        weightFunctionLabel->hide();
+        periodPointsLabel1->hide();
+        periodPointsLineEdit->hide();
+        periodPointsLabel2->hide();
+        weightsLabel1->hide();
+        weightsLineEdit->hide();
+        weightsLabel2->hide();
+        scalingPeriodLabel1->hide();
+        scalingPeriodLineEdit->hide();
+        scalingPeriodLabel2->hide();
+
+        return;
+    }
+    else  // Show minimize MSE and scaling inputs
+    {
+        weightFunctionHeadingLabel->show();
+        weightFunctionLabel->show();
+        periodPointsLabel1->show();
+        periodPointsLineEdit->show();
+        periodPointsLabel2->show();
+        weightsLabel1->show();
+        weightsLineEdit->show();
+        weightsLabel2->show();
+
+        if(index == 2) // Show single period inputs
+        {
+            scalingPeriodLabel1->show();
+            scalingPeriodLineEdit->show();
+            scalingPeriodLabel2->show();
+        }
+        else
+        {
+            scalingPeriodLabel1->hide();
+            scalingPeriodLineEdit->hide();
+            scalingPeriodLabel2->hide();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

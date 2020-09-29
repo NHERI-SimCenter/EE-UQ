@@ -19,6 +19,11 @@ public:
     void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range);
     void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range);
 
+    void setScalingParameters(const int scaleFlag,
+                              const QString& periodPoints,
+                              const QString& weightPoints,
+                              const QString& scalingPeriod);
+
 signals:
     void loginFinished(bool result);
     void recordsDownloaded(QString recordsPath);
@@ -48,6 +53,11 @@ private:
     QVariant magnitudeRange;
     QVariant distanceRange;
     QVariant vs30Range;
+
+    int searchScaleFlag;
+    QString searchPeriodPoints;
+    QString searchWeightPoints;
+    QString searchSinglePeriodScalingT;
 
     //Data for retry on failure
     int retries;
