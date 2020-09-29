@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QTableWidget>
 #include <QTemporaryDir>
+#include <QPointer>
 #include <QVector>
 #include <QCheckBox>
 #include "RecordSelectionPlot.h"
@@ -19,6 +20,8 @@
 
 
 class QComboBox;
+class QLabel;
+class QGroupBox;
 
 struct PeerScaledRecord
 {
@@ -57,6 +60,8 @@ signals:
 
 public slots:
 
+    void onScalingComboBoxChanged(const int index);
+
 private:
     PeerNgaWest2Client peerClient;
     QPushButton* selectRecordsButton;
@@ -67,6 +72,7 @@ private:
     QProgressBar* progressBar;
     QComboBox* spectrumTypeComboBox;
     QStackedWidget* targetSpectrumDetails;
+    QGridLayout* recordSelectionLayout;
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;
@@ -83,6 +89,22 @@ private:
     QLineEdit* vs30Min;
     QLineEdit* vs30Max;
     QTemporaryDir groundMotionsFolder;
+
+    //Scaling
+    QComboBox* scalingComboBox;
+    QLabel* scalingPeriodLabel1;
+    QLineEdit* scalingPeriodLineEdit;
+    QLabel* scalingPeriodLabel2;
+
+    //Weight function inputs
+    QPointer<QLabel> weightFunctionHeadingLabel;
+    QPointer<QLabel> weightFunctionLabel;
+    QPointer<QLabel> periodPointsLabel1;
+    QPointer<QLineEdit> periodPointsLineEdit;
+    QPointer<QLabel> periodPointsLabel2;
+    QPointer<QLabel> weightsLabel1;
+    QPointer<QLineEdit> weightsLineEdit;
+    QPointer<QLabel> weightsLabel2;
 
     //Record Selection Members
     QList<PeerScaledRecord> currentRecords;
