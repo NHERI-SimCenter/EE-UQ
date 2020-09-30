@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = EE_UQ
 TEMPLATE = app
 
-VERSION=2.1.0
+VERSION=2.2.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 win32 {
@@ -35,7 +35,7 @@ include(../SimCenterCommon/Workflow/Workflow.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
 include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
-include(../s3hark/s3hark.pri)
+include(../Qs3hark/Qs3hark.pri)
 include(./EarthquakeEvents.pri)
 
 SOURCES += main.cpp \

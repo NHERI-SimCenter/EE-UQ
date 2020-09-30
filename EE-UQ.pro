@@ -16,7 +16,7 @@ RCC_DIR = $$OUT_PWD/.rcc
 TARGET = EE_UQ
 TEMPLATE = app
 
-VERSION=2.1.0
+VERSION=2.2.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 include($$PWD/ConanHelper.pri)
