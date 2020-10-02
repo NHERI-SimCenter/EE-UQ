@@ -1,5 +1,5 @@
 {
-    "description": "The Earthquake Engineering with Uncertainty Quantification (EE-UQ) application is for determining UQ measures (results of sampling, reliability, sensitivity) associated with the numerical simulation of a building when that building is to be subjected to earthquake motions."
+    "description": "The Earthquake Engineering with Uncertainty Quantification (EE-UQ) application is for determining UQ measures (results of sampling, reliability, sensitivity) associated with the numerical simulation of a building when that building is to be subjected to earthquake motions.",
     "license": "BSD-2-Clause", 
     "notes": "The SimCenter is supported by a grant from the National Science Foundation (#1612843)", 
     "upload_type": "software", 
