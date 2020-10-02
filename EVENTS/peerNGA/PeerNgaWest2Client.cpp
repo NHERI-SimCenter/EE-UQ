@@ -11,6 +11,7 @@
 #include <QStatusBar>
 #include <QDir>
 #include<QHttpMultiPart>
+#include <QSslConfiguration>
 
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     nRecords(3), isLoggedIn(false), retries(0)
@@ -125,7 +126,19 @@ void PeerNgaWest2Client::setupConnection()
 }
 
 void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
-{
+{    
+    /*
+       qDebug() << "Processing reply";
+
+       qDebug() << "Default SSL configuration isNull: "
+                << QSslConfiguration::defaultConfiguration().isNull();
+
+       qDebug() << "SSL configuration used by QNAM isNull: "
+                << reply->sslConfiguration().isNull();
+       qDebug() << QSslSocket::sslLibraryBuildVersionString();
+
+       qDebug() << "support ssl: " << QSslSocket::supportsSsl();
+*/
     if(reply == signInPageReply)
         processSignInPageReply();
 
@@ -154,16 +167,39 @@ void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
 
 void PeerNgaWest2Client::processSignInPageReply()
 {
+
     if(signInPageReply->error() == QNetworkReply::HostNotFoundError)
     {
         emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
         emit loginFinished(false);
         return;
     }
-    QRegularExpression regex("[\\s\\S]+authenticity_token.+value=\"(.+)\".+<\\/div>");
 
+#ifdef _WIN32
+    // mac reg expression not working with \" char .. improvise!
+    QRegularExpression regex("authenticity_token.+div");
     auto match = regex.match(QString(signInPageReply->readAll()));
+    if (match.hasMatch()) {
+        QString stringCaptured = match.captured(0);
+        QString startString = stringCaptured.remove(0,41);
+        QString finalString = startString.remove(44,100);
+        authenticityToken = finalString;
+
+    } else {
+        qDebug() << "NO MATCH\n";
+    }
+
+#else
+    QRegularExpression regex("[\\s\\S]+authenticity_token.+value=\"(.+)\".+<\\/div>");
+    auto match = regex.match(QString(signInPageReply->readAll()));
+    if (match.hasMatch()) {
+
+    } else {
+        qDebug() << "NO MATCH\n";
+    }
+
     authenticityToken = match.captured(1);
+#endif
 
     peerSignInRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
     peerSignInRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -199,7 +235,7 @@ void PeerNgaWest2Client::processSignInReply()
     }
 
     auto err = signInReply->error();
-    qDebug() << "error: "<< err;
+
     if(signInReply->error() == QNetworkReply::HostNotFoundError)
         emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
     else
@@ -239,6 +275,7 @@ void PeerNgaWest2Client::processUploadFileReply()
 
 void PeerNgaWest2Client::processPostSpectrumReply()
 {
+    qDebug() << postSpectraReply->readAll();
     if(postSpectraReply->error() != QNetworkReply::NoError)
     {
         //if it fails we will retry
