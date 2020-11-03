@@ -1,9 +1,17 @@
 {
-  "creators": [
+    "description": "The Earthquake Engineering with Uncertainty Quantification (EE-UQ) application is for determining UQ measures (results of sampling, reliability, sensitivity) associated with the numerical simulation of a building when that building is to be subjected to earthquake motions.",
+    "license": "BSD-2-Clause", 
+    "notes": "The SimCenter is supported by a grant from the National Science Foundation (#1612843)", 
+    "upload_type": "software", 
+    "communities": [
+        {
+            "identifier": "nheri-simcenter"
+        }
+    ], 
+    "creators": [
     {
       "name": "McKenna, Frank",
-      "affiliation": "UC Berkeley",
-      "orcid": "0000-0002-0308-302X"
+      "affiliation": "UC Berkeley"
     },
     {
       "name": "Wael Elhaddad",
@@ -20,16 +28,16 @@
     {
       "name": "Charles Wang",
       "affiliation": "UC Berkeley"
-    }
-  ],
-  "keywords": [
-    "earthquake engineering",
-    "performance based design",
-    "uncertainty quantification",
-    "ground motions",
-  ],
-  "license": "BSD 2-Clause \"Simplified\" License",
-  "upload_type": "software",
-  "notes" : "This work is funded by the National Science Foundation under grant CMMI 1612843",
-  "communities" : "NHERI SimCenter"
+    },
+    {
+      "name": "Stevan Gavrilovic",
+      "affiliation": "UC Berkeley"
+    },
+    {
+      "name": "Long Chen",
+      "affiliation": "University of Washington"
+    }      
+    ], 
+    "access_right": "open"
 }
+

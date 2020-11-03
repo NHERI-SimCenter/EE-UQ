@@ -11,6 +11,7 @@
 #include <QStatusBar>
 #include <QDir>
 #include<QHttpMultiPart>
+#include <QSslConfiguration>
 
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     nRecords(3), isLoggedIn(false), retries(0)
@@ -18,6 +19,8 @@ PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     QNetworkCookie cookie("sourceDb_flag", "1");
     cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
+
+    searchScaleFlag = -1;
 
     setupConnection();
 }
@@ -123,7 +126,19 @@ void PeerNgaWest2Client::setupConnection()
 }
 
 void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
-{
+{    
+    /*
+       qDebug() << "Processing reply";
+
+       qDebug() << "Default SSL configuration isNull: "
+                << QSslConfiguration::defaultConfiguration().isNull();
+
+       qDebug() << "SSL configuration used by QNAM isNull: "
+                << reply->sslConfiguration().isNull();
+       qDebug() << QSslSocket::sslLibraryBuildVersionString();
+
+       qDebug() << "support ssl: " << QSslSocket::supportsSsl();
+*/
     if(reply == signInPageReply)
         processSignInPageReply();
 
@@ -152,16 +167,39 @@ void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
 
 void PeerNgaWest2Client::processSignInPageReply()
 {
+
     if(signInPageReply->error() == QNetworkReply::HostNotFoundError)
     {
         emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
         emit loginFinished(false);
         return;
     }
-    QRegularExpression regex("[\\s\\S]+authenticity_token.+value=\"(.+)\".+<\\/div>");
 
+#ifdef _WIN32
+    // mac reg expression not working with \" char .. improvise!
+    QRegularExpression regex("authenticity_token.+div");
     auto match = regex.match(QString(signInPageReply->readAll()));
+    if (match.hasMatch()) {
+        QString stringCaptured = match.captured(0);
+        QString startString = stringCaptured.remove(0,41);
+        QString finalString = startString.remove(44,100);
+        authenticityToken = finalString;
+
+    } else {
+        qDebug() << "NO MATCH\n";
+    }
+
+#else
+    QRegularExpression regex("[\\s\\S]+authenticity_token.+value=\"(.+)\".+<\\/div>");
+    auto match = regex.match(QString(signInPageReply->readAll()));
+    if (match.hasMatch()) {
+
+    } else {
+        qDebug() << "NO MATCH\n";
+    }
+
     authenticityToken = match.captured(1);
+#endif
 
     peerSignInRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/users/sign_in"));
     peerSignInRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
@@ -197,7 +235,7 @@ void PeerNgaWest2Client::processSignInReply()
     }
 
     auto err = signInReply->error();
-    qDebug() << "error: "<< err;
+
     if(signInReply->error() == QNetworkReply::HostNotFoundError)
         emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
     else
@@ -237,6 +275,7 @@ void PeerNgaWest2Client::processUploadFileReply()
 
 void PeerNgaWest2Client::processPostSpectrumReply()
 {
+    qDebug() << postSpectraReply->readAll();
     if(postSpectraReply->error() != QNetworkReply::NoError)
     {
         //if it fails we will retry
@@ -272,9 +311,25 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         params.addQueryItem("search[SRkey]", "1");
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
-        params.addQueryItem("search[scale_flag]", "1");
-        params.addQueryItem("search[period]", "0.01,0.05,0.1,0.5,1,5,10.0");
-        params.addQueryItem("search[weight]", "1.0,1.0,1.0,1.0,1.0,1.0,1.0");
+
+        if(searchScaleFlag == 0)
+        {
+            params.addQueryItem("search[scale_flag]", "0");
+        }
+        else if(searchScaleFlag == 1)
+        {
+            params.addQueryItem("search[scale_flag]", "1");
+            params.addQueryItem("search[period]", searchPeriodPoints);
+            params.addQueryItem("search[weight]", searchWeightPoints);
+        }
+        else if(searchScaleFlag == 2)
+        {
+            params.addQueryItem("search[scale_flag]", "2");
+            params.addQueryItem("search[SinglePeriodScalingT]", searchSinglePeriodScalingT);
+            params.addQueryItem("search[period]", searchPeriodPoints);
+            params.addQueryItem("search[weight]", searchWeightPoints);
+        }
+
         params.addQueryItem("search[output_num]", QString::number(nRecords));
 
         if(magnitudeRange.isValid() && !magnitudeRange.isNull())
@@ -321,6 +376,7 @@ void PeerNgaWest2Client::processGetRecordsReply()
     QNetworkRequest downloadRecordsRequest(url);
     downloadRecordsReply = networkManager.get(downloadRecordsRequest);
 }
+
 
 void PeerNgaWest2Client::processDownloadRecordsReply()
 {
@@ -376,4 +432,16 @@ void PeerNgaWest2Client::retry()
         emit selectionFinished();
         retrySignIn();
     }
+}
+
+
+void PeerNgaWest2Client::setScalingParameters(const int scaleFlag,
+                                              const QString& periodPoints,
+                                              const QString& weightPoints,
+                                              const QString& scalingPeriod)
+{
+    searchScaleFlag = scaleFlag;
+    searchPeriodPoints = periodPoints;
+    searchWeightPoints = weightPoints;
+    searchSinglePeriodScalingT = scalingPeriod;
 }
