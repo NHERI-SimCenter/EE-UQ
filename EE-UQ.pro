@@ -16,8 +16,9 @@ RCC_DIR = $$OUT_PWD/.rcc
 TARGET = EE_UQ
 TEMPLATE = app
 
-VERSION=2.2.0
+VERSION=2.2.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES += _GRAPHICS_Qt3D
 
 include($$PWD/ConanHelper.pri)
 
@@ -40,14 +41,17 @@ win32 {
     }
 }
 
-
+include(../SimCenterCommon/Common/Common.pri)
+include(../SimCenterCommon/Workflow/Workflow.pri)
+include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
+include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
+include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
+include(../Qs3hark/Qs3hark.pri)
 include(./EarthquakeEvents.pri)
-
 
 SOURCES += main.cpp \
     WorkflowAppEE_UQ.cpp \
     RunWidget.cpp
-
 
 HEADERS  += \
     WorkflowAppEE_UQ.h\

@@ -10,16 +10,11 @@ class EEUQ(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
     requires = "jansson/2.11@bincrafters/stable", \
-               "libcurl/7.64.1@bincrafters/stable", \
-               "s3hark/1.1.2@simcenter/testing", \
-               "lapack/3.7.1@conan/stable", \
-               "SimCenterCommonQt/0.1.9@simcenter/stable",\
-               "SimCenterBackendApplications/1.2.2@simcenter/stable",\
-               "opensees/3.2.2@simcenter/testing",\
-               "dakota/6.12.0@simcenter/testing"
+               "libcurl/7.64.1", \
+               "zlib/1.2.11", \
+               "lapack/3.7.1@conan/stable"
 
     build_policy = "missing"
-
 
     def configure(self):
         if self.settings.os == "Windows":
