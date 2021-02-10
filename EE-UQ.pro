@@ -18,13 +18,17 @@ TEMPLATE = app
 
 VERSION=2.2.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
-DEFINES += _GRAPHICS_Qt3D
+//DEFINES += _GRAPHICS_Qt3D
 
 include($$PWD/ConanHelper.pri)
 
 win32{
     LIBS = $$replace(LIBS, .dll.lib, .dll)
     LIBS += -lAdvapi32
+    LIBS +=CRYPT32.lib
+    LIBS +=Ws2_32.lib
+    LIBS+=User32.lib
+    DEFINES += CURL_STATICLIB
 }
 
 
