@@ -1,0 +1,66 @@
+{
+    "description": "<p>Earthquake Engineering with Uncertainty Quantification (EE-UQ)</p>\n\n<p>Major Changes include:</p>\n\n<p>Site response now allows for random fields in soil layers for soil properties</p>\n<p>Steel building model generator (designs and creates a model for steel building)</p>\n<p>PEER NGA scaling options added</p>\n\nMinor Changes includes changes to UI to reduce wasted space</p>",
+    "license": "BSD-2-Clause", 
+    "title": "NHERI-SimCenter/EE-UQ: Version 2.2.0", 
+    "notes": "The SimCenter is supported by a grant from the National Science Foundation (#1612843)", 
+    "keywords": [
+        "uncertainty quantification", 
+        "earthquake", 
+        "engineering", 
+        "finite element", 
+        "reliability", 
+        "sampling", 
+        "sensitivity"
+    ], 
+    "version": "v2.2.0", 
+    "upload_type": "software", 
+    "communities": [
+        {
+            "identifier": "nheri-simcenter"
+        }
+    ], 
+    "publication_date": "2020-09-29", 
+    "creators": [
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Frank McKenna"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Wael Elhaddad"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Michael Gardner"
+        }, 
+        {
+            "affiliation": "Stanford University", 
+            "name": "Adam Zsarnoczay"
+        }, 
+        {
+            "affiliation": "University of California, Berkeley", 
+            "name": "Charles Wang"
+        },
+	{
+	    "name": "Stevan Gavrilovic",
+	    "affiliation": "UC Berkeley"
+	},
+	{
+	    "name": "Long Chen",
+	    "affiliation": "University of Washington"
+	}      
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/NHERI-SimCenter/EE-UQ/tree/v2.2.0", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.1439079", 
+            "relation": "isVersionOf"
+        }
+    ]
+}

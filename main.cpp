@@ -66,10 +66,10 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.2.0");
-    // GoogleAnalytics::SetTrackingId("UA-126303135-1");
-    GoogleAnalytics::StartSession();
-    GoogleAnalytics::ReportStart();
+    QCoreApplication::setApplicationVersion("2.2.1");
+    //GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    //GoogleAnalytics::StartSession();
+    //GoogleAnalytics::ReportStart();
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
         This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
         their own applications for others to use.\
         <p>\
-        This is Version 2.2.0 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
+        This is Version 2.2.1 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
         features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
         also would benefit from it.\
         <p>";
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
     QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 2.2.0");
+    QString version("Version 2.2.1");
     w.setVersion(version);
 
     QString citeText("Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, & Charles Wang. (2019, October 8). NHERI-SimCenter/EE-UQ: Version 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3475642");
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
     theRemoteService->logout();
     thread->quit();
 
-    GoogleAnalytics::EndSession();
+    //GoogleAnalytics::EndSession();
     // done
     return res;
 }
