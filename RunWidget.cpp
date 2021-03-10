@@ -96,7 +96,7 @@ RunWidget::showLocalApplication(void) {
     theStackedWidget->setCurrentIndex(0);
     theCurrentApplication = localApp;
 
-    this->show();
+   // this->show();
     theCurrentApplication->displayed();
 }
 
