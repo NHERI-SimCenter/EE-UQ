@@ -174,6 +174,9 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
     connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
+    connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
+    connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
+    connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
