@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui charts concurrent network sql qml webenginewidgets uitools webengine webchannel 3dcore 3drender 3dextras charts
+QT += core gui charts concurrent network sql qml webenginewidgets uitools webengine webchannel 3dcore 3drender 3dextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,9 +16,8 @@ RCC_DIR = $$OUT_PWD/.rcc
 TARGET = EE_UQ
 TEMPLATE = app
 
-VERSION=2.2.1
+VERSION=2.2.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
-//DEFINES += _GRAPHICS_Qt3D
 
 include($$PWD/ConanHelper.pri)
 
@@ -33,8 +32,8 @@ win32{
 
 
 linux{
-    CONFIG += no_lflags_merge
-    LIBS += -llapack -lgfortran 
+#    CONFIG += no_lflags_merge
+#    LIBS += -llapack -lgfortran 
 }
 
 win32 {
@@ -42,6 +41,7 @@ win32 {
 } else {
     mac {
     ICON = icons/NHERI-EEUQ-Icon.icns
+    DEFINES += _GRAPHICS_Qt3D
     }
 }
 

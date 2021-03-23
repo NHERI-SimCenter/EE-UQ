@@ -165,9 +165,19 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     auto groundMotionsGroup = new QGroupBox("Ground Motions");
     auto groundMotionsLayout = new QGridLayout(groundMotionsGroup);
     groundMotionsComponentsBox = new QComboBox();
+    /*
     groundMotionsComponentsBox->addItem("One (Horizontal)", GroundMotionComponents::One);
     groundMotionsComponentsBox->addItem("Two (Horizontal)", GroundMotionComponents::Two);
     groundMotionsComponentsBox->addItem("Three (Horizontal & Vertical)", GroundMotionComponents::Three);
+    */
+    groundMotionsComponentsBox->addItem("SRSS", GroundMotionComponents::Two);
+    groundMotionsComponentsBox->addItem("RotD100", GroundMotionComponents::Two);
+    groundMotionsComponentsBox->addItem("RotD50", GroundMotionComponents::Two);
+    groundMotionsComponentsBox->addItem("GeoMean", GroundMotionComponents::Two);
+    groundMotionsComponentsBox->addItem("H1", GroundMotionComponents::One);
+    groundMotionsComponentsBox->addItem("H2", GroundMotionComponents::One);
+    groundMotionsComponentsBox->addItem("V", GroundMotionComponents::Three);
+
     groundMotionsLayout->addWidget(new QLabel("Acceleration Components"), 0, 0);
     groundMotionsLayout->addWidget(groundMotionsComponentsBox, 0, 1);
     recordsTable->setMinimumHeight(200);
@@ -416,7 +426,10 @@ void PEER_NGA_Records::selectRecords()
         peerClient.selectRecords(asce710widget->sds(),
                                  asce710widget->sd1(),
                                  asce710widget->tl(),
-                                 nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+                                 nRecordsEditBox->text().toInt(),
+				 magnitudeRange,
+				 distanceRange,
+                 vs30Range,groundMotionsComponentsBox->currentIndex()+1);
     }
     else
     {
