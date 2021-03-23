@@ -9,5 +9,5 @@ Run the following command when new files have been added to an example which sho
 
 ```shell
 # in EE-UQ/Examples/
-$ make cache
+$ aurore get > index.json
 ```
