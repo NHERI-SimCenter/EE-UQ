@@ -1,11 +1,11 @@
-<map id="{{ id }}" base="{{ base }}" >
+<map id="{{ id }}" base="{{ id }}" >
     <str key="title" src="README.rst#.//title" />
-    <str key="base">{{ base }}</str>
+    <str key="base">{{ id }}</str>
     <set key="doc" cast="path">
       <path>README.rst</path>
       <set unpack="update"  src="README.rst" proc="aurore.find_dependencies" />
     </set>
-        <!-- <path key="entry_point">./input.json</path> -->
+    <path key="entry_point">./input.json</path>
 
     <str  key="summary" src="meta.yaml#/summary"/>
     <str  key="logo" src="README.rst#.//image/@uri" />

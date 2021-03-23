@@ -1,116 +1,208 @@
+.. _lbl-example_randomField:
 
-3-Story Frame - EDP Sampling
-============================
+Including Spatial Variability in Site Response Event
+=======================================================
 
-Consider the problem of uncertainty quantification in a three story shear building
+This page shows two examples on how to incorporate spatial variability into UQ analysis by using various special materials, namely ElasticIsotropic,
+PM4Sand, and PDMY03, in Site Response option under EVENT tab.
 
-.. figure:: figures/model.png
+Problem Statement
+---------------------------------------------
+Site response analysis is commonly performed to analyze the propagation of seismic wave through soil. As shown in :numref:`fig_siteResponse`, 
+one-dimensional response analyses, as a simplified method, assume that all boundaries are horizontal and that the response of a soil deposit is
+predominately caused by SH-waves propagating vertically from the underlying bedrock. Ground surface response is usually the major output from
+these analyses, together with profile plots such as peak horizontal acceleration along the soil profile. When liquefiable soils are presenting,
+maximum shear strain and excess pore pressure ratio plots are also important.
+
+In the real world condition, physical properties of soils vary from place to place within a soil deposit due to varying geologic formation and loading histories such as sedimentation, erosion, transportation,
+and weathering processes. This spatial variability in the soil properties cannot be simply described by a mean and variance, as commonly adopted in UQ analyses,
+since the estimation of the two statistic values does not account for the spatial variation of the soil property data in the soil profile.
+Spatial variability is often modeled using two separated components: a known deterministic trend and a residual variability about the trend.
+These components are illustrated in :numref:`fig_InherentVariability`.
+
+.. _fig_siteResponse:
+.. figure:: figures/siteResponse.png
+   :scale: 50%
    :align: center
-   :width: 400
    :figclass: align-center
 
-   Three Story Shear Building Model (P10.2.9, "Dynamics of Structures", A.K.Chopra)
+   Simplified 1D site response analysis (courtesy of Pedro Arduino)
 
-The structure has uncertain properties that all follow normal distribution:
+.. _fig_InherentVariability:
+.. figure:: figures/InherentVariability.png
+   :scale: 60 %
+   :align: center
+   :figclass: align-center
 
-1. Weight of Typical Floor (``w``): mean :math:`\mu_E=100 \mathrm{kip}` and standard deviation :math:`\sigma_E =10 \mathrm{kip}` (COV = 10%)
-2. Weight of Roof (``wR``): mean :math:`\mu_E=50 \mathrm{kip}` and standard deviation :math:`\sigma_E =5 \mathrm{kip}` (COV = 10%)
-3. Story Stiffness (``k``): mean :math:`\mu_k =326.32 \mathrm{kip/in}` and a standard deviation of :math:`\sigma_P = 3 \mathrm{kN}`, (COV = 12%).
+   Inherent soil variability (after :cite:`Phoon1999`).
 
-The goal of the exercise is to estimate the mean and standard deviation of the relative displacement of the fourth node when subjected to an El Centro ground motion record.
+A summary of the random field preparation procedure for the site response event analysis is summarized here:
 
-The exercise will use both the MDOF, :numref:`lblMDOF`,  and OpenSees, :numref:`lblOpenSeesSIM`, structural generators. For the OpenSees generator the following model script, `ShearBuilding3.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/ShearBuilding3.tcl>`_ , is used:
-
-.. literalinclude:: ShearBuilding3.tcl
-   :language: tcl
+1. Generate mean field using mean target soil property, e.g., relative density (Dr) or shear wave velocity (Vs)
+2. Generate Gaussian random field for target soil property using *Gauss1D.py* with mean = 0.0 and :math:`\sigma` = 1.0
+3. Interpolate Gaussian field to FEM mesh
+4. Combine the mean (trend) field and Gaussian (residual variability) field to obtain a stochastic field
+5. Generate material input for site response analysis based on predefined model calibration methods
+6. Perform site response analysis using the randomized material input and obtain acceleration response at the surface of soil column for subsequent UQ analysis
 
 .. note::
-   
-   1. The first lines containing ``pset`` will be read by the application when the file is selected and the application will autopopulate the random variables ``w``, ``wR``, and ``k`` in the **RV**  panel with these same variable names. It is of course possible to explicitly use Random Variables without the ``pset`` command by "RV.**variable name" in the input file. However, no random variables will be autopopulated if user chooses this route.
+   - Currently only **2D** plain-strain materials (including PDMY03 and ElasticIsotropic) are supported when using random field. Therefore, 1-component motion is required.
 
-.. warning::
+General Workflow for Global Sensitivity Analysis
+-----------------------------------------------------------
 
-   Do not place the file in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing this file multiple times (a copy will be made for each sample specified). If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!
+In a global sensitivity analysis the user is wishing to understand what is the influence of the individual random variables on the quantities of interest.
+This is typically done before the user launches large scale forward uncertainty problems in order to limit the number of random variables used so as to limit the number of simulations performed.
 
+..
+   For this problem we will limit the response qunataties of interest to the following six quantaties. Peak Roof displacement in 1 and 2 directions,
+root mean square (RMS) accelerations in 1 and 2 directions, Peak BAse shear and moments in 1 and 2 directions. 
 
-Sampling Analysis with ElCentro and Reduced Output
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+To perform a Global Sensitivity analysis the user would perform the following steps:
 
-In example :eeuq-01:`/` we got the standard output, which can be both a lot and also limited (in sense you don't get the information you want). In this example we will present how to obtain results just for the roof displacement, the displacement of node **4** in both the **MDOF** and **OpenSees** model generator examples. The examples could be extended to output for example the story shear forces, element forces, element end rotations, ...
+The steps involved:
 
-For this example you will need two additional file `recorderCommands.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/recorderCommands.tcl>`_ and `postprocess.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/postprocess.tcl>`_. 
+1. Start the application and the UQ Selection will be highlighted. In the panel for the UQ selection, keep the UQ engine as that selected, i.e. Dakota. From the UQ Method Category drop down menu
+select Sensitivity Analysis, Keeping the method as LHS (Latin Hypercube). Change the **# Samples** to 20 and the **Seed** to 273 as shown in the figure. The seed specification allows a user to obtain repeatable
+results from multiple runs. 
 
-The ``recorderCommands.tcl`` script as shown below will record the envelope displacements in the first two degrees-of-freedom for nodes **1** through **4**. 
+.. figure:: figures/randomField-UQ.png
+   :align: center
+   :figclass: align-center
 
-.. literalinclude:: recorderCommands.tcl
-   :language: tcl
+2. Next select the **GI** panel. In this panel the building properties and units are set. For this example enter **1** for the number of stories, **144** for building height, **360** fow building width,
+and **360** for building depth.
 
-The postprocess.tcl script shown below will accept as input any of the 4 nodes *in the domain and for each of the two dof directions.
+.. figure:: figures/randomField-GI.png
+   :align: center
+   :figclass: align-center
 
-.. literalinclude:: postprocess.tcl
-   :language: tcl
+3. Next select the **SIM** tab from the input panel. This will default in the MDOF model generator. 
+Define other input variables as shown in figure:
+
+.. figure:: figures/randomField-SIM.png
+   :align: center
+   :figclass: align-center
+
+3. Next select the **EVT** panel. From the Load Generator pull down menu select the **Site Response** option. Define soil profile, ground water table (GWT), and mesh. Then select interested material, e.g., 
+*PM4Sand_Random*, *PDMY03_Random*, or *Elastic_Random*. Under **Configure** tab, select path to the input motion.
 
 .. note::
+   - A reasonable mesh resolution is recommended. Selection of element size should consider several factors, including but not limited to, layer shear wave velocity (for frequency resolution), corelation length (for random field resolution), and computation efficiency.
 
-   The use has the option to provide no postprocess script (in which case the main script must create a ``results.out`` file containing a single line with as many space separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. An example of a postprocessing Python script is `postprocess.py <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/examples/ShearBuilding3/postprocess.py>`_. 
+.. figure:: figures/randomField-EVT.png
+   :align: center
+   :figclass: align-center
 
-   .. literalinclude:: postprocess.py
-      :language: python
+3. Next choose the **FEM** panel. Here we will change the entries to use Rayleigh damping, with rayleigh factor chosen using **1** mode.
 
-The steps are the same as the previous example, with exception of step 4 defining the **EDP**. 5. 
+.. figure:: figures/randomField-FEM.png
+   :align: center
+   :figclass: align-center
 
-1. For the **EDP** panel, we will change the generator to **User Defined**. In the panel that presents itself the user must provide the paths to both the recorder commands and the postprocessing script. Next the user must provide information on the response parameters they are interested in. The user presses the **Add** button and the enters ``Node_4_Disp_1`` in the entry field as shown in figure below.
+4. We will skip the **EDP** panel leaving it in it's default condition, that being to use the **Standard Earthquake** EDP generator.
 
-.. figure:: figures/shearEDP-U.png
+.. figure:: figures/randomField-EDP.png
+   :align: center
+   :figclass: align-center
+
+5. For the **RV** panel, we will enter the distributions and values for our random variables. If only the uncertainty related to spatial variability is interested, a dummy random variable can be defined in this tab.
+Then all the variability shown in the response will solely be due to spatial variability in the site response analysis. 
+
+.. figure:: figures/randomField-RV.png
+   :align: center
+   :figclass: align-center
+
+.. warning::   
+
+   The user cannot leave any of the distributions for these values as constant for the Dakota UQ engine.
+
+5. Next click on the 'Run' button. This will cause the backend application to launch dakota. When done the **RES** tab will be selected and the results will be displayed. The results show the values the mean and standard deviation. 
+The peak displacement of the roof, is the quantity **PFD**. The **PFA** and **PFD** quantity defines peak floor acceleration and displacement, respectively, and the **PID** quantity corresponds to peak interstory drift.
+
+.. figure:: figures/Elastic-RES.png
    :align: center
    :figclass: align-center
 
 
-2. Next click on the **Run** button. This will cause the backend application to launch dakota. When done the **RES** panel will be selected and the results will be displayed. The results show the values the mean and standard deviation as before but now only for the one quantity of interest.
+Adding Spatial Variability
+-----------------------------------------------------------
 
-.. figure:: figures/shearRES-UO.png
+Case 1: using ElasticIsotropic material
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the **Elastic_Random** material, shear wave velocity (Vs) can be selected to be randomized. Then select the **Mean** and **COV** (coefficient of variation :math:`=\frac{\sigma}{\mu}`) for shear wave velocity.  
+**Correlation length** defines how shear wave velocities are vertically correlated. Subsequently, Young's modulus is calculated based the stochastic shear velocity profile at the center of each element. No special calibration is required.
+
+.. note::
+   - Vs is bounded between 50 and 1500 m/s. These limits can be modified in *calibration.py*.
+
+.. figure:: figures/Elastic-Random.png
+   :scale: 60 %
    :align: center
    :figclass: align-center
 
+   Define inputs for Elastic_Random material.
 
-Global Sensitivity
-^^^^^^^^^^^^^^^^^^
+:numref:`fig_Elastic-Average-RespSpect` presents the profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
+Ru are always zero since there is no volumetric strain in ElasticIsotropic material. :numref:`fig_Elastic-Average-RespSpect` depicts the mean and each individual response spectra (5% damping) at surface obtained from 20 realizations.
 
-In a global sensitivity analysis the user is wishing to understand what is the influence of the individual random variables on the quantities of interest. This is typically done before the user launches large scale forward uncertainty problems in order to limit the number of random variables used so as to limit the number of simulations performed.
-
-To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the global reliability method for this problem the user would follow the same sequence of steps as previously. The difference would be in the **UQ** panel in which the user would select a **Reliability** as the Dakota Method Category and then choose GLobal reliability. In the figure the user is specifying that they are interested in the probability that the displacement will exceed certain response levels.
-
-
-.. figure:: figures/shearSensitivityUQ.png
+.. _fig_Elastic-Average-Profile:
+.. figure:: figures/Elastic-Average-Profile.png
+   :scale: 40 %
    :align: center
    :figclass: align-center
 
-After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results.
+   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
 
-.. figure:: figures/shearSensitivityRES.png
+.. _fig_Elastic-Average-RespSpect:
+.. figure:: figures/Elastic-Average-RespSpect.png
+   :scale: 20 %
    :align: center
    :figclass: align-center
 
-The results showing that the earthquake factor has the largest influence on the response followed  by the stiffness value k, as the results graphically would indicate.
-
-Reliability Analysis
-^^^^^^^^^^^^^^^^^^^^
-
-If the user is interested in the probability that certain response measure will be exceeded an alternative strategy is to perform a reliability analysis. To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the Global Reliability method presented in Dakota choose the **Global Reliability** methods from the methods drop down menu. In the response levels enter a value of **2.5**, specifying that we are interested in the value of the CDF for a displacement of the roof of 2.5in, i.e. what is probability that displacement will be less than 2.5in.
+   Response spectra (5% damping) at surface obtained from 20 realizations.
 
 
-.. figure:: figures/shearReliabilityUQ.png
+
+Case 2: using PM4Sand material
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+For the **PM4Sand_Random** material, relative density (Dr) can be selected to be randomized. Then select the **Mean** and **COV** (coefficient of variation :math:`COV=\frac{\sigma}{\mu}`) for shear wave velocity.  
+**Correlation length** defines how shear wave velocities are vertically correlated. In ths current calibration procedure, all the other parameters are kept as input except for the contraction rate
+parameter hpo, that is calibrated based on the empirical triggering model proposed by Idriss and Boulanger 2008.
+
+:numref:`fig_PM4Sand-Average-RespSpect` presents the profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
+Comparing to elastic material, more variability are shown among these realizations. :numref:`fig_PM4Sand-Average-RespSpect` depicts the mean and each individual response spectra (5% damping) at surface obtained from 20 realizations.
+
+.. figure:: figures/PM4Sand-Random.png
+   :scale: 60 %
    :align: center
    :figclass: align-center
 
-After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results, which as shown below, indicate that the probability is **91.5%**/
+   Define inputs for PM4Sand_Random material.
 
-.. figure:: figures/shearReliabilityRes.png
+.. note::
+   - Dr is bounded between 0.2 and 0.95. These limits can be modified in *calibration.py*.
+
+.. _fig_PM4Sand-Average-Profile:
+.. figure:: figures/PM4Sand-Average-Profile.png
+   :scale: 40 %
    :align: center
    :figclass: align-center
 
-.. warning::
+   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
 
-   Reliability analysis can only be performed when their is only one EDP.
+
+.. _fig_PM4Sand-Average-RespSpect:
+.. figure:: figures/PM4Sand-Average-RespSpect.png
+   :scale: 20 %
+   :align: center
+   :figclass: align-center
+
+   Response spectra (5% damping) at surface obtained from 20 realizations.
+
+
+
+
 
 

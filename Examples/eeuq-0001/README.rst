@@ -21,7 +21,7 @@ The goal of the exercise is to estimate the mean and standard deviation of the r
 
 The exercise will use both the MDOF, :ref:`lblMDOFSIM`,  and OpenSees, :ref:`lblOpenSeesSIM`, structural generators. For the OpenSees generator the following model script, `ShearBuilding3.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/ShearBuilding3.tcl>`_ , is used:
 
-.. literalinclude:: ShearBuilding3.tcl
+.. literalinclude:: src/ShearBuilding3.tcl
    :language: tcl
 
 .. note::

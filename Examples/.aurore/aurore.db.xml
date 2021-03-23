@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- <collection id="feed-0004" base="$SIMCENTER_DEV/EE-UQ" > -->
-<collection id="feed-0004" >
-  <category-schemes>
+<collection>
+    <category-schemes>
+      <category-scheme key="Difficulty">
+        <var cast="str" src="./meta.yaml#/difficulty" />
+        <map>
+            <str key="0">Beginner</str>
+            <str key="1">Intermediate</str>
+            <str key="2">Advanced</str>
+        </map>
+      </category-scheme>
+    </category-schemes>
       <!--    <category-scheme key="Simulation">
       <var src="./src/input.json#/fem/program" />
       <map>
@@ -10,7 +19,6 @@
         <str key="FEAP">FEAP</str>
       </map>
       </category-scheme> -->
-  </category-schemes>
 
   <items>
     <map id="eeuq-0001" base="eeuq-0001" type="eeuq" published="2020-12-17T21:26:53.946381-08:00"/>
