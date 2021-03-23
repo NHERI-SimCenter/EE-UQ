@@ -1,0 +1,267 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake",
+                "subtype": "PEER NGA Records"
+            }
+        ],
+        "Modeling": {
+            "Application": "SteelBuildingModel",
+            "ApplicationData": {
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ1",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 30.2831,
+                            "fileName": "RSN13_KERN_PAS180.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-13",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 7.2801,
+                            "fileName": "RSN20_NCALIF.FH_H-FRN044.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-20",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 11.1375,
+                            "fileName": "RSN36_BORREGO_A-ELC180.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-36",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 39.1306,
+                            "fileName": "RSN40_BORREGO_A-SON033.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-40",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 153.7844,
+                            "fileName": "RSN54_SFERN_BSF135.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-54",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 222.9832,
+                            "fileName": "RSN61_SFERN_C08051.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-61",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 206.3216,
+                            "fileName": "RSN67_SFERN_ISD014.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-67",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 149.8421,
+                            "fileName": "RSN74_SFERN_MA1130.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-74",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 141.6545,
+                            "fileName": "RSN76_SFERN_MA3130.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-76",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 202.6075,
+                            "fileName": "RSN84_SFERN_SDC000.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-84",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 95.7887,
+                            "fileName": "RSN86_SFERN_SON033.AT2",
+                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
+                        }
+                    ],
+                    "name": "PEER-Record-86",
+                    "type": "PeerEvent"
+                }
+            ],
+            "TargetSpectrum": {
+                "Edition": "2014 v4.2.0 (Dynamic)",
+                "ReturnPeriod": "2500",
+                "SpectrumType": "Uniform Hazard Spectrum (USGS NSHMP)",
+                "Vs30": "259 (Stiff Soil D)"
+            },
+            "components": "H1",
+            "distanceMax": "50.0",
+            "distanceMin": "0.0",
+            "distanceRange": false,
+            "magnitudeMax": "8.0",
+            "magnitudeMin": "5.0",
+            "magnitudeRange": false,
+            "records": "11",
+            "type": "ExistingPEER_Events",
+            "vs30Max": "300.0",
+            "vs30Min": "150.0",
+            "vs30Range": false
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 3,
+        "PlanArea": 14400,
+        "depth": 120,
+        "height": 39,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 14400,
+        "stories": 3,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 120
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "dampingRatio": 0.02,
+        "dampingRatioModal": 0.02,
+        "fileName": "nonlinear_analysis_solver.tcl",
+        "filePath": "{Current_Dir}/.",
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": 1,
+        "rayleighTangent": "Initial",
+        "secondMode": 2,
+        "solver": "Umfpack"
+    },
+    "StructuralInformation": {
+        "folderName": "Test",
+        "numStories": 3,
+        "pathDataFolder": "{Current_Dir}/Test",
+        "randomVar": [
+        ],
+        "type": "SteelBuildingModel"
+    },
+    "UQ_Method": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "keepSamples": true,
+            "method": "LHS",
+            "samples": 11,
+            "seed": 413
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "localAppDir": "C:/Tools/EE-UQ",
+    "randomVariables": [
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "runType": "runningLocal",
+    "workingDir": "C:/Workdir/EE-UQ"
+}

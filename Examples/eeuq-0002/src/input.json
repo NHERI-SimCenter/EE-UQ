@@ -1,0 +1,206 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "Site Response",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "MDOF_BuildingModel",
+            "ApplicationData": {
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ1",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "author": "SimCenter Site Response Tool",
+            "basicSettings": {
+                "OpenSeesPath": "Input the full path of OpenSees excutable.",
+                "dampingCoeff": 90,
+                "dashpotCoeff": 360,
+                "eSizeH": 0.25,
+                "eSizeV": 0.25,
+                "groundMotion": "{Current_Dir}/elCentro.AT2",
+                "groundWaterTable": 0,
+                "rockDen": 2,
+                "rockVs": 180,
+                "simType": "2D1D",
+                "slopex1": 0,
+                "slopex2": 0
+            },
+            "materials": [
+                {
+                    "COV": 0.1,
+                    "E": 168480,
+                    "Ly": 1,
+                    "Variable": "Vs",
+                    "concurrency": 4,
+                    "density": 2,
+                    "id": 1,
+                    "mean": 180,
+                    "poisson": 0.3,
+                    "realization": 100,
+                    "type": "Elastic_Random"
+                },
+                {
+                    "E": 168480,
+                    "density": 2,
+                    "id": 2,
+                    "poisson": 0.3,
+                    "type": "Elastic"
+                }
+            ],
+            "name": "Configuration of Site Response Analysis of A Demo Site",
+            "soilProfile": {
+                "soilLayers": [
+                    {
+                        "Dr": 0.5,
+                        "color": "#64B5F6",
+                        "density": 2,
+                        "eSize": 0.2,
+                        "hPerm": 1e-07,
+                        "id": 1,
+                        "material": 1,
+                        "name": "Layer 1",
+                        "thickness": 3,
+                        "uBulk": 2200000,
+                        "vPerm": 1e-07,
+                        "void": 0.5,
+                        "vs": 180
+                    },
+                    {
+                        "Dr": 0.4663,
+                        "color": "Black",
+                        "density": 2,
+                        "eSize": 0,
+                        "hPerm": 1e-07,
+                        "id": 2,
+                        "material": 2,
+                        "name": "Rock",
+                        "thickness": 0,
+                        "uBulk": 2200000,
+                        "vPerm": 1e-07,
+                        "void": 0.66011,
+                        "vs": 180
+                    }
+                ]
+            }
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 1,
+        "PlanArea": 129600,
+        "depth": 360,
+        "height": 144,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 129600,
+        "stories": 1,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "dampingRatio": 0.02,
+        "dampingRatioModal": 0.02,
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": 1,
+        "rayleighTangent": "Initial",
+        "secondMode": 0,
+        "solver": "Umfpack"
+    },
+    "StructuralInformation": {
+        "Bx": 0.1,
+        "By": 0.1,
+        "Fyx": 1000000,
+        "Fyy": 1000000,
+        "Krz": 10000000000,
+        "Kx": 100,
+        "Ky": 100,
+        "ModelData": [
+            {
+                "Fyx": 1000000,
+                "Fyy": 1000000,
+                "Ktheta": 10000000000,
+                "bx": 0.1,
+                "by": 0.1,
+                "height": 144,
+                "kx": 100,
+                "ky": 100,
+                "weight": 144
+            }
+        ],
+        "height": 144,
+        "massX": 0,
+        "massY": 0,
+        "numStories": 1,
+        "randomVar": [
+        ],
+        "responseX": 0,
+        "responseY": 0,
+        "type": "MDOF_BuildingModel",
+        "weight": 144
+    },
+    "UQ_Method": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "keepSamples": true,
+            "method": "LHS",
+            "samples": 20,
+            "seed": 188
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "localAppDir": "C:/Tools/EE-UQ",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 10,
+            "name": "dummy",
+            "refCount": 0,
+            "stdDev": 1,
+            "value": "RV.dummy",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "runType": "runningLocal",
+    "workingDir": "C:/Workdir/EE-UQ"
+}
