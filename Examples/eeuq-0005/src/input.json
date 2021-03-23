@@ -1,0 +1,152 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "StochasticGroundMotion",
+                "ApplicationData": {
+                    "modelName": "VlachosSiteSpecificEQ",
+                    "seed": 500
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "OpenSeesInput",
+            "ApplicationData": {
+                "fileName": "ShearBuilding3.tcl",
+                "filePath": "{Current_Dir}/."
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ1",
+            "ApplicationData": {
+            }
+        }
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "modelName": "Vlachos et al. (2018)",
+            "momentMagnitude": "RV.M",
+            "ruptureDist": "RV.R",
+            "seed": 500,
+            "type": "StochasticMotion",
+            "vs30": "RV.V"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 1,
+        "PlanArea": 129600,
+        "depth": 360,
+        "height": 144,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 129600,
+        "stories": 1,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "dampingRatio": 0.02,
+        "dampingRatioModal": 0.02,
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": 1,
+        "rayleighTangent": "Initial",
+        "secondMode": 2,
+        "solver": "Umfpack"
+    },
+    "StructuralInformation": {
+        "centroidNodes": [
+            1,
+            2,
+            3,
+            4
+        ],
+        "ndf": 3,
+        "ndm": 2,
+        "randomVar": [
+        ],
+        "responseNodes": [
+            1,
+            2,
+            3,
+            4
+        ],
+        "type": "OpenSeesInput"
+    },
+    "UQ_Method": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "keepSamples": true,
+            "method": "LHS",
+            "samples": 100,
+            "seed": 413
+        },
+        "uqEngine": "Dakota",
+        "uqType": "Forward Propagation"
+    },
+    "localAppDir": "C:/Tools/EE-UQ",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 7,
+            "name": "M",
+            "refCount": 1,
+            "stdDev": 1,
+            "value": "RV.M",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 20,
+            "name": "R",
+            "refCount": 1,
+            "stdDev": 5,
+            "value": "RV.R",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 259,
+            "name": "V",
+            "refCount": 1,
+            "stdDev": 50,
+            "value": "RV.V",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
+    "runType": "runningLocal",
+    "workingDir": "C:/Workdir/EE-UQ"
+}
