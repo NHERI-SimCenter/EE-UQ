@@ -1,14 +1,13 @@
----
-title: EE-UQ
-template: partials/filter_card_index3.html
-template_data:
-    gallery_items:
-        src/input.json:
-          UQ: UQ_Method.uqType
-    filters:
-        input.json:
-        - description
-        - UQ_Method.uqType
-...
 
-# EE-UQ
+# EE-UQ Examples
+
+## Adding new examples
+
+## Updating existing examples
+
+Run the following command when new files have been added to an example which should be synchronized with the documentation repository:
+
+```shell
+# in EE-UQ/Examples/
+$ make cache
+```
