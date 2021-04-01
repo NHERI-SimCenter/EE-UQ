@@ -72,3 +72,7 @@ SimCenterBackendApplications contains a number of applications written in C++, C
 ### Acknowledgement
 
 This material is based upon work supported by the National Science Foundation under Grant No. 1612843.
+
+### Contact
+
+NHERI-SimCenter nheri-simcenter@berkeley.edu
