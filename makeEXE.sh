@@ -12,7 +12,7 @@ conan install .. --build missing
 status=$?
 if [[ $status != 0 ]]
 then
-    echo "WE-UQ: conan install failed";
+    echo "EE-UQ: conan install failed";
     exit $status;
 fi
 
@@ -21,7 +21,7 @@ qmake ../EE-UQ.pro
 status=$?
 if [[ $status != 0 ]]
 then
-    echo "WE-UQ: qmake failed";
+    echo "EE-UQ: qmake failed";
     exit $status;
 fi
 
@@ -30,6 +30,6 @@ make
 status=$?;
 if [[ $status != 0 ]]
 then
-    echo "WE-UQ: make failed";
+    echo "EE-UQ: make failed";
     exit $status;
 fi
