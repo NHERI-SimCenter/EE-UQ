@@ -18,6 +18,7 @@ TEMPLATE = app
 
 VERSION=2.2.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES += NOINTERNALFEM
 
 include($$PWD/ConanHelper.pri)
 
@@ -32,8 +33,7 @@ win32{
 
 
 linux{
-#    CONFIG += no_lflags_merge
-#    LIBS += -llapack -lgfortran 
+
 }
 
 win32 {
