@@ -19,7 +19,7 @@ for:
        - python -m pip install --upgrade pip
        - pip install conan
        - conan user
-       - conan remote add simcenter https://api.bintray.com/conan/nheri-simcenter/simcenter       
+       - conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter       
 
 
     install:
@@ -63,7 +63,7 @@ for:
        - python -m pip install --upgrade pip
        - pip install conan
        - conan user
-       - conan remote add simcenter https://api.bintray.com/conan/nheri-simcenter/simcenter
+       - conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
        
     install:
        - uname
@@ -112,7 +112,7 @@ for:
        - cmd: conan profile show default
        - cmd: conan profile update settings.compiler="Visual Studio" default
        - cmd: conan profile update settings.compiler.version="16" default
-       - cmd: conan remote add simcenter https://api.bintray.com/conan/nheri-simcenter/simcenter
+       - cmd: conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter                     
        - cmd: echo %PATH%
 
     install:
