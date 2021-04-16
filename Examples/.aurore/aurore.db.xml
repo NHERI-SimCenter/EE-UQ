@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <collection id="feed-0004" base="$SIMCENTER_DEV/EE-UQ" > -->
 <collection>
+    <tag-scheme key="">
+        <tag-scheme key="UV" src="../../SimCenterDocumentation/docs/common/requirements/tags.xml#UV" />
+        <tag-scheme key="UM" src="../../SimCenterDocumentation/docs/common/requirements/tags.xml#UM" />
+        <tag-scheme key="EL" src="../../SimCenterDocumentation/docs/common/requirements/tags.xml#EL" />
+    </tag-scheme>
     <category-schemes>
       <category-scheme key="Difficulty">
         <var cast="str" src="./meta.yaml#/difficulty" />
