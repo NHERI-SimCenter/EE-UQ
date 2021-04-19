@@ -9,10 +9,10 @@ class EEUQ(ConanFile):
     description = "NHERI SimCenter Earthquake Engineering with Uncertainty Quantification Research Tool"
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
-    requires = "jansson/2.11@bincrafters/stable", \
-               "libcurl/7.64.1", \
-               "zlib/1.2.11", \
-               "lapack/3.7.1@conan/stable"
+    requires = "jansson/2.13.1", \
+               "libcurl/7.72.0", \
+               "openblas/0.3.13", \
+               "zlib/1.2.11"
 
     build_policy = "missing"
 

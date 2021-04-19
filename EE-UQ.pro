@@ -18,6 +18,7 @@ TEMPLATE = app
 
 VERSION=2.2.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES += NOINTERNALFEM
 
 include($$PWD/ConanHelper.pri)
 
@@ -32,8 +33,7 @@ win32{
 
 
 linux{
-#    CONFIG += no_lflags_merge
-#    LIBS += -llapack -lgfortran 
+
 }
 
 win32 {
@@ -49,8 +49,7 @@ include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/Workflow/Workflow.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
-include(../GroundMotionUtilities/UI/GroundMotionWidgets.pri)
-include(../Qs3hark/Qs3hark.pri)
+include(../QS3hark/QS3hark.pri)
 include(./EarthquakeEvents.pri)
 
 SOURCES += main.cpp \
