@@ -65,3 +65,4 @@ postprocessDAKOTA
 debug.log
 *.json
 MDOF_BuildingModelToSAM
+tmp.SimCenter
