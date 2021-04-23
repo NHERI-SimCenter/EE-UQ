@@ -42,6 +42,7 @@ win32 {
     mac {
     ICON = icons/NHERI-EEUQ-Icon.icns
     DEFINES += _GRAPHICS_Qt3D
+    QMAKE_INFO_PLIST=$$PWD/Info.plist
     }
 }
 

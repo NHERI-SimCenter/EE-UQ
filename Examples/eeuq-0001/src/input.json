@@ -187,12 +187,12 @@
             "variableClass": "Uncertain"
         },
         {
-            "distribution": "Normal",
+            "distribution": "Uniform",
             "inputType": "Parameters",
-            "mean": 1.2,
+            "lowerbound": 1.2,
             "name": "factorEC",
             "refCount": 1,
-            "stdDev": 1.8,
+            "upperbound": 1.8,
             "value": "RV.factorEC",
             "variableClass": "Uncertain"
         }
