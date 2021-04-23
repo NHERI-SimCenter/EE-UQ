@@ -154,7 +154,7 @@
         "uqEngine": "Dakota",
         "uqType": "Forward Propagation"
     },
-    "localAppDir": "/Users/fmckenna/release/SimCenterBackendApplications",
+    "localAppDir": "C:/Tools/EE-UQ",
     "randomVariables": [
         {
             "distribution": "Normal",
@@ -197,7 +197,7 @@
             "variableClass": "Uncertain"
         }
     ],
-    "remoteAppDir": "/Users/fmckenna/release/SimCenterBackendApplications",
+    "remoteAppDir": "/home1/00477/tg457427/SimCenterBackendApplications/May-2020",
     "runType": "runningLocal",
-    "workingDir": "/Users/fmckenna/Documents/EE-UQ/LocalWorkDir"
+    "workingDir": "C:/Workdir/EE-UQ"
 }
