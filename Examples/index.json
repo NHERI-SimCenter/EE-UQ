@@ -1,0 +1,195 @@
+{
+  "items": {
+    "eeuq-0001": {
+      "id": "eeuq-0001",
+      "title": "Shear Building: Sampling, Reliability and Sensitivity",
+      "base": "eeuq-0001",
+      "doc": [
+        "eeuq-0001/figures/shearFEM-OpenSees.png",
+        "eeuq-0001/figures/shearRES-UO.png",
+        "eeuq-0001/postprocess.py",
+        "eeuq-0001/figures/shearRV.png",
+        "eeuq-0001/figures/shearRES1.png",
+        "eeuq-0001/figures/shearSIM.png",
+        "eeuq-0001/figures/shearSIM-OpenSees.png",
+        "eeuq-0001/recorderCommands.tcl",
+        "eeuq-0001/figures/shearRES6.png",
+        "eeuq-0001/README.rst",
+        "eeuq-0001/figures/shearFEM.png",
+        "eeuq-0001/figures/shearEDP-U.png",
+        "eeuq-0001/figures/shearReliabilityRes.png",
+        "eeuq-0001/figures/shearReliabilityUQ.png",
+        "eeuq-0001/figures/shearRES7.png",
+        "eeuq-0001/figures/shearEVT.png",
+        "eeuq-0001/figures/shearSensitivityRES.png",
+        "eeuq-0001/postprocess.tcl",
+        "eeuq-0001/figures/shearSensitivityUQ.png",
+        "eeuq-0001/figures/model.png",
+        "eeuq-0001/src/ShearBuilding3.tcl",
+        "eeuq-0001/figures/shearUQ.png"
+      ],
+      "entry_point": "eeuq-0001/./input.json",
+      "summary": "This example takes a brief look at uncertainty quantification in a three story shear frame subjected to earthquake loading.",
+      "logo": "figures/model.png",
+      "published": "2020-12-17T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      },
+      "tags": [
+        "UV.1.1",
+        "UM.1.1.1",
+        "UM.1.1",
+        "EL.3"
+      ]
+    },
+    "eeuq-0002": {
+      "id": "eeuq-0002",
+      "title": "Including Spatial Variability in Site Response Event",
+      "base": "eeuq-0002",
+      "doc": [
+        "eeuq-0002/figures/randomField-UQ.png",
+        "eeuq-0002/figures/Elastic-Average-RespSpect.png",
+        "eeuq-0002/README.rst",
+        "eeuq-0002/figures/PM4Sand-Average-Profile.png",
+        "eeuq-0002/figures/Elastic-RES.png",
+        "eeuq-0002/figures/randomField-RV.png",
+        "eeuq-0002/figures/Elastic-Random.png",
+        "eeuq-0002/figures/randomField-EDP.png",
+        "eeuq-0002/figures/InherentVariability.png",
+        "eeuq-0002/figures/randomField-EVT.png",
+        "eeuq-0002/figures/siteResponse.png",
+        "eeuq-0002/figures/Elastic-Average-Profile.png",
+        "eeuq-0002/figures/PM4Sand-Random.png",
+        "eeuq-0002/figures/randomField-FEM.png",
+        "eeuq-0002/figures/PM4Sand-Average-RespSpect.png",
+        "eeuq-0002/figures/randomField-GI.png",
+        "eeuq-0002/figures/randomField-SIM.png"
+      ],
+      "entry_point": "eeuq-0002/./input.json",
+      "summary": "This page shows two examples on how to incorporate spatial variability into UQ analysis by using various special materials, namely ElasticIsotropic, PM4Sand, and PDMY03, in Site Response option under EVENT tab.",
+      "logo": "figures/siteResponse.png",
+      "published": "2021-03-17T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      },
+      "tags": [
+        "UV.1.1",
+        "UM.1.1.1",
+        "UM.1.1"
+      ]
+    },
+    "eeuq-0003": {
+      "id": "eeuq-0003",
+      "title": "Ground Motion Selection and Nonlinear Response Analysis",
+      "base": "eeuq-0003",
+      "doc": [
+        "eeuq-0003/figures/uq.png",
+        "eeuq-0003/figures/sdr_pfa.png",
+        "eeuq-0003/figures/fem.png",
+        "eeuq-0003/figures/res.png",
+        "eeuq-0003/figures/sim.png",
+        "eeuq-0003/figures/evt.png",
+        "eeuq-0003/README.rst",
+        "eeuq-0003/figures/frame.png"
+      ],
+      "entry_point": "eeuq-0003/./input.json",
+      "summary": "This example shows how to select ground motion records and run nonlinear time history analysis for the OpenSees/tcl model of interest.",
+      "logo": "figures/frame.png",
+      "published": "2021-03-17T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      },
+      "tags": [
+        "UM.1.1.1",
+        "UM.1.1",
+        "EL.3",
+        "EL.8"
+      ]
+    },
+    "eeuq-0004": {
+      "id": "eeuq-0004",
+      "title": "AutoSDA and Nonlinear Response Analysis",
+      "base": "eeuq-0004",
+      "doc": [
+        "eeuq-0004/figures/uq.png",
+        "eeuq-0004/README.rst",
+        "eeuq-0004/figures/evt.png",
+        "eeuq-0004/figures/sbm.png",
+        "eeuq-0004/figures/elf.png",
+        "eeuq-0004/figures/mem.png",
+        "eeuq-0004/figures/bdf.png",
+        "eeuq-0004/figures/res.png",
+        "eeuq-0004/figures/ldg.png",
+        "eeuq-0004/figures/bim.png"
+      ],
+      "entry_point": "eeuq-0004/./input.json",
+      "summary": "This example demonstrate the use of a python-based computation platform to automate seismic desing and analysis of of steel moment resisting frames (AutoSDA) ([GBS20]).",
+      "logo": "figures/sbm.png",
+      "published": "2021-03-17T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      },
+      "tags": [
+        "UM.1.1.1",
+        "UM.1.1",
+        "EL.3",
+        "EL.8"
+      ]
+    },
+    "eeuq-0005": {
+      "id": "eeuq-0005",
+      "title": "Shear Building: Synthetic Ground Motion",
+      "base": "eeuq-0005",
+      "doc": [
+        "eeuq-0005/figures/inf_m1.png",
+        "eeuq-0005/figures/sdr_pfa_comp.png",
+        "eeuq-0005/figures/inf_r1.png",
+        "eeuq-0005/figures/evt.png",
+        "eeuq-0005/figures/uq.png",
+        "eeuq-0005/figures/inf_v2.png",
+        "eeuq-0005/figures/evt2.png",
+        "eeuq-0005/figures/fem.png",
+        "eeuq-0005/figures/res1.png",
+        "eeuq-0005/figures/rv.png",
+        "eeuq-0005/figures/rv2.png",
+        "eeuq-0005/ShearBuilding3.tcl",
+        "eeuq-0005/figures/sim.png",
+        "eeuq-0005/figures/all_pfa3.png",
+        "eeuq-0005/figures/model.png",
+        "eeuq-0005/figures/inf_v1.png",
+        "eeuq-0005/README.rst",
+        "eeuq-0005/figures/all_sdr1.png"
+      ],
+      "entry_point": "eeuq-0005/./input.json",
+      "summary": "This example considers the problem of uncertainty quantification in a three story shear building where the ground shaking is represented by sythetic ground motion records based on two methods; Vlachos, Papakonstantinou and Deodatis (2018), and Dabaghi and Der Kiureghian (2018).",
+      "logo": "figures/model.png",
+      "published": "2021-03-17T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      },
+      "tags": [
+        "UV.1.1",
+        "UM.1.1.1",
+        "UM.1.1",
+        "EL.9.1"
+      ]
+    }
+  },
+  "categories": {
+    "Difficulty": {
+      "0": "Beginner",
+      "1": "Intermediate",
+      "2": "Advanced"
+    },
+    "Simulation": {
+      "IMasEDP": "IMasEDP",
+      "OpenSees-Simulation": "OpenSees",
+      "OpenSeesPy-Simulation": "OpenSeesPy"
+    }
+  }
+}
