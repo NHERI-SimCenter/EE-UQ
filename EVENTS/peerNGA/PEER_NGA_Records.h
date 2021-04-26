@@ -56,11 +56,14 @@ public:
     enum GroundMotionComponents{One, Two, Three};
     Q_ENUM(GroundMotionComponents)
 
+    void setOutputDirectory(QString filename);
+
 signals:
 
 public slots:
 
     void onScalingComboBoxChanged(const int index);
+    void chooseOutputDirectory(void);
 
 private:
     PeerNgaWest2Client peerClient;
@@ -114,6 +117,11 @@ private:
     QVector<double> meanPlusSigmaSpectrum;
     QVector<double> meanMinusSigmaSpectrum;
     QVector<double> targetSpectrum;
+
+    // Output directory
+    QLineEdit* outdirLE;
+    QString outdirpath;
+    QString RecordsDir;
 
     void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();

@@ -21,6 +21,8 @@
 #include "USGSTargetWidget.h"
 #include "NSHMPTarget.h"
 #include <GoogleAnalytics.h>
+#include <QLineEdit>
+#include <QFileDialog>
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -157,6 +159,19 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     this->onScalingComboBoxChanged(0);
 
+    // User-defined output directory
+    auto outdirGroup = new QGroupBox("Output Directory");
+    auto outdirLayout = new QGridLayout(outdirGroup);
+    // add stuff to enter Output Directory
+    QLabel *labelOD = new QLabel("Output Directory");
+    outdirLE = new QLineEdit;
+    QPushButton *chooseOutputDirectoryButton = new QPushButton();
+    chooseOutputDirectoryButton->setText(tr("Choose"));
+    connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
+    outdirLayout->addWidget(labelOD,0,0);
+    outdirLayout->addWidget(outdirLE,0,2);
+    outdirLayout->addWidget(chooseOutputDirectoryButton, 0, 4);
+
     //Records Table
     recordsTable = new QTableWidget();
     recordsTable->setHidden(true);
@@ -194,6 +209,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(recordSelectionGroup, 0, 1);
     layout->addWidget(scalingGroup, 1, 0, 1, 2);
     layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
+    // Output directory group location
+    layout->addWidget(outdirGroup, 3, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
                                    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
@@ -202,7 +219,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
                                    "David M. Boore, Tadahiro Kishida, and Jennifer L. Donahue.");
 
     peerCitation->setWordWrap(true);
-    layout->addWidget(peerCitation, 3, 0, 1, 3);
+    layout->addWidget(peerCitation, 4, 0, 1, 3);
 
     //layout->addWidget(thePlottingWindow, 0,3,2,1);
     layout->addWidget(&recordSelectionPlot, 0,3,4,1);
@@ -216,6 +233,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
 void PEER_NGA_Records::setupConnections()
 {
+    // Output directory check
+    if(outdirpath.compare("NULL") == 0)
+        this->chooseOutputDirectory();
+
     connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
     {
 
@@ -234,7 +255,13 @@ void PEER_NGA_Records::setupConnections()
 
     connect(&peerClient, &PeerNgaWest2Client::recordsDownloaded, this, [this](QString recordsFile)
     {
-        auto tempRecordsDir = QDir(groundMotionsFolder.path());
+        // auto tempRecordsDir = QDir(groundMotionsFolder.path());
+        // Adding user-defined output directory
+        RecordsDir = this->outdirLE->text();
+        if (RecordsDir.isEmpty()) {
+            RecordsDir = groundMotionsFolder.path();
+        }
+        auto tempRecordsDir = QDir(RecordsDir);
         //Cleaning up previous search results
         if(tempRecordsDir.exists("_SearchResults.csv"))
             tempRecordsDir.remove("_SearchResults.csv");
@@ -550,7 +577,8 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
         QJsonObject recordH1Json;
         //Adding Horizontal1 in dof 1 direction
         recordH1Json["fileName"] = record.Horizontal1File;
-        recordH1Json["filePath"] = groundMotionsFolder.path();
+        // recordH1Json["filePath"] = groundMotionsFolder.path();
+        recordH1Json["filePath"] = RecordsDir;
         recordH1Json["dirn"] = 1;
         recordH1Json["factor"] = record.Scale;
 
@@ -562,7 +590,8 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
             QJsonObject recordH2Json;
             //Adding Horizontal2 in dof 2 direction
             recordH2Json["fileName"] = record.Horizontal2File;
-            recordH2Json["filePath"] = groundMotionsFolder.path();
+            // recordH2Json["filePath"] = groundMotionsFolder.path();
+            recordH2Json["filePath"] = RecordsDir;
             recordH2Json["dirn"] = 2;
             recordH2Json["factor"] = record.Scale;
 
@@ -574,7 +603,8 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
             QJsonObject recordH3Json;
             //Adding Horizontal3 in dof 3 direction
             recordH3Json["fileName"] = record.VerticalFile;
-            recordH3Json["filePath"] = groundMotionsFolder.path();
+            // recordH3Json["filePath"] = groundMotionsFolder.path();
+            recordH3Json["filePath"] = RecordsDir;
             recordH3Json["dirn"] = 3;
             recordH3Json["factor"] = record.Scale;
 
@@ -669,7 +699,8 @@ bool PEER_NGA_Records::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 bool PEER_NGA_Records::copyFiles(QString &destDir)
 {
-    QDir recordsFolder(groundMotionsFolder.path());
+    // QDir recordsFolder(groundMotionsFolder.path());
+    QDir recordsFolder(RecordsDir);
     QDir destinationFolder(destDir);
     for (auto& record:currentRecords)
     {
@@ -742,6 +773,23 @@ void PEER_NGA_Records::onScalingComboBoxChanged(const int index)
     }
 }
 
+void
+PEER_NGA_Records::setOutputDirectory(QString dirpath) {
+    outdirLE->setText(dirpath);
+    return;
+}
+
+void
+PEER_NGA_Records::chooseOutputDirectory(void) {
+    outdirpath=QFileDialog::getExistingDirectory(this,tr("Output Folder"));
+    if(outdirpath.isEmpty())
+    {
+        outdirpath = "NULL";
+        return;
+    }
+    this->setOutputDirectory(outdirpath);
+
+}
 
 
 
