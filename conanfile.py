@@ -2,7 +2,7 @@ from conans import ConanFile
 
 class EEUQ(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    version = "2.1.0"
+    version = "2.2.3"
     license = "BSD"
     author = "NHERI SimCenter"
     url = "https://github.com/NHERI-SimCenter/PBE"
