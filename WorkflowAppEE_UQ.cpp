@@ -117,8 +117,8 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
 
-    localApp = new LocalApplication("femUQ.py");
-    remoteApp = new RemoteApplication("femUQ.py", theService);
+    localApp = new LocalApplication("sWHALE.py");
+    remoteApp = new RemoteApplication("sWHALE.py", theService);
 
     //    localApp = new LocalApplication("EE-UQ workflow.py");
     //   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);

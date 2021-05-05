@@ -1,29 +1,29 @@
 {
-  "Examples": [
+    "Examples": [
     {
-      "name": "AutoSDA and Nonlinear Response Analysis",
-      "description": "This example demonstrate the use of a python-based computation platform to automate seismic desing and analysis of of steel moment resisting frames (AutoSDA) ([GBS20]).",
-      "InputFile": "eeuq-0004/input.json"
-    },
-    {
-      "name": "Ground Motion Selection and Nonlinear Response Analysis",
-      "description": "This example shows how to select ground motion records and run nonlinear time history analysis for the OpenSees/tcl model of interest.",
-      "InputFile": "eeuq-0003/input.json"
-    },
-    {
-      "name": "Including Spatial Variability in Site Response Event",
-      "description": "This page shows two examples on how to incorporate spatial variability into UQ analysis by using various special materials, namely ElasticIsotropic, PM4Sand, and PDMY03, in Site Response option under EVENT tab.",
-      "InputFile": "eeuq-0002/input.json"
-    },
-    {
-      "name": "Shear Building: Sampling, Reliability and Sensitivity",
+      "name": "E1: Shear Building: Sampling, Reliability and Sensitivity",
       "description": "This example takes a brief look at uncertainty quantification in a three story shear frame subjected to earthquake loading.",
-      "InputFile": "eeuq-0001/input.json"
+      "inputFile": "eeuq-0001/src/input.json"
+    },	
+    {
+      "name": "E2: Including Spatial Variability in Site Response Event",
+      "description": "This page shows two examples on how to incorporate spatial variability into UQ analysis by using various special materials, namely ElasticIsotropic, PM4Sand, and PDMY03, in Site Response option under EVENT tab.",
+      "inputFile": "eeuq-0002/src/input.json"
     },
     {
-      "name": "Shear Building: Synthetic Ground Motion",
+      "name": "E3: Ground Motion Selection and Nonlinear Response Analysis",
+      "description": "This example shows how to select ground motion records and run nonlinear time history analysis for the OpenSees/tcl model of interest.",
+      "inputFile": "eeuq-0003/src/input.json"
+    },	
+    {
+      "name": "E4: AutoSDA and Nonlinear Response Analysis",
+      "description": "This example demonstrate the use of a python-based computation platform to automate seismic desing and analysis of of steel moment resisting frames (AutoSDA) ([GBS20]).",
+      "inputFile": "eeuq-0004/src/input.json"
+    },	
+    {
+      "name": "E5: Shear Building: Synthetic Ground Motion",
       "description": "This example considers the problem of uncertainty quantification in a three story shear building where the ground shaking is represented by sythetic ground motion records based on two methods; Vlachos, Papakonstantinou and Deodatis (2018), and Dabaghi and Der Kiureghian (2018).",
-      "InputFile": "eeuq-0005/input.json"
+      "inputFile": "eeuq-0005/src/input.json"
     }
   ]
 }

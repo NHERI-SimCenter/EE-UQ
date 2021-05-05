@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.2.2");
+    QCoreApplication::setApplicationVersion("2.2.3");
     // GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -143,46 +143,14 @@ int main(int argc, char *argv[])
     WorkflowAppWidget *theInputApp = new WorkflowAppEE_UQ(theRemoteService);
     MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
-    /*
-    QString textAboutEE_UQ = "\
-            <p> \
-            This is the Earthquake Engineering with Uncertainty Quantification (EE-UQ) application.\
-            <p>\
-            This open-source research application, https://github.com/NHERI-SimCenter/EE-UQ, provides an application \
-        researchers can use to predict the response of a building to earthquake events. The application is focused on \
-        quantifying the uncertainties in the predicted response, given the that the properties of the buildings and the earthquake \
-        events are not known exactly, and that the simulation software and the user make simplifying assumptions in the numerical \
-        modeling of that structure. In the application the user is required to characterize the uncertainties in the input, the \
-        application will after utilizing the selected sampling method, provide information that characterizes the uncertainties in \
-        the response. The computations to make these determinations can be prohibitively expensive. To overcome this impedement the \
-        user has the option to perform the computations on the Stampede2 supercomputer. Stampede2 is located at the Texas Advanced \
-        Computing Center and is made available to the user through NHERI DesignSafe, the cyberinfrastructure provider for the distributed \
-        NSF funded Natural Hazards in Engineering Research Infrastructure, NHERI, facility.\
-        <p>\
-        The computations are performed in a workflow application. That is, the numerical simulations are actually performed by a \
-        number of different applications. The EE-UQ backend software runs these different applications for the user, taking the \
-        outputs from some programs and providing them as inputs to others. The design of the EE-UQ application is such that \
-        researchers are able to modify the backend application to utilize their own application in the workflow computations. \
-        This will ensure researchers are not limited to using the default applications we provide and will be enthused to provide\
-        their own applications for others to use.\
-        <p>\
-        This is Version 2.2.2 of the tool and as such is limited in scope. Researchers are encouraged to comment on what additional \
-        features and applications they would like to see in this application. If you want it, chances are many of your colleagues \
-        also would benefit from it.\
-        <p>";
-
-        w.setAbout(textAboutEE_UQ);
-    */
-
-
     QString aboutTitle = "About the SimCenter EE-UQ Application"; // this is the title displayed in the on About dialog
     QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 2.2.2");
+    QString version("Version 2.2.3");
     w.setVersion(version);
 
-    QString citeText("Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, & Charles Wang. (2019, October 8). NHERI-SimCenter/EE-UQ: Version 2.0.0 (Version v2.0.0). Zenodo. http://doi.org/10.5281/zenodo.3475642");
+    QString citeText("Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, Charles Wang, Stevan Gavrilovic, & Long Chen. (2020, September 30). NHERI-SimCenter/EE-UQ: Release 2.2.0 (Version r2.2.0). Zenodo. http://doi.org/10.5281/zenodo.4253161");
     w.setCite(citeText);
 
     QString manualURL("https://nheri-simcenter.github.io/EE-UQ-Documentation/");
