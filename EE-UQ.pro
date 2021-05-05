@@ -50,7 +50,7 @@ include(../SimCenterCommon/Common/Common.pri)
 include(../SimCenterCommon/Workflow/Workflow.pri)
 include(../SimCenterCommon/RandomVariables/RandomVariables.pri)
 include(../SimCenterCommon/InputSheetBM/InputSheetBM.pri)
-include(../QS3hark/QS3hark.pri)
+#include(../QS3hark/QS3hark.pri)
 include(./EarthquakeEvents.pri)
 
 SOURCES += main.cpp \

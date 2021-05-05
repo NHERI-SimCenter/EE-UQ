@@ -64,7 +64,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <ExistingPEER_Records.h>
 #include <UserDefinedApplication.h>
 #include "StochasticMotionInput.h"
-#include "RockOutcrop.h"
+//#include "RockOutcrop.h"
 #include "peerNGA/PEER_NGA_Records.h"
 
 
@@ -130,8 +130,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     */
 
     // Adding SRT widget
-    theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
-    theStackedWidget->addWidget(theRockOutcrop);
+    // theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
+    // theStackedWidget->addWidget(theRockOutcrop);
 
     theExistingPeerEvents = new ExistingPEER_Records(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingPeerEvents);
@@ -159,9 +159,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
-    connect(theRockOutcrop, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
-    connect(theRockOutcrop, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
-    connect(theRockOutcrop, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
+    // connect(theRockOutcrop, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
+    // connect(theRockOutcrop, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
+    // connect(theRockOutcrop, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
     //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
