@@ -64,8 +64,9 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <ExistingPEER_Records.h>
 #include <UserDefinedApplication.h>
 #include "StochasticMotionInput.h"
-//#include "RockOutcrop.h"
+#include "RockOutcrop.h"
 #include "peerNGA/PEER_NGA_Records.h"
+#include "userDefinedDatabase/User_Defined_Database.h"
 
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
@@ -91,9 +92,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Site Response"));
     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Multiple SimCenter"));
+    eventSelection->addItem(tr("User Specified Database"));
     //    eventSelection->addItem(tr("Hazard Based Event"));
     // eventSelection->addItem(tr("User Application"));
-    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
@@ -130,8 +132,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     */
 
     // Adding SRT widget
-    // theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
-    // theStackedWidget->addWidget(theRockOutcrop);
+    theRockOutcrop = new RockOutcrop(theRandomVariablesContainer);
+    theStackedWidget->addWidget(theRockOutcrop);
 
     theExistingPeerEvents = new ExistingPEER_Records(theRandomVariablesContainer);
     theStackedWidget->addWidget(theExistingPeerEvents);
@@ -142,6 +144,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     //    theUserDefinedApplication = new UserDefinedApplication(theRandomVariablesContainer);
     //theStackedWidget->addWidget(theUserDefinedApplication);
+
+    //Adding user defined database ground motion widget
+    userDefinedDatabase = new User_Defined_Database(generalInfoWidget, this);
+    theStackedWidget->addWidget(userDefinedDatabase);
 
 
     layout->addWidget(theStackedWidget);
@@ -159,9 +165,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
-    // connect(theRockOutcrop, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
-    // connect(theRockOutcrop, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
-    // connect(theRockOutcrop, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
+    connect(theRockOutcrop, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
+    connect(theRockOutcrop, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
+    connect(theRockOutcrop, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 
     //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     //connect(theSHA_MotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
@@ -178,6 +184,10 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     connect(peerNgaRecords, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     connect(peerNgaRecords, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(peerNgaRecords, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
+
+    connect(userDefinedDatabase, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
+    connect(userDefinedDatabase, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
+    connect(userDefinedDatabase, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
 }
 
 EarthquakeEventSelection::~EarthquakeEventSelection()
@@ -270,6 +280,11 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     else if(arg1 == "PEER NGA Records") {
         theStackedWidget->setCurrentIndex(1);
         theCurrentEvent = peerNgaRecords;
+    }
+
+    else if(arg1 == "User Specified Database") {
+        theStackedWidget->setCurrentIndex(5);
+        theCurrentEvent = userDefinedDatabase;
     }
     else {
         qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;

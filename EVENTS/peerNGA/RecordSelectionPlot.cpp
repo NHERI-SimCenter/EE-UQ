@@ -15,7 +15,7 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
     spectraChart.addSeries(&targetSeries);
 
     QPen meanPen;
-    meanPen.setColor(Qt::blue);
+    meanPen.setColor(Qt::black);
     meanPen.setWidth(2);
     meanSeries.setPen(meanPen);
 

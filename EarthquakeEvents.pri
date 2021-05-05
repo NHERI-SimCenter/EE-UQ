@@ -25,7 +25,8 @@ SOURCES +=  \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.cpp \
     $$PWD/EVENTS/peerNGA/USGSTargetWidget.cpp \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.cpp \
-    $$PWD/EVENTS/peerNGA/UserSpectrumWidget.cpp
+    $$PWD/EVENTS/peerNGA/UserSpectrumWidget.cpp \
+    $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.cpp
 
 HEADERS +=  \
     $$PWD/EVENTS/EarthquakeEventSelection.h \
@@ -44,5 +45,6 @@ HEADERS +=  \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.h \
     $$PWD/EVENTS/peerNGA/USGSTargetWidget.h \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.h \
-    $$PWD/EVENTS/peerNGA/UserSpectrumWidget.h
+    $$PWD/EVENTS/peerNGA/UserSpectrumWidget.h \
+    $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h
 
