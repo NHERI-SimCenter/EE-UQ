@@ -972,7 +972,8 @@ QVector<QStringList> User_Defined_Database::parseCSVFile(const QString &pathToFi
     auto numRows = rowLines.size();
     if(numRows == 0)
     {
-        qDebug()<<"Error in parsing the .csv file "<<pathToFile;
+        qDebug()<<"Error in parsing the .csv file "<<pathToFile<<" in "<<__FUNCSIG__;
+        qDebug()<<"Error in parsing the .csv file "<<pathToFile <<" in UserDefinedDatabase::parseCSV file";
         return returnVec;
     }
 
@@ -1123,7 +1124,8 @@ void User_Defined_Database::updateFlatfileSpreadSheet(const QVector<QStringList>
 
     if(data.empty())
     {
-        qDebug()<<"Error: Empty data vector";
+        qDebug()<<"Error in "<<__FUNCSIG__<<". Empty data vector";
+        qDebug()<<"Error in UserDefinedDatabase::updateFlatFile. Empty data vector";
         return;
     }
 
