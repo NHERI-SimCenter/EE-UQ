@@ -42,7 +42,7 @@ void PeerNgaWest2Client::signIn(QString username, QString password)
     signInPageReply = networkManager.get(peerSignInPageRequest);
 }
 
-void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range)
+void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey)
 {
     emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
@@ -51,6 +51,7 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     this->magnitudeRange = magnitudeRange;
     this->distanceRange = distanceRange;
     this->vs30Range = vs30Range;
+    this->SRkey = peerSRkey;
 
     uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
