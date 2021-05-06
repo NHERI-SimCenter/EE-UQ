@@ -258,10 +258,10 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(previewGroup, 1, 0, 1, 2);
     layout->addWidget(targetSpectrumGroup, 2, 0);
     layout->addWidget(recordSelectionGroup, 2, 1);
-    layout->addWidget(scalingGroup, 3, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 4, 0, 1, 2);
     // Output directory group location
-    layout->addWidget(outdirGroup, 5, 0, 1, 2);
+    layout->addWidget(outdirGroup, 3, 0, 1, 2);
+    layout->addWidget(scalingGroup, 4, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 5, 0, 1, 2);
 
     //layout->addWidget(thePlottingWindow, 0,3,2,1);
     layout->addWidget(&recordSelectionPlot, 0,3,5,1);

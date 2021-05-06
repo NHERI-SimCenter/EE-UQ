@@ -213,10 +213,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
-    layout->addWidget(scalingGroup, 1, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
     // Output directory group location
-    layout->addWidget(outdirGroup, 3, 0, 1, 2);
+    layout->addWidget(outdirGroup, 1, 0, 1, 2);
+    layout->addWidget(scalingGroup, 2, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 3, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
                                    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
