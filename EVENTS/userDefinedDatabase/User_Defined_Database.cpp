@@ -82,8 +82,8 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
         tableHeadings << str;
     flatfileSpreadSheet->setHorizontalHeaderLabels(tableHeadings);
 
-    infileGroup->setMaximumHeight(60);
-    previewGroup->setMaximumHeight(200);
+    //infileGroup->setMaximumHeight(60);
+    //previewGroup->setMaximumHeight(200);
 
     auto targetSpectrumGroup = new QGroupBox("Target Intensity Measures");
 
@@ -112,6 +112,7 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(usgsSpectrumTarget);
     auto nshmpTarget = new NSHMPTarget(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(nshmpTarget);
+    targetSpectrumLayout->setRowStretch(1,1);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
@@ -166,9 +167,10 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
     sfMax->setEnabled(false);
     sfMax->setValidator(positiveDoubleValidator);
     recordSelectionLayout->addWidget(sfMax, 4, 2);
+    recordSelectionLayout->setRowStretch(5,1);
 
-    targetSpectrumGroup->setMaximumHeight(200);
-    recordSelectionGroup->setMaximumHeight(200);
+   // targetSpectrumGroup->setMaximumHeight(200);
+   // recordSelectionGroup->setMaximumHeight(200);
 
     auto scalingGroup = new QGroupBox("Scaling");
     auto scalingLayout = new QGridLayout(scalingGroup);
@@ -266,7 +268,9 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     recordSelectionPlot.setHidden(true);
 
-    layout->setRowStretch(layout->rowCount(), 1);
+    //layout->setRowStretch(layout->rowCount(), 1);
+    layout->setRowStretch(2, 1);
+    layout->setRowStretch(1, 1);
     layout->setColumnStretch(layout->columnCount(), 1);
 
 }

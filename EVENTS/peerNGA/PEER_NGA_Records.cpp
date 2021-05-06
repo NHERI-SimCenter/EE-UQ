@@ -110,8 +110,13 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionLayout->addWidget(vs30Max, 3, 2);
     recordSelectionLayout->addWidget(new QLabel("m/s"), 3, 3);
 
-    targetSpectrumGroup->setMaximumHeight(200);
-    recordSelectionGroup->setMaximumHeight(200);
+//#ifdef _WIN32
+//    targetSpectrumGroup->setMaximumHeight(200);
+//    recordSelectionGroup->setMaximumHeight(200);
+//#else
+    targetSpectrumLayout->setRowStretch(2,1);
+    recordSelectionLayout->setRowStretch(4, 1);
+//#endif
 
     auto scalingGroup = new QGroupBox("Scaling");
     auto scalingLayout = new QGridLayout(scalingGroup);
@@ -198,6 +203,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordsTable->setMinimumHeight(200);
     groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
     groundMotionsLayout->setRowStretch(1, 1);
+
     progressBar = new QProgressBar();
     progressBar->setRange(0,0);
     progressBar->setAlignment(Qt::AlignCenter);
@@ -226,9 +232,9 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     recordSelectionPlot.setHidden(true);
 
-    layout->setRowStretch(layout->rowCount(), 1);
+    layout->setRowStretch(0,1);
+    //layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
-
 }
 
 void PEER_NGA_Records::setupConnections()
