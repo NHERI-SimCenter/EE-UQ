@@ -475,9 +475,8 @@ void PEER_NGA_Records::selectRecords()
         updateStatus("Retrieving Target Spectrum...");
         auto spectrum = userTargetWidget->spectrum();
 
-
         if (spectrum.size() > 0)
-            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, groundMotionsComponentsBox->currentIndex()+1);
         else
         {
             progressBar->setHidden("True");

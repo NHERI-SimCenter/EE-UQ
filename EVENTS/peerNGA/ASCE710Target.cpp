@@ -50,6 +50,29 @@ void ASCE710Target::deserialize(const QJsonObject &json)
 QList<QPair<double, double>> ASCE710Target::spectrum() const
 {
     QList<QPair<double, double>>  targetSectrum;
+    QList<double> periods;
+    // Use a 0.05 s interval (0.05s ~ 10s)
+    for (int i = 0; i < 200; ++i)
+        periods << 0.05 * i + 0.05;
+
+    // Compute ASCE7-10 two-period spectrum
+    auto Sds = sdsEditBox->text().toDouble();
+    auto Sd1 = sd1EditBox->text().toDouble();
+    auto Tl = tlEditBox->text().toDouble();
+    auto Ts =  Sd1 / Sds;
+    auto T0 = 0.2 * Ts;
+    for (int i = 0; i != periods.size()-1; ++i)
+    {
+        if (periods[i] <= T0)
+            targetSectrum.append({periods[i], Sds*(0.4+0.6*periods[i]/T0)});
+        else if (periods[i] <= Ts)
+            targetSectrum.append({periods[i], Sds});
+        else if (periods[i] <= Tl)
+            targetSectrum.append({periods[i], Sd1/periods[i]});
+        else
+            targetSectrum.append({periods[i], Sd1*Tl/periods[i]/periods[i]});
+    }
+
     return targetSectrum;
 }
 
