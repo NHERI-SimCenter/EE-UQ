@@ -136,7 +136,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     scalingLayout->addWidget(scalingPeriodLineEdit, 0, 3);
     scalingLayout->addWidget(scalingPeriodLabel2, 0, 4);
 
-    weightFunctionHeadingLabel = new QLabel("Weight Function");
+    weightFunctionHeadingLabel = new QLabel("Selection Error Weight Function");
     weightFunctionHeadingLabel->setStyleSheet("font-weight: bold;");
 
     weightFunctionLabel = new QLabel("Weight function is used in both search and scaling when computing MSE. Values can be updated for rescaling. Intermediate points are interpolated with W = fxn(log(T))");
