@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QtNetwork/QNetworkReply>
 #include <GoogleAnalytics.h>
+#include <math.h>
 
 NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -49,6 +50,7 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     layout->addWidget(new QLabel(tr("m/s")), 3, 2);
     vs30Box->setCurrentIndex(4);
 
+    /*
     layout->addWidget(new QLabel(tr("Return Period")), 4, 0);
     returnPeriod = new QComboBox();
     layout->addWidget(returnPeriod, 4, 1);
@@ -59,6 +61,15 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     returnPeriod->addItem("2500");
     returnPeriod->setItemData(2, "2% exceedance in 50 years", Qt::ToolTipRole);
     returnPeriod->setCurrentIndex(2);
+    layout->addWidget(new QLabel(tr("years")), 4, 2);
+    */
+
+    auto positiveIntegerValidator = new QIntValidator(1, 9999); // USGS limits the return period from 2 to 9999
+    positiveIntegerValidator->setBottom(2);
+    layout->addWidget(new QLabel(tr("Return Period")), 4, 0);
+    returnPeriodBox = new QLineEdit("2475"); // default 2475 year
+    returnPeriodBox->setValidator(positiveIntegerValidator);
+    layout->addWidget(returnPeriodBox, 4, 1);
     layout->addWidget(new QLabel(tr("years")), 4, 2);
 
 
@@ -94,7 +105,14 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
     QList<QPair<double, double>> spectrum;
     auto hazardCurves = json["response"].toArray();
 
-    double exceedanceProb = 1.0/returnPeriod->currentText().toDouble();
+    //double exceedanceProb = 1.0/returnPeriod->currentText().toDouble();
+    // Add an additional check of the return period range accepted by USGS
+    if (returnPeriodBox->text().isEmpty() || returnPeriodBox->text().toInt() < 2)
+    {
+        const_cast<NSHMPTarget*>(this)->emit statusUpdated("Please input a valid return period (2~9999).");
+        return spectrum;
+    }
+    double exceedanceProb = 1.0/returnPeriodBox->text().toDouble();
     for (auto hazardCurve: hazardCurves)
     {
         auto imt = hazardCurve.toObject()["metadata"].toObject()["imt"].toObject()["value"].toString();
@@ -117,8 +135,9 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
         {
             if(exceedanceProb >= y[i].toDouble() && exceedanceProb <= y[i-1].toDouble())
             {
-                double delta = (exceedanceProb - y[i].toDouble()) /(y[i-1].toDouble() - y[i].toDouble());
-                double im = x[i].toDouble() + delta * (x[i-1].toDouble()-x[i].toDouble());
+                // interpolation in log-log space
+                double delta = (log(exceedanceProb) - log(y[i].toDouble())) /(log(y[i-1].toDouble()) - log(y[i].toDouble()));
+                double im = exp(log(x[i].toDouble()) + delta * (log(x[i-1].toDouble())-log(x[i].toDouble())));
                 spectrum.append({period, im});
                 break;
             }
@@ -138,7 +157,8 @@ QJsonObject NSHMPTarget::serialize() const
 
     json["Vs30"] = vs30Box->currentText();
     json["Edition"] = editionBox->currentText();
-    json["ReturnPeriod"] = returnPeriod->currentText();
+    //json["ReturnPeriod"] = returnPeriod->currentText();
+    json["ReturnPeriod"] = returnPeriodBox->text();
 
     return json;
 }
@@ -147,7 +167,8 @@ void NSHMPTarget::deserialize(const QJsonObject &json)
 {
     vs30Box->setCurrentText(json["Vs30"].toString());
     editionBox->setCurrentText(json["Edition"].toString());
-    returnPeriod->setCurrentText(json["ReturnPeriod"].toString());
+    //returnPeriod->setCurrentText(json["ReturnPeriod"].toString());
+    returnPeriodBox->setText(json["ReturnPeriod"].toString());
 
     double latitude, longitude;
     generalInfoWidget->getBuildingLocation(latitude, longitude);

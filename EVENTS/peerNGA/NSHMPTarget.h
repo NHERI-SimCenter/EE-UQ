@@ -21,6 +21,7 @@ private:
     QComboBox* editionBox;
     QComboBox* returnPeriod;
     GeneralInformationWidget* generalInfoWidget;
+    QLineEdit* returnPeriodBox;
 
     mutable QNetworkAccessManager networkManager;
 
