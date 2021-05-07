@@ -25,6 +25,8 @@
 #include <QLineEdit>
 #include <QFileDialog>
 
+#include <math.h>
+
 User_Defined_Database::User_Defined_Database(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setDefaultValues();
