@@ -584,7 +584,7 @@ void User_Defined_Database::selectRecords()
             recordScale = 1.0;
             minErr = 0.0;
             for (int j = 0; j != refPeriods.length(); ++j)
-                minErr = minErr + pow(refSpectrum[j] - recordScale*curSpectrum[j], 2.0);
+                minErr = minErr + (refSpectrum[j] - recordScale*curSpectrum[j]) * (refSpectrum[j] - recordScale*curSpectrum[j]);
         }
         else if (scaleFlag == 1)
         {
@@ -618,7 +618,7 @@ void User_Defined_Database::selectRecords()
             {
                 double tmpErr = 0.0;
                 for (int j = 0; j != refPeriods.length(); ++j)
-                    tmpErr = tmpErr + pow(refSpectrum[j] - sf_cur*curSpectrum[j], 2.0);
+                    tmpErr = tmpErr + (refSpectrum[j] - sf_cur*curSpectrum[j]) * (refSpectrum[j] - sf_cur*curSpectrum[j]);
                 if (minErr > tmpErr)
                 {
                     minErr = tmpErr;
@@ -646,7 +646,7 @@ void User_Defined_Database::selectRecords()
             }
             minErr = 0.0;
             for (int j = 0; j != refPeriods.length(); ++j)
-                minErr = minErr + pow(refSpectrum[j] - recordScale*curSpectrum[j], 2.0);
+                minErr = minErr + (refSpectrum[j] - recordScale*curSpectrum[j]) * (refSpectrum[j] - recordScale*curSpectrum[j]);
         }
         // Collect
         cadErr.append(minErr);
