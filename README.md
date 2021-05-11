@@ -36,7 +36,7 @@ their own applications for others to use.
 This tool is under active development. Researchers are encouraged to comment on what additional
 features and applications they would like to see in this
 application. If you want it, chances are many of your colleagues also
-would benefit from it.
+would benefit from it. Additional requests should be posted at the [forum](https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=6.0)
 
 Please visit the [EE-UQ Research Tool webpage](https://simcenter.designsafe-ci.org/research-tools/ee-uq-application/)
 for more resources related to this tool. Additionally, this page
