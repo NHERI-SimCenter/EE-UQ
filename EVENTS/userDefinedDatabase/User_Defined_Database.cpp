@@ -192,7 +192,7 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
     scalingLayout->addWidget(scalingPeriodLineEdit, 0, 3);
     scalingLayout->addWidget(scalingPeriodLabel2, 0, 4);
 
-    weightFunctionHeadingLabel = new QLabel("Weight Function");
+    weightFunctionHeadingLabel = new QLabel("Selection Error Weight Function");
     weightFunctionHeadingLabel->setStyleSheet("font-weight: bold;");
 
     weightFunctionLabel = new QLabel("Weight function is used in both search and scaling when computing MSE. Values can be updated for rescaling. Intermediate points are interpolated with W = fxn(log(T))");
@@ -260,10 +260,10 @@ void User_Defined_Database::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(previewGroup, 1, 0, 1, 2);
     layout->addWidget(targetSpectrumGroup, 2, 0);
     layout->addWidget(recordSelectionGroup, 2, 1);
-    layout->addWidget(scalingGroup, 3, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 4, 0, 1, 2);
     // Output directory group location
-    layout->addWidget(outdirGroup, 5, 0, 1, 2);
+    layout->addWidget(outdirGroup, 3, 0, 1, 2);
+    layout->addWidget(scalingGroup, 4, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 5, 0, 1, 2);
 
     //layout->addWidget(thePlottingWindow, 0,3,2,1);
     layout->addWidget(&recordSelectionPlot, 0,3,5,1);
@@ -586,7 +586,7 @@ void User_Defined_Database::selectRecords()
             recordScale = 1.0;
             minErr = 0.0;
             for (int j = 0; j != refPeriods.length(); ++j)
-                minErr = minErr + pow(refSpectrum[j] - recordScale*curSpectrum[j], 2.0);
+                minErr = minErr + (refSpectrum[j] - recordScale*curSpectrum[j]) * (refSpectrum[j] - recordScale*curSpectrum[j]);
         }
         else if (scaleFlag == 1)
         {
@@ -620,7 +620,7 @@ void User_Defined_Database::selectRecords()
             {
                 double tmpErr = 0.0;
                 for (int j = 0; j != refPeriods.length(); ++j)
-                    tmpErr = tmpErr + pow(refSpectrum[j] - sf_cur*curSpectrum[j], 2.0);
+                    tmpErr = tmpErr + (refSpectrum[j] - sf_cur*curSpectrum[j]) * (refSpectrum[j] - sf_cur*curSpectrum[j]);
                 if (minErr > tmpErr)
                 {
                     minErr = tmpErr;
@@ -648,7 +648,7 @@ void User_Defined_Database::selectRecords()
             }
             minErr = 0.0;
             for (int j = 0; j != refPeriods.length(); ++j)
-                minErr = minErr + pow(refSpectrum[j] - recordScale*curSpectrum[j], 2.0);
+                minErr = minErr + (refSpectrum[j] - recordScale*curSpectrum[j]) * (refSpectrum[j] - recordScale*curSpectrum[j]);
         }
         // Collect
         cadErr.append(minErr);
