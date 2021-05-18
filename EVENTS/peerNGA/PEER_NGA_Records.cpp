@@ -110,8 +110,13 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionLayout->addWidget(vs30Max, 3, 2);
     recordSelectionLayout->addWidget(new QLabel("m/s"), 3, 3);
 
-    targetSpectrumGroup->setMaximumHeight(200);
-    recordSelectionGroup->setMaximumHeight(200);
+//#ifdef _WIN32
+//    targetSpectrumGroup->setMaximumHeight(200);
+//    recordSelectionGroup->setMaximumHeight(200);
+//#else
+    targetSpectrumLayout->setRowStretch(2,1);
+    recordSelectionLayout->setRowStretch(4, 1);
+//#endif
 
     auto scalingGroup = new QGroupBox("Scaling");
     auto scalingLayout = new QGridLayout(scalingGroup);
@@ -131,7 +136,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     scalingLayout->addWidget(scalingPeriodLineEdit, 0, 3);
     scalingLayout->addWidget(scalingPeriodLabel2, 0, 4);
 
-    weightFunctionHeadingLabel = new QLabel("Weight Function");
+    weightFunctionHeadingLabel = new QLabel("Selection Error Weight Function");
     weightFunctionHeadingLabel->setStyleSheet("font-weight: bold;");
 
     weightFunctionLabel = new QLabel("Weight function is used in both search and scaling when computing MSE. Values can be updated for rescaling. Intermediate points are interpolated with W = fxn(log(T))");
@@ -198,6 +203,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordsTable->setMinimumHeight(200);
     groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
     groundMotionsLayout->setRowStretch(1, 1);
+
     progressBar = new QProgressBar();
     progressBar->setRange(0,0);
     progressBar->setAlignment(Qt::AlignCenter);
@@ -207,10 +213,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
-    layout->addWidget(scalingGroup, 1, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
     // Output directory group location
-    layout->addWidget(outdirGroup, 3, 0, 1, 2);
+    layout->addWidget(outdirGroup, 1, 0, 1, 2);
+    layout->addWidget(scalingGroup, 2, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 3, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
                                    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
@@ -226,9 +232,9 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     recordSelectionPlot.setHidden(true);
 
-    layout->setRowStretch(layout->rowCount(), 1);
+    layout->setRowStretch(0,1);
+    //layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
-
 }
 
 void PEER_NGA_Records::setupConnections()
@@ -469,9 +475,8 @@ void PEER_NGA_Records::selectRecords()
         updateStatus("Retrieving Target Spectrum...");
         auto spectrum = userTargetWidget->spectrum();
 
-
         if (spectrum.size() > 0)
-            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range);
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, groundMotionsComponentsBox->currentIndex()+1);
         else
         {
             progressBar->setHidden("True");

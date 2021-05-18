@@ -148,7 +148,7 @@
         "samplingMethodData": {
             "keepSamples": true,
             "method": "LHS",
-            "samples": 1000,
+            "samples": 50,
             "seed": 413
         },
         "uqEngine": "Dakota",

@@ -15,7 +15,7 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
     spectraChart.addSeries(&targetSeries);
 
     QPen meanPen;
-    meanPen.setColor(Qt::blue);
+    meanPen.setColor(Qt::black);
     meanPen.setWidth(2);
     meanSeries.setPen(meanPen);
 
@@ -76,7 +76,8 @@ void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
 
     for(int i = 0; i < periods.size(); i++)
     {
-        meanSeries << QPointF(periods[i], sa[i]);
+        if (periods[i] > 0 && sa[i] > 0.0)
+            meanSeries << QPointF(periods[i], sa[i]);
     }
 
     xAxis.setMin(periods[0]);
@@ -95,7 +96,8 @@ void RecordSelectionPlot::setMeanPlusSigma(QVector<double> periods, QVector<doub
 
     for(int i = 0; i < periods.size(); i++)
     {
-        plusSigmaSeries << QPointF(periods[i], sa[i]);
+        if (periods[i] > 0 && sa[i] > 0.0)
+            plusSigmaSeries << QPointF(periods[i], sa[i]);
     }
 }
 
@@ -105,7 +107,8 @@ void RecordSelectionPlot::setMeanMinusSigma(QVector<double> periods, QVector<dou
 
     for(int i = 0; i < periods.size(); i++)
     {
-        minusSigmaSeries << QPointF(periods[i], sa[i]);
+        if (periods[i] > 0 && sa[i] > 0.0)
+            minusSigmaSeries << QPointF(periods[i], sa[i]);
     }
 }
 
@@ -115,7 +118,8 @@ void RecordSelectionPlot::setTargetSpectrum(QVector<double> periods, QVector<dou
 
     for(int i = 0; i < periods.size(); i++)
     {
-        targetSeries << QPointF(periods[i], sa[i]);
+        if (periods[i] > 0 && sa[i] > 0.0)
+            targetSeries << QPointF(periods[i], sa[i]);
     }
 }
 

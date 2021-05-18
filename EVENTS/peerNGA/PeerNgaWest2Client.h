@@ -18,7 +18,7 @@ public:
     bool loggedIn();
     void signIn(QString username, QString password);
     void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey);
-    void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range);
+    void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey);
     void selectRecords(QStringList);
 
     void setScalingParameters(const int scaleFlag,
