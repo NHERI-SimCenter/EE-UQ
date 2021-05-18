@@ -93,7 +93,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Multiple SimCenter"));
     //    eventSelection->addItem(tr("Hazard Based Event"));
     // eventSelection->addItem(tr("User Application"));
-    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+   // eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     theSelectionLayout->addWidget(label);
