@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.2.4");
+    QCoreApplication::setApplicationVersion("2.2.5");
     // GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 2.2.4");
+    QString version("Version 2.2.5");
     w.setVersion(version);
 
     QString citeText("Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, Charles Wang, Stevan Gavrilovic, & Long Chen. (2020, September 30). NHERI-SimCenter/EE-UQ: Release 2.2.0 (Version r2.2.0). Zenodo. http://doi.org/10.5281/zenodo.4253161");
