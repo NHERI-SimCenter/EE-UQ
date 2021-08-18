@@ -19,18 +19,11 @@ pathToDakota="/Users/fmckenna/dakota-6.12.0"
 source userID.sh
 
 #
-# create build dir if does not exist, cd to build, conan install and then qmake
-# 
+# build it
+#
 
-mkdir -p build
+./makeEXE.sh
 cd build
-rm -fr $appFile
-rm $dmgFile
-conan install .. --build missing
-qmake ../$appName.pro
-make
-
-cp -fr $HOME/release/s3hark/resources ./EE_UQ.app/Contents/MacOS
 
 #
 # Check to see if the app built
@@ -77,8 +70,10 @@ declare -a notWantedApp=("createBIM"
 			 "performDL"			
 			 "createEDP/standardEarthquakeEDP_R"
 			 "createEDP/userEDP_R"
+			 "createEDP/gmtEDP"			 
 			 "createEDP/simpleEDP"
 			 "createEDP/standardWindEDP"
+			 "createEVENT/GeoClawOpenFOAM"			 
 			 "createEVENT/ASCE7_WindSpeed"
 			 "createEVENT/CFDEvent"
 			 "createEVENT/hazardBasedEvent"
@@ -137,4 +132,4 @@ echo "To check status"
 echo "xcrun altool --notarization-info ID  -u $appleID  -p $appleAppPassword"
 echo ""
 echo "Finally staple the dmg"
-echo "xcrun stapler staple \"$appName\" $dmgFle"
+echo "xcrun stapler staple \"$appName\" $dmgFile"

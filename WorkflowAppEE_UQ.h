@@ -95,7 +95,7 @@ public slots:
     void setUpForApplicationRun(QString &, QString &);
     void processResults(QString dakotaOut, QString dakotaTab, QString inputFile);
 
-    void loadFile(QString filename);
+    int loadFile(QString filename);
     void replyFinished(QNetworkReply*);
 
 private:

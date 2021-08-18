@@ -595,8 +595,4 @@ ExistingPEER_Records::copyFiles(QString &dirName) {
     return true;
 }
 
-void
-ExistingPEER_Records::errorMessage(QString message){
-    emit sendErrorMessage(message);
-}
 

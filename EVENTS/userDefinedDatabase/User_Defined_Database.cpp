@@ -702,7 +702,7 @@ void User_Defined_Database::selectRecords()
 
 void User_Defined_Database::updateStatus(QString status)
 {
-    emit sendStatusMessage(status);
+    statusMessage(status);
 
     // Showing status in status bar
     if(this->parent())
@@ -883,7 +883,7 @@ void User_Defined_Database::loadFlatfile(void)
     if (dFlag != 0)
     {
         QString errMsg = "File: " + flatfilepath + " cannot be parsed.";
-        emit sendStatusMessage(errMsg);
+        statusMessage(errMsg);
         return;
     }
 
@@ -963,7 +963,7 @@ QVector<QStringList> User_Defined_Database::parseCSVFile(const QString &pathToFi
     if (!tmpFile.open(QIODevice::ReadOnly))
     {
         QString errMsg = "Cannot find the file: " + pathToFile + "\nCheck your directory and try again.";
-        emit sendStatusMessage(errMsg);
+        statusMessage(errMsg);
         return returnVec;
     }
 
@@ -1182,7 +1182,7 @@ void User_Defined_Database::saveResultsToFolder(void)
     if (!directory.exists())
     {
         QString errMsg = "Cannot find the directory: "+ outdirpath + "\n" +"Check your directory and try again.";
-        emit sendStatusMessage(errMsg);
+        statusMessage(errMsg);
         return;
     }
 
@@ -1192,7 +1192,7 @@ void User_Defined_Database::saveResultsToFolder(void)
     if(res != 0)
     {
         QString errMsg = "Error saving the SelectResults.csv file in the directory " + outdirpath + "\n" +"Check the file and try again.";
-        emit sendStatusMessage(errMsg);
+        statusMessage(errMsg);
         return;
     }
 
@@ -1206,7 +1206,7 @@ int User_Defined_Database::saveSelectResults(const QString& pathToFile)
     if (!file.open(QIODevice::WriteOnly))
     {
         QString errMsg = "Cannot find the required file: SelectResults.csv in the directory" + outdirpath + "\n" +"Check your directory and try again.";
-        emit sendStatusMessage(errMsg);
+        statusMessage(errMsg);
         return -1;
     }
 
