@@ -161,6 +161,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
     connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(eventSelectionChanged(QString)));
 
+    /*
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(theStochasticMotionWidget, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
@@ -188,6 +189,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     connect(userDefinedDatabase, &SimCenterAppWidget::sendErrorMessage, this, [this](QString message) {emit sendErrorMessage(message);});
     connect(userDefinedDatabase, &SimCenterAppWidget::sendFatalMessage, this, [this](QString message) {emit sendFatalMessage(message);});
     connect(userDefinedDatabase, &SimCenterAppWidget::sendStatusMessage, this, [this](QString message) {emit sendStatusMessage(message);});
+    */
 }
 
 EarthquakeEventSelection::~EarthquakeEventSelection()

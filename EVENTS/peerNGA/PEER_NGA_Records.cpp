@@ -341,7 +341,7 @@ void PEER_NGA_Records::setupConnections()
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
 {
-    emit sendStatusMessage(QString("Parsing Downloaded Records"));
+    statusMessage(QString("Parsing Downloaded Records"));
     if(!resultFolder.exists())
         return;
 
@@ -351,7 +351,7 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     setRecordsTable(currentRecords);
 
     plotSpectra();
-    emit sendStatusMessage(QString(""));
+    statusMessage(QString(""));
 }
 
 void PEER_NGA_Records::setRecordsTable(QList<PeerScaledRecord> records)
@@ -411,7 +411,7 @@ void PEER_NGA_Records::plotSpectra()
 
 void PEER_NGA_Records::updateStatus(QString status)
 {
-    emit sendStatusMessage(status);
+    statusMessage(status);
 
     // Showing status in status bar
     if(this->parent())
