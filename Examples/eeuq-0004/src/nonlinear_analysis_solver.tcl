@@ -62,7 +62,7 @@
 		constraints Plain;				# how it handles boundary conditions
 		numberer RCM;					# renumber dof's to minimize band-width (optimization)
 		system UmfPack;					# how to store and solve the system of equations in the analysis
-		test NormDispIncr 1.0e-6 50;	# type of convergence criteria with tolerance, max iterations
+		test NormDispIncr 1.0e-3 50;	# type of convergence criteria with tolerance, max iterations
 		algorithm NewtonLineSearch;		# use NewtonLineSearch solution algorithm: updates tangent stiffness at every iteration and introduces line search to the Newton-Raphson algorithm to solve the nonlinear residual equation. Line search increases the effectiveness of the Newton method
 		integrator Newmark 0.5 0.25;	# uses Newmark's average acceleration method to compute the time history
 		analysis Transient;				# type of analysis: transient or static
