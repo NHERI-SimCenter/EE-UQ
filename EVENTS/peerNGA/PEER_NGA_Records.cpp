@@ -118,7 +118,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionLayout->setRowStretch(4, 1);
 //#endif
 
-    auto scalingGroup = new QGroupBox("Scaling");
+    auto scalingGroup = new QGroupBox("Scaling/Selection Criteria");
     auto scalingLayout = new QGridLayout(scalingGroup);
 
     scalingComboBox = new QComboBox();
@@ -182,7 +182,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordsTable->setHidden(true);
 
     //Ground Motions
-    auto groundMotionsGroup = new QGroupBox("Ground Motions");
+    auto groundMotionsGroup = new QGroupBox("Ground Motion Components");
     auto groundMotionsLayout = new QGridLayout(groundMotionsGroup);
     groundMotionsComponentsBox = new QComboBox();
     /*
@@ -215,8 +215,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(recordSelectionGroup, 0, 1);
     // Output directory group location
     layout->addWidget(outdirGroup, 1, 0, 1, 2);
-    layout->addWidget(scalingGroup, 2, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 3, 0, 1, 2);
+    layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
+    layout->addWidget(scalingGroup, 3, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
                                    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
