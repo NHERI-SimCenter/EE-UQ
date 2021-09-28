@@ -77,6 +77,8 @@ private:
     QStackedWidget* targetSpectrumDetails;
     QGridLayout* recordSelectionLayout;
     QComboBox* suiteAverageBox; // how to compute the suite average
+    QComboBox* faultTypeBox; // fault type in PEER record searching
+    QComboBox* pulseBox; // whether filtering records by pulse-like feature
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;
@@ -93,6 +95,11 @@ private:
     QLineEdit* vs30Min;
     QLineEdit* vs30Max;
     QTemporaryDir groundMotionsFolder;
+
+    //D5-95 Range
+    QCheckBox* durationCheckBox;
+    QLineEdit* durationMin;
+    QLineEdit* durationMax;
 
     //Scaling
     QComboBox* scalingComboBox;

@@ -74,48 +74,80 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     nRecordsEditBox->setValidator(positiveIntegerValidator);
     recordSelectionLayout->addWidget(nRecordsEditBox, 0, 1);
 
+    // Fault Type
+    faultTypeBox = new QComboBox();
+    faultTypeBox->addItem("All Types");
+    faultTypeBox->addItem("Strike Slip (SS)");
+    faultTypeBox->addItem("Normal/Oblique");
+    faultTypeBox->addItem("Reverse/Oblique");
+    faultTypeBox->addItem("SS+Normal");
+    faultTypeBox->addItem("SS+Reverse");
+    faultTypeBox->addItem("Normal+Reverse");
+    recordSelectionLayout->addWidget(new QLabel("Fault Type"), 1, 0);
+    recordSelectionLayout->addWidget(faultTypeBox, 1, 1);
+
+    // Pulse Type
+    pulseBox = new QComboBox();
+    pulseBox->addItem("All");
+    pulseBox->addItem("Only Pulse-like");
+    pulseBox->addItem("No Pulse-like");
+    recordSelectionLayout->addWidget(new QLabel("Pulse"), 2, 0);
+    recordSelectionLayout->addWidget(pulseBox, 2, 1);
+
     //Magnitude Range
     magnitudeCheckBox = new QCheckBox("Magnitude");
-    recordSelectionLayout->addWidget(magnitudeCheckBox, 1, 0);
+    recordSelectionLayout->addWidget(magnitudeCheckBox, 3, 0);
     magnitudeMin = new QLineEdit("5.0");
     magnitudeMin->setEnabled(false);
     magnitudeMin->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(magnitudeMin, 1, 1);
+    recordSelectionLayout->addWidget(magnitudeMin, 3, 1);
     magnitudeMax = new QLineEdit("8.0");
     magnitudeMax->setEnabled(false);
     magnitudeMax->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(magnitudeMax, 1, 2);
+    recordSelectionLayout->addWidget(magnitudeMax, 3, 2);
 
     distanceCheckBox = new QCheckBox("Distance");
-    recordSelectionLayout->addWidget(distanceCheckBox, 2, 0);
+    recordSelectionLayout->addWidget(distanceCheckBox, 4, 0);
     distanceMin = new QLineEdit("0.0");
     distanceMin->setEnabled(false);
     distanceMin->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(distanceMin, 2, 1);
+    recordSelectionLayout->addWidget(distanceMin, 4, 1);
     distanceMax = new QLineEdit("50.0");
     distanceMax->setEnabled(false);
     distanceMax->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(distanceMax, 2, 2);
-    recordSelectionLayout->addWidget(new QLabel("km"), 2, 3);
+    recordSelectionLayout->addWidget(distanceMax, 4, 2);
+    recordSelectionLayout->addWidget(new QLabel("km"), 4, 3);
 
     vs30CheckBox = new QCheckBox("Vs30");
-    recordSelectionLayout->addWidget(vs30CheckBox, 3, 0);
+    recordSelectionLayout->addWidget(vs30CheckBox, 5, 0);
     vs30Min = new QLineEdit("150.0");
     vs30Min->setEnabled(false);
     vs30Min->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(vs30Min, 3, 1);
+    recordSelectionLayout->addWidget(vs30Min, 5, 1);
     vs30Max = new QLineEdit("300.0");
     vs30Max->setEnabled(false);
     vs30Max->setValidator(positiveDoubleValidator);
-    recordSelectionLayout->addWidget(vs30Max, 3, 2);
-    recordSelectionLayout->addWidget(new QLabel("m/s"), 3, 3);
+    recordSelectionLayout->addWidget(vs30Max, 5, 2);
+    recordSelectionLayout->addWidget(new QLabel("m/s"), 5, 3);
+
+    durationCheckBox = new QCheckBox("D5-95");
+    recordSelectionLayout->addWidget(durationCheckBox, 6, 0);
+    durationMin = new QLineEdit("0.0");
+    durationMin->setEnabled(false);
+    durationMin->setValidator(positiveDoubleValidator);
+    recordSelectionLayout->addWidget(durationMin, 6, 1);
+    durationMax = new QLineEdit("20.0");
+    durationMax->setEnabled(false);
+    durationMax->setValidator(positiveDoubleValidator);
+    recordSelectionLayout->addWidget(durationMax, 6, 2);
+    recordSelectionLayout->addWidget(new QLabel("sec"), 6, 3);
 
 //#ifdef _WIN32
 //    targetSpectrumGroup->setMaximumHeight(200);
 //    recordSelectionGroup->setMaximumHeight(200);
 //#else
     targetSpectrumLayout->setRowStretch(2,1);
-    recordSelectionLayout->setRowStretch(4, 1);
+    recordSelectionLayout->setRowStretch(7, 1);
 //#endif
 
     auto scalingGroup = new QGroupBox("Scaling/Selection Criteria");
@@ -297,6 +329,11 @@ void PEER_NGA_Records::setupConnections()
         vs30Max->setEnabled(checked);
     });
 
+    connect(durationCheckBox, &QCheckBox::clicked, this, [this](bool checked){
+        durationMin->setEnabled(checked);
+        durationMax->setEnabled(checked);
+    });
+
     connect(&peerClient, &PeerNgaWest2Client::statusUpdated, this, &PEER_NGA_Records::updateStatus);
 
     connect(&peerClient, &PeerNgaWest2Client::selectionStarted, this, [this]()
@@ -460,6 +497,10 @@ void PEER_NGA_Records::selectRecords()
     if(vs30CheckBox->checkState() == Qt::Checked)
         vs30Range.setValue(qMakePair(vs30Min->text().toDouble(), vs30Max->text().toDouble()));
 
+    QVariant durationRange;
+    if(durationCheckBox->checkState() == Qt::Checked)
+        durationRange.setValue(qMakePair(durationMin->text().toDouble(), durationMax->text().toDouble()));
+
     if(targetSpectrumDetails->currentIndex() == 0)
     {
         auto asce710widget = reinterpret_cast<ASCE710Target*>(targetSpectrumDetails->currentWidget());
@@ -469,7 +510,7 @@ void PEER_NGA_Records::selectRecords()
                                  nRecordsEditBox->text().toInt(),
 				 magnitudeRange,
 				 distanceRange,
-                 vs30Range,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex()+1);
+                 vs30Range,durationRange,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex(),faultTypeBox->currentIndex()+1,pulseBox->currentIndex()+1);
     }
     else
     {
@@ -483,7 +524,8 @@ void PEER_NGA_Records::selectRecords()
         auto spectrum = userTargetWidget->spectrum();
 
         if (spectrum.size() > 0)
-            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, groundMotionsComponentsBox->currentIndex()+1, suiteAverageBox->currentIndex()+1);
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, durationRange,
+                                     groundMotionsComponentsBox->currentIndex()+1, suiteAverageBox->currentIndex(), faultTypeBox->currentIndex()+1, pulseBox->currentIndex()+1);
         else
         {
             progressBar->setHidden("True");
@@ -637,7 +679,14 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
     jsonObject["TargetSpectrum"] = spectrumJson;
 
+    jsonObject["scaling"] = scalingComboBox->currentText();
+    jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
+    jsonObject["periodPoints"] = periodPointsLineEdit->text();
+    jsonObject["weights"] = weightsLineEdit->text();
+
     jsonObject["components"] = groundMotionsComponentsBox->currentText();
+    jsonObject["faultType"] = faultTypeBox->currentText();
+    jsonObject["pulse"] = pulseBox->currentText();
 
     jsonObject["records"] = nRecordsEditBox->text();
 
@@ -653,6 +702,11 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     jsonObject["vs30Min"] = vs30Min->text();
     jsonObject["vs30Max"] = vs30Max->text();
 
+    jsonObject["durationRange"] = durationCheckBox->isChecked();
+    jsonObject["durationMin"] = durationMin->text();
+    jsonObject["durationMax"] = durationMax->text();
+
+
     return true;
 }
 
@@ -665,7 +719,14 @@ bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
         dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
     }
 
+    scalingComboBox->setCurrentText(jsonObject["scaling"].toString());
+    scalingPeriodLineEdit->setText(jsonObject["singlePeriod"].toString());
+    periodPointsLineEdit->setText(jsonObject["periodPoints"].toString());
+    weightsLineEdit->setText(jsonObject["weights"].toString());
+
     groundMotionsComponentsBox->setCurrentText(jsonObject["components"].toString());
+    faultTypeBox->setCurrentText(jsonObject["faultType"].toString());
+    pulseBox->setCurrentText(jsonObject["pulse"].toString());
 
     nRecordsEditBox->setText(jsonObject["records"].toString());
 
@@ -685,10 +746,17 @@ bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
 
     auto vs30Range = jsonObject["vs30Range"].toBool();
     vs30CheckBox->setChecked(vs30Range);
-    vs30Min->setEnabled(distanceRange);
+    vs30Min->setEnabled(vs30Range);
     vs30Min->setText(jsonObject["vs30Min"].toString());
-    vs30Max->setEnabled(distanceRange);
+    vs30Max->setEnabled(vs30Range);
     vs30Max->setText(jsonObject["vs30Max"].toString());
+
+    auto durationRange = jsonObject["durationRange"].toBool();
+    durationCheckBox->setChecked(durationRange);
+    durationMin->setEnabled(durationMin);
+    durationMin->setText(jsonObject["durationMin"].toString());
+    durationMax->setEnabled(durationRange);
+    durationMax->setText(jsonObject["durationMax"].toString());
 
     return true;
 }
