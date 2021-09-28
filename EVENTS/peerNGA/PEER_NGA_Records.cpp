@@ -198,18 +198,25 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     groundMotionsComponentsBox->addItem("H2", GroundMotionComponents::One);
     groundMotionsComponentsBox->addItem("V", GroundMotionComponents::Three);
 
+    // Suite Averge
+    suiteAverageBox = new QComboBox();
+    suiteAverageBox->addItem("Arithmetic");
+    suiteAverageBox->addItem("Geometric");
+
     groundMotionsLayout->addWidget(new QLabel("Acceleration Components"), 0, 0);
     groundMotionsLayout->addWidget(groundMotionsComponentsBox, 0, 1);
+    groundMotionsLayout->addWidget(new QLabel("Suite Average"), 1, 0);
+    groundMotionsLayout->addWidget(suiteAverageBox, 1, 1);
     recordsTable->setMinimumHeight(200);
-    groundMotionsLayout->addWidget(recordsTable, 1, 0, 1, 2);
-    groundMotionsLayout->setRowStretch(1, 1);
+    groundMotionsLayout->addWidget(recordsTable, 2, 0, 1, 2);
+    groundMotionsLayout->setRowStretch(2, 1);
 
     progressBar = new QProgressBar();
     progressBar->setRange(0,0);
     progressBar->setAlignment(Qt::AlignCenter);
     progressBar->setHidden(true);
 
-    groundMotionsLayout->addWidget(progressBar, 2, 0, 1, 2);
+    groundMotionsLayout->addWidget(progressBar, 3, 0, 1, 2);
 
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
@@ -462,7 +469,7 @@ void PEER_NGA_Records::selectRecords()
                                  nRecordsEditBox->text().toInt(),
 				 magnitudeRange,
 				 distanceRange,
-                 vs30Range,groundMotionsComponentsBox->currentIndex()+1);
+                 vs30Range,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex()+1);
     }
     else
     {
@@ -476,7 +483,7 @@ void PEER_NGA_Records::selectRecords()
         auto spectrum = userTargetWidget->spectrum();
 
         if (spectrum.size() > 0)
-            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, groundMotionsComponentsBox->currentIndex()+1);
+            peerClient.selectRecords(userTargetWidget->spectrum(), nRecordsEditBox->text().toInt(), magnitudeRange, distanceRange, vs30Range, groundMotionsComponentsBox->currentIndex()+1, suiteAverageBox->currentIndex()+1);
         else
         {
             progressBar->setHidden("True");

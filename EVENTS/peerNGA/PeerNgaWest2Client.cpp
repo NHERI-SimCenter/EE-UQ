@@ -42,7 +42,7 @@ void PeerNgaWest2Client::signIn(QString username, QString password)
     signInPageReply = networkManager.get(peerSignInPageRequest);
 }
 
-void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey)
+void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey, int peerSRmeanFlag)
 {
     emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
@@ -52,6 +52,8 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     this->distanceRange = distanceRange;
     this->vs30Range = vs30Range;
     this->SRkey = peerSRkey;
+    this->SRmeanFlag = peerSRmeanFlag;
+
 
     uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
@@ -88,13 +90,14 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     uploadFileReply = networkManager.post(uploadFileRequest, multiPart);
 }
 
-void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey)
+void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey, int peerSRmeanFlag)
 {
     emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
 
     this->nRecords = nRecords;
     this->SRkey = peerSRkey;
+    this->SRmeanFlag = peerSRmeanFlag;
 
     QNetworkCookie cookie("SpectrumModel_Dropdown", "99");
     cookie.setDomain("ngawest2.berkeley.edu");
@@ -353,6 +356,7 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         params.addQueryItem("authenticity_token", authenticityToken);
         params.addQueryItem("search[DampingRatio]", "0.05");
         params.addQueryItem("search[SRkey]", QString::number(this->SRkey));
+        params.addQueryItem("search[SRmeanFlag]", QString::number(this->SRmeanFlag));
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
 

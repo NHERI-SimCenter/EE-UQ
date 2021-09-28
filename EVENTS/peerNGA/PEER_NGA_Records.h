@@ -76,6 +76,7 @@ private:
     QComboBox* spectrumTypeComboBox;
     QStackedWidget* targetSpectrumDetails;
     QGridLayout* recordSelectionLayout;
+    QComboBox* suiteAverageBox; // how to compute the suite average
 
     //Magnitude Range
     QCheckBox* magnitudeCheckBox;

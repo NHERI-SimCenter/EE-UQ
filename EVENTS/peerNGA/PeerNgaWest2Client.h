@@ -17,8 +17,8 @@ public:
     explicit PeerNgaWest2Client(QObject *parent = nullptr);
     bool loggedIn();
     void signIn(QString username, QString password);
-    void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey);
-    void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey);
+    void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey, int peerSRmeanFlag);
+    void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey, int peerSRmeanFlag);
     void selectRecords(QStringList);
 
     void setScalingParameters(const int scaleFlag,
@@ -52,6 +52,7 @@ private:
     QString password;
     int nRecords;
     int SRkey;
+    int SRmeanFlag;
     bool isLoggedIn;
     QVariant magnitudeRange;
     QVariant distanceRange;
