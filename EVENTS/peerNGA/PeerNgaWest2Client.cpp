@@ -42,7 +42,7 @@ void PeerNgaWest2Client::signIn(QString username, QString password)
     signInPageReply = networkManager.get(peerSignInPageRequest);
 }
 
-void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey)
+void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, QVariant durationRange, int peerSRkey, int peerSRmeanFlag, int peerFaultType, int peerPulse)
 {
     emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
@@ -51,7 +51,12 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     this->magnitudeRange = magnitudeRange;
     this->distanceRange = distanceRange;
     this->vs30Range = vs30Range;
+    this->durationRange = durationRange;
     this->SRkey = peerSRkey;
+    this->SRmeanFlag = peerSRmeanFlag;
+    this->faultType = peerFaultType;
+    this->pulse = peerPulse;
+
 
     uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
@@ -88,13 +93,16 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     uploadFileReply = networkManager.post(uploadFileRequest, multiPart);
 }
 
-void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, int peerSRkey)
+void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, QVariant durationRange, int peerSRkey, int peerSRmeanFlag, int peerFaultType, int peerPulse)
 {
     emit selectionStarted();
     emit statusUpdated("Performing Record Selection...");
 
     this->nRecords = nRecords;
     this->SRkey = peerSRkey;
+    this->SRmeanFlag = peerSRmeanFlag;
+    this->faultType = peerFaultType;
+    this->pulse = peerPulse;
 
     QNetworkCookie cookie("SpectrumModel_Dropdown", "99");
     cookie.setDomain("ngawest2.berkeley.edu");
@@ -119,6 +127,7 @@ void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nR
     this->magnitudeRange = magnitudeRange;
     this->distanceRange = distanceRange;
     this->vs30Range = vs30Range;
+    this->durationRange = durationRange;
 
     recordsToDownload.clear();
     postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
@@ -353,6 +362,9 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         params.addQueryItem("authenticity_token", authenticityToken);
         params.addQueryItem("search[DampingRatio]", "0.05");
         params.addQueryItem("search[SRkey]", QString::number(this->SRkey));
+        params.addQueryItem("search[SRmeanFlag]", QString::number(this->SRmeanFlag));
+        params.addQueryItem("search[faultType]", QString::number(this->faultType));
+        params.addQueryItem("search[pulse]", QString::number(this->pulse));
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
 
@@ -403,6 +415,12 @@ void PeerNgaWest2Client::processPostSpectrumReply()
                 auto vs30Pair = vs30Range.value<QPair<double, double>>();
                 QString vs30 = QString::number(vs30Pair.first) + ',' + QString::number(vs30Pair.second);
                 params.addQueryItem("search[vs30]", vs30);
+            }
+            if(durationRange.isValid() && !durationRange.isNull())
+            {
+                auto durationPair = durationRange.value<QPair<double, double>>();
+                QString duration = QString::number(durationPair.first) + ',' + QString::number(durationPair.second);
+                params.addQueryItem("search[duration]", duration);
             }
         } else {
 
