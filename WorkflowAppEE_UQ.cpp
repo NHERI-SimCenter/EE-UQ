@@ -85,7 +85,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHostInfo>
 #include <DakotaResultsSampling.h>
 #include <Utils/PythonProgressDialog.h>
-#include <Utils/RelativePathResolver.h>
 
 #include <GoogleAnalytics.h>
 
@@ -628,10 +627,6 @@ WorkflowAppEE_UQ::loadFile(const QString fileName){
     val=file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
-
-    //Resolve absolute paths from relative ones
-    QFileInfo fileInfo(fileName);
-    SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
 
     // close file
     file.close();
