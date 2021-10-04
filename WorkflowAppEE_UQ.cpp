@@ -85,6 +85,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHostInfo>
 #include <DakotaResultsSampling.h>
 #include <Utils/PythonProgressDialog.h>
+#include <Utils/RelativePathResolver.h>
 
 #include <GoogleAnalytics.h>
 
@@ -227,7 +228,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     PythonProgressDialog *theDialog=PythonProgressDialog::getInstance();
     theDialog->appendInfoMessage("Welcome to EE-UQ");
-    theDialog->hideAfterElapsedTime(1);
+    //    theDialog->hideAfterElapsedTime(1);
 }
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
@@ -368,11 +369,11 @@ WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString i
   }
 
   //
-  // proess results
+  // process results
   // 
 
   theResults->processResults(dakotaOut, dakotaTab);
-  theRunWidget->hide();
+  // theRunWidget->hide();
   theComponentSelection->displayComponent("RES");
 }
 
@@ -628,6 +629,10 @@ WorkflowAppEE_UQ::loadFile(const QString fileName){
     QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
     QJsonObject jsonObj = doc.object();
 
+    //Resolve absolute paths from relative ones
+    QFileInfo fileInfo(fileName);
+    SCUtils::ResolveAbsolutePaths(jsonObj, fileInfo.dir());
+    
     // close file
     file.close();
 
