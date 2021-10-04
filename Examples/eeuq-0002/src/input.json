@@ -41,7 +41,7 @@
                 "dashpotCoeff": 360,
                 "eSizeH": 0.25,
                 "eSizeV": 0.25,
-                "groundMotion": "{Current_Dir}/elCentro.AT2",
+                "groundMotion": "{Current_Dir}/motion.json",
                 "groundWaterTable": 0,
                 "rockDen": 2,
                 "rockVs": 180,

@@ -3,6 +3,10 @@
 
 #include "AbstractTargetWidget.h"
 #include "UserSpectrumModel.h"
+#include <QFile>
+#include <QDir>
+#include <QTableView>
+#include <QGridLayout>
 
 class UserSpectrumWidget : public AbstractTargetWidget
 {
@@ -15,12 +19,19 @@ public:
     QJsonObject serialize() const override;
     void deserialize(const QJsonObject &json) override;
 
+public slots:
+    void loadCSV(void);
+    void loadSpectrum(void);
+
     // AbstractTargetWidget interface
 public:
     QList<QPair<double, double> > spectrum() const override;
 
 private:
     UserSpectrumModel* model;
+    QString spectrumfilepath;
+    QTableView* table;
+    QGridLayout* layout;
 
 };
 
