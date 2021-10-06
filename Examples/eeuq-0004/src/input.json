@@ -47,14 +47,23 @@
             "distanceMax": "50.0",
             "distanceMin": "0.0",
             "distanceRange": false,
+            "durationMax": "",
+            "durationMin": "",
+            "durationRange": false,
+            "faultType": "All Types",
             "magnitudeMax": "8.0",
             "magnitudeMin": "5.0",
             "magnitudeRange": false,
+            "periodPoints": "0.01,0.05,0.1,0.5,1,5,10.0",
+            "pulse": "All",
             "records": "11",
+            "scaling": "Single Period",
+            "singlePeriod": "1.0",
             "type": "ExistingPEER_Events",
             "vs30Max": "300.0",
             "vs30Min": "150.0",
-            "vs30Range": false
+            "vs30Range": false,
+            "weights": "1.0,1.0,1.0,1.0,1.0,1.0,1.0"
         }
     ],
     "GeneralInformation": {
