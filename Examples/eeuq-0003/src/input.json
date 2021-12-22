@@ -38,151 +38,7 @@
     "Events": [
         {
             "EventClassification": "Earthquake",
-            "Events": [
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 7.903,
-                            "fileName": "RSN9_BORREGO_B-ELC000.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-9",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 8.6944,
-                            "fileName": "RSN28_PARKF_C12050.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-28",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 3.8338,
-                            "fileName": "RSN36_BORREGO_A-ELC180.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-36",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 14.4769,
-                            "fileName": "RSN40_BORREGO_A-SON033.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-40",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 51.1018,
-                            "fileName": "RSN54_SFERN_BSF135.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-54",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 43.6206,
-                            "fileName": "RSN55_SFERN_BVP090.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-55",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 66.419,
-                            "fileName": "RSN67_SFERN_ISD014.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-67",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 2.23,
-                            "fileName": "RSN68_SFERN_PEL090.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-68",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 46.1076,
-                            "fileName": "RSN76_SFERN_MA3130.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-76",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 31.7031,
-                            "fileName": "RSN86_SFERN_SON033.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-86",
-                    "type": "PeerEvent"
-                },
-                {
-                    "EventClassification": "Earthquake",
-                    "Records": [
-                        {
-                            "dirn": 1,
-                            "factor": 5.9943,
-                            "fileName": "RSN93_SFERN_WND143.AT2",
-                            "filePath": "C:/Users/kuans/AppData/Local/Temp.aeFRqh"
-                        }
-                    ],
-                    "name": "PEER-Record-93",
-                    "type": "PeerEvent"
-                }
-            ],
+            "Events": [],
             "TargetSpectrum": {
                 "Sd1": "0.6",
                 "Sds": "1.0",
@@ -193,14 +49,23 @@
             "distanceMax": "50.0",
             "distanceMin": "0.0",
             "distanceRange": false,
+            "durationMax": "",
+            "durationMin": "",
+            "durationRange": false,
+            "faultType": "All Types",
             "magnitudeMax": "8.0",
             "magnitudeMin": "5.0",
             "magnitudeRange": false,
+            "periodPoints": "0.01,0.05,0.1,0.5,1,5,10.0",
+            "pulse": "All",
             "records": "11",
+            "scaling": "Single Period",
+            "singlePeriod": "1.0",
             "type": "ExistingPEER_Events",
             "vs30Max": "300.0",
             "vs30Min": "150.0",
-            "vs30Range": false
+            "vs30Range": false,
+            "weights": "1.0,1.0,1.0,1.0,1.0,1.0,1.0"
         }
     ],
     "GeneralInformation": {
