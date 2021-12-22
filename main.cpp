@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("2.2.5");
-    //  GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    QCoreApplication::setApplicationVersion("2.2.6");
+    GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
@@ -147,10 +147,10 @@ int main(int argc, char *argv[])
     QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 2.2.5");
+    QString version("Version 2.2.6");
     w.setVersion(version);
 
-    QString citeText("1) Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, Charles Wang, Stevan Gavrilovic, & Long Chen. (2020, September 30). NHERI-SimCenter/EE-UQ: Release 2.2.0 (Version r2.2.0). Zenodo. http://doi.org/10.5281/zenodo.4253161\n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+    QString citeText("1) Frank McKenna, Wael Elhaddad, Michael Gardner, Adam Zsarnoczay, kuanshi, Charles Wang, claudioperez, Peter Mackenzie-Helnwein, Stevan Gavrilovic, & kuanshi-zhong. (2021). NHERI-SimCenter/EE-UQ: Version 2.2.6 (v2.2.6). Zenodo. https://doi.org/10.5281/zenodo.5800070 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     w.setCite(citeText);
 
     
