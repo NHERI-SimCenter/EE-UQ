@@ -445,6 +445,13 @@ void ExistingPEER_Records::loadEventsFromDir(void) {
 
     } else {
 
+        QString recordsCsv(directory.filePath("_SearchResults.csv"));
+        QFileInfo checkCsvFile(recordsCsv);
+        if (checkCsvFile.exists() && checkCsvFile.isFile()) {
+            this->parseSearchResults(directory.filePath("_SearchResults.csv"));
+            return;
+        }
+
         QStringList fileList= directory.entryList(QStringList() << "*.AT2",QDir::Files);
         foreach(QString fileName, fileList) {
 
@@ -595,4 +602,99 @@ ExistingPEER_Records::copyFiles(QString &dirName) {
     return true;
 }
 
+void ExistingPEER_Records::parseSearchResults(QString searchResultsFilePath)
+{
+    QFile searchResultsFile(searchResultsFilePath);
+    if(!searchResultsFile.exists())
+        return;
+
+    if(!searchResultsFile.open(QFile::ReadOnly))
+        return;
+
+    QFileInfo fileInfo(searchResultsFile.fileName());
+    QDir recordDir(fileInfo.dir());
+
+    QTextStream searchResultsStream(&searchResultsFile);
+    while (!searchResultsStream.atEnd())
+    {
+        QString line = searchResultsStream.readLine();
+
+        //Parsing selected records information
+        if(line.contains("Metadata of Selected Records"))
+        {
+            //skip header
+            searchResultsStream.readLine();
+            line = searchResultsStream.readLine();
+
+            while(!line.isEmpty())
+            {
+                auto values = line.split(',');
+                qDebug() << values;
+                if (values[0].isEmpty()) {
+                    break;
+                }
+                PeerEvent *theEvent = new PeerEvent(theRandVariableIW); // new PEER event
+                QString Ordination = values[1].trimmed();
+                double ScaleFactor = values[4].toDouble();
+                QString Horizontal1File = values[19].trimmed();
+                QString Horizontal2File = values[20].trimmed();
+                QString VerticalFile = values[21].trimmed();
+                QString EventName(Horizontal1File);
+                EventName.chop(4); // remove ".AT"
+                EventName.chop(3); // remove direction key (last three
+                theEvent->theName->setText(EventName);
+
+                if (Ordination.compare("H1")==0 || Ordination.compare("H2")==0) {
+                    // single horizontal component
+                    PeerRecord *theRecord = theEvent->theRecords.at(0);
+                    if (theRecord != NULL) {
+                        if (Ordination.compare("H1")==0)
+                            theRecord->file->setText(recordDir.filePath(Horizontal1File));
+                        else
+                            theRecord->file->setText(recordDir.filePath(Horizontal2File));
+                        theRecord->factor->setText(QString::number(ScaleFactor));
+                        theRecord->dirn->setValue(1);
+                    }
+                } else {
+                    // single vertical component
+                    if (Ordination.compare("V")==0) {
+                        PeerRecord *theRecord = theEvent->theRecords.at(0);
+                        if (theRecord != NULL) {
+                            theRecord->file->setText(recordDir.filePath(VerticalFile));
+                            theRecord->factor->setText(QString::number(ScaleFactor));
+                            theRecord->dirn->setValue(3);
+                        }
+                    } else {
+                        // 2d horizontal components
+                        PeerRecord *Record1 = theEvent->theRecords.at(0);
+                        if (Record1 != NULL) {
+                            Record1->file->setText(recordDir.filePath(Horizontal1File));
+                            Record1->factor->setText(QString::number(ScaleFactor));
+                            Record1->dirn->setValue(1);
+                        }
+                        PeerRecord *Record2 = new PeerRecord(theRandVariableIW);
+                        theEvent->recordLayout->addWidget(Record2);
+                        theEvent->theRecords.append(Record2);
+                        Record2 = theEvent->theRecords.at(1);
+                        if (Record2 != NULL) {
+                            Record2->file->setText(recordDir.filePath(Horizontal2File));
+                            Record2->factor->setText(QString::number(ScaleFactor));
+                            Record2->dirn->setValue(2);
+                        }
+                    }
+                }
+                theEvents.append(theEvent);
+                eventLayout->insertWidget(eventLayout->count()-1, theEvent);
+
+                line = searchResultsStream.readLine();
+                qDebug() << line;
+            }
+        }
+    }
+
+    searchResultsFile.close();
+    qDebug() << "searchResultsFile closed.";
+
+    return;
+}
 

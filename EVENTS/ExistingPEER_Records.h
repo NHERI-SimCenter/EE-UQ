@@ -125,14 +125,14 @@ public slots:
    void removeEvents(void);
    void clear(void);
    void loadEventsFromDir(void);
-
+   void parseSearchResults(QString searchResultsFilePath);
 
 private:
     QVBoxLayout *verticalLayout;
     QVBoxLayout *eventLayout;
 
     QVector<PeerEvent *>theEvents;
-    RandomVariablesContainer *theRandVariableIW;
+    RandomVariablesContainer *theRandVariableIW; 
 };
 
 #endif // EXISTING_PEER_RECORDS_H
