@@ -67,7 +67,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "RockOutcrop.h"
 #include "peerNGA/PEER_NGA_Records.h"
 #include "userDefinedDatabase/User_Defined_Database.h"
-
+#include <QScrollArea>
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
@@ -108,8 +108,16 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     //
     // create the stacked widget
     //
+
+    QScrollArea *sa = new QScrollArea;
+    sa->setWidgetResizable(true);
+    sa->setLineWidth(0);
+    sa->setFrameShape(QFrame::NoFrame);      
+    
     theStackedWidget = new QStackedWidget();
 
+    sa->setWidget(theStackedWidget);
+    
     //
     // create the individual load widgets & add to stacked widget
     //
@@ -150,7 +158,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theStackedWidget->addWidget(userDefinedDatabase);
 
 
-    layout->addWidget(theStackedWidget);
+    //layout->addWidget(theStackedWidget);
+    layout->addWidget(sa);
     layout->setMargin(0);
     this->setLayout(layout);
     theCurrentEvent=theStochasticMotionWidget;
