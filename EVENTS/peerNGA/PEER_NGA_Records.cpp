@@ -20,6 +20,7 @@
 #include "UserSpectrumWidget.h"
 #include "USGSTargetWidget.h"
 #include "NSHMPTarget.h"
+#include "NSHMPDeagg.h"
 #include <GoogleAnalytics.h>
 #include <QLineEdit>
 #include <QFileDialog>
@@ -55,6 +56,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     spectrumTypeComboBox->addItem("User Specified");
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
     spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
+    spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
 
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
@@ -66,6 +68,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(usgsSpectrumTarget);
     auto nshmpTarget = new NSHMPTarget(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(nshmpTarget);
+    auto nshmpDeagg = new NSHMPDeagg(generalInfoWidget, this);
+    targetSpectrumDetails->addWidget(nshmpDeagg);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
