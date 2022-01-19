@@ -81,7 +81,7 @@ PeerRecord::PeerRecord(RandomVariablesContainer *theRV_IW, QWidget *parent)
 
    layout->addWidget(button);
    layout->addWidget(labelFile);
-   layout->addWidget(file, 1.0);
+   layout->addWidget(file,1);
    layout->addWidget(chooseFile);
    layout->addWidget(labelDirn);
    layout->addWidget(dirn);
@@ -166,7 +166,7 @@ PeerEvent::PeerEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
    //theName->setReadOnly(true);
 
    layout->addWidget(button);
-   layout->addWidget(theName);
+   layout->addWidget(theName,1);
 
    // QVBox Holding Peer Records, could be multiple
     recordLayout = new QVBoxLayout();
@@ -188,7 +188,7 @@ PeerEvent::PeerEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
    theRecords.append(theRecord);
   // connect(theRecord,SIGNAL(removeRecord()), this, SLOT(onRemoveRecord()));
 
-   layout->addLayout(recordLayout, 1.0);
+   layout->addLayout(recordLayout, 5);
 
 
    //this->setLayout(layout)
