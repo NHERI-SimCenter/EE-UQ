@@ -24,6 +24,7 @@
 #include <GoogleAnalytics.h>
 #include <QLineEdit>
 #include <QFileDialog>
+#include <QMessageBox>
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -627,8 +628,11 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     jsonObject["type"] = "ExistingPEER_Events";
 
     QJsonArray eventsArray;
+    int numRecords = 0;
     for (auto& record:currentRecords)
     {
+        numRecords++;
+	
         QJsonObject eventJson;
         QJsonArray recordsJsonArray;
 
@@ -677,6 +681,27 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
         eventsArray.append(eventJson);
     }
 
+    if (numRecords == 0) {
+      statusMessage(QString("PEER-NGA no motions yet selected"));      
+      switch( QMessageBox::question( 
+            this, 
+            tr("PEER-NGA"), 
+            tr("PEER-NGA has detected that no motions have been selected. If you are trying to Run a Workflow, the workflow will FAIL. To select motions, return to the PEER-NGA EVENT and press the 'Select Records' Button. Do you wish to continue anyway?"), 
+            QMessageBox::Yes | 
+            QMessageBox::No,
+            QMessageBox::Yes ) )
+	{
+	case QMessageBox::Yes:
+	  break;
+	case QMessageBox::No:
+	  return false;
+	  break;
+	default:
+
+	  break;
+	}
+    }
+    
     jsonObject["Events"] = eventsArray;
 
     auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();

@@ -212,11 +212,11 @@ EarthquakeEventSelection::outputToJSON(QJsonObject &jsonObject)
 {
     QJsonArray eventArray;
     QJsonObject singleEventData;
-    theCurrentEvent->outputToJSON(singleEventData);
+    bool result = theCurrentEvent->outputToJSON(singleEventData);
     eventArray.append(singleEventData);
     jsonObject["Events"]=eventArray;
 
-    return true;
+    return result;
 }
 
 
