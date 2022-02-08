@@ -98,7 +98,6 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 .. figure:: figures/shearRV.png
    :align: center
    :figclass: align-center
-.. note::
 
 .. warning::   
 
