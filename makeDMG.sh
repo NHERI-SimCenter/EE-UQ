@@ -125,7 +125,7 @@ echo "codesign --force --sign "$appleCredential" $dmgFile"
 codesign --force --sign "$appleCredential" $dmgFile
 
 echo "Issue the following: " 
-echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$dmgFile --primary-bundle-id altool --verbose"
+echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$dmgFile --primary-bundle-id altool"
 echo ""
 echo "returns id: ID .. wait for email indicating success"
 echo "To check status"
