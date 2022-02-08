@@ -40,8 +40,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include <QWidget>
-
-#include "MainWindow.h"
 #include <WorkflowAppWidget.h>
 
 class SimCenterComponentSelection;
@@ -51,7 +49,7 @@ class InputWidgetBIM;
 class InputWidgetUQ;
 class SIM_Selection;
 class UQ_EngineSelection;
-class FEM_Selection;
+class FEA_Selection;
 class UQOptions;
 class ResultsWidget;
 class GeneralInformationWidget;
@@ -109,7 +107,7 @@ private:
     SIM_Selection *theSIM;
     UQ_EngineSelection *theUQ_Selection;
     EarthquakeEventSelection *theEventSelection;
-    FEM_Selection *theAnalysisSelection;
+    FEA_Selection *theAnalysisSelection;
     EDP_EarthquakeSelection *theEDP_Selection;
     UQ_Results *theResults;
 

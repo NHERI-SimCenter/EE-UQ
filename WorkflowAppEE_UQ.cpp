@@ -47,6 +47,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QHBoxLayout>
 #include <QStackedWidget>
 #include <EarthquakeEventSelection.h>
+#include <EDP_EarthquakeSelection.h>
 #include <RunLocalWidget.h>
 #include <QProcess>
 #include <QCoreApplication>
@@ -61,19 +62,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "GeneralInformationWidget.h"
 #include <SIM_Selection.h>
 #include <RandomVariablesContainer.h>
-#include <InputWidgetSampling.h>
-#include <FEM_Selection.h>
+#include <FEA_Selection.h>
 #include <QDir>
 #include <QFile>
 #include <UQ_EngineSelection.h>
+#include <UQ_Results.h>
 #include <LocalApplication.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 #include <InputWidgetBIM.h>
 #include <InputWidgetUQ.h>
-
-#include <EDP_EarthquakeSelection.h>
 
 #include "CustomizedItemModel.h"
 
@@ -83,7 +82,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
-#include <DakotaResultsSampling.h>
 #include <Utils/PythonProgressDialog.h>
 #include <Utils/RelativePathResolver.h>
 
@@ -107,15 +105,14 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // create the various widgets
     //
 
-    theRVs = new RandomVariablesContainer();
+    theRVs = RandomVariablesContainer::getInstance();
     theGI = GeneralInformationWidget::getInstance();
     theSIM = new SIM_Selection(theRVs);
     theEventSelection = new EarthquakeEventSelection(theRVs, theGI);
-    theAnalysisSelection = new FEM_Selection(theRVs);
-    theUQ_Selection = new UQ_EngineSelection(theRVs);
+    theAnalysisSelection = new FEA_Selection(theRVs);
+    theUQ_Selection = new UQ_EngineSelection();
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
-
-    //theResults = new DakotaResultsSampling(theRVs);
+      
     theResults = theUQ_Selection->getResults();
 
     localApp = new LocalApplication("sWHALE.py");
@@ -137,8 +134,8 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     // error messages and signals
 
-    connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theResults, SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
+    //    connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+    //    connect(theResults, SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
 
     connect(theGI,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
     connect(theGI,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
@@ -330,6 +327,26 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     jsonObjectTop["Applications"]=apps;
 
+    QJsonObject defaultValues;
+    defaultValues["workflowInput"]=QString("dakota.json");    
+    defaultValues["filenameBIM"]=QString("BIM.json");
+    defaultValues["filenameEVENT"] = QString("EVENT.json");
+    defaultValues["filenameSAM"]= QString("SAM.json");
+    defaultValues["filenameEDP"]= QString("EDP.json");
+    defaultValues["filenameSIM"]= QString("SIM.json");
+    defaultValues["driverFile"]= QString("driver");
+    defaultValues["filenameDL"]= QString("BIM.json");
+    defaultValues["workflowOutput"]= QString("EDP.json");
+    QJsonArray rvFiles, edpFiles;
+    rvFiles.append(QString("BIM.json"));
+    rvFiles.append(QString("SAM.json"));
+    rvFiles.append(QString("EVENT.json"));
+    rvFiles.append(QString("SIM.json"));
+    edpFiles.append(QString("EDP.json"));
+    defaultValues["rvFiles"]= rvFiles;
+    defaultValues["edpFiles"]=edpFiles;
+    jsonObjectTop["DefaultValues"]=defaultValues;
+    
     //theRunLocalWidget->outputToJSON(jsonObjectTop);
 
     return result;
@@ -354,8 +371,8 @@ WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString i
   // connect signals for results widget
   //
 
-  connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-  connect(theResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+  //  connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
+  //  connect(theResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
 
   //
   // swap current results with existing one in selection & disconnect signals
