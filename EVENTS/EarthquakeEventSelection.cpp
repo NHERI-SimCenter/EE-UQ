@@ -68,11 +68,12 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "peerNGA/PEER_NGA_Records.h"
 #include "userDefinedDatabase/User_Defined_Database.h"
 #include <QScrollArea>
+#include <SimCenterIntensityMeasureWidget.h>
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
 {
-    QVBoxLayout *layout = new QVBoxLayout();
+    QGridLayout *layout = new QGridLayout();
 
     //
     // the selection part
@@ -103,7 +104,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     theSelectionLayout->addItem(spacer);
     theSelectionLayout->addWidget(eventSelection);
     theSelectionLayout->addStretch();
-    layout->addLayout(theSelectionLayout);
+    layout->addLayout(theSelectionLayout,0,1,1,1);
 
     //
     // create the stacked widget
@@ -115,8 +116,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     sa->setFrameShape(QFrame::NoFrame);      
     
     theStackedWidget = new QStackedWidget();
+    layout->addWidget(theStackedWidget,1,1,6,1);
 
-    sa->setWidget(theStackedWidget);
+    //sa->setWidget(theStackedWidget);
     
     //
     // create the individual load widgets & add to stacked widget
@@ -159,9 +161,22 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
 
 
     //layout->addWidget(theStackedWidget);
-    layout->addWidget(sa);
+    //layout->addWidget(sa);
     layout->setMargin(0);
-    this->setLayout(layout);
+
+    // add Intensity Widget
+    theSCIMWidget = new SimCenterIntensityMeasureWidget();
+    layout->addWidget(theSCIMWidget,7,1,3,1);
+
+    QGroupBox *allWidgets = new QGroupBox();
+    allWidgets->setLayout(layout);
+
+    sa->setWidget(allWidgets);
+
+    QVBoxLayout *global_layout = new QVBoxLayout();
+    global_layout->addWidget(sa);
+
+    this->setLayout(global_layout);
     theCurrentEvent=theStochasticMotionWidget;
 
     //
@@ -215,6 +230,10 @@ EarthquakeEventSelection::outputToJSON(QJsonObject &jsonObject)
     bool result = theCurrentEvent->outputToJSON(singleEventData);
     eventArray.append(singleEventData);
     jsonObject["Events"]=eventArray;
+
+    QJsonObject imJson;
+    result = theSCIMWidget->outputToJSON(imJson);
+    jsonObject["IntensityMeasure"] = imJson;
 
     return result;
 }
