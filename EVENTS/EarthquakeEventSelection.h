@@ -49,7 +49,6 @@ class QComboBox;
 class QStackedWidget;
 class UserDefinedApplication;
 class RockOutcrop;
-class SimCenterIntensityMeasureWidget;
 
 class RandomVariablesContainer;
 
@@ -87,7 +86,6 @@ private:
 
    RandomVariablesContainer *theRandomVariablesContainer;
 
-   SimCenterIntensityMeasureWidget *theSCIMWidget;
 };
 
 #endif // EARTHQUAKE_EVENT_SELECTION_H

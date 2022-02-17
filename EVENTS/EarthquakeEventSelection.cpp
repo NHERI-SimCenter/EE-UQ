@@ -68,7 +68,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "peerNGA/PEER_NGA_Records.h"
 #include "userDefinedDatabase/User_Defined_Database.h"
 #include <QScrollArea>
-#include <SimCenterIntensityMeasureWidget.h>
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
     : SimCenterAppWidget(parent), theCurrentEvent(0), theRandomVariablesContainer(theRandomVariableIW)
@@ -165,8 +164,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     layout->setMargin(0);
 
     // add Intensity Widget
-    theSCIMWidget = new SimCenterIntensityMeasureWidget();
-    layout->addWidget(theSCIMWidget,7,1,3,1);
+    //theSCIMWidget = new SimCenterIntensityMeasureWidget();
+    //layout->addWidget(theSCIMWidget,7,1,3,1);
 
     QGroupBox *allWidgets = new QGroupBox();
     allWidgets->setLayout(layout);
@@ -231,9 +230,9 @@ EarthquakeEventSelection::outputToJSON(QJsonObject &jsonObject)
     eventArray.append(singleEventData);
     jsonObject["Events"]=eventArray;
 
-    QJsonObject imJson;
-    result = theSCIMWidget->outputToJSON(imJson);
-    jsonObject["IntensityMeasure"] = imJson;
+    //QJsonObject imJson;
+    //result = theSCIMWidget->outputToJSON(imJson);
+    //jsonObject["IntensityMeasure"] = imJson;
 
     return result;
 }

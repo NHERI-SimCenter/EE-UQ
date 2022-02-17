@@ -13,9 +13,6 @@ INCLUDEPATH += $$PWD/EVENTS/StochasticMotionInput/include
 SOURCES +=  \
     $$PWD/EVENTS/EarthquakeEventSelection.cpp \
     $$PWD/EVENTS/ExistingPEER_Records.cpp \
-    $$PWD/EVENTS/SimCenterUnitsCombo.cpp \
-    $$PWD/EVENTS/SimCenterIntensityMeasureCombo.cpp \
-    $$PWD/EVENTS/SimCenterIntensityMeasureWidget.cpp \
     $$PWD/EVENTS/StochasticMotionInput/src/StochasticMotionInput.cpp \
     $$PWD/EVENTS/StochasticMotionInput/src/StochasticModelWidget.cpp \
     $$PWD/EVENTS/StochasticMotionInput/src/VlachosEtAlModel.cpp \
@@ -36,9 +33,6 @@ SOURCES +=  \
 HEADERS +=  \
     $$PWD/EVENTS/EarthquakeEventSelection.h \
     $$PWD/EVENTS/ExistingPEER_Records.h \
-    $$PWD/EVENTS/SimCenterUnitsCombo.h \
-    $$PWD/EVENTS/SimCenterIntensityMeasureCombo.h \
-    $$PWD/EVENTS/SimCenterIntensityMeasureWidget.h \
     $$PWD/EVENTS/StochasticMotionInput/include/StochasticMotionInput.h \
     $$PWD/EVENTS/StochasticMotionInput/include/StochasticModelWidget.h \
     $$PWD/EVENTS/StochasticMotionInput/include/VlachosEtAlModel.h \

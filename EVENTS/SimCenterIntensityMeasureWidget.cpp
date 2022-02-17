@@ -89,6 +89,8 @@ SimCenterIntensityMeasureWidget::SimCenterIntensityMeasureWidget(QWidget* parent
     sa->setLineWidth(0);
     sa->setFrameShape(QFrame::NoFrame);
     sa->setWidget(imBox);
+    sa->setMinimumHeight(200);
+    sa->setMaximumHeight(200);
 
     vLayout->addLayout(hLayout);
     vLayout->addWidget(sa);
@@ -135,9 +137,7 @@ SimCenterIM::~SimCenterIM()
 
 void SimCenterIM::handleIMChanged(const QString& newIM)
 {
-    qDebug() << "handleIMChanged";
-    qDebug() << newIM;
-    if ((newIM.contains("Pseudo")) || (newIM.contains("SaRatio")))
+    if ((newIM.contains("Spectral")) || (newIM.contains("SaRatio")))
         myPeriods->setVisible(true);
     else
         myPeriods->setVisible(false);
