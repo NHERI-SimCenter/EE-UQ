@@ -162,12 +162,12 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString, QString, QString)), this, SLOT(processResults(QString, QString, QString)));
+    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
 
     connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
 
-    connect(theJobManager,SIGNAL(processResults(QString , QString, QString)), this, SLOT(processResults(QString, QString, QString)));
-    connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
+    connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
+    connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
 
     connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
@@ -327,7 +327,7 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     jsonObjectTop["Applications"]=apps;
 
     QJsonObject defaultValues;
-    defaultValues["workflowInput"]=QString("dakota.json");    
+    defaultValues["workflowInput"]=QString("scInput.json");    
     defaultValues["filenameBIM"]=QString("BIM.json");
     defaultValues["filenameEVENT"] = QString("EVENT.json");
     defaultValues["filenameSAM"]= QString("SAM.json");
@@ -353,7 +353,7 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
 void
-WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+WorkflowAppEE_UQ::processResults(QString &dirName){
 
 
   //
@@ -388,7 +388,7 @@ WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString i
   // process results
   // 
 
-  theResults->processResults(dakotaOut, dakotaTab);
+  theResults->processResults(dirName);
   // theRunWidget->hide();
   theComponentSelection->displayComponent("RES");
 }
@@ -591,11 +591,11 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     theEDP_Selection->copyFiles(templateDirectory);
 
     //
-    // in new templatedir dir save the UI data into dakota.json file (same result as using saveAs)
+    // in new templatedir dir save the UI data into scInput.json file (same result as using saveAs)
     // NOTE: we append object workingDir to this which points to template dir
     //
 
-    QString inputFile = templateDirectory + QDir::separator() + tr("dakota.json");
+    QString inputFile = templateDirectory + QDir::separator() + tr("scInput.json");
 
     QFile file(inputFile);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -622,7 +622,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 }
 
 int
-WorkflowAppEE_UQ::loadFile(const QString fileName){
+WorkflowAppEE_UQ::loadFile(QString &fileName){
 
     errorMessage("");
 
