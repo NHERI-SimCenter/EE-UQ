@@ -85,6 +85,7 @@ private:
    SimCenterAppWidget* userDefinedDatabase;
 
    RandomVariablesContainer *theRandomVariablesContainer;
+
 };
 
 #endif // EARTHQUAKE_EVENT_SELECTION_H
