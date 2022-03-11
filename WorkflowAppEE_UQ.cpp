@@ -106,9 +106,9 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     theRVs = RandomVariablesContainer::getInstance();
     theGI = GeneralInformationWidget::getInstance();
-    theSIM = new SIM_Selection(theRVs);
+    theSIM = new SIM_Selection();
     theEventSelection = new EarthquakeEventSelection(theRVs, theGI);
-    theAnalysisSelection = new FEA_Selection(theRVs);
+    theAnalysisSelection = new FEA_Selection();
     theUQ_Selection = new UQ_EngineSelection();
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
       
@@ -259,17 +259,6 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     jsonObjectTop["GeneralInformation"] = jsonObjGenInfo;
 
-    QJsonObject jsonObjStructural;
-    result = theSIM->outputToJSON(jsonObjStructural);
-    if (result == false)
-        return result;
-
-    jsonObjectTop["StructuralInformation"] = jsonObjStructural;
-    QJsonObject appsSIM;
-    result = theSIM->outputAppDataToJSON(appsSIM);
-    if (result == false)
-        return result;
-    apps["Modeling"]=appsSIM;
 
     result = theRVs->outputToJSON(jsonObjectTop);
     if (result == false)
@@ -303,6 +292,14 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
+    result = theSIM->outputAppDataToJSON(apps);
+    if (result == false)
+        return result;
+
+    result = theSIM->outputToJSON(jsonObjectTop);
+    if (result == false)
+        return result;
+    
     result = theAnalysisSelection->outputAppDataToJSON(apps);
     if (result == false)
         return result;
@@ -421,16 +418,6 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         QJsonObject theApplicationObject = jsonObject["Applications"].toObject();
 
-        if (theApplicationObject.contains("Modeling")) {
-            QJsonObject theObject = theApplicationObject["Modeling"].toObject();
-            if (theSIM->inputAppDataFromJSON(theObject) == false) {
-                emit errorMessage("EE_UQ: failed to read Modeling Application");
-            }
-        } else {
-            emit errorMessage("EE_UQ: failed to find Modeling Application");
-            return false;
-        }
-
         // note: Events is different because the object is an Array
         if (theApplicationObject.contains("Events")) {
             //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
@@ -446,6 +433,9 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         if (theUQ_Selection->inputAppDataFromJSON(theApplicationObject) == false)
             emit errorMessage("EE_UQ: failed to read UQ application");
 
+        if (theSIM->inputAppDataFromJSON(theApplicationObject) == false)
+            emit errorMessage("EE_UQ: failed to read SIM application");
+	
         if (theAnalysisSelection->inputAppDataFromJSON(theApplicationObject) == false)
             emit errorMessage("EE_UQ: failed to read FEM application");
 
@@ -469,17 +459,7 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     theEventSelection->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
-
-    if (jsonObject.contains("StructuralInformation")) {
-        QJsonObject jsonObjStructuralInformation = jsonObject["StructuralInformation"].toObject();
-        if (theSIM->inputFromJSON(jsonObjStructuralInformation) == false) {
-            emit errorMessage("EE_UQ: failed to read StructuralInformation");
-        }
-    } else {
-        emit errorMessage("EE_UQ: failed to find StructuralInformation");
-        return false;
-    }
-
+        
     if (jsonObject.contains("EDP")) {
         QJsonObject edpObj = jsonObject["EDP"].toObject();
         if (theEDP_Selection->inputFromJSON(edpObj) == false)
@@ -491,11 +471,17 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
 
     if (theUQ_Selection->inputFromJSON(jsonObject) == false)
-        emit errorMessage("EE_UQ: failed to read UQ Method data");
+       emit errorMessage("EE_UQ: failed to read UQ Method data");
 
     if (theAnalysisSelection->inputFromJSON(jsonObject) == false)
+
+    if (theSIM->inputFromJSON(jsonObject) == false)
         emit errorMessage("EE_UQ: failed to read FEM Method data");
 
+    if (theSIM->inputFromJSON(jsonObject) == false)
+        emit errorMessage("EE_UQ: failed to read SIM Method data");
+
+      
     return true;
 }
 
