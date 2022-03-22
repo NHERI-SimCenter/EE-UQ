@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QDebug>
 
 UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(parent)
 {
