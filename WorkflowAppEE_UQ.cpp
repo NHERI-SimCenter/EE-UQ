@@ -109,7 +109,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     theSIM = new SIM_Selection();
     theEventSelection = new EarthquakeEventSelection(theRVs, theGI);
     theAnalysisSelection = new FEA_Selection();
-    theUQ_Selection = new UQ_EngineSelection();
+    theUQ_Selection = new UQ_EngineSelection(ForwardReliabilitySensitivity);
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
       
     theResults = theUQ_Selection->getResults();

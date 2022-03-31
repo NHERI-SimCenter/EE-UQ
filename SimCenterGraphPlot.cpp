@@ -3,7 +3,6 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <MainWindow.h>
 #include <QSpinBox>
 
 #include <qcustomplot.h>
@@ -12,8 +11,6 @@
 SimCenterGraphPlot::SimCenterGraphPlot(
                                QString xLabel,
                                QString yLabel,
-                               int width = 0,
-                               int height = 0,
                                QWidget *parent)
     : QWidget(parent), numGraphs(0)
 {
@@ -32,10 +29,10 @@ SimCenterGraphPlot::SimCenterGraphPlot(
     thePlot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     thePlot->setInteractions(QCP::iSelectPlottables);
 
-    QRect rec = QApplication::desktop()->screenGeometry();
+    QRect rec = QGuiApplication::screens()[0]->geometry();
 
-    height = (height > 0) ? height : 0.2*rec.height();
-    width = (width > 0) ? width : 0.5*rec.width();
+    int height = 0.2*rec.height();
+    int width = 0.5*rec.width();
 
     thePlot->setMinimumWidth(width);
     thePlot->setMinimumHeight(height);
@@ -47,6 +44,43 @@ SimCenterGraphPlot::SimCenterGraphPlot(
 
     this->setLayout(mainLayout);
 }
+
+SimCenterGraphPlot::SimCenterGraphPlot(
+                               QString xLabel,
+                               QString yLabel,
+                               int minWidth,
+                               int minHeight,
+                               QWidget *parent)
+    : QWidget(parent), numGraphs(0)
+{
+    yMinValue = 0;
+    yMaxValue = 0;
+    xMinValue = 0;
+    xMaxValue = 0;
+    // create a main layout
+    QVBoxLayout *mainLayout = new QVBoxLayout();
+
+    //
+    // graphic window
+    //
+
+    thePlot=new QCustomPlot();
+    thePlot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    thePlot->setInteractions(QCP::iSelectPlottables);
+
+
+    thePlot->setMinimumWidth(minWidth);
+    thePlot->setMinimumHeight(minHeight);
+
+    mainLayout->addWidget(thePlot);
+
+    thePlot->xAxis->setLabel(xLabel);
+    thePlot->yAxis->setLabel(yLabel);
+   // thePlot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+
+    this->setLayout(mainLayout);
+}
+
 
 SimCenterGraphPlot::~SimCenterGraphPlot()
 {
@@ -62,6 +96,41 @@ SimCenterGraphPlot::clear() {
    yMaxValue = -1e10;
    xMinValue = 1e10;
    xMaxValue = -1e10;
+   thePlot->replot();
+}
+
+
+void
+SimCenterGraphPlot::drawPDF(QVector<double> &x, QVector<double> &y) {
+
+  
+    addLine(x,y);
+
+    //
+    // add shade
+    //
+
+    thePlot->graph(numGraphs-1)->setBrush(QBrush(QColor(0, 75, 148,20)));
+
+    //
+    // add some margin
+    //
+
+    double ymargin =  (yMaxValue - yMinValue)*0.3;
+    double xmargin =  (xMaxValue - xMinValue)*0.05;
+    thePlot->yAxis->setRange(yMinValue, yMaxValue + ymargin);
+    thePlot->xAxis->setRange(xMinValue - xmargin, xMaxValue + xmargin);
+    thePlot->replot();
+
+    //
+    // righthandside/top axis without ticklabels ("box on")
+    //
+    
+    thePlot->xAxis2->setVisible(true);
+    thePlot->xAxis2->setTickLabels(false);
+    thePlot->yAxis2->setVisible(true);
+    thePlot->yAxis2->setTickLabels(false);
+
 }
 
 void
