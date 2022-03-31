@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui charts concurrent network sql qml 3dcore 3drender 3dextras printsupport quick
+QT += core gui charts concurrent uitools webenginewidgets network sql qml 3dcore 3drender 3dextras printsupport quick
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

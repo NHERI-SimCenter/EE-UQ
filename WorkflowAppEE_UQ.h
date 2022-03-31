@@ -91,9 +91,10 @@ signals:
 public slots:  
 
     void setUpForApplicationRun(QString &, QString &);
-    void processResults(QString dakotaOut, QString dakotaTab, QString inputFile);
+    void processResults(QString &dirName);
 
-    int loadFile(QString filename);
+    int loadFile(QString &filename);
+  
     void replyFinished(QNetworkReply*);
 
 private:
