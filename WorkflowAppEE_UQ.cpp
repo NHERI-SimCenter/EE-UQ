@@ -162,16 +162,12 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    //connect(localApp,SIGNAL(processResults(QString, QString, QString)), this, SLOT(processResults(QString, QString, QString)));
-    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
+    connect(localApp,SIGNAL(processResults(QString, QString, QString)), this, SLOT(processResults(QString, QString, QString)));
 
     connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
 
-    //connect(theJobManager,SIGNAL(processResults(QString , QString, QString)), this, SLOT(processResults(QString, QString, QString)));
-    //connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
-
-    connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
-    connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
+    connect(theJobManager,SIGNAL(processResults(QString , QString, QString)), this, SLOT(processResults(QString, QString, QString)));
+    connect(theJobManager,SIGNAL(loadFile(QString)), this, SLOT(loadFile(QString)));
 
     connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
 
@@ -182,9 +178,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
-    // KZ connect queryEVT and the reply
-    connect(theUQ_Selection, SIGNAL(queryEVT()), theEventSelection, SLOT(replyEventType()));
-    connect(theEventSelection, SIGNAL(typeEVT(QString)), theUQ_Selection, SLOT(setEventType(QString)));
 
     //
     // create layout to hold component selectio
@@ -360,8 +353,8 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 
 void
-WorkflowAppEE_UQ::processResults(QString &dirName){
-//WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+WorkflowAppEE_UQ::processResults(QString dakotaOut, QString dakotaTab, QString inputFile){
+
 
   //
   // get results widget fr currently selected UQ option
@@ -395,8 +388,7 @@ WorkflowAppEE_UQ::processResults(QString &dirName){
   // process results
   // 
 
-  //theResults->processResults(dakotaOut, dakotaTab);
-  theResults->processResults(dirName);
+  theResults->processResults(dakotaOut, dakotaTab);
   // theRunWidget->hide();
   theComponentSelection->displayComponent("RES");
 }
@@ -630,11 +622,9 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 }
 
 int
-WorkflowAppEE_UQ::loadFile(QString &fileName){
-//WorkflowAppEE_UQ::loadFile(const QString fileName){
+WorkflowAppEE_UQ::loadFile(const QString fileName){
 
-    //errorMessage("");
-    statusMessage(QString("Loading File .. ") + fileName);
+    errorMessage("");
 
     //
     // open file
