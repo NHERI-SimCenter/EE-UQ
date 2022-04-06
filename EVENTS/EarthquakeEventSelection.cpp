@@ -405,3 +405,13 @@ EarthquakeEventSelection::copyFiles(QString &destDir) {
 
     return false;
 }
+
+void
+EarthquakeEventSelection::replyEventType(void) {
+    if (eventSelection->currentIndex() != 2 && eventSelection->currentIndex() != 5) {
+        emit typeEVT("EQ");
+    } else {
+        // the Site Response and User-Defined Database are excluded
+        emit typeEVT("None");
+    }
+}

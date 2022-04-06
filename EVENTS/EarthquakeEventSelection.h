@@ -66,9 +66,11 @@ public:
     bool copyFiles(QString &destName);
 
 signals:
+    void typeEVT(QString type);
 
 public slots:
    void eventSelectionChanged(const QString &arg1);
+   void replyEventType(void);
 
 private:
    QComboBox   *eventSelection;
