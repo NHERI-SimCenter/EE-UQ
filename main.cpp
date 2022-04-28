@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.0.0");
+    QCoreApplication::setApplicationVersion("3.0.1");
     // GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
     w.setAbout(aboutTitle, aboutSource);
 
-    QString version("Version 3.0.0");
+    QString version("Version 3.0.1");
     w.setVersion(version);
 
     QString citeText("1) Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Charles Wang, & Wael Elhaddad. (2022). NHERI-SimCenter/EE-UQ: Version 3.0.0 (v3.0.0). Zenodo. https://doi.org/10.5281/zenodo.6404517 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matt J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
