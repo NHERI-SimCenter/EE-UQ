@@ -106,9 +106,9 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     theRVs = RandomVariablesContainer::getInstance();
     theGI = GeneralInformationWidget::getInstance();
-    theSIM = new SIM_Selection();
+    theSIM = new SIM_Selection(false, false);
     theEventSelection = new EarthquakeEventSelection(theRVs, theGI);
-    theAnalysisSelection = new FEA_Selection();
+    theAnalysisSelection = new FEA_Selection(false);
     theUQ_Selection = new UQ_EngineSelection(ForwardReliabilitySensitivity);
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
       
@@ -131,34 +131,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // connect signals and slots
     //
 
-    // error messages and signals
-
-    //    connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    //    connect(theResults, SIGNAL(sendErrorMessage(QString)), this, SLOT(errorMessage(QString)));
-
-    connect(theGI,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(theGI,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theGI,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(theSIM,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(theSIM,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theSIM,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(theEventSelection,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(theEventSelection,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theEventSelection,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(theRunWidget,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(theRunWidget,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(theRunWidget,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(localApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(localApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(localApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
-
-    connect(remoteApp,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    connect(remoteApp,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-    connect(remoteApp,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));
 
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
@@ -175,8 +147,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
     connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
     connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
-
-    //connect(theRunLocalWidget, SIGNAL(runButtonPressed(QString, QString)), this, SLOT(runLocal(QString, QString)));
 
     // KZ connect queryEVT and the reply
     connect(theUQ_Selection, SIGNAL(queryEVT()), theEventSelection, SLOT(replyEventType()));
@@ -281,16 +251,11 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     apps["EDP"]=appsEDP;
 
-    /*
-    QJsonObject jsonObjectUQ;
-    theUQ_Selection->outputToJSON(jsonObjectUQ);
-    jsonObjectTop["UQ_Method"] = jsonObjectUQ;
-    */
-
     result = theUQ_Selection->outputAppDataToJSON(apps);
     if (result == false)
         return result;
 
+    
     result = theUQ_Selection->outputToJSON(jsonObjectTop);
     if (result == false)
         return result;
@@ -379,8 +344,8 @@ WorkflowAppEE_UQ::processResults(QString &dirName){
 
   QWidget *oldResults = theComponentSelection->swapComponent(QString("RES"), theResults);
   if (oldResults != NULL) {
-    disconnect(oldResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    disconnect(oldResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));  
+    //    disconnect(oldResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
+    //    disconnect(oldResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));  
     delete oldResults;
   }
 
@@ -410,10 +375,10 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     if (jsonObject.contains("GeneralInformation")) {
         QJsonObject jsonObjGeneralInformation = jsonObject["GeneralInformation"].toObject();
         if (theGI->inputFromJSON(jsonObjGeneralInformation) == false) {
-            emit errorMessage("EE_UQ: failed to read GeneralInformation");
+            this->errorMessage("EE_UQ: failed to read GeneralInformation");
         }
     } else {
-        emit errorMessage("EE_UQ: failed to find GeneralInformation");
+        this->errorMessage("EE_UQ: failed to find GeneralInformation");
         return false;
     }
 
@@ -425,30 +390,30 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         if (theApplicationObject.contains("Events")) {
             //  QJsonObject theObject = theApplicationObject["Events"].toObject(); it is null object, actually an array
             if (theEventSelection->inputAppDataFromJSON(theApplicationObject) == false) {
-                emit errorMessage("EE_UQ: failed to read Event Application");
+                this->errorMessage("EE_UQ: failed to read Event Application");
             }
 
         } else {
-            emit errorMessage("EE_UQ: failed to find Event Application");
+            this->errorMessage("EE_UQ: failed to find Event Application");
             return false;
         }
 
         if (theUQ_Selection->inputAppDataFromJSON(theApplicationObject) == false)
-            emit errorMessage("EE_UQ: failed to read UQ application");
+            this->errorMessage("EE_UQ: failed to read UQ application");
 
         if (theSIM->inputAppDataFromJSON(theApplicationObject) == false)
-            emit errorMessage("EE_UQ: failed to read SIM application");
+            this->errorMessage("EE_UQ: failed to read SIM application");
 	
         if (theAnalysisSelection->inputAppDataFromJSON(theApplicationObject) == false)
-            emit errorMessage("EE_UQ: failed to read FEM application");
+            this->errorMessage("EE_UQ: failed to read FEM application");
 
         if (theApplicationObject.contains("EDP")) {
             QJsonObject theObject = theApplicationObject["EDP"].toObject();
             if (theEDP_Selection->inputAppDataFromJSON(theObject) == false) {
-                emit errorMessage("EE_UQ: failed to read EDP application");
+                this->errorMessage("EE_UQ: failed to read EDP application");
             }
         } else {
-            emit errorMessage("EE_UQ: failed to find EDP application");
+            this->errorMessage("EE_UQ: failed to find EDP application");
             return false;
         }
 
@@ -466,25 +431,25 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     if (jsonObject.contains("EDP")) {
         QJsonObject edpObj = jsonObject["EDP"].toObject();
         if (theEDP_Selection->inputFromJSON(edpObj) == false)
-            emit errorMessage("EE_UQ: failed to read EDP data");
+            this->errorMessage("EE_UQ: failed to read EDP data");
     } else {
-        emit errorMessage("EE_UQ: failed to find EDP data");
+        this->errorMessage("EE_UQ: failed to find EDP data");
         return false;
     }
 
 
     if (theUQ_Selection->inputFromJSON(jsonObject) == false)
-       emit errorMessage("EE_UQ: failed to read UQ Method data");
+       this->errorMessage("EE_UQ: failed to read UQ Method data");
 
     if (theAnalysisSelection->inputFromJSON(jsonObject) == false)
 
     if (theSIM->inputFromJSON(jsonObject) == false)
-        emit errorMessage("EE_UQ: failed to read FEM Method data");
+        this->errorMessage("EE_UQ: failed to read FEM Method data");
 
     if (theSIM->inputFromJSON(jsonObject) == false)
-        emit errorMessage("EE_UQ: failed to read SIM Method data");
+        this->errorMessage("EE_UQ: failed to read SIM Method data");
 
-      
+    this->statusMessage("Done Loading File");
     return true;
 }
 
@@ -499,7 +464,7 @@ WorkflowAppEE_UQ::onRunButtonClicked() {
 
 void
 WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
-    emit errorMessage("");
+    this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
 
@@ -518,7 +483,7 @@ WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
 void
 WorkflowAppEE_UQ::onRemoteGetButtonClicked(){
 
-    emit errorMessage("");
+    this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
 
@@ -593,7 +558,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     }
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
-        emit errorMessage("WorkflowApp - failed in outputToJson");
+        this->errorMessage("WorkflowApp - failed in outputToJson");
         return;
     }
     json["runDir"]=tmpDirectory;
@@ -621,7 +586,7 @@ WorkflowAppEE_UQ::loadFile(QString &fileName){
 
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        emit errorMessage(QString("Could Not Open File: ") + fileName);
+        this->errorMessage(QString("Could Not Open File: ") + fileName);
         return -1;
     }
 

@@ -66,3 +66,5 @@ debug.log
 *.json
 MDOF_BuildingModelToSAM
 tmp.SimCenter
+build
+userID.sh
