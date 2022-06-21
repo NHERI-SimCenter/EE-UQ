@@ -523,7 +523,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     *********************************************** */
 
     QString tmpDirName = QString("tmp.SimCenter");
-    qDebug() << "TMP_DIR: " << tmpDirName;
+
     QDir workDir(workingDir);
 
     QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
@@ -539,7 +539,10 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
 
     // copyPath(path, tmpDirectory, false);
     theSIM->copyFiles(templateDirectory);
-    theEventSelection->copyFiles(templateDirectory);
+    if (theEventSelection->copyFiles(templateDirectory) == false) {
+      errorMessage("Workflow Failed to start as EVENT failed in copyFiles");
+      return;
+    }
     theAnalysisSelection->copyFiles(templateDirectory);
     theUQ_Selection->copyFiles(templateDirectory);
     theEDP_Selection->copyFiles(templateDirectory);

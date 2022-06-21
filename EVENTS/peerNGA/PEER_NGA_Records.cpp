@@ -680,7 +680,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 
         eventsArray.append(eventJson);
     }
-
+    /*
     if (numRecords == 0) {
       statusMessage(QString("PEER-NGA no motions yet selected"));      
       switch( QMessageBox::question( 
@@ -701,6 +701,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 	  break;
 	}
     }
+    */
     
     jsonObject["Events"] = eventsArray;
 
@@ -811,30 +812,68 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     // QDir recordsFolder(groundMotionsFolder.path());
     QDir recordsFolder(RecordsDir);
     QDir destinationFolder(destDir);
+
+    bool ok = true;
+    QString msg;
+    int count = 0;
     for (auto& record:currentRecords)
-    {
+      {
         //Copying Horizontal1 file
-        if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File)))
-            return false;
-
+	if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
+	  msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal1File);
+	  ok = false;
+	  break;
+	}
+	
+	
         auto components = groundMotionsComponentsBox->currentData().value<GroundMotionComponents>();
-
+	
         if(components == GroundMotionComponents::Two || components == GroundMotionComponents::Three)
-        {
-
+	  {
+	    
             //Copying Horizontal2 file
-            if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File)))
-                return false;
-        }
+	    if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
+	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal2File);
+	      ok = false;
+	      break; 	    
+	    }
+	  }
 
-        if(components == GroundMotionComponents::Three)
-        {
+	if(components == GroundMotionComponents::Three)
+	  {
             //Copying Vertical file
-            if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile)))
-                return false;
-        }
-    }
+	    if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
+	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.VerticalFile);
+	      ok = false;
+	      break;
+	    }
+	  }
+	count++;
+      }
 
+
+    //FMKFMK
+    if (ok == false || count == 0) {
+      statusMessage(QString("PEER-NGA no motions Downloaded"));      
+      switch( QMessageBox::question( 
+            this, 
+            tr("PEER-NGA"), 
+            tr("PEER-NGA has detected that no motions have been downloaded. You may have requested too many motions or you did not run the 'Select Records' after entering your search criteria. If you  trying to Run a Workflow, the workflow will FAIL to run or you will be presented with NANs (not a number) and zeroes. To select motions, return to the PEER-NGA EVENT and press the 'Select Records' Button. If you have pressed this button and see this message you do not have the priviledges with PEER that will allow you to download the number of motions you have specified, the typical limit is 100 per day. Do you wish to continue anyway?"), 
+            QMessageBox::Yes | 
+            QMessageBox::No,
+            QMessageBox::Yes ) )
+	{
+	case QMessageBox::Yes:
+	  break;
+	case QMessageBox::No:
+	  return false;
+	  break;
+	default:
+
+	  break;
+	}
+    }
+    
     return true;
 }
 
