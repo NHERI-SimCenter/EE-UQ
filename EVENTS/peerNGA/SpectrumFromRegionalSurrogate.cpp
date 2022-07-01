@@ -812,7 +812,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     {
         qDebug() << "Failed to start the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString().split('\n');
-        //emit sendStatusMessage("Failed to start the workflow!!!");
+        //this->statusMessage("Failed to start the workflow!!!");
         failed = true;
     }
 
@@ -820,7 +820,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        //emit sendStatusMessage("Failed to finish running the workflow!!!");
+        //this->statusMessage("Failed to finish running the workflow!!!");
         failed = true;
     }
 
@@ -829,7 +829,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        //emit sendStatusMessage("Failed to run the workflow!!!");
+        //this->statusMessage("Failed to run the workflow!!!");
         failed = true;
     }
 
@@ -855,22 +855,19 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     } else if (homeDir.exists(".zshrc")) {
         sourceBash = QString("source $HOME/.zshrc; ");
     } else
-        emit sendErrorMessage( "No .bash_profile, .bashrc, .zprofile or .zshrc file found. This may not find Dakota or OpenSees");
+
+
+      qDebug() << QString("No .bash_profile, .bashrc, .zprofile or .zshrc file found. This may not find Dakota or OpenSees");
 
     // note the above not working under linux because bash_profile not being called so no env variables!!
     QString command;
 
     if (appName == "R2D"){
 
-        /*
-        command = sourceBash + exportPath + "; \"" + python + QString("\" \"" ) + pySCRIPT + QString("\" " )
-                + QString(" \"" ) + inputFile + QString("\"");
-
-      */
         command = sourceBash + exportPath + "; \"" + python + QString("\" \"" ) + pySCRIPT + QString("\" " )
                 + QString(" \"" ) + inputFile + QString("\" ") +"--registry"
                 + QString(" \"") + registryFile + QString("\" ") + "--referenceDir" + QString(" \"")
-                + tempDirectory + QString("/input_data\" ") + "-w" + QString(" \"") + tmpDirectory + QDir::separator() + "Results" + QString("\"");
+                + tempDirectory + QString("/input_data\" ") + "-w" + QString(" \"") + tempDirectory + QDir::separator() + "Results" + QString("\"");
 
     } else {
 
@@ -888,7 +885,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     {
         qDebug() << "Failed to finish running the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to finish running the workflow!!!");
+	//        this->statusMessage("Failed to finish running the workflow!!!");
         failed = true;
     }
 
@@ -897,7 +894,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
-        emit sendStatusMessage("Failed to run the workflow!!!");
+        // this->statusMessage("Failed to run the workflow!!!");
         failed = true;
     }
 
@@ -906,7 +903,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
         qDebug().noquote() << proc->readAllStandardOutput();
         qDebug().noquote() << proc->readAllStandardError();
         emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
-        return false;
+        return;
     }
 
 #endif
@@ -1142,9 +1139,9 @@ void SpectrumFromRegionalSurrogate::saveSpectrum(bool runFlag, QString dirName, 
         csv_file.open(QIODevice::Append | QIODevice::Text);
         QTextStream stream(&csv_file);
         QString separator(",");
-        stream << "T (sec)" + separator + "Sa (g)" + separator << endl;
+        stream << "T (sec)" + separator + "Sa (g)" + separator << "\n";
         for (int i = rvNames.size(); i<rvNames.size()+periodArray.size(); i++) {
-            stream << periodArray.at(i-rvNames.size()) << separator << res_data.at(i).toDouble() << separator << endl;
+            stream << periodArray.at(i-rvNames.size()) << separator << res_data.at(i).toDouble() << separator << "\n";
         }
         stream.flush();
         csv_file.close();
