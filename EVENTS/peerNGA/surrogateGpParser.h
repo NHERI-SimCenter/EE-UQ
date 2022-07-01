@@ -1,5 +1,5 @@
-#ifndef EARTHQUAKE_EVENT_SELECTION_H
-#define EARTHQUAKE_EVENT_SELECTION_H
+#ifndef SURROGATE_GP_PARSER_H
+#define SURROGATE_GP_PARSER_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -39,55 +39,19 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
+#include <QStringList>
 
-#include <QGroupBox>
-#include <QVector>
-#include <GeneralInformationWidget.h>
-
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
-class RockOutcrop;
-
-class RandomVariablesContainer;
-
-class EarthquakeEventSelection : public  SimCenterAppWidget
+class surrogateGpParser
 {
-    Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, GeneralInformationWidget* generalInfoWidget, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
+    surrogateGpParser();
+    ~surrogateGpParser();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
-
-signals:
-    void typeEVT(QString type);
-
-public slots:
-   void eventSelectionChanged(const QString &arg1);
-   void replyEventType(void);
+    QStringList getVariables(QString inFilename);
+    void writeFile(QString infilename, QString outFilename, QStringList varToChange);
 
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
-
-   //   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   //SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
-   SimCenterAppWidget* peerNgaRecords;
-   SimCenterAppWidget* userDefinedDatabase;
-
-   RandomVariablesContainer *theRandomVariablesContainer;
 
 };
 
-#endif // EARTHQUAKE_EVENT_SELECTION_H
+#endif // SURROGATE_GP_PARSER_H

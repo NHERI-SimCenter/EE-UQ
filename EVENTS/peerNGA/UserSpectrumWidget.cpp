@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QDebug>
 
 UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(parent)
 {
@@ -74,11 +75,11 @@ void UserSpectrumWidget::loadCSV(void)
         qDebug()<<"Path is empty.";
         return;
     }
-    this->loadSpectrum();
+    this->loadSpectrum(spectrumfilepath);
 
 }
 
-void UserSpectrumWidget::loadSpectrum(void)
+void UserSpectrumWidget::loadSpectrum(QString spectrumfilepath)
 {
     qDebug()<<"Loading spectrum file...";
     QFile tmpFile(spectrumfilepath);

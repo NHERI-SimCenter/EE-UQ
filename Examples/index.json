@@ -162,5 +162,33 @@
       "OpenSees-Simulation": "OpenSees",
       "OpenSeesPy-Simulation": "OpenSeesPy"
     }
+  },
+  "eeuq-0006": {
+    "id": "eeuq-0006",
+    "title": "Surrogate Model for Structural Response Prediction (Probabilistic Learning on Manifolds)",
+    "base": "eeuq-0006",
+    "doc": [
+      "eeuq-0006/figures/edp.png",
+      "eeuq-0006/figures/evt.png",
+      "eeuq-0006/figures/fem.png",
+      "eeuq-0006/figures/res_comp1.png",
+      "eeuq-0006/figures/res_comp2.png",
+      "eeuq-0006/figures/res_data.png",
+      "eeuq-0006/figures/res_kde.png",
+      "eeuq-0006/figures/res_save.png",
+      "eeuq-0006/figures/res_summary.png",
+      "eeuq-0006/figures/sim.png",
+      "eeuq-0006/figures/uq_imc.png",
+      "eeuq-0006/figures/uq_plom.png",
+      "eeuq-0006/README.rst"
+    ],
+    "entry_point": "eeuq-0006/./input.json",
+    "summary": "This example demonstrates using a novel method, Probabilistic Learning on Manifolds (PLoM), to develop surrogate models for structural responses under earthquake ground motion inputs.",
+    "logo": "figures/res_comp1.png",
+    "published": "2022-03-01T21:26:53.946381-08:00",
+    "categories": {
+      "Difficulty": "0",
+      "Simulation": "OpenSees-Simulation"
+    }
   }
 }
