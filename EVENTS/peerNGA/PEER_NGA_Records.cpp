@@ -25,6 +25,7 @@
 #include <QLineEdit>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "SpectrumFromRegionalSurrogate.h"
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -58,12 +59,13 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
     spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
     spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
+    spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
 
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
     auto asce710Target = new ASCE710Target(this);
     targetSpectrumDetails->addWidget(asce710Target);
-    auto userSpectrumTarget = new UserSpectrumWidget(this);
+    userSpectrumTarget = new UserSpectrumWidget(this);
     targetSpectrumDetails->addWidget(userSpectrumTarget);
     auto usgsSpectrumTarget = new USGSTargetWidget(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(usgsSpectrumTarget);
@@ -71,6 +73,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(nshmpTarget);
     auto nshmpDeagg = new NSHMPDeagg(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(nshmpDeagg);
+    spectrumSurrogate = new SpectrumFromRegionalSurrogate(this);
+    targetSpectrumDetails->addWidget(spectrumSurrogate);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
@@ -386,6 +390,8 @@ void PEER_NGA_Records::setupConnections()
 
 
     connect(scalingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onScalingComboBoxChanged(int)));
+
+    connect(spectrumSurrogate, &SpectrumFromRegionalSurrogate::spectrumSaved, this, &PEER_NGA_Records::switchUserDefined);
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -937,6 +943,14 @@ PEER_NGA_Records::chooseOutputDirectory(void) {
     }
     this->setOutputDirectory(outdirpath);
 
+}
+
+void PEER_NGA_Records::switchUserDefined(QString dirName, QString fileName) {
+    // switch user defined
+    targetSpectrumDetails->setCurrentIndex(1);
+    spectrumTypeComboBox->setCurrentIndex(1);
+    // load the csv file in
+    userSpectrumTarget->loadSpectrum(dirName+QDir::separator()+fileName);
 }
 
 

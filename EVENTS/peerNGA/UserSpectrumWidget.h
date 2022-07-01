@@ -21,7 +21,7 @@ public:
 
 public slots:
     void loadCSV(void);
-    void loadSpectrum(void);
+    void loadSpectrum(QString spectrumfilepath);
 
     // AbstractTargetWidget interface
 public:

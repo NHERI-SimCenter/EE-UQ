@@ -22,6 +22,8 @@
 class QComboBox;
 class QLabel;
 class QGroupBox;
+class SpectrumFromRegionalSurrogate;
+class UserSpectrumWidget;
 
 struct PeerScaledRecord
 {
@@ -64,6 +66,7 @@ public slots:
 
     void onScalingComboBoxChanged(const int index);
     void chooseOutputDirectory(void);
+    void switchUserDefined(QString dirName, QString fileName);
 
 private:
     PeerNgaWest2Client peerClient;
@@ -141,6 +144,9 @@ private:
     void updateStatus(QString status);
     void selectRecords();
     void addTableItem(int row, int Column, QString value);
+
+    SpectrumFromRegionalSurrogate *spectrumSurrogate;
+    UserSpectrumWidget *userSpectrumTarget;
 
 };
 
