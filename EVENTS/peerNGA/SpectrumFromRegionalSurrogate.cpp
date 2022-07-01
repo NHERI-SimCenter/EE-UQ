@@ -637,19 +637,23 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
     destinationDirectory.mkpath(templateDirectory);
     QString inputFile = templateDirectory + QDir::separator() + tr("scInput.json");
 
+    qDebug() << "INPUT FILE: " << inputFile;
     QFile file(inputFile);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        //errorMessage();
         return;
     }
+    /* REMOVING CRAP
     QJsonObject json;
     if (this->outputToJSON(json) == false) {
         //this->errorMessage("WorkflowApp - failed in outputToJson");
         return;
     }
+    */
+    
     QJsonDocument doc(configJSON);
     file.write(doc.toJson());
     file.close();
+    qDebug() << "JSON: " << configJSON;
 
     // copy files
     this->copyFiles(templateDirectory);
