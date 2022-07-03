@@ -54,6 +54,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QFileDialog>
 #include <QScrollArea>
 #include <LineEditRV.h>
+#include <QButtonGroup>
 
 PeerRecord::PeerRecord(RandomVariablesContainer *theRV_IW, QWidget *parent)
 :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
@@ -162,6 +163,10 @@ PeerEvent::PeerEvent(RandomVariablesContainer *theRV_IW, QWidget *parent)
 
    QHBoxLayout *layout = new QHBoxLayout();
    button = new QRadioButton();
+   // include the uncheck feature
+   auto buttonGroup = new QButtonGroup();
+   buttonGroup->addButton(button);
+   buttonGroup->setExclusive(false);
    theName = new QLineEdit();
    //theName->setReadOnly(true);
 
