@@ -131,7 +131,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // connect signals and slots
     //
 
-
     connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
     connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
     connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
@@ -254,7 +253,6 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     result = theUQ_Selection->outputAppDataToJSON(apps);
     if (result == false)
         return result;
-
     
     result = theUQ_Selection->outputToJSON(jsonObjectTop);
     if (result == false)
@@ -330,13 +328,6 @@ WorkflowAppEE_UQ::processResults(QString &dirName){
     this->errorMessage("FATAL - UQ option selected not returning results widget");
     return;
   }
-
-  //
-  // connect signals for results widget
-  //
-
-  //  connect(theResults,SIGNAL(sendStatusMessage(QString)), this,SLOT(statusMessage(QString)));
-  //  connect(theResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
 
   //
   // swap current results with existing one in selection & disconnect signals
@@ -513,17 +504,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     // and copy all files needed to this directory by invoking copyFiles() on app widgets
     //
 
-    // designsafe will need a unique name
-    /* *********************************************
-    will let ParallelApplication rename dir
-    QUuid uniqueName = QUuid::createUuid();
-    QString strUnique = uniqueName.toString();
-    strUnique = strUnique.mid(1,36);
-    QString tmpDirName = QString("tmp.SimCenter") + strUnique;
-    *********************************************** */
-
     QString tmpDirName = QString("tmp.SimCenter");
-
     QDir workDir(workingDir);
 
     QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
@@ -567,11 +548,9 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     json["runDir"]=tmpDirectory;
     json["WorkflowType"]="Building Simulation";
 
-
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
-
 
     statusMessage("SetUp Done .. Now starting application");
 
