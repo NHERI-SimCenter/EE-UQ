@@ -48,7 +48,8 @@ SpectrumFromRegionalSurrogate::SpectrumFromRegionalSurrogate(QWidget* parent): A
     // surrogate pkl file
     QLabel *label2 = new QLabel("Hazard SurrogateGP Model (.pkl)");
     postprocessScript = new QLineEdit;
-    postprocessScript->setPlaceholderText("(Optional)");
+    // KZ: .pkl is not optional.
+    //postprocessScript->setPlaceholderText("(Optional)");
     QPushButton *choosePostprocessScript = new QPushButton();
     choosePostprocessScript->setText(tr("Choose"));
     connect(choosePostprocessScript, &QPushButton::clicked, this, [this](){
