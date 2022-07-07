@@ -2,8 +2,8 @@
 Ground Motion Selection and Nonlinear Response Analysis
 ========================================================
 
-Shown in :numref:`fig_frame` is an OpenSees model sketch of a steel moment frame building. The 2D model represents 
-50% of the story in the weak direction of the building. The building has a four-bay lateral frame with gravity system 
+Shown in :numref:`fig_frame` is an OpenSees model sketch of a 2D steel moment frame building. 
+The building has a four-bay lateral frame with gravity system 
 which is modeled by the leaning column in the model. The bottom two stories 
 use the column section of :math:`W24 \times 207` and beam section of :math:`30 \times 108`.  The top two stories 
 use the column section of :math:`W24 \times 162`and beam section of :math:`24 \times 84`. The reduced beam section 
