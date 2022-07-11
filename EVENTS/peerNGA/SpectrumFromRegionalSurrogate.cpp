@@ -184,26 +184,85 @@ SpectrumFromRegionalSurrogate::SpectrumFromRegionalSurrogate(QWidget* parent): A
 QJsonObject SpectrumFromRegionalSurrogate::serialize() const
 {
     QJsonObject json;
-    QJsonArray spectrumArray;
-    for (auto& pair: model->spectrum())
-    {
-        QJsonArray point;
-        point.append(pair.first);
-        point.append(pair.second);
-        spectrumArray.append(point);
+
+    // adding more surrogate info. to the jsonObject
+    json["Application"] = QString("SurrogateGP");
+    QJsonObject fem_data;
+    QFileInfo ms_path(inputScript->text());
+    QFileInfo ps_path(postprocessScript->text());
+    QDir tmp1 = ms_path.absoluteDir();
+    fem_data["MS_Path"] = tmp1.absolutePath();
+    //qDebug() << "MS_Path: " << tmp1.absolutePath() << "\n";
+    QDir tmp2 = ps_path.absoluteDir();
+    fem_data["PS_Path"] = tmp2.absolutePath();
+    //qDebug() << "PS_Path: " << tmp2.absolutePath() << "\n";
+    fem_data["mainScript"] = ms_path.fileName();
+    fem_data["postprocessScript"] = ps_path.fileName();
+    json["ApplicationData"] = fem_data;
+    json["femOption"] = "continue";
+    json["gpSeed"] = 1;
+    json["predictionOption"] = gpOutputComboBox->currentText();
+    json["varThres"] = thresVal->text().toDouble();
+    json["periods"] = periodsLineEdit->text();
+    QJsonArray outputRVValues;
+    for (auto & curVal : rvValues) {
+        outputRVValues.append(curVal);
     }
-    json["UserSpectrum"] = spectrumArray;
+    QJsonArray outputRVNames;
+    for (auto & curName : rvNames) {
+        outputRVNames.append(curName);
+    }
+    json["rvNames"] = outputRVNames;
+    json["rvValues"] = outputRVValues;
 
     return json;
 }
 
 void SpectrumFromRegionalSurrogate::deserialize(const QJsonObject &json)
 {
+    // read main and post-process scripts
+    QJsonObject fem_data;
+    fem_data = json["ApplicationData"].toObject();
+    auto ms_path = fem_data["MS_Path"].toString() + QDir().separator() + fem_data["mainScript"].toString();
+    //qDebug() << "ms_path: " << ms_path << "\n";
+    inputScript->setText(ms_path);
+    auto ps_path = fem_data["PS_Path"].toString() + QDir().separator() + fem_data["postprocessScript"].toString();
+    //qDebug() << "ps_path: " << ps_path << "\n";
+    postprocessScript->setText(ps_path);
+
+    // set main script
+    this->setMainScript(ms_path);
+
+    // set up GP parameters
+    gpOutputComboBox->setCurrentIndex(0);
+    thresVal->setText(QString::number(json["varThres"].toDouble()));
+
+    // set up periods
+    periodsLineEdit->setText(json["periods"].toString());
+    this->commitPeriods();
+    //qDebug() << "periodArray: " << periodArray;
+
+    // set up RVs
+    auto inputRVNames = json["rvNames"].toArray().toVariantList();
+    auto inputRVValues = json["rvValues"].toArray().toVariantList();
+    for (int j = 0; j < inputRVNames.size(); j++) {
+        auto curName = inputRVNames[j].toString();
+        for (int i = 0; i < rvNames.size(); i++) {
+            if (rvNames[i].compare(curName)==0) {
+                rvValues[i] = inputRVValues[j].toDouble();
+                rvValueLE[i]->setText(inputRVValues[j].toString());
+                break;
+            }
+        }
+    }
+
+    /***
     QList<QPair<double, double>> spectrum;
     for (auto point: json["UserSpectrum"].toArray())
         spectrum.append({point.toArray()[0].toDouble(), point.toArray()[1].toDouble()});
 
     model->set(spectrum);
+    ***/
 }
 
 QList<QPair<double, double>> SpectrumFromRegionalSurrogate::spectrum() const
@@ -424,7 +483,44 @@ double SpectrumFromRegionalSurrogate::interpolateForGP(QVector<double> X, QVecto
     return (estY);
 }
 
-bool SpectrumFromRegionalSurrogate::outputToJSON(QJsonObject &configObject) {
+/***
+bool SpectrumFromRegionalSurrogate::outputToJSON(QJsonObject &jsonObject) {
+    bool result = true;
+    qDebug() << QString("outputToJSON for SpectrumFromRegionalSurrogate configuration\n");
+
+    // adding more surrogate info. to the jsonObject
+    jsonObject["Application"] = QString("SurrogateGP");
+    QJsonObject fem_data;
+    QFileInfo ms_path(inputScript->text());
+    QFileInfo ps_path(postprocessScript->text());
+    QDir tmp1 = ms_path.absoluteDir();
+    fem_data["MS_Path"] = tmp1.absolutePath();
+    QDir tmp2 = ps_path.absoluteDir();
+    fem_data["PS_Path"] = tmp2.absolutePath();
+    fem_data["mainScript"] = ms_path.fileName();
+    fem_data["postprocessScript"] = ps_path.fileName();
+    jsonObject["ApplicationData"] = fem_data;
+    jsonObject["femOption"] = "continue";
+    jsonObject["gpSeed"] = 1;
+    jsonObject["predictionOption"] = gpOutputComboBox->currentText();
+    jsonObject["varThres"] = thresVal->text().toDouble();
+    jsonObject["periods"] = periodsLineEdit->text();
+    QJsonArray outputRVValues;
+    for (auto & curVal : rvValues) {
+        outputRVValues.append(curVal);
+    }
+    QJsonArray outputRVNames;
+    for (auto & curName : rvNames) {
+        outputRVNames.append(curName);
+    }
+    jsonObject["rvNames"] = outputRVNames;
+    jsonObject["rvValues"] = outputRVValues;
+
+    return result;
+}
+***/
+
+bool SpectrumFromRegionalSurrogate::writeConfigJSON(QJsonObject &configObject) {
 
     bool result = true;
     QJsonArray rvArray;
@@ -593,23 +689,23 @@ void SpectrumFromRegionalSurrogate::showRVs(QStringList &varNamesAndValues) {
 
     // show RVs
     int numVar = varNamesAndValues.count();
-    qDebug() << "numVar=" << numVar;
+    //qDebug() << "numVar=" << numVar;
     for (int i = 0; i<numVar; i+= 2) {
-        qDebug() << "i=" << i;
+        //qDebug() << "i=" << i;
         QString varName = varNamesAndValues.at(i);
-        qDebug() << "varName=" << varName;
+        //qDebug() << "varName=" << varName;
         QString value = varNamesAndValues.at(i+1);
-        qDebug() << "value=" << value;
+        //qDebug() << "value=" << value;
         rvNames.append(varName);
-        qDebug() << "rvNames=" << rvNames;
+        //qDebug() << "rvNames=" << rvNames;
         rvValues.append(value.toDouble());
-        qDebug() << "rvValues=" << rvValues;
+        //qDebug() << "rvValues=" << rvValues;
         QHBoxLayout *curLayout = new QHBoxLayout();
-        qDebug() << "curLayout";
+        //qDebug() << "curLayout";
         QLabel *curLabel = new QLabel(varName);
-        qDebug() << "curLabel=" << curLabel;
+        //qDebug() << "curLabel=" << curLabel;
         QLineEdit *curLE = new QLineEdit(value);
-        qDebug() << "curLE";
+        //qDebug() << "curLE";
         rvValueLE.append(curLE);
         curLayout->addWidget(curLabel);
         curLayout->addWidget(curLE);
@@ -630,7 +726,7 @@ void SpectrumFromRegionalSurrogate::getSpectrum(void) {
 
     // write json
     QJsonObject configJSON;
-    this->outputToJSON(configJSON);
+    this->writeConfigJSON(configJSON);
 
     QString templateDir("templatedir");
     QDir destinationDirectory(configJSON.value("runDir").toString());
@@ -1145,6 +1241,7 @@ void SpectrumFromRegionalSurrogate::saveSpectrum(bool runFlag, QString dirName, 
         QTextStream stream(&csv_file);
         QString separator(",");
         stream << "T (sec)" + separator + "Sa (g)" + separator << "\n";
+        qDebug() << "rvNames.size(): " << rvNames.size() << "\n";
         for (int i = rvNames.size(); i<rvNames.size()+periodArray.size(); i++) {
             stream << periodArray.at(i-rvNames.size()) << separator << res_data.at(i).toDouble() << separator << "\n";
         }
