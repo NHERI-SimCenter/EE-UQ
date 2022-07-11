@@ -177,6 +177,32 @@
         "Difficulty": "0",
         "Simulation": "OpenSees-Simulation"
       }
+    },
+    "eeuq-0007": {
+      "id": "eeuq-0007",
+      "title": "Target Spectrum by Surrogate Hazard GP Model",
+      "base": "eeuq-0007",
+      "doc": [
+        "eeuq-0007/figures/edp.png",
+        "eeuq-0007/figures/evt.png",
+        "eeuq-0007/figures/fem.png",
+        "eeuq-0007/figures/res1.png",
+        "eeuq-0007/figures/res2.png",
+        "eeuq-0007/figures/trainingData.png",
+        "eeuq-0007/figures/trainingConfig.png",
+        "eeuq-0007/figures/trainingRes.png",
+        "eeuq-0007/figures/resSpectrum.png",
+        "eeuq-0007/figures/configSpectrum.png",
+        "eeuq-0007/README.rst"
+      ],
+      "entry_point": "eeuq-0007/./input.json",
+      "summary": "This example demonstrates using pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
+      "logo": "figures/trainingData.png",
+      "published": "2022-07-10T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      }
     }
   },
   "categories": {
