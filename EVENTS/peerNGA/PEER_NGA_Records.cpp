@@ -742,7 +742,6 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     jsonObject["durationMin"] = durationMin->text();
     jsonObject["durationMax"] = durationMax->text();
 
-
     return true;
 }
 

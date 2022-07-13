@@ -25,8 +25,9 @@ public:
     void setMainScript(QString filnema1); // synced from surrogateGpFEM
     QJsonObject serialize() const override;
     void deserialize(const QJsonObject &json) override;
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputToJSON(QJsonObject &rvObject);
+    //bool inputFromJSON(QJsonObject &jsonObject);
+    //bool outputToJSON(QJsonObject &jsonObject);
+    bool writeConfigJSON(QJsonObject &configObject);
     QList<QPair<double, double> > spectrum() const override;
     bool copyFiles(QString dirName);
     static bool copyPath(QString sourceDir, QString destinationDir, bool overWriteDirectory);

@@ -153,7 +153,7 @@ Ru are always zero since there is no volumetric strain in ElasticIsotropic mater
    :align: center
    :figclass: align-center
 
-   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
+   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations (postprocessed from realization output data).
 
 .. _fig_Elastic-Average-RespSpect:
 .. figure:: figures/Elastic-Average-RespSpect.png
@@ -161,7 +161,7 @@ Ru are always zero since there is no volumetric strain in ElasticIsotropic mater
    :align: center
    :figclass: align-center
 
-   Response spectra (5% damping) at surface obtained from 20 realizations.
+   Response spectra (5% damping) at surface obtained from 20 realizations (postprocessed from realization output data).
 
 
 
@@ -190,7 +190,7 @@ Comparing to elastic material, more variability are shown among these realizatio
    :align: center
    :figclass: align-center
 
-   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations.
+   Profiles of shear wave velocity, peak horizontal acceleration, maximum shear strain, and maximum excess pore pressure ratio (Ru) obtained from 20 realizations (postprocessed from realization output data).
 
 
 .. _fig_PM4Sand-Average-RespSpect:
@@ -199,7 +199,7 @@ Comparing to elastic material, more variability are shown among these realizatio
    :align: center
    :figclass: align-center
 
-   Response spectra (5% damping) at surface obtained from 20 realizations.
+   Response spectra (5% damping) at surface obtained from 20 realizations (postprocessed from realization output data).
 
 
 
