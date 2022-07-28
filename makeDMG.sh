@@ -63,6 +63,10 @@ echo "cp -fr $pathToOpenSees/* $pathApp/Contents/MacOS/applications/opensees"
 cp -fr $pathToOpenSees/* ./$appFile/Contents/MacOS/applications/opensees
 cp -fr $pathToDakota/*  ./$appFile/Contents/MacOS/applications/dakota
 
+cp /usr/local/opt/libomp/lib/libomp.dylib ./$appFile/Contents/MacOS/applications/performUQ/SimCenterUQ
+install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./$appFile/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
+
+
 # clean up
 declare -a notWantedApp=("createBIM" 
 			 "performRegionalMapping"
