@@ -30,5 +30,11 @@
       "description": "This example demonstrates using a novel method, Probabilistic Learning on Manifolds (PLoM), to develop surrogate models for structural responses under earthquake ground motion inputs.",
       "inputFile": "eeuq-0006/src/input.json"
     }
+    ,
+    {
+      "name": "E7: Target Spectrum by Surrogate Hazard GP Model",
+      "description": "This example demonstrates using pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
+      "inputFile": "eeuq-0007/src/input.json"
+    }
   ]
 }
