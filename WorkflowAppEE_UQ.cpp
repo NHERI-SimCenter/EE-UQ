@@ -57,14 +57,20 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
 #include <QUuid>
+#include <QDir>
+#include <QFile>
+#include <QSettings>
+#include <QUuid>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QHostInfo>
 
 #include <SimCenterComponentSelection.h>
 #include "GeneralInformationWidget.h"
 #include <SIM_Selection.h>
 #include <RandomVariablesContainer.h>
 #include <FEA_Selection.h>
-#include <QDir>
-#include <QFile>
 #include <UQ_EngineSelection.h>
 #include <UQ_Results.h>
 #include <LocalApplication.h>
@@ -75,15 +81,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "CustomizedItemModel.h"
 
-#include <QSettings>
-#include <QUuid>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
-#include <QHostInfo>
 #include <Utils/PythonProgressDialog.h>
 #include <Utils/RelativePathResolver.h>
-
 #include <GoogleAnalytics.h>
 
 // static pointer for global procedure set in constructor
@@ -196,7 +195,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     PythonProgressDialog *theDialog=PythonProgressDialog::getInstance();
     theDialog->appendInfoMessage("Welcome to EE-UQ");
-    //    theDialog->hideAfterElapsedTime(1);
 }
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
@@ -221,35 +219,41 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     //
     // get each of the main widgets to output themselves
     //
+  
     bool result = true;
     QJsonObject apps;
 
+    //
+    // get each of the main widgets to output themselves to top 
+    // and workflow widgets to outut appData to apps
+    //
+
+    // theGI
     QJsonObject jsonObjGenInfo;
     result = theGI->outputToJSON(jsonObjGenInfo);
     if (result == false)
         return result;
-
     jsonObjectTop["GeneralInformation"] = jsonObjGenInfo;
 
-
+    // theRVs
     result = theRVs->outputToJSON(jsonObjectTop);
     if (result == false)
         return result;
 
+    // theEDP
     QJsonObject jsonObjectEDP;
     result = theEDP_Selection->outputToJSON(jsonObjectEDP);
     if (result == false)
         return result;
-
     jsonObjectTop["EDP"] = jsonObjectEDP;
 
     QJsonObject appsEDP;
     result = theEDP_Selection->outputAppDataToJSON(appsEDP);
     if (result == false)
         return result;
-
     apps["EDP"]=appsEDP;
 
+    // theUQ
     result = theUQ_Selection->outputAppDataToJSON(apps);
     if (result == false)
         return result;
@@ -258,6 +262,7 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
+    // theSIM
     result = theSIM->outputAppDataToJSON(apps);
     if (result == false)
         return result;
@@ -265,7 +270,8 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     result = theSIM->outputToJSON(jsonObjectTop);
     if (result == false)
         return result;
-    
+
+    // theAnalysis
     result = theAnalysisSelection->outputAppDataToJSON(apps);
     if (result == false)
         return result;
@@ -291,7 +297,7 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
     QJsonObject defaultValues;
     defaultValues["workflowInput"]=QString("scInput.json");    
-    defaultValues["filenameBIM"]=QString("BIM.json");
+    defaultValues["filenameAIM"]=QString("AIM.json");
     defaultValues["filenameEVENT"] = QString("EVENT.json");
     defaultValues["filenameSAM"]= QString("SAM.json");
     defaultValues["filenameEDP"]= QString("EDP.json");
@@ -300,7 +306,7 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     defaultValues["filenameDL"]= QString("BIM.json");
     defaultValues["workflowOutput"]= QString("EDP.json");
     QJsonArray rvFiles, edpFiles;
-    rvFiles.append(QString("BIM.json"));
+    rvFiles.append(QString("AIM.json"));
     rvFiles.append(QString("SAM.json"));
     rvFiles.append(QString("EVENT.json"));
     rvFiles.append(QString("SIM.json"));
@@ -308,8 +314,6 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     defaultValues["rvFiles"]= rvFiles;
     defaultValues["edpFiles"]=edpFiles;
     jsonObjectTop["DefaultValues"]=defaultValues;
-    
-    //theRunLocalWidget->outputToJSON(jsonObjectTop);
 
     return result;
 }
@@ -317,7 +321,6 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
 
 void
 WorkflowAppEE_UQ::processResults(QString &dirName){
-
 
   //
   // get results widget fr currently selected UQ option
@@ -335,8 +338,6 @@ WorkflowAppEE_UQ::processResults(QString &dirName){
 
   QWidget *oldResults = theComponentSelection->swapComponent(QString("RES"), theResults);
   if (oldResults != NULL) {
-    //    disconnect(oldResults,SIGNAL(sendErrorMessage(QString)), this,SLOT(errorMessage(QString)));
-    //    disconnect(oldResults,SIGNAL(sendFatalMessage(QString)), this,SLOT(fatalMessage(QString)));  
     delete oldResults;
   }
 
@@ -441,6 +442,7 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
         this->errorMessage("EE_UQ: failed to read SIM Method data");
 
     this->statusMessage("Done Loading File");
+    
     return true;
 }
 
