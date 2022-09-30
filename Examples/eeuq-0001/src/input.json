@@ -143,7 +143,7 @@
         "type": "MDOF_BuildingModel",
         "weight": "RV.w"
     },
-    "UQ_Method": {
+    "UQ": {
         "parallelExecution": true,
         "samplingMethodData": {
             "keepSamples": true,

@@ -112,7 +112,7 @@
         ],
         "type": "SteelBuildingModel"
     },
-    "UQ_Method": {
+    "UQ": {
         "parallelExecution": true,
         "samplingMethodData": {
             "keepSamples": true,
