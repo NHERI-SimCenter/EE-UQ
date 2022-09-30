@@ -85,8 +85,8 @@ private:
    SimCenterAppWidget *theRockOutcrop;
    SimCenterAppWidget* peerNgaRecords;
    SimCenterAppWidget* userDefinedDatabase;
-
    RandomVariablesContainer *theRandomVariablesContainer;
+   QString currentEventType; 
 
 };
 

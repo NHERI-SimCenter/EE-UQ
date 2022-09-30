@@ -39,6 +39,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "EarthquakeEventSelection.h"
+#include <GoogleAnalytics.h>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -246,11 +247,13 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     if (arg1 == "Multiple SimCenter") {
         theStackedWidget->setCurrentIndex(4);
         theCurrentEvent = theExistingEvents;
+	currentEventType="SimCenter";      	
     }
 
     else if(arg1 == "Multiple PEER") {
         theStackedWidget->setCurrentIndex(3);
         theCurrentEvent = theExistingPeerEvents;
+	currentEventType="PEER";      	
     }
     
     /*
@@ -263,11 +266,13 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     else if (arg1 == "Site Response") {
       theStackedWidget->setCurrentIndex(2);
       theCurrentEvent = theRockOutcrop;
+      currentEventType="SiteResponse";      
     }
 
     else if (arg1 == "Stochastic Ground Motion") {
       theStackedWidget->setCurrentIndex(0);
       theCurrentEvent = theStochasticMotionWidget;
+      currentEventType="StochasticGroundMotion";			      
     }
 
     /*
@@ -280,11 +285,13 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
     else if(arg1 == "PEER NGA Records") {
         theStackedWidget->setCurrentIndex(1);
         theCurrentEvent = peerNgaRecords;
+	currentEventType="PEER_NGA";      	
     }
 
     else if(arg1 == "User Specified Database") {
         theStackedWidget->setCurrentIndex(5);
         theCurrentEvent = userDefinedDatabase;
+	currentEventType="UserDatabase";
     }
     else {
         qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;
@@ -334,24 +341,32 @@ EarthquakeEventSelection::inputAppDataFromJSON(QJsonObject &jsonObject)
     if ((type == QString("Existing Events")) ||
 	(type == QString("Existing SimCenter Events")) ||
 	(type == QString("ExistingSimCenterEvents"))) {
+
+        currentEventType="SimCenterEvent";
         index = 4;
     } else if ((type == QString("Existing PEER Records")) ||
                (type == QString("ExistingPEER_Events"))  ||
                (type == QString("ExistingPEER_Records"))) {
-        if(!subtype.isEmpty() && subtype == "PEER NGA Records")
+      if(!subtype.isEmpty() && subtype == "PEER NGA Records") {
             index = 1;
-        else
+	    currentEventType="PEER_NGA";		    
+      }  else {
             index = 3;
+	    currentEventType="PEER";	
+      } 
+
   //  } else if (type == QString("Hazard Based Event")) {
   //      index = 3;
     } else if (type == QString("Site Response") ||
                type == QString("SiteResponse")) {
         index = 2;
+        currentEventType="SiteResponse";		
     } else if (type == QString("Stochastic Ground Motion Model") ||
 	       type == QString("Stochastic Ground Motion") ||
 	       type == QString("StochasticGroundMotion") ||
                type == QString("StochasticMotion")) {
         index = 0;
+        currentEventType="StochasticGroundMotion";			
    // } else if ((type == QString("User Application")) ||
    //            (type == QString("UserDefinedApplication"))) {
    //     index = 6;
@@ -371,7 +386,9 @@ bool
 EarthquakeEventSelection::copyFiles(QString &destDir) {
 
     if (theCurrentEvent != 0) {
-        return  theCurrentEvent->copyFiles(destDir);
+          QString textForAnalytics = QString("Event-") + currentEventType;
+	  GoogleAnalytics::ReportAppUsage(textForAnalytics);    
+	  return theCurrentEvent->copyFiles(destDir);
     }
 
     return false;
