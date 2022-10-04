@@ -20,12 +20,13 @@ class SimCenterGraphPlot : public QWidget
 {
     Q_OBJECT
 public:
-    SimCenterGraphPlot(QString xAxis, QString yAxis, int width, int height, QWidget *parent = 0);
+    SimCenterGraphPlot(QString xAxis, QString yAxis, QWidget *parent = 0);
+    SimCenterGraphPlot(QString xAxis, QString yAxis, int minWidth, int minHeight, QWidget *parent = 0);
     ~SimCenterGraphPlot();
 
     void clear();
     void addLine(QVector<double> &x, QVector<double> &y, int width = 1, int r=0, int g=0, int b=0);
-
+    void drawPDF(QVector<double> &x, QVector<double> &y);
 signals:
 
 public slots:

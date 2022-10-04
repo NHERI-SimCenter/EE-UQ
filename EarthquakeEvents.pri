@@ -24,9 +24,11 @@ SOURCES +=  \
     $$PWD/EVENTS/peerNGA/PEER_NGA_Records.cpp \
     $$PWD/EVENTS/peerNGA/RecordSelectionPlot.cpp \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.cpp \
+    $$PWD/EVENTS/peerNGA/SpectrumFromRegionalSurrogate.cpp \
     $$PWD/EVENTS/peerNGA/USGSTargetWidget.cpp \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.cpp \
     $$PWD/EVENTS/peerNGA/UserSpectrumWidget.cpp \
+    $$PWD/EVENTS/peerNGA/surrogateGpParser.cpp \
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.cpp \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.cpp
 
@@ -46,9 +48,11 @@ HEADERS +=  \
     $$PWD/EVENTS/peerNGA/PEER_NGA_Records.h \
     $$PWD/EVENTS/peerNGA/RecordSelectionPlot.h \
     $$PWD/EVENTS/peerNGA/PeerNgaWest2Client.h \
+    $$PWD/EVENTS/peerNGA/SpectrumFromRegionalSurrogate.h \
     $$PWD/EVENTS/peerNGA/USGSTargetWidget.h \
     $$PWD/EVENTS/peerNGA/UserSpectrumModel.h \
     $$PWD/EVENTS/peerNGA/UserSpectrumWidget.h \
-    $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h
+    $$PWD/EVENTS/peerNGA/surrogateGpParser.h \
+    $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.h
 

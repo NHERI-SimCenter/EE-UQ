@@ -25,6 +25,7 @@
 #include <QLineEdit>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "SpectrumFromRegionalSurrogate.h"
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
@@ -58,12 +59,13 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
     spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
     spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
+    spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
 
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
     auto asce710Target = new ASCE710Target(this);
     targetSpectrumDetails->addWidget(asce710Target);
-    auto userSpectrumTarget = new UserSpectrumWidget(this);
+    userSpectrumTarget = new UserSpectrumWidget(this);
     targetSpectrumDetails->addWidget(userSpectrumTarget);
     auto usgsSpectrumTarget = new USGSTargetWidget(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(usgsSpectrumTarget);
@@ -71,6 +73,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(nshmpTarget);
     auto nshmpDeagg = new NSHMPDeagg(generalInfoWidget, this);
     targetSpectrumDetails->addWidget(nshmpDeagg);
+    spectrumSurrogate = new SpectrumFromRegionalSurrogate(this);
+    targetSpectrumDetails->addWidget(spectrumSurrogate);
 
     auto recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
@@ -386,6 +390,8 @@ void PEER_NGA_Records::setupConnections()
 
 
     connect(scalingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onScalingComboBoxChanged(int)));
+
+    connect(spectrumSurrogate, &SpectrumFromRegionalSurrogate::spectrumSaved, this, &PEER_NGA_Records::switchUserDefined);
 }
 
 void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
@@ -680,7 +686,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 
         eventsArray.append(eventJson);
     }
-
+    /*
     if (numRecords == 0) {
       statusMessage(QString("PEER-NGA no motions yet selected"));      
       switch( QMessageBox::question( 
@@ -701,6 +707,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
 	  break;
 	}
     }
+    */
     
     jsonObject["Events"] = eventsArray;
 
@@ -734,7 +741,6 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     jsonObject["durationRange"] = durationCheckBox->isChecked();
     jsonObject["durationMin"] = durationMin->text();
     jsonObject["durationMax"] = durationMax->text();
-
 
     return true;
 }
@@ -811,30 +817,68 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     // QDir recordsFolder(groundMotionsFolder.path());
     QDir recordsFolder(RecordsDir);
     QDir destinationFolder(destDir);
+
+    bool ok = true;
+    QString msg;
+    int count = 0;
     for (auto& record:currentRecords)
-    {
+      {
         //Copying Horizontal1 file
-        if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File)))
-            return false;
-
+	if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
+	  msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal1File);
+	  ok = false;
+	  break;
+	}
+	
+	
         auto components = groundMotionsComponentsBox->currentData().value<GroundMotionComponents>();
-
+	
         if(components == GroundMotionComponents::Two || components == GroundMotionComponents::Three)
-        {
-
+	  {
+	    
             //Copying Horizontal2 file
-            if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File)))
-                return false;
-        }
+	    if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
+	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal2File);
+	      ok = false;
+	      break; 	    
+	    }
+	  }
 
-        if(components == GroundMotionComponents::Three)
-        {
+	if(components == GroundMotionComponents::Three)
+	  {
             //Copying Vertical file
-            if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile)))
-                return false;
-        }
-    }
+	    if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
+	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.VerticalFile);
+	      ok = false;
+	      break;
+	    }
+	  }
+	count++;
+      }
 
+
+    //FMKFMK
+    if (ok == false || count == 0) {
+      statusMessage(QString("PEER-NGA no motions Downloaded"));      
+      switch( QMessageBox::question( 
+            this, 
+            tr("PEER-NGA"), 
+            tr("PEER-NGA has detected that no motions have been downloaded. You may have requested too many motions or you did not run the 'Select Records' after entering your search criteria. If you  trying to Run a Workflow, the workflow will FAIL to run or you will be presented with NANs (not a number) and zeroes. To select motions, return to the PEER-NGA EVENT and press the 'Select Records' Button. If you have pressed this button and see this message you do not have the priviledges with PEER that will allow you to download the number of motions you have specified, the typical limit is 100 per day. Do you wish to continue anyway?"), 
+            QMessageBox::Yes | 
+            QMessageBox::No,
+            QMessageBox::Yes ) )
+	{
+	case QMessageBox::Yes:
+	  break;
+	case QMessageBox::No:
+	  return false;
+	  break;
+	default:
+
+	  break;
+	}
+    }
+    
     return true;
 }
 
@@ -898,6 +942,14 @@ PEER_NGA_Records::chooseOutputDirectory(void) {
     }
     this->setOutputDirectory(outdirpath);
 
+}
+
+void PEER_NGA_Records::switchUserDefined(QString dirName, QString fileName) {
+    // switch user defined
+    targetSpectrumDetails->setCurrentIndex(1);
+    spectrumTypeComboBox->setCurrentIndex(1);
+    // load the csv file in
+    userSpectrumTarget->loadSpectrum(dirName+QDir::separator()+fileName);
 }
 
 

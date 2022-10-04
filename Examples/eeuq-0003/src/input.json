@@ -27,7 +27,7 @@
             }
         },
         "UQ": {
-            "Application": "Dakota-UQ1",
+            "Application": "Dakota-UQ",
             "ApplicationData": {
             }
         }
@@ -127,7 +127,7 @@
         ],
         "type": "OpenSeesInput"
     },
-    "UQ_Method": {
+    "UQ": {
         "parallelExecution": true,
         "samplingMethodData": {
             "keepSamples": true,

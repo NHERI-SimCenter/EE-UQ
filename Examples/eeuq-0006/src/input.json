@@ -1,0 +1,200 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake",
+                "subtype": "PEER NGA Records"
+            }
+        ],
+        "Modeling": {
+            "Application": "MDOF_BuildingModel",
+            "ApplicationData": {
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "SimCenterUQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameBIM": "BIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "BIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "dakota.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "TargetSpectrum": {
+                "Sd1": "0.75",
+                "Sds": "1.0",
+                "SpectrumType": "Design Spectrum (ASCE 7-10)",
+                "Tl": "12.0"
+            },
+            "components": "SRSS",
+            "distanceMax": "50.0",
+            "distanceMin": "0.0",
+            "distanceRange": false,
+            "durationMax": "20.0",
+            "durationMin": "0.0",
+            "durationRange": false,
+            "faultType": "All Types",
+            "magnitudeMax": "8.0",
+            "magnitudeMin": "5.0",
+            "magnitudeRange": false,
+            "periodPoints": "0.01,0.05,0.1,0.5,1,5,10.0",
+            "pulse": "All",
+            "records": "20",
+            "scaling": "Minimize MSE",
+            "singlePeriod": "0.5",
+            "type": "ExistingPEER_Events",
+            "vs30Max": "300.0",
+            "vs30Min": "150.0",
+            "vs30Range": false,
+            "weights": "1.0,1.0,1.0,1.0,1.0,1.0,1.0"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 1,
+        "PlanArea": 129600,
+        "depth": 360,
+        "height": 144,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 129600,
+        "stories": 1,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "dampingRatio": 0.02,
+        "dampingRatioModal": 0.02,
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": 1,
+        "rayleighTangent": "Initial",
+        "secondMode": 0,
+        "solver": "Umfpack"
+    },
+    "StructuralInformation": {
+        "Bx": 0.1,
+        "By": 0.1,
+        "Fyx": 1,
+        "Fyy": 1,
+        "Krz": 10000000000,
+        "Kx": 100,
+        "Ky": 100,
+        "ModelData": [
+            {
+                "Fyx": 1,
+                "Fyy": 1,
+                "Ktheta": 10000000000,
+                "bx": 0.1,
+                "by": 0.1,
+                "height": 144,
+                "kx": 100,
+                "ky": 100,
+                "weight": 144
+            }
+        ],
+        "height": 144,
+        "massX": 0,
+        "massY": 0,
+        "numStories": 1,
+        "randomVar": [
+        ],
+        "responseX": 0,
+        "responseY": 0,
+        "type": "MDOF_BuildingModel",
+        "weight": 144
+    },
+    "UQ": {
+        "surrogateMethodInfo": {
+            "IntensityMeasure": {
+                "PSA": {
+                    "Periods": [
+                        0.5
+                    ],
+                    "Unit": "g"
+                },
+                "SaRatio": {
+                    "Periods": [
+                        0.1,
+                        0.5,
+                        1.5
+                    ],
+                    "Unit": "scalar"
+                }
+            },
+            "advancedOpt": true,
+            "constraints": false,
+            "diffusionMaps": true,
+            "epsilonPCA": 0.0001,
+            "inpFile": "PLoM_variables.csv",
+            "kdeTolerance": 0.1,
+            "logTransform": false,
+            "method": "Sampling and Simulation",
+            "newSampleRatio": 2,
+            "outFile": "PLoM_responses.csv",
+            "outputData": true,
+            "parallelExecution": false,
+            "preTrained": false,
+            "randomSeed": 10,
+            "samplingMethod": {
+                "method": "LHS",
+                "samples": 20,
+                "seed": 314
+            },
+            "smootherKDE": 25
+        },
+        "uqEngine": "SimCenterUQ",
+        "uqType": "PLoM Model"
+    },
+    "randomVariables": [
+    ],
+    "runType": "runningLocal"
+}
