@@ -69,6 +69,10 @@ public slots:
     void switchUserDefined(QString dirName, QString fileName);
 
 private:
+
+    // widget groups
+    QGroupBox *recordSelectionGroup;
+    QGridLayout *targetSpectrumLayout;
     PeerNgaWest2Client peerClient;
     QPushButton* selectRecordsButton;
     QLineEdit* nRecordsEditBox;

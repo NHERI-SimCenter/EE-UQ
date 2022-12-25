@@ -18,6 +18,7 @@ SOURCES +=  \
     $$PWD/EVENTS/StochasticMotionInput/src/VlachosEtAlModel.cpp \
     $$PWD/EVENTS/StochasticMotionInput/src/DabaghiDerKiureghianPulse.cpp \
     $$PWD/EVENTS/peerNGA/ASCE710Target.cpp \
+    $$PWD/EVENTS/peerNGA/NoSpectrumUniform.cpp \
     $$PWD/EVENTS/peerNGA/NSHMPDeagg.cpp \
     $$PWD/EVENTS/peerNGA/NSHMPTarget.cpp \
     $$PWD/EVENTS/peerNGA/PeerLoginDialog.cpp \
@@ -40,6 +41,7 @@ HEADERS +=  \
     $$PWD/EVENTS/StochasticMotionInput/include/VlachosEtAlModel.h \
     $$PWD/EVENTS/StochasticMotionInput/include/DabaghiDerKiureghianPulse.h \
     $$PWD/EVENTS/peerNGA/ASCE710Target.h \
+    $$PWD/EVENTS/peerNGA/NoSpectrumUniform.h \
     $$PWD/EVENTS/peerNGA/AbstractJsonSerializable.h \
     $$PWD/EVENTS/peerNGA/AbstractTargetWidget.h \
     $$PWD/EVENTS/peerNGA/NSHMPDeagg.h \

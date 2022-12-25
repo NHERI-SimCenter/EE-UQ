@@ -17,6 +17,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include "ASCE710Target.h"
+#include "NoSpectrumUniform.h"
 #include "UserSpectrumWidget.h"
 #include "USGSTargetWidget.h"
 #include "NSHMPTarget.h"
@@ -50,16 +51,17 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumLayout->setColumnMinimumWidth(1, 100);
     targetSpectrumLayout->setColumnMinimumWidth(2, 30);
 
-    targetSpectrumLayout->addWidget(new QLabel("Type"), 0, 0);
+    targetSpectrumLayout->addWidget(new QLabel("Type      "), 0, 0);
     spectrumTypeComboBox = new QComboBox();
 
-    targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1);
+    targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1, Qt::AlignLeft);
     spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
     spectrumTypeComboBox->addItem("User Specified");
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
     spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
     spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
     spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
+    spectrumTypeComboBox->addItem("No Spectrum - Uniform IMs");
 
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
@@ -75,8 +77,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(nshmpDeagg);
     spectrumSurrogate = new SpectrumFromRegionalSurrogate(this);
     targetSpectrumDetails->addWidget(spectrumSurrogate);
+    auto noSpect =  new NoSpectrumUniform(this);
+    targetSpectrumDetails->addWidget(noSpect);
 
-    auto recordSelectionGroup = new QGroupBox("Record Selection");
+    recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
@@ -156,6 +160,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 //    recordSelectionGroup->setMaximumHeight(200);
 //#else
     targetSpectrumLayout->setRowStretch(2,1);
+    targetSpectrumLayout->setColumnStretch(2,1);
     recordSelectionLayout->setRowStretch(7, 1);
 //#endif
 
@@ -211,6 +216,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     // add stuff to enter Output Directory
     QLabel *labelOD = new QLabel("Output Directory");
     outdirLE = new QLineEdit;
+    outdirLE->setPlaceholderText("(Opional) Default:" + groundMotionsFolder.path());
     QPushButton *chooseOutputDirectoryButton = new QPushButton();
     chooseOutputDirectoryButton->setText(tr("Choose"));
     connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
@@ -377,7 +383,20 @@ void PEER_NGA_Records::setupConnections()
 
     connect(spectrumTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         targetSpectrumDetails->setCurrentIndex(index);
+        if(spectrumTypeComboBox->currentText().contains("No Spectrum")) {
+            double newHeight =  targetSpectrumDetails->height();
+            double newWidth =  targetSpectrumDetails->width();
+            newWidth += recordSelectionGroup->width();
 
+            recordSelectionGroup->setVisible(false);
+            //targetSpectrumDetails->resize(newHeight, newWidth);
+            targetSpectrumDetails->setMinimumWidth(newWidth);
+            //widget->resize(165, widget->height());
+
+        } else {
+            recordSelectionGroup->setVisible(true);
+            targetSpectrumDetails->setMinimumWidth(10); // some random number
+        }
         return;
     });
 
@@ -523,6 +542,19 @@ void PEER_NGA_Records::selectRecords()
 				 distanceRange,
                  vs30Range,durationRange,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex(),faultTypeBox->currentIndex()+1,pulseBox->currentIndex()+1);
     }
+    else if(targetSpectrumDetails->currentIndex() == 6) // no spectrum (uniform
+    {
+        auto unifrom_widget = reinterpret_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget());
+
+        progressBar->setHidden("False");
+        selectRecordsButton->setEnabled(false);
+        selectRecordsButton->setDown(true);
+
+        updateStatus("Retrieving ground motion RSN ...");
+        auto RSN = unifrom_widget->spectrum();
+
+        // TO ADD
+     }
     else
     {
         auto userTargetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->currentWidget());
