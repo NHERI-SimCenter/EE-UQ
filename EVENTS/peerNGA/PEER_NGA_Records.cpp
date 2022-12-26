@@ -551,7 +551,8 @@ void PEER_NGA_Records::selectRecords()
         selectRecordsButton->setDown(true);
 
         updateStatus("Retrieving ground motion RSN ...");
-        auto RSN = unifrom_widget->spectrum();
+        auto RSN = unifrom_widget->getRSN(); // This will run a python script
+        peerClient.selectRecords(RSN);
 
         // TO ADD
      }

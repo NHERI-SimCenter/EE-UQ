@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QProcess>
+#include <QPushButton>
 #include "AbstractTargetWidget.h"
 #include "SimCenterIntensityMeasureWidget.h"
 
@@ -24,6 +25,7 @@ private:
 
     QLineEdit* numSampPerBin;
     SimCenterIntensityMeasureWidget *theSCIMWidget_grid;
+    QPushButton* selectRecordsButton;
     QProcess * proc;
 
 public:
@@ -34,6 +36,7 @@ public:
     // AbstractTargetWidget interface
 public:
     QList<QPair<double, double> > spectrum() const override;
+    QStringList getRSN() const;
 //    double sds();
 //    double sd1();
 //    double tl();

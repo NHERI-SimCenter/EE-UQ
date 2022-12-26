@@ -21,6 +21,7 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent) : AbstractTargetWidget(par
     layout->addWidget(new QLabel("# samples per bin"), 0, 0);
     layout->addWidget(numSampPerBin, 0, 1);
     layout->addWidget(theSCIMWidget_grid, 1, 0,1,-1);
+
     layout->setColumnStretch(2,1);
 }
 
@@ -44,35 +45,25 @@ void NoSpectrumUniform::deserialize(const QJsonObject &json)
 QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
 {
     QList<QPair<double, double>>  targetSectrum;
-//    QList<double> periods;
-//    // Use a 0.05 s interval (0.05s ~ 10s)
-//    for (int i = 0; i < 200; ++i)
-//        periods << 0.05 * i + 0.05;
-
-//    // Compute ASCE7-10 two-period spectrum
-//    auto Sds = sdsEditBox->text().toDouble();
-//    auto Sd1 = sd1EditBox->text().toDouble();
-//    auto Tl = tlEditBox->text().toDouble();
-//    auto Ts =  Sd1 / Sds;
-//    auto T0 = 0.2 * Ts;
-//    for (int i = 0; i != periods.size()-1; ++i)
-//    {
-//        if (periods[i] <= T0)
-//            targetSectrum.append({periods[i], Sds*(0.4+0.6*periods[i]/T0)});
-//        else if (periods[i] <= Ts)
-//            targetSectrum.append({periods[i], Sds});
-//        else if (periods[i] <= Tl)
-//            targetSectrum.append({periods[i], Sd1/periods[i]});
-//        else
-//            targetSectrum.append({periods[i], Sd1*Tl/periods[i]/periods[i]});
-//    }
-
     return targetSectrum;
+}
+
+QStringList NoSpectrumUniform::getRSN() const
+{
+    QStringList RSN({"6,14"}) ;
+    // Write Json & Run the script
+
+
+    // Read the RSN.out file as a stringlist
+
+    return RSN;
 }
 
 
 void NoSpectrumUniform::writeConfigJSON(QJsonObject myJson) {
 
+    myJson["numSampPerBin"]=numSampPerBin->text();
+    theSCIMWidget_grid->outputToJSON(myJson);
 
 }
 
@@ -94,13 +85,6 @@ void NoSpectrumUniform::getUniformRSN(void) {
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         return;
     }
-    /* REMOVING CRAP
-    QJsonObject json;
-    if (this->outputToJSON(json) == false) {
-        //this->errorMessage("WorkflowApp - failed in outputToJson");
-        return;
-    }
-    */
 
     QJsonDocument doc(configJSON);
     file.write(doc.toJson());
