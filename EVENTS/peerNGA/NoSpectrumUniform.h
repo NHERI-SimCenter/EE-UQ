@@ -13,8 +13,7 @@ class NoSpectrumUniform : public AbstractTargetWidget
     Q_OBJECT
 public:
     explicit NoSpectrumUniform(QWidget *parent = nullptr);
-    void writeConfigJSON(QJsonObject myJson);
-    void getUniformRSN(void);
+    void writeConfigJSON(QJsonObject &myJson);
 signals:
     void runComplete(bool, QString, QString);
 
@@ -23,6 +22,7 @@ private:
 //    QLineEdit* sd1EditBox;
 //    QLineEdit* tlEditBox;
 
+    void getUniformRSN(void);
     QLineEdit* numSampPerBin;
     SimCenterIntensityMeasureWidget *theSCIMWidget_grid;
     QPushButton* selectRecordsButton;
@@ -36,7 +36,7 @@ public:
     // AbstractTargetWidget interface
 public:
     QList<QPair<double, double> > spectrum() const override;
-    QStringList getRSN() const;
+    QStringList getRSN();
 //    double sds();
 //    double sd1();
 //    double tl();

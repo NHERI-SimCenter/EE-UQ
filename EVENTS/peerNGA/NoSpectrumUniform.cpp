@@ -48,11 +48,13 @@ QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
     return targetSectrum;
 }
 
-QStringList NoSpectrumUniform::getRSN() const
+QStringList NoSpectrumUniform::getRSN()
 {
-    QStringList RSN({"6,14"}) ;
+    // Test
+    //QStringList RSN({"6,14"}) ;
+    QStringList RSN;
     // Write Json & Run the script
-
+    this->getUniformRSN();
 
     // Read the RSN.out file as a stringlist
 
@@ -60,10 +62,21 @@ QStringList NoSpectrumUniform::getRSN() const
 }
 
 
-void NoSpectrumUniform::writeConfigJSON(QJsonObject myJson) {
+void NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
 
     myJson["numSampPerBin"]=numSampPerBin->text();
-    theSCIMWidget_grid->outputToJSON(myJson);
+
+    QJsonObject imJson;
+    theSCIMWidget_grid->outputToJSON(imJson);
+    myJson.insert("IM", imJson);
+    //
+    // config
+    //
+
+    QString tmpDirName = QString("tmp.SimCenter");
+    QDir workDir(SimCenterPreferences::getInstance()->getLocalWorkDir());
+    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
+    myJson["runDir"] = tmpDirectory;
 
 }
 
@@ -78,7 +91,7 @@ void NoSpectrumUniform::getUniformRSN(void) {
     QDir destinationDirectory(configJSON.value("runDir").toString());
     QString templateDirectory  = destinationDirectory.absoluteFilePath(templateDir);
     destinationDirectory.mkpath(templateDirectory);
-    QString inputFile = templateDirectory + QDir::separator() + tr("scInput.json");
+    QString inputFile = templateDirectory + QDir::separator() + tr("gridIM.json");
 
     qDebug() << "INPUT FILE: " << inputFile;
     QFile file(inputFile);
@@ -100,10 +113,11 @@ void NoSpectrumUniform::getUniformRSN(void) {
     //qDebug() << "RUNTYPE" << runType;
     QString appDir = SimCenterPreferences::getInstance()->getAppDir();
     //QString appName = QCoreApplication::applicationName();
+    qDebug() << "appDir: " << appDir;
 
 //    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
 //    QString pySCRIPT;
-    QDir scriptDir(appDir);
+    QDir scriptDir(appDir +QDir::separator() + "applications");
 //    //scriptDir.cd("applications");
 //    //scriptDir.cd("Workflow");
 //    //pySCRIPT = scriptDir.absoluteFilePath("qWHALE.py"); // invoke qWHALE to run GP surrogate prediction
@@ -116,6 +130,7 @@ void NoSpectrumUniform::getUniformRSN(void) {
 //    }
 
     QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    qDebug() << "REGISTRY: " << registryFile;
     QFileInfo check_registry(registryFile);
     if (!check_registry.exists() || !check_registry.isFile()) {
         //emit sendErrorMessage(QString("NO REGISTRY FILE: ") + registryFile);
@@ -124,7 +139,6 @@ void NoSpectrumUniform::getUniformRSN(void) {
     }
 
 //    qDebug() << "SCRIPT: " << pySCRIPT;
-    qDebug() << "REGISTRY: " << registryFile;
 
     QStringList files;
     //files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
