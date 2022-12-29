@@ -293,6 +293,11 @@ WorkflowAppEE_UQ::outputToJSON(QJsonObject &jsonObjectTop) {
     if (result == false)
         return result;
 
+    // sy - to save results
+    result = theResults->outputToJSON(jsonObjectTop);
+    if (result == false)
+        return result;
+
     jsonObjectTop["Applications"]=apps;
 
     QJsonObject defaultValues;
@@ -419,7 +424,7 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
     theEventSelection->inputFromJSON(jsonObject);
     theRVs->inputFromJSON(jsonObject);
     theRunWidget->inputFromJSON(jsonObject);
-        
+
     if (jsonObject.contains("EDP")) {
         QJsonObject edpObj = jsonObject["EDP"].toObject();
         if (theEDP_Selection->inputFromJSON(edpObj) == false)
@@ -440,6 +445,13 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
     if (theSIM->inputFromJSON(jsonObject) == false)
         this->errorMessage("EE_UQ: failed to read SIM Method data");
+
+    // sy - to display results
+    auto* theNewResults = theUQ_Selection->getResults();
+
+    if (theNewResults->inputFromJSON(jsonObject) == false)
+        this->errorMessage("EE_UQ: failed to read RES Method data");
+    theResults->setResultWidget(theNewResults);
 
     this->statusMessage("Done Loading File");
     
