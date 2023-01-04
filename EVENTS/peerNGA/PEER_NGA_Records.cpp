@@ -211,12 +211,12 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     this->onScalingComboBoxChanged(0);
 
     // User-defined output directory
-    auto outdirGroup = new QGroupBox("Output Directory");
+    auto outdirGroup = new QGroupBox("Temporary records Directory");
     auto outdirLayout = new QGridLayout(outdirGroup);
     // add stuff to enter Output Directory
-    QLabel *labelOD = new QLabel("Output Directory");
+    QLabel *labelOD = new QLabel("Temporary records Directory");
     outdirLE = new QLineEdit;
-    outdirLE->setPlaceholderText("(Opional) Default:" + groundMotionsFolder.path());
+    outdirLE->setPlaceholderText("(Opional) " + groundMotionsFolder.path());
     QPushButton *chooseOutputDirectoryButton = new QPushButton();
     chooseOutputDirectoryButton->setText(tr("Choose"));
     connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
@@ -419,6 +419,29 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     if(!resultFolder.exists())
         return;
 
+
+    QString readMePathString = groundMotionsFolder.path() + QDir::separator() + QString("_readME.txt");
+    QFileInfo readMeInfo(readMePathString);
+    if (readMeInfo.exists()) {
+        QFile readMeFile(readMePathString);
+        QString line("");
+        if (readMeFile.open(QIODevice::ReadOnly)) {
+           QTextStream in(&readMeFile);
+           while (!in.atEnd()) {
+              line = in.readLine();
+           }
+           readMeFile.close();
+        }
+        if (line.contains("No records")) {
+            errorMessage(QString(QString("Failed to download PEER NGA records: ") + line));
+            errorMessage(QString("The limit can be 100 per day, 200 per week, 400 per month"));
+            return;
+        } else {
+            infoMessage(QString(QString("Message from PEER NGA: ") + line));
+            }
+    }
+
+
     clearSpectra();
 
     currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
@@ -440,7 +463,7 @@ void PEER_NGA_Records::setRecordsTable(QList<PeerScaledRecord> records)
     for(auto& record: records)
     {
         addTableItem(row, 0, QString::number(record.RSN));
-        addTableItem(row, 1, QString::number(record.Scale));
+        addTableItem(row, 1, QString::number(record.Scale, 'g', 2));
         addTableItem(row, 2, record.Earthquake);
         addTableItem(row, 3, record.Station);
         addTableItem(row, 4, QString::number(record.Magnitude));
@@ -470,18 +493,21 @@ void PEER_NGA_Records::plotSpectra()
 {
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+    if (spectrumTypeComboBox->currentIndex()!=6) {
+        recordSelectionPlot.setHidden(false);
+        recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
+        recordSelectionPlot.setMean(periods, meanSpectrum);
+        recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
+        recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
+        recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
 
-    recordSelectionPlot.setHidden(false);
-    recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
-    recordSelectionPlot.setMean(periods, meanSpectrum);
-    recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
-    recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
-    recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
+        auto size = recordSelectionPlot.size();
+        size.setWidth(size.height());
+        recordSelectionPlot.setMinimumSize(size);
+    }
 
-    auto size = recordSelectionPlot.size();
-    size.setWidth(size.height());
-    recordSelectionPlot.setMinimumSize(size);
 }
+
 
 void PEER_NGA_Records::updateStatus(QString status)
 {
@@ -531,6 +557,7 @@ void PEER_NGA_Records::selectRecords()
     if(durationCheckBox->checkState() == Qt::Checked)
         durationRange.setValue(qMakePair(durationMin->text().toDouble(), durationMax->text().toDouble()));
 
+    additionalScaling.clear();
     if(targetSpectrumDetails->currentIndex() == 0)
     {
         auto asce710widget = reinterpret_cast<ASCE710Target*>(targetSpectrumDetails->currentWidget());
@@ -541,20 +568,25 @@ void PEER_NGA_Records::selectRecords()
 				 magnitudeRange,
 				 distanceRange,
                  vs30Range,durationRange,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex(),faultTypeBox->currentIndex()+1,pulseBox->currentIndex()+1);
+
+        // _ no additional scaling
+        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
     }
     else if(targetSpectrumDetails->currentIndex() == 6) // no spectrum (uniform
     {
         auto unifrom_widget = reinterpret_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget());
-
-        progressBar->setHidden("False");
-        selectRecordsButton->setEnabled(false);
-        selectRecordsButton->setDown(true);
-
         updateStatus("Retrieving ground motion RSN ...");
-        auto RSN = unifrom_widget->getRSN(); // This will run a python script
-        peerClient.selectRecords(RSN);
-
-        // TO ADD
+        QStringList RSN;
+        unifrom_widget->getRSN(RSN, additionalScaling); // This will run a python script
+        // additionalScaling are given in "sorted" RSN older.
+        RSN.removeAll(QString(""));
+        if (RSN.isEmpty()) {
+            return;
+            // TO ADD error messages here
+        } else {
+            peerClient.selectRecords(RSN);
+            //return;
+        }
      }
     else
     {
@@ -576,7 +608,11 @@ void PEER_NGA_Records::selectRecords()
             selectRecordsButton->setEnabled(true);
             selectRecordsButton->setDown(false);
         }
+
+        // _ no additional scaling
+        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
     }
+
 }
 
 void PEER_NGA_Records::addTableItem(int row, int column, QString value)
@@ -601,7 +637,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
     while (!searchResultsStream.atEnd())
     {
         QString line = searchResultsStream.readLine();
-
+        int ng = 0;
         //Parsing selected records information
         if(line.contains("Metadata of Selected Records"))
         {
@@ -620,13 +656,14 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Distance = values[15].trimmed().toDouble();
                 record.Vs30 = values[16].trimmed().toDouble();
 
-                record.Scale = values[4].toDouble();
+                record.Scale = values[4].toDouble()*additionalScaling[ng];
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
 
                 records.push_back(record);
                 line = searchResultsStream.readLine();
+                ng++;
             }
         }
 
@@ -649,7 +686,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 scaledSelectedSpectra.resize(values.size() - 5);
                 for (int i = 5; i < values.size(); i++)
                 {
-                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble());
+                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble()*additionalScaling[i-5]);
                 }
                 line = searchResultsStream.readLine();
             }

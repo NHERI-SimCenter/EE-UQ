@@ -138,6 +138,9 @@ private:
     QString outdirpath;
     QString RecordsDir;
 
+    // Additional scaling
+    QVector<double> additionalScaling;
+
     void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();
     void processPeerRecords(QDir resultFolder);
