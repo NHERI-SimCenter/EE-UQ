@@ -6,6 +6,8 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QProcess>
+#include <QJsonObject>
+#include <QJsonArray>
 
 NoSpectrumUniform::NoSpectrumUniform(QWidget *parent) : AbstractTargetWidget(parent)
 {
@@ -48,53 +50,46 @@ QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
     return targetSectrum;
 }
 
-QStringList NoSpectrumUniform::getRSN()
-{
-    // Test
-    //QStringList RSN({"6,14"}) ;
-    QStringList RSN;
-    // Write Json & Run the script
-    this->getUniformRSN();
-
-    // Read the RSN.out file as a stringlist
-
-    return RSN;
-}
 
 
 void NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
 
     myJson["numSampPerBin"]=numSampPerBin->text();
-
     QJsonObject imJson;
     theSCIMWidget_grid->outputToJSON(imJson);
     myJson.insert("IM", imJson);
-    //
-    // config
-    //
-
-    QString tmpDirName = QString("tmp.SimCenter");
-    QDir workDir(SimCenterPreferences::getInstance()->getLocalWorkDir());
-    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
-    myJson["runDir"] = tmpDirectory;
-
 }
 
-void NoSpectrumUniform::getUniformRSN(void) {
+void NoSpectrumUniform::getRSN(QStringList &RSN, QVector<double> &additionalScaling) {
 
+    RSN = QStringList({""});
+
+    QJsonObject configJSON; // Input information
+
+    // clean up working directory
+    QDir workDir(SimCenterPreferences::getInstance()->getLocalWorkDir());
+    QString tmpDirName("tmp.SimCenter");
+    QString templateDir("templatedir");
+    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
+    QDir destinationDirectory(tmpDirectory);
+    QString templateDirectory  = destinationDirectory.absoluteFilePath(templateDir);
+
+    if(destinationDirectory.exists()) {
+      destinationDirectory.removeRecursively();
+    }
+
+    destinationDirectory.mkpath(templateDirectory);
 
     // write json
-    QJsonObject configJSON;
     this->writeConfigJSON(configJSON);
 
-    QString templateDir("templatedir");
-    QDir destinationDirectory(configJSON.value("runDir").toString());
-    QString templateDirectory  = destinationDirectory.absoluteFilePath(templateDir);
-    destinationDirectory.mkpath(templateDirectory);
-    QString inputFile = templateDirectory + QDir::separator() + tr("gridIM.json");
+    // important
+    QString inputFilePath = templateDirectory + QDir::separator() + tr("gridIM_input.json");
+    QString outputFilePath = templateDirectory + QDir::separator() + tr("gridIM_output.json");
+    QString errFilePath = templateDirectory + QDir::separator() + tr("gridIM_log.err");
 
-    qDebug() << "INPUT FILE: " << inputFile;
-    QFile file(inputFile);
+    qDebug() << "INPUT FILE: " << inputFilePath;
+    QFile file(inputFilePath);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         return;
     }
@@ -105,45 +100,59 @@ void NoSpectrumUniform::getUniformRSN(void) {
     qDebug() << "JSON: " << configJSON;
 
     // run myScript
-    QString tempDirectory = templateDirectory;
-    QString inputFilePath = inputFile;
-
-    // qDebug() << "RUNTYPE" << runType;
-    //QString runType("runningLocal");
-    //qDebug() << "RUNTYPE" << runType;
     QString appDir = SimCenterPreferences::getInstance()->getAppDir();
-    //QString appName = QCoreApplication::applicationName();
     qDebug() << "appDir: " << appDir;
 
-//    //TODO: recognize if it is PBE or EE-UQ -> probably smarter to do it inside the python file
-//    QString pySCRIPT;
-    QDir scriptDir(appDir +QDir::separator() + "applications");
-//    //scriptDir.cd("applications");
-//    //scriptDir.cd("Workflow");
-//    //pySCRIPT = scriptDir.absoluteFilePath("qWHALE.py"); // invoke qWHALE to run GP surrogate prediction
-//    pySCRIPT = "Path/To/GMselector";
-//    QFileInfo check_script(pySCRIPT);
-//    if (!check_script.exists() || !check_script.isFile()) {
-//        //emit sendErrorMessage(QString("NO SCRIPT FILE: ") + pySCRIPT);
-//        emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
-//        return;
-//    }
+    QDir scriptDir(appDir +QDir::separator());
+    scriptDir.cd("applications");
+    scriptDir.cd("Workflow");
 
-    QString registryFile = scriptDir.absoluteFilePath("WorkflowApplications.json");
-    qDebug() << "REGISTRY: " << registryFile;
-    QFileInfo check_registry(registryFile);
+    QString registryFilePath = scriptDir.absoluteFilePath("WorkflowApplications.json");
+    qDebug() << "REGISTRY: " << registryFilePath;
+    QFileInfo check_registry(registryFilePath);
     if (!check_registry.exists() || !check_registry.isFile()) {
-        //emit sendErrorMessage(QString("NO REGISTRY FILE: ") + registryFile);
-        emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
-        return;
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+        return ;
     }
 
-//    qDebug() << "SCRIPT: " << pySCRIPT;
+    QFile registryFile(registryFilePath);
+    if (!registryFile.open(QFile::ReadOnly | QFile::Text)) {
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+        return;
+    }
+    //
+    // place contents of file into json object
+    //
+
+    QByteArray tmp =  registryFile.readAll();
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(tmp);
+    QJsonObject jsonObj = jsonDoc.object();
+
+    QJsonObject EVT_Apps1 = jsonObj["EventApplications"].toObject();
+    QJsonArray EVT_Apps2 = EVT_Apps1["Applications"].toArray();
+
+
+    QString GmSelectionScriptPath = ""; // python file
+    for(const QJsonValue& val: EVT_Apps2) {
+        QJsonObject loopObj = val.toObject();
+        if (loopObj["Name"].toString() == "gridGroundMoionSelection") {
+            GmSelectionScriptPath = appDir + QDir::separator() + loopObj["ExecutablePath"].toString();
+        }
+    }
+
+
+     QFileInfo check_selectionScript(GmSelectionScriptPath);
+
+     if (!check_selectionScript.exists() || !check_selectionScript.isFile()) {
+         emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+         return;
+     }
+
 
     QStringList files;
     //files << "dakota.in" << "dakota.out" << "dakotaTab.out" << "dakota.err";
-    //qDebug() << "files: " << files;
-    files << "RSN.out";
+    files << "gridIM_input.json";
+    qDebug() << "files: " << files;
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
@@ -159,6 +168,8 @@ void NoSpectrumUniform::getUniformRSN(void) {
     qDebug() << "python: " << python;
     QString exportPath("export PATH=");
     qDebug() << "exportPath: " << exportPath;
+
+
     bool colonYes = false;
     SimCenterPreferences *preferences = SimCenterPreferences::getInstance();
     python = preferences->getPython();
@@ -171,18 +182,17 @@ void NoSpectrumUniform::getUniformRSN(void) {
         exportPath += pythonPath;
         pathEnv = pythonPath + ';' + pathEnv;
     } else {
-        //emit sendErrorMessage("NO VALID PYTHON - Read the Manual & Check your Preferences");
-        emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
         return;
     }
 
-//    exportPath += "$PATH";
-//    procEnv.insert("PATH", pathEnv);
-//    procEnv.insert("PYTHONPATH", pythonPathEnv);
-//    proc->setProcessEnvironment(procEnv);
+    exportPath += "$PATH";
+    procEnv.insert("PATH", pathEnv);
+    procEnv.insert("PYTHONPATH", pythonPathEnv);
+    proc->setProcessEnvironment(procEnv);
 
     QStringList args;
-        args << inputFile << registryFile;
+    args << GmSelectionScriptPath << files;
 
 #ifdef Q_OS_WIN
     python = QString("\"") + python + QString("\"");
@@ -190,6 +200,7 @@ void NoSpectrumUniform::getUniformRSN(void) {
     qDebug() << python;
     qDebug() << args;
 
+    proc->setWorkingDirectory(templateDirectory);
     proc->start(python,args);
 
     bool failed = false;
@@ -210,7 +221,7 @@ void NoSpectrumUniform::getUniformRSN(void) {
     }
 
 
-    if(0 != proc->exitCode())
+    if((0 != proc->exitCode())&&(-1 != proc->exitCode())) // latter is caputred error
     {
         qDebug() << "Failed to run the workflow!!! exit code returned: " << proc->exitCode();
         qDebug() << proc->errorString();
@@ -222,7 +233,7 @@ void NoSpectrumUniform::getUniformRSN(void) {
     {
         qDebug().noquote() << proc->readAllStandardOutput();
         qDebug().noquote() << proc->readAllStandardError();
-        emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
         return;
     }
 
@@ -277,15 +288,65 @@ void NoSpectrumUniform::getUniformRSN(void) {
     {
         qDebug().noquote() << proc->readAllStandardOutput();
         qDebug().noquote() << proc->readAllStandardError();
-        emit runComplete(false, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
         return;
     }
 
 #endif
 
+    qDebug() << "Output File Path" << outputFilePath;
+    QFile resultsFile(outputFilePath);
+    if (!resultsFile.open(QFile::ReadOnly | QFile::Text)) {
+        QFile errFile(errFilePath);
+
+        QString line("");
+        if (errFile.open(QIODevice::ReadOnly)) {
+            QTextStream in(&errFile);
+            while (!in.atEnd()) {
+                line = in.readLine();
+            }
+            errFile.close();
+            const_cast<NoSpectrumUniform*>(this)->emit statusUpdated("RECORD SELECTION FAILED:" + line);
+            emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+            return;
+        } else {
+            emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+            return;
+        }
+
+
+        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+        return;
+    }
+
+    //
+    // place contents of file into json object
+    //
+
+    QJsonDocument jsonOutDoc = QJsonDocument::fromJson(resultsFile.readAll());
+    QJsonObject jsonOutObj = jsonOutDoc.object();
+
+    //
+    // Read GM RSN
+    //
+    QJsonArray RSN_array = jsonOutObj["gm_RSN"].toArray();
+    for (int i=0; i<RSN_array.size();i++) {
+        RSN << QString::number(RSN_array[i].toDouble());
+    }
+
+    //
+    // Read GM custom scale
+    //
+    QJsonArray Scale_array = jsonOutObj["gm_scale"].toArray();
+
+    for (int i=0; i<Scale_array.size();i++) {
+        additionalScaling.push_back(Scale_array[i].toDouble());
+    }
+
     // return
-    emit runComplete(true, configJSON.value("runDir").toString(), "surrogateSpectrum.csv");
+    emit runComplete(true, configJSON.value("runDir").toString(), "gridIM_output.json");
     qDebug() << "runComplete with success.";
+
 }
 
 

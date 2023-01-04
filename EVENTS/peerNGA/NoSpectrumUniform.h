@@ -22,7 +22,6 @@ private:
 //    QLineEdit* sd1EditBox;
 //    QLineEdit* tlEditBox;
 
-    void getUniformRSN(void);
     QLineEdit* numSampPerBin;
     SimCenterIntensityMeasureWidget *theSCIMWidget_grid;
     QPushButton* selectRecordsButton;
@@ -36,7 +35,7 @@ public:
     // AbstractTargetWidget interface
 public:
     QList<QPair<double, double> > spectrum() const override;
-    QStringList getRSN();
+    void getRSN(QStringList &RSN, QVector<double> &additionalScaling);
 //    double sds();
 //    double sd1();
 //    double tl();
