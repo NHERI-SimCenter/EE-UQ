@@ -19,14 +19,18 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent) : AbstractTargetWidget(par
     numSampPerBin = new QLineEdit("4");
     theSCIMWidget_grid = new SimCenterIntensityMeasureWidget();
     theSCIMWidget_grid->addGridField();
+    numTotalSamp = new QLabel("Total number of ground motions is 0.");
 
     layout->addWidget(new QLabel("# samples per bin"), 0, 0);
     layout->addWidget(numSampPerBin, 0, 1);
     layout->addWidget(theSCIMWidget_grid, 1, 0,1,-1);
+    layout->addWidget(numTotalSamp, 2, 0,1,-1);
 
     layout->setColumnStretch(2,1);
-}
 
+    connect(theSCIMWidget_grid, SIGNAL(numBinsChanged(int)), this, SLOT(updateNumTotalSamp(int)));
+
+}
 
 QJsonObject NoSpectrumUniform::serialize() const
 {
@@ -50,6 +54,10 @@ QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
     return targetSectrum;
 }
 
+void NoSpectrumUniform::updateNumTotalSamp(int numBins) {
+    int num = numSampPerBin->text().toInt() * numBins;
+    numTotalSamp -> setText("The number of ground motions to be selected is " + QString::number(num) + ".");
+}
 
 
 void NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
@@ -60,33 +68,36 @@ void NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
     myJson.insert("IM", imJson);
 }
 
-void NoSpectrumUniform::getRSN(QStringList &RSN, QVector<double> &additionalScaling) {
+void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<double> &additionalScaling, QString &imagePath) {
 
     RSN = QStringList({""});
 
     QJsonObject configJSON; // Input information
 
     // clean up working directory
-    QDir workDir(SimCenterPreferences::getInstance()->getLocalWorkDir());
-    QString tmpDirName("tmp.SimCenter");
-    QString templateDir("templatedir");
-    QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
-    QDir destinationDirectory(tmpDirectory);
-    QString templateDirectory  = destinationDirectory.absoluteFilePath(templateDir);
+    //QDir workDir(SimCenterPreferences::getInstance()->getLocalWorkDir());
+    //QDir workDir(workDirPath);
+    //QString tmpDirName("tmp.SimCenter");
+    //QString templateDir("templatedir");
+    //QString tmpDirectory = workDir.absoluteFilePath(tmpDirName);
+    QDir workDir(workDirPath);
 
-    if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
+    if(workDir.exists()) {
+      workDir.remove("gridIM_input.json");
+      workDir.remove("gridIM_output.json");
+      workDir.remove("gridIM_log.err");
+      workDir.remove("gridIM_coverage.png");
     }
 
-    destinationDirectory.mkpath(templateDirectory);
 
     // write json
     this->writeConfigJSON(configJSON);
 
     // important
-    QString inputFilePath = templateDirectory + QDir::separator() + tr("gridIM_input.json");
-    QString outputFilePath = templateDirectory + QDir::separator() + tr("gridIM_output.json");
-    QString errFilePath = templateDirectory + QDir::separator() + tr("gridIM_log.err");
+    QString inputFilePath = workDirPath + QDir::separator() + tr("gridIM_input.json");
+    QString outputFilePath = workDirPath + QDir::separator() + tr("gridIM_output.json");
+    QString errFilePath = workDirPath + QDir::separator() + tr("gridIM_log.err");
+    imagePath = workDirPath + QDir::separator() + tr("gridIM_coverage.png");
 
     qDebug() << "INPUT FILE: " << inputFilePath;
     QFile file(inputFilePath);
@@ -200,7 +211,7 @@ void NoSpectrumUniform::getRSN(QStringList &RSN, QVector<double> &additionalScal
     qDebug() << python;
     qDebug() << args;
 
-    proc->setWorkingDirectory(templateDirectory);
+    proc->setWorkingDirectory(workDirPath);
     proc->start(python,args);
 
     bool failed = false;
