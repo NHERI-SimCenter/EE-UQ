@@ -133,6 +133,9 @@ private:
     QVector<double> meanMinusSigmaSpectrum;
     QVector<double> targetSpectrum;
 
+    //Display of coverage image
+    QLabel *coverageImage;
+
     // Output directory
     QLineEdit* outdirLE;
     QString outdirpath;

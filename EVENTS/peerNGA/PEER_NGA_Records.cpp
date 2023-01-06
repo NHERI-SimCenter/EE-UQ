@@ -281,10 +281,14 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     peerCitation->setWordWrap(true);
     layout->addWidget(peerCitation, 4, 0, 1, 3);
 
-    //layout->addWidget(thePlottingWindow, 0,3,2,1);
-    layout->addWidget(&recordSelectionPlot, 0,3,4,1);
+    coverageImage = new QLabel();
 
+    //add record selection plot
+    layout->addWidget(&recordSelectionPlot, 0,3,4,1);
+    layout->addWidget(coverageImage, 0,3,4,1);
+    coverageImage->setHidden(true);
     recordSelectionPlot.setHidden(true);
+
 
     layout->setRowStretch(0,1);
     //layout->setRowStretch(layout->rowCount(), 1);
@@ -325,6 +329,14 @@ void PEER_NGA_Records::setupConnections()
         //Cleaning up previous search results
         if(tempRecordsDir.exists("_SearchResults.csv"))
             tempRecordsDir.remove("_SearchResults.csv");
+        if(tempRecordsDir.exists("_readME.txt"))
+            tempRecordsDir.remove("_readME.txt");
+        QDir it(RecordsDir, {"grid_IM*"});
+        for(const QString & filename: it.entryList()){
+            it.remove(filename);
+        }
+
+
         ZipUtils::UnzipFile(recordsFile, tempRecordsDir);
         processPeerRecords(tempRecordsDir);
     });
@@ -420,7 +432,7 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
         return;
 
 
-    QString readMePathString = groundMotionsFolder.path() + QDir::separator() + QString("_readME.txt");
+    QString readMePathString = RecordsDir + QDir::separator() + QString("_readME.txt");
     QFileInfo readMeInfo(readMePathString);
     if (readMeInfo.exists()) {
         QFile readMeFile(readMePathString);
@@ -493,6 +505,9 @@ void PEER_NGA_Records::plotSpectra()
 {
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+
+    coverageImage->setHidden(true);
+    recordSelectionPlot.setHidden(true);
     if (spectrumTypeComboBox->currentIndex()!=6) {
         recordSelectionPlot.setHidden(false);
         recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
@@ -504,6 +519,8 @@ void PEER_NGA_Records::plotSpectra()
         auto size = recordSelectionPlot.size();
         size.setWidth(size.height());
         recordSelectionPlot.setMinimumSize(size);
+    } else {
+        coverageImage->setHidden(false);
     }
 
 }
@@ -577,7 +594,12 @@ void PEER_NGA_Records::selectRecords()
         auto unifrom_widget = reinterpret_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget());
         updateStatus("Retrieving ground motion RSN ...");
         QStringList RSN;
-        unifrom_widget->getRSN(RSN, additionalScaling); // This will run a python script
+        QString imagePath;
+        RecordsDir = this->outdirLE->text();
+        if (RecordsDir.isEmpty()) {
+            RecordsDir = groundMotionsFolder.path();
+        }
+        unifrom_widget->getRSN(RecordsDir, RSN, additionalScaling, imagePath); // This will run a python script
         // additionalScaling are given in "sorted" RSN older.
         RSN.removeAll(QString(""));
         if (RSN.isEmpty()) {
@@ -587,6 +609,12 @@ void PEER_NGA_Records::selectRecords()
             peerClient.selectRecords(RSN);
             //return;
         }
+
+        QFile searchImageFile(imagePath);
+        if(searchImageFile.exists()) {
+            coverageImage->setPixmap(QPixmap(imagePath));
+        }
+
      }
     else
     {
