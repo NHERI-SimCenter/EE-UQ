@@ -14,7 +14,7 @@ class NoSpectrumUniform : public AbstractTargetWidget
     Q_OBJECT
 public:
     explicit NoSpectrumUniform(QWidget *parent = nullptr);
-    void writeConfigJSON(QJsonObject &myJson);
+    bool writeConfigJSON(QJsonObject &myJson);
 
 signals:
     void runComplete(bool, QString, QString);

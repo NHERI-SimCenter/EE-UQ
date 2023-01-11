@@ -60,12 +60,12 @@ void NoSpectrumUniform::updateNumTotalSamp(int numBins) {
 }
 
 
-void NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
-
+bool NoSpectrumUniform::writeConfigJSON(QJsonObject &myJson) {
     myJson["numSampPerBin"]=numSampPerBin->text();
     QJsonObject imJson;
-    theSCIMWidget_grid->outputToJSON(imJson);
+    auto res = theSCIMWidget_grid->outputToJSON(imJson);
     myJson.insert("IM", imJson);
+    return res;
 }
 
 void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<double> &additionalScaling, QString &imagePath) {
@@ -91,8 +91,11 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
 
 
     // write json
-    this->writeConfigJSON(configJSON);
+    bool res = this->writeConfigJSON(configJSON);
 
+    if (res==false) {
+        return;
+    }
     // important
     QString inputFilePath = workDirPath + QDir::separator() + tr("gridIM_input.json");
     QString outputFilePath = workDirPath + QDir::separator() + tr("gridIM_output.json");
