@@ -17,6 +17,7 @@
 #include <QProgressBar>
 #include <QStackedWidget>
 #include <GeneralInformationWidget.h>
+#include <QWebEngineView>
 
 
 class QComboBox;
@@ -47,6 +48,7 @@ class PEER_NGA_Records : public SimCenterAppWidget
 
 public:
     explicit PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent = nullptr);
+    ~PEER_NGA_Records();
 
     bool outputToJSON(QJsonObject &jsonObject) override;
     bool inputFromJSON(QJsonObject &jsonObject) override;
@@ -134,7 +136,9 @@ private:
     QVector<double> targetSpectrum;
 
     //Display of coverage image
-    QLabel *coverageImage;
+    //QLabel *coverageImage;
+    QWebEngineView * coverageImage;
+
 
     // Output directory
     QLineEdit* outdirLE;

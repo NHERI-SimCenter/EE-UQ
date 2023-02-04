@@ -27,12 +27,18 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "SpectrumFromRegionalSurrogate.h"
+#include <QWebEngineView>
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setupUI(generalInfoWidget);
 
     setupConnections();
+}
+
+PEER_NGA_Records::~PEER_NGA_Records()
+{
+    coverageImage->deleteLater();
 }
 
 void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
@@ -281,13 +287,23 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     peerCitation->setWordWrap(true);
     layout->addWidget(peerCitation, 4, 0, 1, 3);
 
-    coverageImage = new QLabel();
-
     //add record selection plot
     layout->addWidget(&recordSelectionPlot, 0,3,4,1);
-    layout->addWidget(coverageImage, 0,3,4,1);
-    coverageImage->setHidden(true);
     recordSelectionPlot.setHidden(true);
+
+
+    //coverageImage = new QLabel();
+    //layout->addWidget(coverageImage, 0,3,4,1);
+    //coverageImage->setHidden(true);
+
+    coverageImage = new QWebEngineView();
+    coverageImage->page()->setBackgroundColor(Qt::transparent);
+    coverageImage->setHtml("Loading coverage image...");
+    // sy - **NOTE** QWebEngineView display is VERY SLOW when the app is built in debug mode / Max size of figure is limited to 2MB
+    layout->addWidget(coverageImage, 0,3,4,1);
+    coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
+   // coverageImage ->page()-> deleteLater();
+    //coverageImage->setHidden(true);
 
 
     layout->setRowStretch(0,1);
@@ -609,10 +625,15 @@ void PEER_NGA_Records::selectRecords()
             peerClient.selectRecords(RSN);
             //return;
         }
+        //TEMP TESTING
 
         QFile searchImageFile(imagePath);
         if(searchImageFile.exists()) {
-            coverageImage->setPixmap(QPixmap(imagePath));
+            //coverageImage->setPixmap(QPixmap(imagePath));
+            coverageImage->load(QUrl::fromLocalFile((imagePath)));
+            coverageImage->show();
+        } else {
+            coverageImage->setHidden(true);
         }
 
      }

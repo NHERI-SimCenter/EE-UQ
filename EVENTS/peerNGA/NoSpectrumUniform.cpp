@@ -57,6 +57,11 @@ QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
 void NoSpectrumUniform::updateNumTotalSamp(int numBins) {
     int num = numSampPerBin->text().toInt() * numBins;
     numTotalSamp -> setText("The number of ground motions to be selected is " + QString::number(num) + ".");
+    if (num>=100) {
+        numTotalSamp->setStyleSheet("QLabel  {color: red;}");
+    } else {
+        numTotalSamp->setStyleSheet("QLabel {color: black;}");
+    }
 }
 
 
@@ -86,7 +91,8 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
       workDir.remove("gridIM_input.json");
       workDir.remove("gridIM_output.json");
       workDir.remove("gridIM_log.err");
-      workDir.remove("gridIM_coverage.png");
+      //workDir.remove("gridIM_coverage.png");
+      workDir.remove("gridIM_coverage.html");
     }
 
 
@@ -100,7 +106,7 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     QString inputFilePath = workDirPath + QDir::separator() + tr("gridIM_input.json");
     QString outputFilePath = workDirPath + QDir::separator() + tr("gridIM_output.json");
     QString errFilePath = workDirPath + QDir::separator() + tr("gridIM_log.err");
-    imagePath = workDirPath + QDir::separator() + tr("gridIM_coverage.png");
+    imagePath = workDirPath + QDir::separator() + tr("gridIM_coverage.html");
 
     qDebug() << "INPUT FILE: " << inputFilePath;
     QFile file(inputFilePath);
@@ -273,7 +279,7 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     QString command;
 
         command = "\"" + python + QString("\" \"" ) +
-                inputFile + QString("\" \"") + registryFile + QString("\"");
+                GmSelectionScriptPath + QString("\" \"") + files[0] + QString("\"");
 
         qDebug() << "PYTHON COMMAND" << command;
 
