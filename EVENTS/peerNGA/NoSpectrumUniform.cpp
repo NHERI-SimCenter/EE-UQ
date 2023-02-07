@@ -1,5 +1,7 @@
 #include "NoSpectrumUniform.h"
 #include "SimCenterPreferences.h"
+#include "SimCenterHtmlWidget.h"
+#include "ModularPython.h"
 #include <QGridLayout>
 #include <QLabel>
 #include <QDoubleValidator>
@@ -9,7 +11,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-NoSpectrumUniform::NoSpectrumUniform(QWidget *parent) : AbstractTargetWidget(parent)
+NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(parent)
 {
     auto layout = new QGridLayout(this);
 
@@ -32,27 +34,27 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent) : AbstractTargetWidget(par
 
 }
 
-QJsonObject NoSpectrumUniform::serialize() const
-{
-    QJsonObject json;
-    json["numSampPerBin"] = numSampPerBin->text();
-    theSCIMWidget_grid->outputToJSON(json);
-    return json;
-}
+//QJsonObject NoSpectrumUniform::serialize() const
+//{
+//    QJsonObject json;
+//    json["numSampPerBin"] = numSampPerBin->text();
+//    theSCIMWidget_grid->outputToJSON(json);
+//    return json;
+//}
 
-void NoSpectrumUniform::deserialize(const QJsonObject &json)
+/*oid NoSpectrumUniform::deserialize(const QJsonObject &json)
 {
     QJsonObject* myNonRefJson = const_cast<QJsonObject*>(&json);
 
     numSampPerBin->setText(json["numSampPerBin"].toString());
     theSCIMWidget_grid->inputFromJSON(*myNonRefJson);
-}
+}*/
 
-QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
-{
-    QList<QPair<double, double>>  targetSectrum;
-    return targetSectrum;
-}
+//QList<QPair<double, double>> NoSpectrumUniform::spectrum() const
+//{
+//    QList<QPair<double, double>>  targetSectrum;
+//    return targetSectrum;
+//}
 
 void NoSpectrumUniform::updateNumTotalSamp(int numBins) {
     int num = numSampPerBin->text().toInt() * numBins;
@@ -91,7 +93,6 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
       workDir.remove("gridIM_input.json");
       workDir.remove("gridIM_output.json");
       workDir.remove("gridIM_log.err");
-      //workDir.remove("gridIM_coverage.png");
       workDir.remove("gridIM_coverage.html");
     }
 
@@ -131,13 +132,13 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     qDebug() << "REGISTRY: " << registryFilePath;
     QFileInfo check_registry(registryFilePath);
     if (!check_registry.exists() || !check_registry.isFile()) {
-        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+        errorMessage(QString("Registry file does not exist. Reset the preference or set correct backend applications folder."));
         return ;
     }
 
     QFile registryFile(registryFilePath);
     if (!registryFile.open(QFile::ReadOnly | QFile::Text)) {
-        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+        errorMessage(QString("Registry file cannot be opened."));
         return;
     }
     //
@@ -164,7 +165,7 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
      QFileInfo check_selectionScript(GmSelectionScriptPath);
 
      if (!check_selectionScript.exists() || !check_selectionScript.isFile()) {
-         emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+         errorMessage(QString("Failed find ")+GmSelectionScriptPath);
          return;
      }
 
@@ -176,6 +177,10 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     //
     // now invoke dakota, done via a python script in tool app dircetory
     //
+
+    ModularPython *thePy = new ModularPython(workDirPath);
+    thePy->run(GmSelectionScriptPath,files);
+/*
     proc = new QProcess(this);
     proc->setProcessChannelMode(QProcess::SeparateChannels);
     qDebug() << "setProcessChannelMode";
@@ -313,7 +318,7 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     }
 
 #endif
-
+*/
     qDebug() << "Output File Path" << outputFilePath;
     QFile resultsFile(outputFilePath);
     if (!resultsFile.open(QFile::ReadOnly | QFile::Text)) {
@@ -326,16 +331,12 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
                 line = in.readLine();
             }
             errFile.close();
-            const_cast<NoSpectrumUniform*>(this)->emit statusUpdated("RECORD SELECTION FAILED:" + line);
-            emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
+            errorMessage("RECORD SELECTION FAILED:" + line);
             return;
         } else {
-            emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
             return;
         }
 
-
-        emit runComplete(false, configJSON.value("runDir").toString(), "gridIM_output.json");
         return;
     }
 
@@ -364,7 +365,7 @@ void NoSpectrumUniform::getRSN(QString workDirPath, QStringList &RSN, QVector<do
     }
 
     // return
-    emit runComplete(true, configJSON.value("runDir").toString(), "gridIM_output.json");
+    //emit runComplete(true, configJSON.value("runDir").toString(), "gridIM_output.json");
     qDebug() << "runComplete with success.";
 
 }
