@@ -9,7 +9,7 @@
 #include "AbstractTargetWidget.h"
 #include "SimCenterIntensityMeasureWidget.h"
 
-class NoSpectrumUniform : public AbstractTargetWidget
+class NoSpectrumUniform : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
@@ -31,12 +31,12 @@ private:
     QProcess * proc;
 
 public:
-    QJsonObject serialize() const override;
-    void deserialize(const QJsonObject &json) override;
+    //QJsonObject serialize() const override;
+    //void deserialize(const QJsonObject &json) override;
 
 
     // AbstractTargetWidget interface
-    QList<QPair<double, double> > spectrum() const override;
+    //QList<QPair<double, double> > spectrum() const override;
     void getRSN(QString WorkDir, QStringList &RSN, QVector<double> &additionalScaling, QString &imagePath);
 //    double sds();
 //    double sd1();
