@@ -38,7 +38,7 @@ PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, 
 
 PEER_NGA_Records::~PEER_NGA_Records()
 {
-    coverageImage->deleteLater();
+    //coverageImage->deleteLater();
 }
 
 void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
@@ -296,14 +296,13 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     //layout->addWidget(coverageImage, 0,3,4,1);
     //coverageImage->setHidden(true);
 
+    // sy - **NOTE** QWebEngineView display is VERY SLOW in debug mode / Max size of figure is limited to 2MB
     coverageImage = new QWebEngineView();
     coverageImage->page()->setBackgroundColor(Qt::transparent);
     coverageImage->setHtml("Loading coverage image...");
-    // sy - **NOTE** QWebEngineView display is VERY SLOW when the app is built in debug mode / Max size of figure is limited to 2MB
     layout->addWidget(coverageImage, 0,3,4,1);
-    coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
-   // coverageImage ->page()-> deleteLater();
-    //coverageImage->setHidden(true);
+    coverageImage->setHidden(true);
+    //coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
 
 
     layout->setRowStretch(0,1);

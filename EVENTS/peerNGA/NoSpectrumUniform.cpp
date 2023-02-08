@@ -1,6 +1,5 @@
 #include "NoSpectrumUniform.h"
 #include "SimCenterPreferences.h"
-#include "SimCenterHtmlWidget.h"
 #include "ModularPython.h"
 #include <QGridLayout>
 #include <QLabel>
