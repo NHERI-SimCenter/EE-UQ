@@ -829,36 +829,39 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     
     jsonObject["Events"] = eventsArray;
 
-    auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
-    spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
-    jsonObject["TargetSpectrum"] = spectrumJson;
+    if (spectrumTypeComboBox->currentText() != QString("No Spectrum - Uniform IMs"))
+    {
+        auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
+        spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
+        jsonObject["TargetSpectrum"] = spectrumJson;
 
-    jsonObject["scaling"] = scalingComboBox->currentText();
-    jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
-    jsonObject["periodPoints"] = periodPointsLineEdit->text();
-    jsonObject["weights"] = weightsLineEdit->text();
+        jsonObject["scaling"] = scalingComboBox->currentText();
+        jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
+        jsonObject["periodPoints"] = periodPointsLineEdit->text();
+        jsonObject["weights"] = weightsLineEdit->text();
 
-    jsonObject["components"] = groundMotionsComponentsBox->currentText();
-    jsonObject["faultType"] = faultTypeBox->currentText();
-    jsonObject["pulse"] = pulseBox->currentText();
+        jsonObject["components"] = groundMotionsComponentsBox->currentText();
+        jsonObject["faultType"] = faultTypeBox->currentText();
+        jsonObject["pulse"] = pulseBox->currentText();
 
-    jsonObject["records"] = nRecordsEditBox->text();
+        jsonObject["records"] = nRecordsEditBox->text();
 
-    jsonObject["magnitudeRange"] = magnitudeCheckBox->isChecked();
-    jsonObject["magnitudeMin"] = magnitudeMin->text();
-    jsonObject["magnitudeMax"] = magnitudeMax->text();
+        jsonObject["magnitudeRange"] = magnitudeCheckBox->isChecked();
+        jsonObject["magnitudeMin"] = magnitudeMin->text();
+        jsonObject["magnitudeMax"] = magnitudeMax->text();
 
-    jsonObject["distanceRange"] = distanceCheckBox->isChecked();
-    jsonObject["distanceMin"] = distanceMin->text();
-    jsonObject["distanceMax"] = distanceMax->text();
+        jsonObject["distanceRange"] = distanceCheckBox->isChecked();
+        jsonObject["distanceMin"] = distanceMin->text();
+        jsonObject["distanceMax"] = distanceMax->text();
 
-    jsonObject["vs30Range"] = vs30CheckBox->isChecked();
-    jsonObject["vs30Min"] = vs30Min->text();
-    jsonObject["vs30Max"] = vs30Max->text();
+        jsonObject["vs30Range"] = vs30CheckBox->isChecked();
+        jsonObject["vs30Min"] = vs30Min->text();
+        jsonObject["vs30Max"] = vs30Max->text();
 
-    jsonObject["durationRange"] = durationCheckBox->isChecked();
-    jsonObject["durationMin"] = durationMin->text();
-    jsonObject["durationMax"] = durationMax->text();
+        jsonObject["durationRange"] = durationCheckBox->isChecked();
+        jsonObject["durationMin"] = durationMin->text();
+        jsonObject["durationMax"] = durationMax->text();
+    }
 
     return true;
 }
