@@ -28,7 +28,6 @@
 #include <QMessageBox>
 #include "SpectrumFromRegionalSurrogate.h"
 #include <QWebEngineView>
-
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setupUI(generalInfoWidget);
@@ -303,10 +302,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(coverageImage, 0,3,4,1);
     coverageImage->setHidden(true);
     //coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
-
+    RSN=QStringList(); // for batchRSN
+    numDownloaded = 0; // for batchRSN
 
     layout->setRowStretch(0,1);
-    //layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
 }
 
@@ -318,7 +317,7 @@ void PEER_NGA_Records::setupConnections()
 
     connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
     {
-
+        currentRecords.clear();
         if(!peerClient.loggedIn())
         {
             PeerLoginDialog loginDialog(&peerClient, this);
@@ -350,9 +349,8 @@ void PEER_NGA_Records::setupConnections()
         for(const QString & filename: it.entryList()){
             it.remove(filename);
         }
-
-
         ZipUtils::UnzipFile(recordsFile, tempRecordsDir);
+
         processPeerRecords(tempRecordsDir);
     });
 
@@ -468,10 +466,20 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
             }
     }
 
-
     clearSpectra();
+    auto tmpList = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+    currentRecords = currentRecords + tmpList;
+    //if (currentRecords.length()!=numDownloaded) {
+    //    errorMessage(QString("Some records are missing"));
+    //}
+    if (!RSN.isEmpty())
+    {
+            this->downloadRecordBatch();
+            return;
+            // "_SearchResults.csv"
+    }
 
-    currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+
     setRecordsTable(currentRecords);
 
     plotSpectra();
@@ -608,7 +616,6 @@ void PEER_NGA_Records::selectRecords()
     {
         auto unifrom_widget = reinterpret_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget());
         updateStatus("Retrieving ground motion RSN ...");
-        QStringList RSN;
         QString imagePath;
         RecordsDir = this->outdirLE->text();
         if (RecordsDir.isEmpty()) {
@@ -621,7 +628,11 @@ void PEER_NGA_Records::selectRecords()
             return;
             // TO ADD error messages here
         } else {
-            peerClient.selectRecords(RSN);
+            //peerClient.selectRecords(RSN);
+            if (!RSN.isEmpty())
+            {
+                    this->downloadRecordBatch();
+            }
             //return;
         }
         //TEMP TESTING
@@ -661,6 +672,32 @@ void PEER_NGA_Records::selectRecords()
         additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
     }
 
+}
+
+void PEER_NGA_Records::downloadRecordBatch(void)
+{
+    if(RSN.empty())
+        return;
+
+
+    const int peerBatchSize = 100;
+
+    if(RSN.size() < peerBatchSize)
+    {
+        peerClient.selectRecords(RSN);
+        numDownloaded = RSN.size();
+
+        RSN.clear();
+    }
+    else
+    {
+        auto recordsBatch = RSN.mid(0,peerBatchSize);
+
+        peerClient.selectRecords(recordsBatch);
+        numDownloaded += peerBatchSize;
+
+        RSN = RSN.mid(peerBatchSize,RSN.size()-peerBatchSize);
+    }
 }
 
 void PEER_NGA_Records::addTableItem(int row, int column, QString value)

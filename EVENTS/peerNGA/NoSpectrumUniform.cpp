@@ -30,6 +30,7 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(pare
     layout->setColumnStretch(2,1);
 
     connect(theSCIMWidget_grid, SIGNAL(numBinsChanged(int)), this, SLOT(updateNumTotalSamp(int)));
+    connect(numSampPerBin, SIGNAL(textChanged(int)), this, SLOT(updateNumTotalSamp(int)));
 
 }
 

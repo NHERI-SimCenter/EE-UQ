@@ -72,6 +72,8 @@ public slots:
 
 private:
 
+    void downloadRecordBatch();
+
     // widget groups
     QGroupBox *recordSelectionGroup;
     QGridLayout *targetSpectrumLayout;
@@ -147,7 +149,8 @@ private:
 
     // Additional scaling
     QVector<double> additionalScaling;
-
+    QStringList RSN;
+    int numDownloaded;
     void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();
     void processPeerRecords(QDir resultFolder);
