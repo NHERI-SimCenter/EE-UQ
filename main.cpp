@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.2.0");
-    // GoogleAnalytics::SetTrackingId("UA-126303135-1");
+    QCoreApplication::setApplicationVersion("3.2.2");
+    GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
 
