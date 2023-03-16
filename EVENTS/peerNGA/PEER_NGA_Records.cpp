@@ -298,7 +298,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     // sy - **NOTE** QWebEngineView display is VERY SLOW in debug mode / Max size of figure is limited to 2MB
     coverageImage = new QWebEngineView();
     coverageImage->page()->setBackgroundColor(Qt::transparent);
-    coverageImage->setHtml("Loading coverage image...");
+    //coverageImage->setHtml("Loading coverage image...");
     layout->addWidget(coverageImage, 0,3,4,1);
     coverageImage->setHidden(true);
     //coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
@@ -409,7 +409,7 @@ void PEER_NGA_Records::setupConnections()
     connect(spectrumTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         targetSpectrumDetails->setCurrentIndex(index);
         if(spectrumTypeComboBox->currentText().contains("No Spectrum")) {
-            double newHeight =  targetSpectrumDetails->height();
+            //double newHeight =  targetSpectrumDetails->height();
             double newWidth =  targetSpectrumDetails->width();
             newWidth += recordSelectionGroup->width();
 
@@ -417,10 +417,14 @@ void PEER_NGA_Records::setupConnections()
             //targetSpectrumDetails->resize(newHeight, newWidth);
             targetSpectrumDetails->setMinimumWidth(newWidth);
             //widget->resize(165, widget->height());
-
+            scalingComboBox->setDisabled(true);
+            suiteAverageBox->setCurrentIndex(1);
+            suiteAverageBox->setDisabled(true);
         } else {
             recordSelectionGroup->setVisible(true);
             targetSpectrumDetails->setMinimumWidth(10); // some random number
+            scalingComboBox->setDisabled(false);
+            suiteAverageBox->setDisabled(false);
         }
         return;
     });
@@ -637,9 +641,9 @@ void PEER_NGA_Records::selectRecords()
         }
         //TEMP TESTING
 
-        QFile searchImageFile(imagePath);
+        QFile searchImageFile(imagePath); //html image
         if(searchImageFile.exists()) {
-            //coverageImage->setPixmap(QPixmap(imagePath));
+            //coverageImage->setPixmap(QPixmap(imagePath)); // for png
             coverageImage->load(QUrl::fromLocalFile((imagePath)));
             coverageImage->show();
         } else {

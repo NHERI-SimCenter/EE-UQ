@@ -30,6 +30,8 @@ private:
     QPushButton* selectRecordsButton;
     QProcess * proc;
 
+    int numBin;
+
 public:
     //QJsonObject serialize() const override;
     //void deserialize(const QJsonObject &json) override;

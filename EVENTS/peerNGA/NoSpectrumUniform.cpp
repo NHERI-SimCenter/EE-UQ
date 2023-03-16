@@ -17,10 +17,11 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(pare
     auto positiveDoubleValidator = new QDoubleValidator();
     positiveDoubleValidator->setBottom(0.0);
 
-    numSampPerBin = new QLineEdit("4");
+    numSampPerBin = new QLineEdit("1");
     theSCIMWidget_grid = new SimCenterIntensityMeasureWidget();
     theSCIMWidget_grid->addGridField();
     numTotalSamp = new QLabel("Total number of ground motions is 0.");
+    numBin=0;
 
     layout->addWidget(new QLabel("# samples per bin"), 0, 0);
     layout->addWidget(numSampPerBin, 0, 1);
@@ -30,7 +31,9 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(pare
     layout->setColumnStretch(2,1);
 
     connect(theSCIMWidget_grid, SIGNAL(numBinsChanged(int)), this, SLOT(updateNumTotalSamp(int)));
-    connect(numSampPerBin, SIGNAL(textChanged(int)), this, SLOT(updateNumTotalSamp(int)));
+    connect(numSampPerBin, &QLineEdit::textChanged, this, [=](QString txt) {
+        this->updateNumTotalSamp(numBin);
+    });
 
 }
 
@@ -57,7 +60,8 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(pare
 //}
 
 void NoSpectrumUniform::updateNumTotalSamp(int numBins) {
-    int num = numSampPerBin->text().toInt() * numBins;
+    numBin = numBins;
+    int num = numSampPerBin->text().toInt() * numBin;
     numTotalSamp -> setText("The number of ground motions to be selected is " + QString::number(num) + ".");
     if (num>=100) {
         numTotalSamp->setStyleSheet("QLabel  {color: red;}");
