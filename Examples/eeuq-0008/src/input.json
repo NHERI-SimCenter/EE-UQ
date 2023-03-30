@@ -76,19 +76,19 @@
         }
     ],
     "GeneralInformation": {
-        "NumberOfStories": 3,
+        "NumberOfStories": 5,
         "PlanArea": 0,
         "StructureType": "RM1",
         "YearBuilt": 1990,
         "depth": 0,
-        "height": 9.50001,
+        "height": 15.8333,
         "location": {
             "latitude": 37.8715,
             "longitude": -122.273
         },
         "name": "",
         "planArea": 0,
-        "stories": 3,
+        "stories": 5,
         "units": {
             "force": "kips",
             "length": "in",
@@ -121,8 +121,8 @@
                             "bx": 0.1,
                             "by": 0.1,
                             "height": 3.16667,
-                            "kx": 100,
-                            "ky": 100,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
                             "weight": 144
                         },
                         {
@@ -132,8 +132,8 @@
                             "bx": 0.1,
                             "by": 0.1,
                             "height": 3.16667,
-                            "kx": 100,
-                            "ky": 100,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
                             "weight": 144
                         },
                         {
@@ -143,16 +143,38 @@
                             "bx": 0.1,
                             "by": 0.1,
                             "height": 3.16667,
-                            "kx": 100,
-                            "ky": 100,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
                             "weight": 144
                         }
                     ],
-                    "dampingRatio": 0.02,
+                    "dampingRatio": 0.05,
                     "height": 3.16667,
                     "massX": 0,
                     "massY": 0,
-                    "numStories": 3,
+                    "numStories": 5,
                     "randomVar": [
                     ],
                     "responseX": 0,
@@ -231,7 +253,7 @@
                             "weight": 144
                         }
                     ],
-                    "dampingRatio": 0.02,
+                    "dampingRatio": 0.05,
                     "height": 3.16667,
                     "massX": 0,
                     "massY": 0,
@@ -283,7 +305,7 @@
                     "firstMode": 1,
                     "integration": "Newmark 0.5 0.25",
                     "modalRayleighTangentRatio": 0,
-                    "numModesModal": 4,
+                    "numModesModal": -1,
                     "rayleighTangent": "Initial",
                     "secondMode": -1,
                     "solver": "Umfpack"
@@ -311,7 +333,7 @@
             "inputType": "Parameters",
             "mean": 100,
             "name": "k",
-            "refCount": 1,
+            "refCount": 0,
             "stdDev": 1,
             "value": "RV.k",
             "variableClass": "Uncertain"

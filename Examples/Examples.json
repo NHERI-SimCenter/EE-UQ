@@ -37,7 +37,7 @@
       "inputFile": "eeuq-0007/src/input.json"
     },
     {
-      "name": "E8: Using Multiple SIM and FEM Models",
+      "name": "E8: Using Multiple Modeling and Analysis Options",
       "description": "This example demonstrates how to use multiple modeling and simulation options within a single analysis in EE-UQ.",
       "inputFile": "eeuq-0008/src/input.json"
     }
