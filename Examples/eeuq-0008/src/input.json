@@ -65,7 +65,7 @@
                             "dirn": 1,
                             "factor": "RV.factorEC",
                             "fileName": "elCentro.AT2",
-                            "filePath": "/Users/aakash/SimCenter/EE-UQ/build/EE_UQ.app/Contents/MacOS/Examples/eeuq-0001/src"
+                            "filePath": "{Current_Dir}/."
                         }
                     ],
                     "name": "elCentro",
