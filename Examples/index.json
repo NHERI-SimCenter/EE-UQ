@@ -204,6 +204,38 @@
         "Simulation": "OpenSees-Simulation"
       }
     },
+    "eeuq-0008": {
+      "id": "eeuq-0008",
+      "title": "Multiple Models and Analysis Options",
+      "base": "eeuq-0008",
+      "doc": [
+        "eeuq-0008/figures/EDP.png",
+        "eeuq-0008/figures/EVT.png",
+        "eeuq-0008/figures/FEM1.png",
+        "eeuq-0008/figures/FEM2.png",
+        "eeuq-0008/figures/RES.png",
+        "eeuq-0008/figures/RV.png",
+        "eeuq-0008/figures/SIM1.png",
+        "eeuq-0008/figures/SIM2.png",
+        "eeuq-0008/figures/UQ.png",
+        "eeuq-0008/README.rst"
+      ],
+      "entry_point": "eeuq-0008/src/input.json",
+      "summary": "This example demonstrates using multiple modeling and simulation applications within the same analysis.",
+      "logo": "figures/FEM1.png",
+      "published": "2022-07-10T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "0",
+        "Simulation": "OpenSees-Simulation"
+      }
+    }
+  },
+  "categories": {
+    "Difficulty": {
+      "0": "Beginner",
+      "1": "Intermediate",
+      "2": "Advanced"
+    },
     "eeuq-0009": {
       "id": "eeuq-0009",
       "title": "Surrogate Model for Structural Response Prediction (Gaussian Process)",

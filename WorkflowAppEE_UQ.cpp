@@ -105,10 +105,11 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     theRVs = RandomVariablesContainer::getInstance();
     theGI = GeneralInformationWidget::getInstance();
-    theSIM = new SIM_Selection(false, false);
+    theSIM = new SIM_Selection(false, true);
     theEventSelection = new EarthquakeEventSelection(theRVs, theGI);
     theAnalysisSelection = new FEA_Selection(false);
     theUQ_Selection = new UQ_EngineSelection(ForwardReliabilitySensitivitySurrogate);
+
     theEDP_Selection = new EDP_EarthquakeSelection(theRVs);
       
     theResults = theUQ_Selection->getResults();
@@ -400,7 +401,7 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
 
         if (theSIM->inputAppDataFromJSON(theApplicationObject) == false)
             this->errorMessage("EE_UQ: failed to read SIM application");
-	
+    
         if (theAnalysisSelection->inputAppDataFromJSON(theApplicationObject) == false)
             this->errorMessage("EE_UQ: failed to read FEM application");
 
@@ -439,8 +440,6 @@ WorkflowAppEE_UQ::inputFromJSON(QJsonObject &jsonObject)
        this->errorMessage("EE_UQ: failed to read UQ Method data");
 
     if (theAnalysisSelection->inputFromJSON(jsonObject) == false)
-
-    if (theSIM->inputFromJSON(jsonObject) == false)
         this->errorMessage("EE_UQ: failed to read FEM Method data");
 
     if (theSIM->inputFromJSON(jsonObject) == false)
