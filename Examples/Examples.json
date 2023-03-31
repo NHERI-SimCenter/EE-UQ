@@ -35,6 +35,11 @@
       "name": "E7: Target Spectrum by Surrogate Hazard GP Model",
       "description": "This example demonstrates using pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
       "inputFile": "eeuq-0007/src/input.json"
+    },
+    {
+      "name": "E8: Using Multiple Modeling and Analysis Options",
+      "description": "This example demonstrates how to use multiple modeling and simulation options within a single analysis in EE-UQ.",
+      "inputFile": "eeuq-0008/src/input.json"
     }
   ]
 }

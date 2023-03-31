@@ -1,0 +1,345 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Modeling"
+            }
+        },
+        "Simulation": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Simulation"
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": "RV.factorEC",
+                            "fileName": "elCentro.AT2",
+                            "filePath": "/Users/aakash/SimCenter/EE-UQ/build/EE_UQ.app/Contents/MacOS/Examples/eeuq-0001/src"
+                        }
+                    ],
+                    "name": "elCentro",
+                    "type": "PeerEvent"
+                }
+            ],
+            "type": "ExistingPEER_Events"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 5,
+        "PlanArea": 0,
+        "StructureType": "RM1",
+        "YearBuilt": 1990,
+        "depth": 0,
+        "height": 15.8333,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 0,
+        "stories": 5,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 12
+    },
+    "Modeling": {
+        "modelToRun": "RV.MultiModel-Modeling",
+        "models": [
+            {
+                "Application": "MDOF_BuildingModel",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Bx": 0.1,
+                    "By": 0.1,
+                    "Fyx": 1000000,
+                    "Fyy": 1000000,
+                    "Krz": 10000000000,
+                    "Kx": "RV.k",
+                    "Ky": "RV.k",
+                    "ModelData": [
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": "RV.k",
+                            "ky": "RV.k",
+                            "weight": 144
+                        }
+                    ],
+                    "dampingRatio": 0.05,
+                    "height": 3.16667,
+                    "massX": 0,
+                    "massY": 0,
+                    "numStories": 5,
+                    "randomVar": [
+                    ],
+                    "responseX": 0,
+                    "responseY": 0,
+                    "type": "MDOF_BuildingModel",
+                    "weight": 144
+                }
+            },
+            {
+                "Application": "MDOF_BuildingModel",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Bx": 0.1,
+                    "By": 0.1,
+                    "Fyx": 1000000,
+                    "Fyy": 1000000,
+                    "Krz": 10000000000,
+                    "Kx": 100,
+                    "Ky": 100,
+                    "ModelData": [
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": 100,
+                            "ky": 100,
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": 100,
+                            "ky": 100,
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": 100,
+                            "ky": 100,
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": 100,
+                            "ky": 100,
+                            "weight": 144
+                        },
+                        {
+                            "Fyx": 1000000,
+                            "Fyy": 1000000,
+                            "Ktheta": 10000000000,
+                            "bx": 0.1,
+                            "by": 0.1,
+                            "height": 3.16667,
+                            "kx": 100,
+                            "ky": 100,
+                            "weight": 144
+                        }
+                    ],
+                    "dampingRatio": 0.05,
+                    "height": 3.16667,
+                    "massX": 0,
+                    "massY": 0,
+                    "numStories": 5,
+                    "randomVar": [
+                    ],
+                    "responseX": 0,
+                    "responseY": 0,
+                    "type": "MDOF_BuildingModel",
+                    "weight": 144
+                }
+            }
+        ]
+    },
+    "Simulation": {
+        "modelToRun": "RV.MultiModel-Simulation",
+        "models": [
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Rayleigh Damping",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0,
+                    "numModesModal": -1,
+                    "rayleighTangent": "Initial",
+                    "secondMode": -1,
+                    "solver": "Umfpack"
+                }
+            },
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Modal Damping",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0,
+                    "numModesModal": -1,
+                    "rayleighTangent": "Initial",
+                    "secondMode": -1,
+                    "solver": "Umfpack"
+                }
+            }
+        ]
+    },
+    "UQ": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 50,
+            "seed": 56
+        },
+        "saveWorkDir": true,
+        "uqType": "Forward Propagation"
+    },
+    "correlationMatrix": [
+        1
+    ],
+    "localAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 100,
+            "name": "k",
+            "refCount": 0,
+            "stdDev": 1,
+            "value": "RV.k",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/Users/aakash/SimCenter/SimCenterBackendApplications",
+    "runType": "runningLocal",
+    "workingDir": "/Users/aakash/Documents/EE-UQ/LocalWorkDir"
+}
