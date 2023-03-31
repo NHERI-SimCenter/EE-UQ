@@ -41,5 +41,11 @@
       "description": "This example demonstrates how to use multiple modeling and simulation options within a single analysis in EE-UQ.",
       "inputFile": "eeuq-0008/src/input.json"
     }
+    ,
+    {
+      "name": "E9: Surrogate Model: GP",
+      "description": "This example demonstrates to develop surrogate models for seismic structural responses.",
+      "inputFile": "eeuq-0009/src/input.json"
+    }
   ]
 }

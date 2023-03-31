@@ -17,6 +17,7 @@
 #include <QProgressBar>
 #include <QStackedWidget>
 #include <GeneralInformationWidget.h>
+#include <QWebEngineView>
 
 
 class QComboBox;
@@ -47,6 +48,7 @@ class PEER_NGA_Records : public SimCenterAppWidget
 
 public:
     explicit PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent = nullptr);
+    ~PEER_NGA_Records();
 
     bool outputToJSON(QJsonObject &jsonObject) override;
     bool inputFromJSON(QJsonObject &jsonObject) override;
@@ -69,6 +71,12 @@ public slots:
     void switchUserDefined(QString dirName, QString fileName);
 
 private:
+
+    void downloadRecordBatch();
+
+    // widget groups
+    QGroupBox *recordSelectionGroup;
+    QGridLayout *targetSpectrumLayout;
     PeerNgaWest2Client peerClient;
     QPushButton* selectRecordsButton;
     QLineEdit* nRecordsEditBox;
@@ -129,11 +137,20 @@ private:
     QVector<double> meanMinusSigmaSpectrum;
     QVector<double> targetSpectrum;
 
+    //Display of coverage image
+    //QLabel *coverageImage;
+    QWebEngineView * coverageImage;
+
+
     // Output directory
     QLineEdit* outdirLE;
     QString outdirpath;
     QString RecordsDir;
 
+    // Additional scaling
+    QVector<double> additionalScaling;
+    QStringList RSN;
+    int numDownloaded;
     void setupUI(GeneralInformationWidget* generalInfoWidget);
     void setupConnections();
     void processPeerRecords(QDir resultFolder);

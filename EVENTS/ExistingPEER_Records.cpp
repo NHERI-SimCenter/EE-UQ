@@ -56,6 +56,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <LineEditRV.h>
 #include <QButtonGroup>
 
+#include <QJsonDocument>
+
 PeerRecord::PeerRecord(RandomVariablesContainer *theRV_IW, QWidget *parent)
 :SimCenterWidget(parent), theRandVariableIW(theRV_IW)
 {
@@ -332,6 +334,10 @@ ExistingPEER_Records::ExistingPEER_Records(RandomVariablesContainer *theRV_IW, Q
     removeEvent->setText(tr("Remove"));
     //    connect(removeEvent,SIGNAL(clicked()),this,SLOT(removeInputWidgetPeerEvent()));
 
+    QPushButton *removeAllEvent = new QPushButton();
+    removeAllEvent->setMinimumWidth(100);
+    removeAllEvent->setMaximumWidth(100);
+    removeAllEvent->setText(tr("Remove All"));
 
     QPushButton *loadDirectory = new QPushButton();
     loadDirectory->setMinimumWidth(150);
@@ -343,6 +349,8 @@ ExistingPEER_Records::ExistingPEER_Records(RandomVariablesContainer *theRV_IW, Q
     titleLayout->addWidget(addEvent);
     titleLayout->addSpacing(20);
     titleLayout->addWidget(removeEvent);
+    titleLayout->addSpacing(20);
+    titleLayout->addWidget(removeAllEvent);
     titleLayout->addSpacing(50);
     titleLayout->addWidget(loadDirectory);
     titleLayout->addStretch();
@@ -369,6 +377,7 @@ ExistingPEER_Records::ExistingPEER_Records(RandomVariablesContainer *theRV_IW, Q
 
     connect(addEvent, SIGNAL(pressed()), this, SLOT(addEvent()));
     connect(removeEvent, SIGNAL(pressed()), this, SLOT(removeEvents()));
+    connect(removeAllEvent, SIGNAL(pressed()), this, SLOT(removeAllEvents()));
     connect(loadDirectory, SIGNAL(pressed()), this, SLOT(loadEventsFromDir()));
 }
 
@@ -389,7 +398,7 @@ void ExistingPEER_Records::addEvent(void)
 
 void ExistingPEER_Records::loadEventsFromDir(void) {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                 "/home",
+                                                 "",
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks);
 
@@ -454,32 +463,63 @@ void ExistingPEER_Records::loadEventsFromDir(void) {
         QFileInfo checkCsvFile(recordsCsv);
         if (checkCsvFile.exists() && checkCsvFile.isFile()) {
             this->parseSearchResults(directory.filePath("_SearchResults.csv"));
-            return;
-        }
+        } else {
+            QStringList fileList= directory.entryList(QStringList() << "*.AT2",QDir::Files);
+            foreach(QString fileName, fileList) {
 
-        QStringList fileList= directory.entryList(QStringList() << "*.AT2",QDir::Files);
-        foreach(QString fileName, fileList) {
+                PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
+                QString name = fileName;
+                name.chop(4); // remove .AT2
+                if (name.contains("RSN")) {
+                    name.remove(0,3); // remove RSN
+                    int index = name.indexOf(QString("_"));
+                    if (index != -1)
+                        name=name.left(index);
+                }
 
-            PeerEvent *theEvent = new PeerEvent(theRandVariableIW);
-            QString name = fileName;
-            name.chop(4); // remove .AT2
-            if (name.contains("RSN")) {
-                name.remove(0,3); // remove RSN
-                int index = name.indexOf(QString("_"));
-                if (index != -1)
-                    name=name.left(index);
+                theEvent->theName->setText(name);
+                PeerRecord *theRecord = theEvent->theRecords.at(0);
+                if (theRecord != NULL) {
+                    theRecord->file->setText(directory.filePath(fileName));
+                }
+                theEvents.append(theEvent);
+                eventLayout->insertWidget(eventLayout->count()-1, theEvent);
             }
-
-            theEvent->theName->setText(name);
-            PeerRecord *theRecord = theEvent->theRecords.at(0);
-            if (theRecord != NULL) {
-                theRecord->file->setText(directory.filePath(fileName));
-            }
-            theEvents.append(theEvent);
-            eventLayout->insertWidget(eventLayout->count()-1, theEvent);
         }
     }
 
+    // check if there is additional scaling done in SimCenter UI eg. uniform Grid IM
+    QString scalingInfoPath(directory.filePath("gridIM_output.json"));
+    QFileInfo scalingInfoFile(scalingInfoPath);
+    if (scalingInfoFile.exists() && scalingInfoFile.isFile()) {
+
+        //
+        // place contents of file into json object
+        //
+        QVector<double> additionalScaling;
+        QFile scalingInfoFile(scalingInfoPath);
+        if (scalingInfoFile.open(QFile::ReadOnly | QFile::Text)) {
+            QJsonDocument jsonOutDoc = QJsonDocument::fromJson(scalingInfoFile.readAll());
+            QJsonObject jsonOutObj = jsonOutDoc.object();
+
+            QJsonArray Scale_array = jsonOutObj["gm_scale"].toArray();
+            for (int i=0; i<Scale_array.size();i++) {
+                additionalScaling.push_back(Scale_array[i].toDouble());
+            }
+
+        }
+
+        if (theEvents.size() == additionalScaling.size()) {
+            for (int i=0; i<theEvents.size(); i++) {
+                PeerEvent *theEvent = theEvents.at(i);
+                for (int j=0; j<theEvent->theRecords.size(); j++) {
+                    PeerRecord *theRecord = theEvent->theRecords.at(j);
+                    double curScale = theRecord->factor->text().toDouble();
+                    theRecord->factor->setText(QString::number(curScale*additionalScaling[i]));
+                }
+            }
+        }
+    }
 }
 
 void ExistingPEER_Records::removeEvents(void)
@@ -498,6 +538,19 @@ void ExistingPEER_Records::removeEvents(void)
     }
 }
 
+void ExistingPEER_Records::removeAllEvents(void)
+{
+    // find the ones selected & remove them
+    int numInputWidgetExistingEvents = theEvents.size();
+    for (int i = numInputWidgetExistingEvents-1; i >= 0; i--) {
+      PeerEvent *theEvent = theEvents.at(i);
+      theEvent->close();
+      eventLayout->removeWidget(theEvent);
+      theEvents.remove(i);
+      theEvent->setParent(0);
+      delete theEvent;
+    }
+}
 
 void
 ExistingPEER_Records::clear(void)

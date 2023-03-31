@@ -236,10 +236,22 @@
       "1": "Intermediate",
       "2": "Advanced"
     },
-    "Simulation": {
-      "IMasEDP": "IMasEDP",
-      "OpenSees-Simulation": "OpenSees",
-      "OpenSeesPy-Simulation": "OpenSeesPy"
+    "eeuq-0009": {
+      "id": "eeuq-0009",
+      "title": "Surrogate Model for Structural Response Prediction (Gaussian Process)",
+      "base": "eeuq-0009",
+      "doc": [
+        "eeuq-0009/figures/Fig.png",
+        "eeuq-0009/README.rst"
+      ],
+      "entry_point": "eeuq-0009/./input.json",
+      "summary": "This surrogates seismic structural responses using a Gaussian Process model",
+      "logo": "figures/Fig.png",
+      "published": "2022-07-10T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "2",
+        "Simulation": "OpenSees-Simulation"
+      }
     }
   }
 }

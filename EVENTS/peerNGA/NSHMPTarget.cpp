@@ -116,7 +116,8 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
     for (auto hazardCurve: hazardCurves)
     {
         auto imt = hazardCurve.toObject()["metadata"].toObject()["imt"].toObject()["value"].toString();
-        double period = 0;
+        // double period = 0;
+        double period = 0.01; // KZ: default period at 0.01 second for PGA as 0 second in NGA West's log-log interpolation is non-sense...
         if (imt.startsWith("SA"))
             period = imt.remove("SA").replace('P', '.').toDouble();
 
