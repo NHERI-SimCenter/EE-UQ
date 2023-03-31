@@ -870,16 +870,16 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     
     jsonObject["Events"] = eventsArray;
 
+    jsonObject["scaling"] = scalingComboBox->currentText();
+    jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
+    jsonObject["periodPoints"] = periodPointsLineEdit->text();
+    jsonObject["weights"] = weightsLineEdit->text();
+
     if (spectrumTypeComboBox->currentText() != QString("No Spectrum - Uniform IMs"))
     {
         auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
         spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
         jsonObject["TargetSpectrum"] = spectrumJson;
-
-        jsonObject["scaling"] = scalingComboBox->currentText();
-        jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
-        jsonObject["periodPoints"] = periodPointsLineEdit->text();
-        jsonObject["weights"] = weightsLineEdit->text();
 
         jsonObject["components"] = groundMotionsComponentsBox->currentText();
         jsonObject["faultType"] = faultTypeBox->currentText();
@@ -902,6 +902,11 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
         jsonObject["durationRange"] = durationCheckBox->isChecked();
         jsonObject["durationMin"] = durationMin->text();
         jsonObject["durationMax"] = durationMax->text();
+    } else {
+        QJsonObject spectrumJson;
+        spectrumJson["SpectrumType"] = "No Spectrum - Uniform IMs";
+        jsonObject["TargetSpectrum"] = spectrumJson;
+        dynamic_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget())->outputToJSON(jsonObject);
     }
 
     return true;
@@ -912,9 +917,15 @@ bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
     if(jsonObject["TargetSpectrum"].isObject() && jsonObject["TargetSpectrum"].toObject().keys().contains("SpectrumType"))
     {
         auto targetSpectrumJson = jsonObject["TargetSpectrum"].toObject();
+        spectrumTypeComboBox->setCurrentIndex(0);
         spectrumTypeComboBox->setCurrentText(jsonObject["TargetSpectrum"].toObject()["SpectrumType"].toString());
-        dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
-    }
+
+        if (spectrumTypeComboBox->currentText() != QString("No Spectrum - Uniform IMs")) {
+            dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
+        } else {
+            dynamic_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget())->inputFromJSON(jsonObject);
+        }
+    };
 
     scalingComboBox->setCurrentText(jsonObject["scaling"].toString());
     scalingPeriodLineEdit->setText(jsonObject["singlePeriod"].toString());

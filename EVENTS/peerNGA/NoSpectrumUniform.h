@@ -15,6 +15,8 @@ class NoSpectrumUniform : public SimCenterAppWidget
 public:
     explicit NoSpectrumUniform(QWidget *parent = nullptr);
     bool writeConfigJSON(QJsonObject &myJson);
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);
 
 signals:
     void runComplete(bool, QString, QString);

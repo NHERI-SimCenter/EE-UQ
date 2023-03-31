@@ -37,6 +37,23 @@ NoSpectrumUniform::NoSpectrumUniform(QWidget *parent)  : SimCenterAppWidget(pare
 
 }
 
+bool NoSpectrumUniform::outputToJSON(QJsonObject &jsonObject)
+{
+    jsonObject["numSampPerBin"] = numSampPerBin->text().toInt();
+    QJsonObject jsonIM;
+    bool result = theSCIMWidget_grid->outputToJSON(jsonIM);
+    jsonObject["IntensityMeasure"] = jsonIM;
+    return result;
+}
+
+bool NoSpectrumUniform::inputFromJSON(QJsonObject &jsonObject)
+{
+    numSampPerBin->setText(QString::number(jsonObject["numSampPerBin"].toInt()));
+    bool result =theSCIMWidget_grid->inputFromJSON(jsonObject);
+    return result;
+}
+
+
 //QJsonObject NoSpectrumUniform::serialize() const
 //{
 //    QJsonObject json;
