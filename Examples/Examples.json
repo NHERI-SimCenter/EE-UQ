@@ -36,5 +36,11 @@
       "description": "This example demonstrates using pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
       "inputFile": "eeuq-0007/src/input.json"
     }
+    ,
+    {
+      "name": "E9: Surrogate Model: GP",
+      "description": "This example demonstrates to develop surrogate models for seismic structural responses.",
+      "inputFile": "eeuq-0009/src/input.json"
+    }
   ]
 }
