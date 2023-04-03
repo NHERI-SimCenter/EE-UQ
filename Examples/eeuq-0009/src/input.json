@@ -1,0 +1,220 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake",
+                "subtype": "PEER NGA Records"
+            }
+        ],
+        "Modeling": {
+            "Application": "MDOF_BuildingModel",
+            "ApplicationData": {
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+            ],
+            "IntensityMeasure": {
+                "DS575": {
+                    "Periods": [
+                        0
+                    ],
+                    "Unit": "sec",
+                    "lowerBound": "2.5",
+                    "numBins": "9",
+                    "upperBound": "30"
+                },
+                "PSA": {
+                    "Periods": [
+                        0.5
+                    ],
+                    "Unit": "g",
+                    "lowerBound": "0.1",
+                    "numBins": "9",
+                    "upperBound": "3.5"
+                }
+            },
+            "TargetSpectrum": {
+                "SpectrumType": "No Spectrum - Uniform IMs"
+            },
+            "numSampPerBin": 1,
+            "periodPoints": "0.01,0.05,0.1,0.5,1,5,10.0",
+            "scaling": "No Scaling",
+            "singlePeriod": "1.0",
+            "type": "ExistingPEER_Events",
+            "weights": "1.0,1.0,1.0,1.0,1.0,1.0,1.0"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 1,
+        "PlanArea": 129600,
+        "StructureType": "RM1",
+        "YearBuilt": 1990,
+        "depth": 360,
+        "height": 144,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 129600,
+        "stories": 1,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Modeling": {
+        "Bx": 0.1,
+        "By": 0.1,
+        "Fyx": 1000000,
+        "Fyy": 1000000,
+        "Krz": 10000000000,
+        "Kx": "RV.K",
+        "Ky": "RV.K",
+        "ModelData": [
+            {
+                "Fyx": 1000000,
+                "Fyy": 1000000,
+                "Ktheta": 10000000000,
+                "bx": 0.1,
+                "by": 0.1,
+                "height": 144,
+                "kx": "RV.K",
+                "ky": "RV.K",
+                "weight": 144
+            }
+        ],
+        "dampingRatio": 0.02,
+        "height": 144,
+        "massX": 0,
+        "massY": 0,
+        "numStories": 1,
+        "randomVar": [
+        ],
+        "responseX": 0,
+        "responseY": 0,
+        "type": "MDOF_BuildingModel",
+        "weight": 144
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": -1,
+        "rayleighTangent": "Initial",
+        "secondMode": -1,
+        "solver": "Umfpack"
+    },
+    "UQ": {
+        "surrogateMethodInfo": {
+            "DoEmethod": "None",
+            "IntensityMeasure": {
+                "DS575": {
+                    "Periods": [
+                        0
+                    ],
+                    "Unit": "sec"
+                },
+                "PSA": {
+                    "Periods": [
+                        0.5
+                    ],
+                    "Unit": "g"
+                }
+            },
+            "accuracyLimit": 0.02,
+            "advancedOpt": false,
+            "existingDoE": false,
+            "initialDoE": -1,
+            "inpFile": "NA",
+            "kernel": "Radial Basis",
+            "linear": false,
+            "logTransform": true,
+            "method": "Sampling and Simulation",
+            "nuggetOpt": "Heteroscedastic",
+            "nuggetString": "NA",
+            "numRepl": 1,
+            "numSampToBeRepl": 1,
+            "outFile": "NA",
+            "parallelExecution": true,
+            "samples": 25,
+            "seed": 984,
+            "timeLimit": 60,
+            "useGeoMean": true
+        },
+        "uqType": "Train GP Surrogate Model"
+    },
+    "isSurrogate": false,
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 50,
+            "name": "K",
+            "refCount": 1,
+            "upperbound": 150,
+            "value": "RV.K",
+            "variableClass": "Uniform"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir"
+}
