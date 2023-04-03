@@ -17,6 +17,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include "ASCE710Target.h"
+#include "NoSpectrumUniform.h"
 #include "UserSpectrumWidget.h"
 #include "USGSTargetWidget.h"
 #include "NSHMPTarget.h"
@@ -26,12 +27,17 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "SpectrumFromRegionalSurrogate.h"
-
+#include <QWebEngineView>
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setupUI(generalInfoWidget);
 
     setupConnections();
+}
+
+PEER_NGA_Records::~PEER_NGA_Records()
+{
+    //coverageImage->deleteLater();
 }
 
 void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
@@ -50,16 +56,17 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumLayout->setColumnMinimumWidth(1, 100);
     targetSpectrumLayout->setColumnMinimumWidth(2, 30);
 
-    targetSpectrumLayout->addWidget(new QLabel("Type"), 0, 0);
+    targetSpectrumLayout->addWidget(new QLabel("Type      "), 0, 0);
     spectrumTypeComboBox = new QComboBox();
 
-    targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1);
+    targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1, Qt::AlignLeft);
     spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
     spectrumTypeComboBox->addItem("User Specified");
     spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
     spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
     spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
     spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
+    spectrumTypeComboBox->addItem("No Spectrum - Uniform IMs");
 
     targetSpectrumDetails = new QStackedWidget(this);
     targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
@@ -75,8 +82,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(nshmpDeagg);
     spectrumSurrogate = new SpectrumFromRegionalSurrogate(this);
     targetSpectrumDetails->addWidget(spectrumSurrogate);
+    auto noSpect =  new NoSpectrumUniform(this);
+    targetSpectrumDetails->addWidget(noSpect);
 
-    auto recordSelectionGroup = new QGroupBox("Record Selection");
+    recordSelectionGroup = new QGroupBox("Record Selection");
     recordSelectionLayout = new QGridLayout(recordSelectionGroup);
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
@@ -156,6 +165,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 //    recordSelectionGroup->setMaximumHeight(200);
 //#else
     targetSpectrumLayout->setRowStretch(2,1);
+    targetSpectrumLayout->setColumnStretch(2,1);
     recordSelectionLayout->setRowStretch(7, 1);
 //#endif
 
@@ -206,11 +216,12 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     this->onScalingComboBoxChanged(0);
 
     // User-defined output directory
-    auto outdirGroup = new QGroupBox("Output Directory");
+    auto outdirGroup = new QGroupBox("Temporary records Directory");
     auto outdirLayout = new QGridLayout(outdirGroup);
     // add stuff to enter Output Directory
-    QLabel *labelOD = new QLabel("Output Directory");
+    QLabel *labelOD = new QLabel("Temporary records Directory");
     outdirLE = new QLineEdit;
+    outdirLE->setPlaceholderText("(Opional) " + groundMotionsFolder.path());
     QPushButton *chooseOutputDirectoryButton = new QPushButton();
     chooseOutputDirectoryButton->setText(tr("Choose"));
     connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
@@ -275,13 +286,26 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     peerCitation->setWordWrap(true);
     layout->addWidget(peerCitation, 4, 0, 1, 3);
 
-    //layout->addWidget(thePlottingWindow, 0,3,2,1);
+    //add record selection plot
     layout->addWidget(&recordSelectionPlot, 0,3,4,1);
-
     recordSelectionPlot.setHidden(true);
 
+
+    //coverageImage = new QLabel();
+    //layout->addWidget(coverageImage, 0,3,4,1);
+    //coverageImage->setHidden(true);
+
+    // sy - **NOTE** QWebEngineView display is VERY SLOW in debug mode / Max size of figure is limited to 2MB
+    coverageImage = new QWebEngineView();
+    coverageImage->page()->setBackgroundColor(Qt::transparent);
+    //coverageImage->setHtml("Loading coverage image...");
+    layout->addWidget(coverageImage, 0,3,4,1);
+    coverageImage->setHidden(true);
+    //coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
+    RSN=QStringList(); // for batchRSN
+    numDownloaded = 0; // for batchRSN
+
     layout->setRowStretch(0,1);
-    //layout->setRowStretch(layout->rowCount(), 1);
     layout->setColumnStretch(layout->columnCount(), 1);
 }
 
@@ -293,7 +317,7 @@ void PEER_NGA_Records::setupConnections()
 
     connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
     {
-
+        currentRecords.clear();
         if(!peerClient.loggedIn())
         {
             PeerLoginDialog loginDialog(&peerClient, this);
@@ -319,7 +343,14 @@ void PEER_NGA_Records::setupConnections()
         //Cleaning up previous search results
         if(tempRecordsDir.exists("_SearchResults.csv"))
             tempRecordsDir.remove("_SearchResults.csv");
+        if(tempRecordsDir.exists("_readME.txt"))
+            tempRecordsDir.remove("_readME.txt");
+        QDir it(RecordsDir, {"grid_IM*"});
+        for(const QString & filename: it.entryList()){
+            it.remove(filename);
+        }
         ZipUtils::UnzipFile(recordsFile, tempRecordsDir);
+
         processPeerRecords(tempRecordsDir);
     });
 
@@ -377,7 +408,24 @@ void PEER_NGA_Records::setupConnections()
 
     connect(spectrumTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         targetSpectrumDetails->setCurrentIndex(index);
+        if(spectrumTypeComboBox->currentText().contains("No Spectrum")) {
+            //double newHeight =  targetSpectrumDetails->height();
+            double newWidth =  targetSpectrumDetails->width();
+            newWidth += recordSelectionGroup->width();
 
+            recordSelectionGroup->setVisible(false);
+            //targetSpectrumDetails->resize(newHeight, newWidth);
+            targetSpectrumDetails->setMinimumWidth(newWidth);
+            //widget->resize(165, widget->height());
+            scalingComboBox->setDisabled(true);
+            suiteAverageBox->setCurrentIndex(1);
+            suiteAverageBox->setDisabled(true);
+        } else {
+            recordSelectionGroup->setVisible(true);
+            targetSpectrumDetails->setMinimumWidth(10); // some random number
+            scalingComboBox->setDisabled(false);
+            suiteAverageBox->setDisabled(false);
+        }
         return;
     });
 
@@ -400,9 +448,42 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     if(!resultFolder.exists())
         return;
 
-    clearSpectra();
 
-    currentRecords = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+    QString readMePathString = RecordsDir + QDir::separator() + QString("_readME.txt");
+    QFileInfo readMeInfo(readMePathString);
+    if (readMeInfo.exists()) {
+        QFile readMeFile(readMePathString);
+        QString line("");
+        if (readMeFile.open(QIODevice::ReadOnly)) {
+           QTextStream in(&readMeFile);
+           while (!in.atEnd()) {
+              line = in.readLine();
+           }
+           readMeFile.close();
+        }
+        if (line.contains("No records")) {
+            errorMessage(QString(QString("Failed to download PEER NGA records: ") + line));
+            errorMessage(QString("The limit can be 100 per day, 200 per week, 400 per month"));
+            return;
+        } else {
+            infoMessage(QString(QString("Message from PEER NGA: ") + line));
+            }
+    }
+
+    clearSpectra();
+    auto tmpList = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+    currentRecords = currentRecords + tmpList;
+    //if (currentRecords.length()!=numDownloaded) {
+    //    errorMessage(QString("Some records are missing"));
+    //}
+    if (!RSN.isEmpty())
+    {
+            this->downloadRecordBatch();
+            return;
+            // "_SearchResults.csv"
+    }
+
+
     setRecordsTable(currentRecords);
 
     plotSpectra();
@@ -421,7 +502,7 @@ void PEER_NGA_Records::setRecordsTable(QList<PeerScaledRecord> records)
     for(auto& record: records)
     {
         addTableItem(row, 0, QString::number(record.RSN));
-        addTableItem(row, 1, QString::number(record.Scale));
+        addTableItem(row, 1, QString::number(record.Scale, 'g', 2));
         addTableItem(row, 2, record.Earthquake);
         addTableItem(row, 3, record.Station);
         addTableItem(row, 4, QString::number(record.Magnitude));
@@ -452,17 +533,25 @@ void PEER_NGA_Records::plotSpectra()
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
 
-    recordSelectionPlot.setHidden(false);
-    recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
-    recordSelectionPlot.setMean(periods, meanSpectrum);
-    recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
-    recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
-    recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
+    coverageImage->setHidden(true);
+    recordSelectionPlot.setHidden(true);
+    if (spectrumTypeComboBox->currentIndex()!=6) {
+        recordSelectionPlot.setHidden(false);
+        recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
+        recordSelectionPlot.setMean(periods, meanSpectrum);
+        recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
+        recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
+        recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
 
-    auto size = recordSelectionPlot.size();
-    size.setWidth(size.height());
-    recordSelectionPlot.setMinimumSize(size);
+        auto size = recordSelectionPlot.size();
+        size.setWidth(size.height());
+        recordSelectionPlot.setMinimumSize(size);
+    } else {
+        coverageImage->setHidden(false);
+    }
+
 }
+
 
 void PEER_NGA_Records::updateStatus(QString status)
 {
@@ -512,6 +601,7 @@ void PEER_NGA_Records::selectRecords()
     if(durationCheckBox->checkState() == Qt::Checked)
         durationRange.setValue(qMakePair(durationMin->text().toDouble(), durationMax->text().toDouble()));
 
+    additionalScaling.clear();
     if(targetSpectrumDetails->currentIndex() == 0)
     {
         auto asce710widget = reinterpret_cast<ASCE710Target*>(targetSpectrumDetails->currentWidget());
@@ -522,7 +612,45 @@ void PEER_NGA_Records::selectRecords()
 				 magnitudeRange,
 				 distanceRange,
                  vs30Range,durationRange,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex(),faultTypeBox->currentIndex()+1,pulseBox->currentIndex()+1);
+
+        // _ no additional scaling
+        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
     }
+    else if(targetSpectrumDetails->currentIndex() == 6) // no spectrum (uniform
+    {
+        auto unifrom_widget = reinterpret_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget());
+        updateStatus("Retrieving ground motion RSN ...");
+        QString imagePath;
+        RecordsDir = this->outdirLE->text();
+        if (RecordsDir.isEmpty()) {
+            RecordsDir = groundMotionsFolder.path();
+        }
+        unifrom_widget->getRSN(RecordsDir, RSN, additionalScaling, imagePath); // This will run a python script
+        // additionalScaling are given in "sorted" RSN older.
+        RSN.removeAll(QString(""));
+        if (RSN.isEmpty()) {
+            return;
+            // TO ADD error messages here
+        } else {
+            //peerClient.selectRecords(RSN);
+            if (!RSN.isEmpty())
+            {
+                    this->downloadRecordBatch();
+            }
+            //return;
+        }
+        //TEMP TESTING
+
+        QFile searchImageFile(imagePath); //html image
+        if(searchImageFile.exists()) {
+            //coverageImage->setPixmap(QPixmap(imagePath)); // for png
+            coverageImage->load(QUrl::fromLocalFile((imagePath)));
+            coverageImage->show();
+        } else {
+            coverageImage->setHidden(true);
+        }
+
+     }
     else
     {
         auto userTargetWidget = reinterpret_cast<AbstractTargetWidget*>(targetSpectrumDetails->currentWidget());
@@ -543,6 +671,36 @@ void PEER_NGA_Records::selectRecords()
             selectRecordsButton->setEnabled(true);
             selectRecordsButton->setDown(false);
         }
+
+        // _ no additional scaling
+        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
+    }
+
+}
+
+void PEER_NGA_Records::downloadRecordBatch(void)
+{
+    if(RSN.empty())
+        return;
+
+
+    const int peerBatchSize = 100;
+
+    if(RSN.size() < peerBatchSize)
+    {
+        peerClient.selectRecords(RSN);
+        numDownloaded = RSN.size();
+
+        RSN.clear();
+    }
+    else
+    {
+        auto recordsBatch = RSN.mid(0,peerBatchSize);
+
+        peerClient.selectRecords(recordsBatch);
+        numDownloaded += peerBatchSize;
+
+        RSN = RSN.mid(peerBatchSize,RSN.size()-peerBatchSize);
     }
 }
 
@@ -568,7 +726,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
     while (!searchResultsStream.atEnd())
     {
         QString line = searchResultsStream.readLine();
-
+        int ng = 0;
         //Parsing selected records information
         if(line.contains("Metadata of Selected Records"))
         {
@@ -587,13 +745,14 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Distance = values[15].trimmed().toDouble();
                 record.Vs30 = values[16].trimmed().toDouble();
 
-                record.Scale = values[4].toDouble();
+                record.Scale = values[4].toDouble()*additionalScaling[ng];
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
 
                 records.push_back(record);
                 line = searchResultsStream.readLine();
+                ng++;
             }
         }
 
@@ -616,7 +775,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 scaledSelectedSpectra.resize(values.size() - 5);
                 for (int i = 5; i < values.size(); i++)
                 {
-                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble());
+                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble()*additionalScaling[i-5]);
                 }
                 line = searchResultsStream.readLine();
             }
@@ -711,36 +870,44 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     
     jsonObject["Events"] = eventsArray;
 
-    auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
-    spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
-    jsonObject["TargetSpectrum"] = spectrumJson;
-
     jsonObject["scaling"] = scalingComboBox->currentText();
     jsonObject["singlePeriod"] = scalingPeriodLineEdit->text();
     jsonObject["periodPoints"] = periodPointsLineEdit->text();
     jsonObject["weights"] = weightsLineEdit->text();
 
-    jsonObject["components"] = groundMotionsComponentsBox->currentText();
-    jsonObject["faultType"] = faultTypeBox->currentText();
-    jsonObject["pulse"] = pulseBox->currentText();
+    if (spectrumTypeComboBox->currentText() != QString("No Spectrum - Uniform IMs"))
+    {
+        auto spectrumJson = dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->serialize();
+        spectrumJson["SpectrumType"] = spectrumTypeComboBox->currentText();
+        jsonObject["TargetSpectrum"] = spectrumJson;
 
-    jsonObject["records"] = nRecordsEditBox->text();
+        jsonObject["components"] = groundMotionsComponentsBox->currentText();
+        jsonObject["faultType"] = faultTypeBox->currentText();
+        jsonObject["pulse"] = pulseBox->currentText();
 
-    jsonObject["magnitudeRange"] = magnitudeCheckBox->isChecked();
-    jsonObject["magnitudeMin"] = magnitudeMin->text();
-    jsonObject["magnitudeMax"] = magnitudeMax->text();
+        jsonObject["records"] = nRecordsEditBox->text();
 
-    jsonObject["distanceRange"] = distanceCheckBox->isChecked();
-    jsonObject["distanceMin"] = distanceMin->text();
-    jsonObject["distanceMax"] = distanceMax->text();
+        jsonObject["magnitudeRange"] = magnitudeCheckBox->isChecked();
+        jsonObject["magnitudeMin"] = magnitudeMin->text();
+        jsonObject["magnitudeMax"] = magnitudeMax->text();
 
-    jsonObject["vs30Range"] = vs30CheckBox->isChecked();
-    jsonObject["vs30Min"] = vs30Min->text();
-    jsonObject["vs30Max"] = vs30Max->text();
+        jsonObject["distanceRange"] = distanceCheckBox->isChecked();
+        jsonObject["distanceMin"] = distanceMin->text();
+        jsonObject["distanceMax"] = distanceMax->text();
 
-    jsonObject["durationRange"] = durationCheckBox->isChecked();
-    jsonObject["durationMin"] = durationMin->text();
-    jsonObject["durationMax"] = durationMax->text();
+        jsonObject["vs30Range"] = vs30CheckBox->isChecked();
+        jsonObject["vs30Min"] = vs30Min->text();
+        jsonObject["vs30Max"] = vs30Max->text();
+
+        jsonObject["durationRange"] = durationCheckBox->isChecked();
+        jsonObject["durationMin"] = durationMin->text();
+        jsonObject["durationMax"] = durationMax->text();
+    } else {
+        QJsonObject spectrumJson;
+        spectrumJson["SpectrumType"] = "No Spectrum - Uniform IMs";
+        jsonObject["TargetSpectrum"] = spectrumJson;
+        dynamic_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget())->outputToJSON(jsonObject);
+    }
 
     return true;
 }
@@ -750,9 +917,15 @@ bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
     if(jsonObject["TargetSpectrum"].isObject() && jsonObject["TargetSpectrum"].toObject().keys().contains("SpectrumType"))
     {
         auto targetSpectrumJson = jsonObject["TargetSpectrum"].toObject();
+        spectrumTypeComboBox->setCurrentIndex(0);
         spectrumTypeComboBox->setCurrentText(jsonObject["TargetSpectrum"].toObject()["SpectrumType"].toString());
-        dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
-    }
+
+        if (spectrumTypeComboBox->currentText() != QString("No Spectrum - Uniform IMs")) {
+            dynamic_cast<AbstractJsonSerializable*>(targetSpectrumDetails->currentWidget())->deserialize(jsonObject["TargetSpectrum"].toObject());
+        } else {
+            dynamic_cast<NoSpectrumUniform*>(targetSpectrumDetails->currentWidget())->inputFromJSON(jsonObject);
+        }
+    };
 
     scalingComboBox->setCurrentText(jsonObject["scaling"].toString());
     scalingPeriodLineEdit->setText(jsonObject["singlePeriod"].toString());

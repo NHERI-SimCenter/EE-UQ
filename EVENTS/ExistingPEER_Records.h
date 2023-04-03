@@ -123,6 +123,7 @@ public:
 public slots:
    void addEvent(void);
    void removeEvents(void);
+   void removeAllEvents(void);
    void clear(void);
    void loadEventsFromDir(void);
    void parseSearchResults(QString searchResultsFilePath);

@@ -361,10 +361,6 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         QUrlQuery params;
         params.addQueryItem("authenticity_token", authenticityToken);
         params.addQueryItem("search[DampingRatio]", "0.05");
-        params.addQueryItem("search[SRkey]", QString::number(this->SRkey));
-        params.addQueryItem("search[SRmeanFlag]", QString::number(this->SRmeanFlag));
-        params.addQueryItem("search[faultType]", QString::number(this->faultType));
-        params.addQueryItem("search[pulse]", QString::number(this->pulse));
         params.addQueryItem("search[search_station_name]", "");
         params.addQueryItem("search[search_eq_name]", "");
 
@@ -372,9 +368,14 @@ void PeerNgaWest2Client::processPostSpectrumReply()
 
         if (recordsToDownload.length() == 0) {
 
+
+
             // it is  a search, provide selection quantaties
             params.addQueryItem("search[search_nga_number]", "");
-
+            params.addQueryItem("search[SRkey]", QString::number(this->SRkey));
+            params.addQueryItem("search[SRmeanFlag]", QString::number(this->SRmeanFlag));
+            params.addQueryItem("search[faultType]", QString::number(this->faultType));
+            params.addQueryItem("search[pulse]", QString::number(this->pulse));
 
             if(searchScaleFlag == 0)
             {
@@ -424,7 +425,6 @@ void PeerNgaWest2Client::processPostSpectrumReply()
             }
         } else {
 
-            // just want to download specific records
             QString list;
             int lengthRecords = recordsToDownload.length();
             for (int i=0; i<lengthRecords; i++) {
@@ -444,9 +444,10 @@ void PeerNgaWest2Client::processPostSpectrumReply()
             params.addQueryItem("search[vs30]", "");
             params.addQueryItem("search[duration]", "");
             params.addQueryItem("search[pulse]", "1");
-            params.addQueryItem("search[Pulse]", "1");
+            //params.addQueryItem("search[Pulse]", "1");
             params.addQueryItem("search[synth_FaultType]", "0");
             params.addQueryItem("search[synth_Adjacency]", "0");
+            params.addQueryItem("search[SRkey]", "1");
             params.addQueryItem("search[SRmeanFlag]", "0");
             params.addQueryItem("search[vs30]", "");
             params.addQueryItem("search[rrup]", "");
