@@ -2,10 +2,11 @@
 Surrogate Model for Structural Response Prediction (Gaussian Process)
 ===========================================================================================================
 
-Pre-trained Gaussian Process Surrogate Model
+Training Gaussian Process Surrogate Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example shows how to train a surrogate model that can replace structural dyanmic simulations once it is trained using a small set of simulations.
+
 The ground motions are selected from the PEER NGA database
 
 .. warning:: To reproduce the result of this example, user should first click **EVT** and **Select Records**, and then click the **RUN** button. See the below procedure for details.
@@ -15,7 +16,7 @@ Configure Surrogate Target Spectrum
 
 1. In **UQ tab** select the **SimCenterUQ** as **UQ Engine**. Select the **Train GP Surrogate Model** in the method.
 
-      .. figure:: EE09_UQ/Fig.png
+      .. figure:: figures/EE09_UQ.png
          :name: UQ inputs
          :align: center
          :width: 600
@@ -38,7 +39,7 @@ Configure Surrogate Target Spectrum
 3. In **SIM tab**, the specifics of the target structural model is provided via **MDOF** building generator. One story building is created having stiffness as an input parameter.
 
 
-      .. figure:: figures/EE09_UQ.png
+      .. figure:: figures/EE09_SIM.png
          :name: UQ inputs
          :align: center
          :width: 600
@@ -48,7 +49,7 @@ Configure Surrogate Target Spectrum
 4. In **EVT tab**, **PEER NGA ground motion records** is selected. Theoretically the more diverse the intensity measures are, the more likely to reasonably capture the aleatory uncertainty in the earthquake source. 
 
 
-      .. figure:: figures/EE09_EVT.png
+      .. figure:: figures/EE09_EVT1.png
          :name: UQ inputs
          :align: center
          :width: 600
@@ -62,6 +63,12 @@ Configure Surrogate Target Spectrum
          :figclass: align-center
 
 
+      .. figure:: figures/EE09_EVT3.png
+         :name: UQ inputs
+         :align: center
+         :width: 600
+         :figclass: align-center
+         
 5. The **FEM tab** is kept as default.
 
 6. The **EDP tab** is kept as default. For the surrogate model to be compatible with the PBE and other applications, it should follow the naming of the Standard Earthquake.

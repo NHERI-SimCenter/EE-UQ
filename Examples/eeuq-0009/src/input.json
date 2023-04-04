@@ -190,7 +190,7 @@
             "numSampToBeRepl": 1,
             "outFile": "NA",
             "parallelExecution": true,
-            "samples": 25,
+            "samples": 81,
             "seed": 984,
             "timeLimit": 60,
             "useGeoMean": true
