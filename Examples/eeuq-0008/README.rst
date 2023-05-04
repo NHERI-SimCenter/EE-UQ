@@ -2,7 +2,10 @@
 Using Multiple Models and Analysis Options in EE-UQ
 ===================================================
 
-This example demonstrates using multiple structural models and finite element analysis options to predict structural responses under earthquake ground motion inputs.
+This example showcases the use of multiple structural models and finite element analysis options to predict structural responses to earthquake ground motion inputs. 
+
+Non-linear time history analysis is conducted using OpenSees, employing a simple model of a 5 story structure, subjected to recorded ground acceleration time history during an earthquake. The response of the model is used to extract commonly used engineering demand parameters, while considering uncertainties in the value of story stiffnesses and model formulation. By including or excluding the uncertainty in the story stiffness and using modal or Rayleigh damping, four possible models are obtained, with each model having an equal chance of being randomly picked to predict the response of the structure. The resulting distribution of the engineering demand parameters is that obtained by propagating model form uncertainty as well as uncertainty about the value of a parameter of the model.
+
    
 Configure UQ Engine
 ^^^^^^^^^^^^^^^^^^^^^
@@ -68,6 +71,11 @@ Run the analysis and observe the results
 
 1. Next, click on the **Run** button. This will call the backend application to launch the analysis. When the analysis is finished, 
    the **RES** panel will be displayed, which shows summary statistics of the output quantities in the **Summary** tab. 
+
+
+.. note::
+   The use of multiple models in the analysis results in the automatic creation of new variables by the tools during the analysis. In this example, two variables named 'Multimodel-Modeling' and 'Multimodel-Simulation' are created automatically, with their values representing the index of the models as defined within the **SIM** and **FEM** panels, respectively.
+
 
 2. In the **Data Value** tab, a spreadsheet shows the sampled values of the input random variables and the corresponding output engineering demand parameters. A chart shows scatter plots of the sampled values, and by clicking the left or right mouse buttons within the spreadsheet, the chart shows a histogram or a plot of the cumulative frequency distribution of the sampled values. 
 
