@@ -1,0 +1,4 @@
+"C:\Users\SimCenter\Sangri\SimCenterBackendApplications\applications\createEVENT\multiplePEER\MultiplePEER" "--filenameAIM" "AIM.json" "--filenameEVENT" "EVENT.json" 
+"C:\Users\SimCenter\Sangri\SimCenterBackendApplications\applications\createSAM\mdofBuildingModel\MDOF_BuildingModel" "--filenameAIM" "AIM.json" "--filenameEVENT" "EVENT.json" "--filenameSAM" "SAM.json" 
+"C:\Users\SimCenter\Sangri\SimCenterBackendApplications\applications\createEDP\standardEarthquakeEDP\StandardEQEDP" "--filenameAIM" "AIM.json" "--filenameEVENT" "EVENT.json" "--filenameSAM" "SAM.json" "--filenameEDP" "EDP.json" 
+"C:\Users\SimCenter\Downloads\WE-UQprelease_my\WE-UQ_Windows_Download\applications\python\python.exe" "C:\Users\SimCenter\Sangri\SimCenterBackendApplications\applications\performSIMULATION\openSees\OpenSeesSimulation.py" "--filenameAIM" "AIM.json" "--filenameSAM" "SAM.json" "--filenameEVENT" "EVENT.json" "--filenameEDP" "EDP.json" "--filenameSIM" "SIM.json" 
