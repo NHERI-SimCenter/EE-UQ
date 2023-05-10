@@ -26,7 +26,7 @@
       "inputFile": "eeuq-0005/src/input.json"
     },
     {
-      "name": "E6: Surrogate Model: PLoM",
+      "name": "E6: PLoM Surrogate Model",
       "description": "This example demonstrates using a novel method, Probabilistic Learning on Manifolds (PLoM), to develop surrogate models for structural responses under earthquake ground motion inputs.",
       "inputFile": "eeuq-0006/src/input.json"
     }
@@ -43,9 +43,15 @@
     }
     ,
     {
-      "name": "E9: Surrogate Model: GP",
+      "name": "E9: Training GP Surrogate Model",
       "description": "This example demonstrates to develop surrogate models for seismic structural responses.",
       "inputFile": "eeuq-0009/src/input.json"
+    }
+    ,
+    {
+      "name": "E10: Prediction from GP Surrogate Model",
+      "description": "This example uses pre-trained GP to obtain statistic for seismic structural responses.",
+      "inputFile": "eeuq-0010/src/input.json"
     }
   ]
 }
