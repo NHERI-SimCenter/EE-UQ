@@ -56,7 +56,7 @@ Define Target Structure
 Select Ground Motions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-4. In **EVT tab**, **PEER NGA ground motion records** is selected. Let us consider the site of interest located at (37.8715, -122.273), Hard Rock (A) site class. From ASCE 7-16, the design spectrum for risk category I (low hazard) can be obtained. Let us select 30 ground motion time histories that match this spectrum by clicking **Select records**button. The target response spectrum curve and the selected ground motions will be displayed in the right-hand side panel as shown below.
+4. In **EVT tab**, **PEER NGA ground motion records** option is selected. Let us consider the site of interest located at (37.8715, -122.273), of which we would like to select ground motions that follows USGS Uniform Hazard Spectrum (2014 v4.2.0) with return period 2475. Vs30 is assumed 760 m/s. Let us select 30 ground motion time histories that match this spectrum by clicking **Select records** button. The target response spectrum curve and the selected ground motions will be displayed on the right-hand side panel as shown below.
 
       .. figure:: figures/EE10_EVT1.png
          :name: UQ inputs
@@ -175,23 +175,35 @@ Run the Analysis and Process Results
       * The term "90% prediction interval" is the interval in which the exact "response", i.e. dynamic simulation output, will fall with 90% probability.
       * The term "90% confidence interval" is the estimated range of the "mean response". Therefore, the confidence interval is always tighter than the prediction interval.
 
-11. **[Verification]** Only for verification purposes, an additional forward propagation is performed using the exact simulation model instead of the surrogate model, using the exact same ground motion/structural parameters. For this, UQ, GI, EVT, RV tabs are kept unchanged, and SIM, FEM, EDP tabs are modified to replace the surrogate with the original model, i.e. for SIM, FEM, EDP tabs, the exact same configuration used in :ref:`example 09<eeuq-0009>` was used.  Below is a comparison of the obtained median (and log-mean) and log-standard deviation of the EDPs from 30 samples:
+11. **[Verification]** Only for verification purposes, an additional forward propagation is performed using the exact simulation model instead of the surrogate model, using the exact same ground motion/structural parameters. For this, UQ, GI, EVT, RV tabs are kept unchanged, and SIM, FEM, EDP tabs are modified to replace the surrogate with the original model, i.e. for SIM, FEM, EDP tabs, the exact same configuration used in :ref:`example 09<eeuq-0009>` was used.  Below is a comparison of the obtained mean log-EDPs from 30 samples:
 
 
    .. figure:: figures/EE10_RES4_1.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 700
          :figclass: align-center
 
-         Comparison of median
+         Comparing median of log-EDP
+
+The same comparison in the original scale shown below.
 
    .. figure:: figures/EE10_RES4_2.png
          :name: UQ inputs
          :align: center
-         :width: 400
+         :width: 700
          :figclass: align-center
 
          Comparison of log-standard deviation
+
+On the other hand, log-standard deviation of the EDPs from 30 samples are obtained as below.
+
+   .. figure:: figures/EE10_RES4_3.png
+         :name: UQ inputs
+         :align: center
+         :width: 700
+         :figclass: align-center
+
+         Comparing standard deviation of log-EDP
 
 The estimated medians of EDPs from the surrogate and the original model show in general good agreement. The standard deviation of the surrogate model is larger partly because of the added uncertainty in surrogate model approximation. The difference in the statistics may also attribute to the small sample size of 30.
