@@ -79,8 +79,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     // the selection part
     //
 
-    QGridLayout *theSelectionLayout = new QGridLayout();
-    //    QLabel *label = new QLabel();
+    QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     SectionTitle *label=new SectionTitle();
     label->setMinimumWidth(250);
     label->setText(QString("Load Generator"));
@@ -94,18 +93,19 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Multiple SimCenter"));
     eventSelection->addItem(tr("User Specified Database"));
-    //    eventSelection->addItem(tr("Hazard Based Event"));
+    // eventSelection->addItem(tr("Hazard Based Event"));
     // eventSelection->addItem(tr("User Application"));
-    //eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
-    theSelectionLayout->addWidget(label,0,0,2,1);
-    QSpacerItem *spacer = new QSpacerItem(50,1);
-    theSelectionLayout->addItem(spacer,0,1,2,1);
-    theSelectionLayout->addWidget(eventSelection,0,2,1,1);
-    theSelectionLayout->setRowStretch(1,1);
-    theSelectionLayout->setColumnStretch(3,1);
-    //theSelectionLayout->addStretch();
+    eventSelection->setMinimumWidth(250);
+    eventSelection->setMaximumHeight(25);
+
+    theSelectionLayout->addWidget(label);
+    //QSpacerItem *spacer = new QSpacerItem(50,1);
+    //theSelectionLayout->addItem(spacer);
+    theSelectionLayout->addWidget(eventSelection);
+    theSelectionLayout->addStretch();
     layout->addLayout(theSelectionLayout,0,1);
 
     //
@@ -186,6 +186,11 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     //
 
     connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(eventSelectionChanged(QString)));
+
+    global_layout->setSpacing(0);
+    layout->setSpacing(0);
+    global_layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 
 }
 
