@@ -1,2 +1,2 @@
-summary: This example demonstrates the training of Gaussian Process (GP) model to predict the peak seismic response
-difficulty: 2
+summary: This example shows how to train a surrogate model that can be imported into EE-UQ and replace structural dynamic simulations.
+difficulty: 1
