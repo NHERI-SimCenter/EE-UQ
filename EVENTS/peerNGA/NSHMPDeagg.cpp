@@ -415,7 +415,7 @@ QList<QPair<double, double>> NSHMPDeagg::spectrum() const
 
 QList<QPair<double, QList<double>>> NSHMPDeagg::deagginfo() const
 {
-    //GoogleAnalytics::Report("RecordSelection", "USGS-DEAGG");
+    //GoogleAnalytics::Report("RecordSelection", "USGS_DEAGG");
 
     QString url(editionBox->currentData().toString());
 
