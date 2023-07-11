@@ -397,7 +397,7 @@ bool
 EarthquakeEventSelection::copyFiles(QString &destDir) {
 
     if (theCurrentEvent != 0) {
-          QString textForAnalytics = QString("Event-") + currentEventType;
+          QString textForAnalytics = QString("Event_") + currentEventType;
 	  GoogleAnalytics::ReportAppUsage(textForAnalytics);    
 	  return theCurrentEvent->copyFiles(destDir);
     }

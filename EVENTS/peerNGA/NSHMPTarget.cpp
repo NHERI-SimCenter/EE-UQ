@@ -179,7 +179,7 @@ void NSHMPTarget::deserialize(const QJsonObject &json)
 
 QList<QPair<double, double>> NSHMPTarget::spectrum() const
 {
-    GoogleAnalytics::Report("RecordSelection", "USGS-UHS");
+    GoogleAnalytics::Report("RecordSelection", "USGS_UHS");
 
     QString url(editionBox->currentData().toString());
 
