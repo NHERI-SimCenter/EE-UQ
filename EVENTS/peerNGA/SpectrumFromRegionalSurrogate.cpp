@@ -7,12 +7,14 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QLabel>
+#include <QtCore5Compat/QStringRef>
 #include <QLineEdit>
 #include "surrogateGpParser.h"
 #include <QJsonDocument>
 #include <QGroupBox>
 #include <QComboBox>
 #include <QJsonObject>
+#include <QRegularExpression>
 #include <QFileInfo>
 #include <sstream>
 #include <SimCenterPreferences.h>
@@ -122,8 +124,8 @@ SpectrumFromRegionalSurrogate::SpectrumFromRegionalSurrogate(QWidget* parent): A
     // periods for the spectrum
     QLabel *periodLabel = new QLabel(tr("Intensity Measure Periods (sec):"),this);
     // Set a validator to allow only numbers, periods, and spaces
-    QRegExp regExpAllow("^([1-9][0-9]*|[1-9]*\\.[0-9]*|0\\.[0-9]*)*(([ ]*,[ ]*){0,1}([[1-9]*\\.[0-9]*|[1-9][0-9]*|0\\.[0-9]*))*");
-    LEValidator = new QRegExpValidator(regExpAllow,this);
+    QRegularExpression regExpAllow("^([1-9][0-9]*|[1-9]*\\.[0-9]*|0\\.[0-9]*)*(([ ]*,[ ]*){0,1}([[1-9]*\\.[0-9]*|[1-9][0-9]*|0\\.[0-9]*))*");
+    LEValidator = new QRegularExpressionValidator(regExpAllow,this);
     periodsLineEdit = new QLineEdit(this);
     periodArray = {};
     connect(this->periodsLineEdit, &QLineEdit::textChanged, this, &SpectrumFromRegionalSurrogate::checkPeriodsValid);
@@ -302,7 +304,7 @@ void SpectrumFromRegionalSurrogate::loadSpectrum(void)
     auto numRows = rowLines.size();
     if(numRows == 0)
     {
-        qDebug()<<"Error in parsing the .csv file "<<tmpFile <<" in UserDefinedDatabase::parseCSV file";
+        qDebug()<<"Error in parsing the .csv file "<<tmpFile.fileName() <<" in UserDefinedDatabase::parseCSV file";
         return;
     }
     int row_num = 0;
@@ -318,7 +320,7 @@ void SpectrumFromRegionalSurrogate::loadSpectrum(void)
             {
                 // try spacings
                 separator = "\\s+";
-                tmpData = it.split(QRegExp(separator));
+                tmpData = it.split(QRegularExpression(separator));
             }
             auto tmpT = tmpData.at(0).toDouble();
             auto tmpSa = tmpData.at(1).toDouble();
@@ -1236,7 +1238,7 @@ void SpectrumFromRegionalSurrogate::saveSpectrum(bool runFlag, QString dirName, 
 
         // write a csv file
         QFile csv_file(dirName + QDir::separator() + fileName);
-        qDebug() << "csv_file: " << csv_file;
+        qDebug() << "csv_file: " << csv_file.fileName();
         csv_file.open(QIODevice::Append | QIODevice::Text);
         QTextStream stream(&csv_file);
         QString separator(",");

@@ -84,7 +84,7 @@ StochasticMotionInput::StochasticMotionInput(
 
   // Connect model selection slot
   connect(model_selection_,
-          QOverload<const QString&>::of(&QComboBox::currentIndexChanged), this,
+          &QComboBox::currentIndexChanged, this,
           &StochasticMotionInput::modelSelectionChanged);
 }
 
@@ -176,7 +176,9 @@ bool StochasticMotionInput::inputAppDataFromJSON(QJsonObject& jsonObject) {
   return true;
 }
 
-void StochasticMotionInput::modelSelectionChanged(const QString& model) {
+void StochasticMotionInput::modelSelectionChanged(int index) {
+
+  auto model = model_selection_->itemText(index);
   // Switch the model description and form layout based on model selection
   if (model == "Vlachos et al. (2018)") {
     auto temp_model = stochastic_model_;
