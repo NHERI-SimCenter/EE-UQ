@@ -7,7 +7,11 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QLabel>
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 #include <QtCore5Compat/QStringRef>
+#else
+#include <QStringRef>
+#endif
 #include <QLineEdit>
 #include "surrogateGpParser.h"
 #include <QJsonDocument>
