@@ -59,7 +59,12 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
     plusSigmaSeries.attachAxis(&yAxis);
     targetSeries.attachAxis(&yAxis);
 
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+    auto chartView = new QChartView(&spectraChart, this);
+#else
     auto chartView = new QtCharts::QChartView(&spectraChart, this);
+#endif
+
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setMinimumWidth(500);
     chartView->setMinimumHeight(500);
@@ -135,7 +140,11 @@ void RecordSelectionPlot::setSelectedSpectra(QVector<double> periods, QVector<QV
     bool firstLegendShown = false;
     for(auto spectrum: spectra)
     {
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+        auto series = new QLineSeries(this);
+#else
         auto series = new QtCharts::QLineSeries(this);
+#endif
         spectraChart.addSeries(series);
         currentSelectedSeries.push_back(series);
 

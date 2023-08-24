@@ -23,6 +23,17 @@ signals:
 public slots:
 
 private:
+    
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+    QLineSeries meanSeries;
+    QLineSeries plusSigmaSeries;
+    QLineSeries minusSigmaSeries;
+    QLineSeries targetSeries;
+    QChart spectraChart;
+    QLogValueAxis xAxis;
+    QLogValueAxis yAxis;
+    QList<QLineSeries*> currentSelectedSeries;
+#else
     QtCharts::QLineSeries meanSeries;
     QtCharts::QLineSeries plusSigmaSeries;
     QtCharts::QLineSeries minusSigmaSeries;
@@ -30,8 +41,9 @@ private:
     QtCharts::QChart spectraChart;
     QtCharts::QLogValueAxis xAxis;
     QtCharts::QLogValueAxis yAxis;
-
     QList<QtCharts::QLineSeries*> currentSelectedSeries;
+#endif
+    
 };
 
 #endif // RECORDSELECTIONPLOT_H
