@@ -614,7 +614,7 @@ void PEER_NGA_Records::selectRecords()
                  vs30Range,durationRange,groundMotionsComponentsBox->currentIndex()+1,suiteAverageBox->currentIndex(),faultTypeBox->currentIndex()+1,pulseBox->currentIndex()+1);
 
         // _ no additional scaling
-        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
+        additionalScaling = QVector<double>(nRecordsEditBox->text().toInt(),1.0);
     }
     else if(targetSpectrumDetails->currentIndex() == 6) // no spectrum (uniform
     {
@@ -673,7 +673,7 @@ void PEER_NGA_Records::selectRecords()
         }
 
         // _ no additional scaling
-        additionalScaling = QVector(nRecordsEditBox->text().toInt(),1.0);
+        additionalScaling = QVector<double>(nRecordsEditBox->text().toInt(),1.0);
     }
 
 }

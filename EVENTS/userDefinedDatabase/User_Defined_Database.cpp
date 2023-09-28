@@ -660,11 +660,11 @@ void User_Defined_Database::selectRecords()
     currentRecords.clear();
     currentRecords.reserve(nRecords);
     auto cadErrSort = cadErr;
-    qStableSort(cadErrSort.begin(), cadErrSort.end());
+    std::stable_sort(cadErrSort.begin(), cadErrSort.end());
     QList<int> recordTag;
     for (int i = 0; i != nRecords; ++i)
     {
-        auto j = qFind(cadErr.begin(), cadErr.end(), cadErrSort[i]) - cadErr.begin();
+        auto j = std::find(cadErr.begin(), cadErr.end(), cadErrSort[i]) - cadErr.begin();
         UserSpecifiedRecord record;
         record.RSN = allRecords[j].RSN;
         record.Earthquake = allRecords[j].Earthquake;
