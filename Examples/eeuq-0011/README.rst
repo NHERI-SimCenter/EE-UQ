@@ -4,7 +4,7 @@ Multi-fidelity Monte Carlo Simulation
 ===========================================================================================================
 
 
-This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short tool id|. The high- and low-fidelity building models of a benchmark 9-story steel structure ([Ohtori2004]_) following the implementation in ([Patsialis2023]_). 
+This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short tool id|. The high- and low-fidelity building models of a benchmark 9-story steel structure ([Ohtori2004]_) is used for the demonstration, following the implementation in ([Patsialis2023]_). 
 
 
       .. figure:: figures/ee11_main.png
@@ -25,11 +25,12 @@ This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short 
 Target structure
 ^^^^^^^^^^^^^^^^^^^^
 
-The target structure is a moment-resisting five-bay frame with a total height 37.19 m and length 45.73 m. 
+The target structure is a nine-story moment-resisting five-bay frame with a total height 37.19 m and length 45.73 m. 
 
-The **high-fidelity** model is a nonlinear finite element model developed in OpenSees. Material characteristics are: modulus of elasticity E=1.99 105 MPa for both beams and columns, yield stress for the columns 345 MPa and 248 MPa for the beams using values proposed in [Ohtori2004]_. For modeling material inelastic behavior, the Giufre'-Menegotto-Pinto model with isotropic strain hardening is chosen for the steel fibers. The fundamental period is 2.274 sec, and under Rayleigh damping assumption, the damping ratio is selected as 2% for 1st and 3rd modes.
+The 
+`High-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1>`_ (main script: `benchmark_9st_model.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1/benchmark_9st_model.tcl>`_) is a nonlinear finite element model developed in OpenSees. Material characteristics are: modulus of elasticity E=1.99 105 MPa for both beams and columns, yield stress for the columns 345 MPa and 248 MPa for the beams using values proposed in [Ohtori2004]_. For modeling material inelastic behavior, the Giufre'-Menegotto-Pinto model with isotropic strain hardening is chosen for the steel fibers. The fundamental period is 2.274 sec, and under Rayleigh damping assumption, the damping ratio is selected as 2% for 1st and 3rd modes.
 
-The **low-fidelity** model is the reduced-order model (ROM) of the high-fidelity model. The detailed development procedures can be found in [Patsialis2020A]_ and [Patsialis2020B]_. As promoted in the papers, Bouc-Wen hysteretic model is chosen for the nonlinear connections of the ROM. The parameters of the ROM are chosen to minimize the error from the high-fidelity response, where three ground motion records are used generate the reference data and low-fidelity predictions.
+The `Low-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2>`_ (main script: `benchmark_9st_model.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2/Alt_ROM_Simulation_BoucWen_Drift.tcl>`_) is the reduced-order model (ROM) of the high-fidelity model. The detailed development procedures can be found in [Patsialis2020A]_ and [Patsialis2020B]_. As promoted in the papers, Bouc-Wen hysteretic model is chosen for the nonlinear connections of the ROM. The parameters of the ROM are chosen to minimize the error from the high-fidelity response, where three ground motion records are used to generate the reference high-fidelity prediction and optimize low-fidelity predictions.
 
 In the example, the computation time of the low-fidelity model is expected to be 40-50 times faster than that of the high-fidelity model. 
 
@@ -57,7 +58,7 @@ Procedure
 
    .. note::   
 
-      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 30 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time. 
+      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 40 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time. 
 
 
 2. The **GI tab** is kept as default. (GI tab is not used when opensees models are imported in SIM tab)
@@ -93,7 +94,7 @@ Both models have spatial dimensions of 2 and have 3 degrees of freedom per node.
       In case the structural models have uncertain parameters, the current implementation of MFMC requires the two models to share the same random variables as input. For example, if the floor height is the input random variable of the high-fidelity model, the low-fidelity model should also have the floor height as input. In this example, the structure is considered deterministic, and only the uncertainty in the ground motion model (moment magnitude and random time history) is considered.
 
 
-4. In **EVT tab**, **PStochastic Ground Motion** option is selected. In particular, **Vlachos et al. (2018)** is selected among alternatives. Let us assume the Moment Magnitude is a random variable by putting the letter ``M`` instead of a number. The random distribution can be specified later in the **RV tab**
+4. In **EVT tab**, **Stochastic Ground Motion** option is selected. In particular, **Vlachos et al. (2018)** is selected among alternatives. Let us assume the Moment Magnitude is a random variable by putting the letter ``M`` instead of a number. The random distribution can be specified later in the **RV tab**
 
 
    .. figure:: figures/ee11_EVT.png
