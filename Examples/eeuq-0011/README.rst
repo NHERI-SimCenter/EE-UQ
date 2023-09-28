@@ -53,11 +53,11 @@ Procedure
 
          UQ tab 
 
-   Let us set the maximum computation time to be 60 mins. Random seed can be any positive integer and is only for reproducibility purposes. Check the **Advanced Options** and set the minimum number of simulations to 30. Additionally, the the statistics will be estimated in a log scale by checking **perform log-transform** check box.
+   Let us set the maximum computation time to be 60 mins. Random seed can be any positive integer and is only for reproducibility purposes. Check the **Advanced Options** and set the minimum number of simulations to 40. Additionally, the the statistics will be estimated in a log scale by checking **perform log-transform** check box.
 
    .. note::   
 
-      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 30 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time. For example, the screenshot of the **RES tab** at the end of this page shows that the analysis time slightly exceeded 60 mins.
+      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 30 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time. 
 
 
 2. The **GI tab** is kept as default. (GI tab is not used when opensees models are imported in SIM tab)
@@ -167,8 +167,7 @@ Run the Analysis
 
          RES tab - summary of response statistics
 
-   The results additionally show **Speed Up** factors by comparing the total analysis time with the expected analysis time required to get the same precision of the estimator using only the high-fidelity simulations. Note that the elapsed time slightly exceeded the given target of 60 mins, because of the mild estimation error in the completion time. The computation time per model evaluation is "wall-clock" time, and because the example is computed using 8 processors, the actual analysis time of each model in a single processor is 8 times longer.
-
+   The results additionally show **Speed Up** factors by comparing the total analysis time with the expected analysis time required to get the same precision of the estimator using only the high-fidelity simulations. The computation time per model evaluation is "wall-clock" time, and because the example is computed using 8 processors, the actual analysis time of each model in a single processor is 8 times longer.
 
 10. In the "Data Values" tab, one can plot the histogram and cumulative density function (CDF) of the samples, as well as scatter plots between the input and output of surrogate predictions. Using this feature, one can draw a scatter plot between low- and high-fidelity model responses. This is useful because it gives intuition on how informative the low-fidelity model run is.
 
