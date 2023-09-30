@@ -290,6 +290,32 @@
         "Difficulty": "2",
         "Simulation": "OpenSees-Simulation"
       }
+    },
+      "eeuq-0011": {
+      "id": "eeuq-0011",
+      "title": "Muti-fidelity Monte Carlo",
+      "base": "eeuq-0011",
+      "doc": [
+        "eeuq-0011/figures/ee11_main.png",
+        "eeuq-0011/figures/ee11_EVT.png",
+        "eeuq-0011/figures/ee11_FEM1.png",
+        "eeuq-0011/figures/ee11_FEM2.png",
+        "eeuq-0011/figures/ee11_RES1.png",
+        "eeuq-0011/figures/ee11_RES2.png",
+        "eeuq-0011/figures/ee11_RV.png",
+        "eeuq-0011/figures/ee11_SIM1.png",
+        "eeuq-0011/figures/ee11_SIM2.png",
+        "eeuq-0011/figures/ee11_UQ.png",
+        "eeuq-0011/README.rst"
+      ],
+      "entry_point": "eeuq-0011/./input.json",
+      "summary": "This example shows how to replace structural dynamic simulations using a pre-trained Gaussian process (GP) surrogate model for running forward uncertainty propagation (Monte Carlo Simulation)",
+      "logo": "eeuq-0011/figures/EE11_main.png",
+      "published": "2022-07-10T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "2",
+        "Simulation": "OpenSees-Simulation"
+      }
     }
   },
     "categories": {

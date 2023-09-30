@@ -76,14 +76,14 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   truncate_ = new QRadioButton("Truncate and baseline correct synthetic motion");
   truncate_->setAutoExclusive(false);
   truncate_->setChecked(true);  
-  seed_ = new QSpinBox();
-  seed_->setMinimum(1);
-  seed_->setMaximum(2147483647);
-  seed_->setValue(500);  
-  seed_->setEnabled(false);
-  use_seed_ = new QRadioButton("Provide seed value");
-  use_seed_->setAutoExclusive(false);
-  use_seed_->setChecked(false);
+//  seed_ = new QSpinBox();
+//  seed_->setMinimum(1);
+//  seed_->setMaximum(2147483647);
+//  seed_->setValue(500);
+//  seed_->setEnabled(false);
+//  use_seed_ = new QRadioButton("Provide seed value");
+//  use_seed_->setAutoExclusive(false);
+//  use_seed_->setChecked(false);
   
   parameters_ = new QFormLayout();
   parameters_->addRow(new QLabel(tr("Moment Magnitude")), moment_magnitude_);
@@ -120,7 +120,7 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   // Construct required layouts
   QHBoxLayout* layout = new QHBoxLayout();
   QVBoxLayout* inputs_layout = new QVBoxLayout;
-  QHBoxLayout* seed_layout = new QHBoxLayout();
+  //QHBoxLayout* seed_layout = new QHBoxLayout();
   QHBoxLayout* truncate_layout = new QHBoxLayout();  
   QHBoxLayout* parameters_layout = new QHBoxLayout();
   QHBoxLayout* faulting_layout = new QHBoxLayout();
@@ -128,9 +128,9 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   QHBoxLayout* image_layout = new QHBoxLayout();    
   
   // Add widgets to layouts and layouts to this
-  seed_layout->addWidget(use_seed_);
-  seed_layout->addWidget(seed_);
-  seed_layout->addStretch();
+  //seed_layout->addWidget(use_seed_);
+  //seed_layout->addWidget(seed_);
+  //seed_layout->addStretch();
   truncate_layout->addWidget(truncate_);
   truncate_layout->addStretch();  
   parameters_layout->addLayout(parameters_);
@@ -146,7 +146,7 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   inputs_layout->addLayout(sim_type_layout);
   inputs_layout->addLayout(parameters_layout);
   inputs_layout->addLayout(truncate_layout);
-  inputs_layout->addLayout(seed_layout);
+  //inputs_layout->addLayout(seed_layout);
   inputs_layout->addStretch();
   
   layout->addLayout(inputs_layout);
@@ -158,8 +158,8 @@ DabaghiDerKiureghianPulse::DabaghiDerKiureghianPulse(
   this->setLayout(layout);
 
   // Connect slots
-  connect(use_seed_, &QRadioButton::toggled, this,
-          &DabaghiDerKiureghianPulse::provideSeed);
+  //connect(use_seed_, &QRadioButton::toggled, this,
+ //         &DabaghiDerKiureghianPulse::provideSeed);
 }
 
 bool DabaghiDerKiureghianPulse::outputToJSON(QJsonObject& jsonObject) {
@@ -190,12 +190,14 @@ bool DabaghiDerKiureghianPulse::outputToJSON(QJsonObject& jsonObject) {
 
   jsonObject.insert("truncate", truncate_->isChecked());
 
-  if (use_seed_->isChecked()) {
-    jsonObject.insert("seed", seed_->value());
-  } else {
-    jsonObject.insert("seed", "None");
-  }
-  
+//  if (use_seed_->isChecked()) {
+//    jsonObject.insert("seed", seed_->value());
+//  } else {
+//    jsonObject.insert("seed", "None");
+//  }
+
+  jsonObject.insert("seed", "RV.StochasticSeed");
+
   return result;
 }
 
@@ -235,21 +237,21 @@ bool DabaghiDerKiureghianPulse::inputFromJSON(QJsonObject& jsonObject) {
     truncate_->setChecked(false);    
   }
 
-  if (jsonObject.value("seed").isString()) {
-    use_seed_->setChecked(false);    
-  } else {
-    use_seed_->setChecked(true);
-    seed_->setValue(jsonObject.value("seed").toInt());    
-  }
+//  if (jsonObject.value("seed").isString()) {
+//    use_seed_->setChecked(false);
+//  } else {
+//    use_seed_->setChecked(true);
+//    seed_->setValue(jsonObject.value("seed").toInt());
+//  }
 
   return result;
 }
 
-void DabaghiDerKiureghianPulse::provideSeed(const bool& checked) {
-  if (checked) {
-    seed_->setEnabled(true);
-  } else {
-    seed_->setEnabled(false);
-    seed_->setValue(500);
-  }
-}
+//void DabaghiDerKiureghianPulse::provideSeed(const bool& checked) {
+//  if (checked) {
+//    seed_->setEnabled(true);
+//  } else {
+//    seed_->setEnabled(false);
+//    seed_->setValue(500);
+//  }
+//}

@@ -98,11 +98,11 @@ class DabaghiDerKiureghianPulse : public StochasticModelWidget {
   bool outputToJSON(QJsonObject& rvObject) override;
 
  public slots:
-  /**
-   * Update ability to provide seed based on changed status of radio button
-   * @param[in] checked Current status of radio button for providing seed
-   */
-  void provideSeed(const bool& checked);
+//  /**
+//   * Update ability to provide seed based on changed status of radio button
+//   * @param[in] checked Current status of radio button for providing seed
+//   */
+//  void provideSeed(const bool& checked);
 
  protected:
   QLabel* model_description_; /**< Brief description of model indicating relevant
@@ -124,9 +124,9 @@ class DabaghiDerKiureghianPulse : public StochasticModelWidget {
   QRadioButton* truncate_;   /**< Radio button to indicate whether synthetic
                                 motion should be truncated and baseline corrected
                               */
-  QSpinBox* seed_;           /**< Value to use as seed for motion generation */
-  QRadioButton* use_seed_;   /**< Radio button to indicate whether specific seed
-                                value should be used */
+//  QSpinBox* seed_;           /**< Value to use as seed for motion generation */
+//  QRadioButton* use_seed_;   /**< Radio button to indicate whether specific seed
+//                                value should be used */
   QFormLayout* parameters_;  /**< Widget for inputting model parameters */
   QLabel* directivity_params_; /**< Image showing directivity parameters */
 };
