@@ -158,7 +158,7 @@ Run the Analysis and Process Results
 
       * 1-PFA-0-1 : **peak floor acceleration** at the **ground floor**, **component 1** (x-dir)
       * 1-PFD-1-2 : **peak floor displacement** (respective to the ground) at the **1st floor** ceiling, **component 2** (y-dir)
-      * 1-PID-3-1 : **peak inter-story drift ratio** of the **1st floor**, **component 1** (x-dir)   
+      * 1-PID-3-1 : **peak inter-story drift ratio** of the **3rd floor**, **component 1** (x-dir)   
       * 1-PRD-1-1 : **peak roof drift ratio**, **component 1** (x-dir)   
 
 7. Two Goodness-of-fit measures are provided : Inter-quartile ratio (IQR) and normality (Cramer-Von Mises test) score. Using the leave-one-out cross-validation predictions, the IQR provides the ratio of the sample QoIs that lies in 25-75% LOOCV prediction bounds (interquartile range). The IQR values should theoretically approach 0.5 if the prediction is accurate.

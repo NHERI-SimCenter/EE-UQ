@@ -116,7 +116,7 @@ class StochasticMotionInput : public SimCenterAppWidget {
    * Emit change in model selection
    * @param[in] model String name currently selected model
    */
-  void modelSelectionChanged(const QString& model);
+  void modelSelectionChanged(int model);
 
  private:
   RandomVariablesContainer* rv_input_widget_; /**< Widget for inputting random

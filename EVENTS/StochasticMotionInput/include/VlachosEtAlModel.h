@@ -53,6 +53,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Forward declarations
 class LineEditRV;
+class SC_CheckBox;
 class QFormLayout;
 class QJsonObject;
 class QLabel;
@@ -102,7 +103,7 @@ class VlachosEtAlModel : public StochasticModelWidget {
    * Update ability to provide seed based on changed status of radio button
    * @param[in] checked Current status of radio button for providing seed
    */
-  void provideSeed(const bool& checked);
+  //void provideSeed(const bool& checked);
 
  protected:
   QLabel* model_description_; /**< Brief description of model indicating relevant
@@ -111,9 +112,10 @@ class VlachosEtAlModel : public StochasticModelWidget {
   LineEditRV * moment_magnitude_; /**< Moment magnitude of event */
   LineEditRV * rupture_dist_; /**< Closest-to-site rupture distance */
   LineEditRV * vs30_; /**< Average shear-wave velocity for the upper 30-m depth (Vs30) */
-  QSpinBox * seed_; /**< Value to use as seed for motion generation */
-  QRadioButton* use_seed_; /**< Radio button to indicate whether specific seed
-                              value should be used */
+  SC_CheckBox * protectModelCheckBox; /**Give error when the model input exceed the validated range **/
+//  QSpinBox * seed_; /**< Value to use as seed for motion generation */
+//  QRadioButton* use_seed_; /**< Radio button to indicate whether specific seed
+//                              value should be used */
   QFormLayout* parameters_; /**< Widget for inputting model parameters */
 };
 

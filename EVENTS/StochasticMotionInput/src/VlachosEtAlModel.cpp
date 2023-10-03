@@ -49,7 +49,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <RandomVariablesContainer.h>
 #include <SimCenterWidget.h>
-
+#include <SC_CheckBox.h>
 #include "VlachosEtAlModel.h"
 
 VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
@@ -60,13 +60,15 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
   moment_magnitude_ = new LineEditRV(random_variables); moment_magnitude_->setText("7.0");
   rupture_dist_ = new LineEditRV(random_variables); rupture_dist_->setText("40.0");
   vs30_ = new LineEditRV(random_variables); vs30_->setText("500.0");
-  seed_ = new QSpinBox();
-  seed_->setMinimum(1);
-  seed_->setMaximum(2147483647);
-  seed_->setValue(500);  
-  seed_->setEnabled(false);
-  use_seed_ = new QRadioButton("Provide seed value");
-  use_seed_->setChecked(true);
+  protectModelCheckBox = new SC_CheckBox("protectModel", "Throw an error when the model inputs exceed the validated range M>7.5, R<5 km", true);
+//  protectModelCheckBox->setStyleSheet("QCheckBox {color: grey}");
+//  seed_ = new QSpinBox();
+//  seed_->setMinimum(1);
+//  seed_->setMaximum(2147483647);
+//  seed_->setValue(500);
+//  seed_->setEnabled(false);
+//  use_seed_ = new QRadioButton("Provide seed value");
+//  use_seed_->setChecked(true);
   parameters_ = new QFormLayout();
   parameters_->addRow(new QLabel(tr("Moment Magnitude")), moment_magnitude_);
   parameters_->addRow(new QLabel(tr("Closest-to-Site Rupture Distance [km]")),
@@ -74,34 +76,35 @@ VlachosEtAlModel::VlachosEtAlModel(RandomVariablesContainer* random_variables,
   parameters_->addRow(
       new QLabel(tr("Average shear-wave velocity for top 30 meters [m/s]")),
       vs30_);
+  parameters_->addRow(new QLabel(tr("Protect Model")), protectModelCheckBox);
 
   // Add description label
   model_description_ = new QLabel(
-      tr("This model implements the method described in Vlachos et\nal. (2018) "
-         "- \"Predictive model for site specific simulation of\nground motions "
+      tr("This model implements the method described in Vlachos et al. (2018)\n "
+         "- \"Predictive model for site specific simulation of ground motions \n"
          "based on earthquake scenarions\""));
   //model_description_->setStyleSheet("QLabel { color : gray; }");
 
   // Construct required layouts
   QVBoxLayout* layout = new QVBoxLayout();
-  QHBoxLayout* seed_layout = new QHBoxLayout();
+  //QHBoxLayout* seed_layout = new QHBoxLayout();
   QHBoxLayout* parameters_layout = new QHBoxLayout();
 
   // Add widgets to layouts and layouts to this
-  seed_layout->addWidget(use_seed_);
-  seed_layout->addWidget(seed_);
-  seed_layout->addStretch();
+  //seed_layout->addWidget(use_seed_);
+  //seed_layout->addWidget(seed_);
+  //seed_layout->addStretch();
   parameters_layout->addLayout(parameters_);
   parameters_layout->addStretch();
   layout->addWidget(model_description_);
   layout->addLayout(parameters_layout);
-  layout->addLayout(seed_layout);
+  //layout->addLayout(seed_layout);
   layout->addStretch();
   this->setLayout(layout);
 
   // Connect slots
-  connect(use_seed_, &QRadioButton::toggled, this,
-          &VlachosEtAlModel::provideSeed);
+  //connect(use_seed_, &QRadioButton::toggled, this,
+  //        &VlachosEtAlModel::provideSeed);
 }
 
 bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
@@ -110,12 +113,15 @@ bool VlachosEtAlModel::outputToJSON(QJsonObject& jsonObject) {
   moment_magnitude_->outputToJSON(jsonObject, QString("momentMagnitude"));
   rupture_dist_->outputToJSON(jsonObject, QString("ruptureDist"));
   vs30_->outputToJSON(jsonObject, QString("vs30"));
-  
-  if (use_seed_->isChecked()) {
-    jsonObject.insert("seed", seed_->value());
-  } else {
-    jsonObject.insert("seed", "None");
-  }
+  jsonObject.insert("seed", "RV.StochasticSeed");
+  protectModelCheckBox->outputToJSON(jsonObject);
+
+    //if (use_seed_->isChecked()) {
+    //jsonObject.insert("seed", seed_->value());
+
+    //  } else {
+    //    jsonObject.insert("seed", "None");
+    //  }
   
   return result;
 }
@@ -126,22 +132,22 @@ bool VlachosEtAlModel::inputFromJSON(QJsonObject& jsonObject) {
   moment_magnitude_->inputFromJSON(jsonObject, QString("momentMagnitude"));
   rupture_dist_->inputFromJSON(jsonObject, QString("ruptureDist"));
   vs30_->inputFromJSON(jsonObject, QString("vs30"));
-
-  if (jsonObject.value("seed").isString()) {
-    use_seed_->setChecked(false);    
-  } else {
-    use_seed_->setChecked(true);
-    seed_->setValue(jsonObject.value("seed").toInt());    
-  }
+  protectModelCheckBox->inputFromJSON(jsonObject);
+//  if (jsonObject.value("seed").isString()) {
+//    use_seed_->setChecked(false);
+//  } else {
+//    use_seed_->setChecked(true);
+//    seed_->setValue(jsonObject.value("seed").toInt());
+//  }
 
   return result;
 }
 
-void VlachosEtAlModel::provideSeed(const bool& checked) {
-  if (checked) {
-    seed_->setEnabled(true);
-  } else {
-    seed_->setEnabled(false);
-    seed_->setValue(500);
-  }
-}
+//void VlachosEtAlModel::provideSeed(const bool& checked) {
+//  if (checked) {
+//    seed_->setEnabled(true);
+//  } else {
+//    seed_->setEnabled(false);
+//    seed_->setValue(500);
+//  }
+//}

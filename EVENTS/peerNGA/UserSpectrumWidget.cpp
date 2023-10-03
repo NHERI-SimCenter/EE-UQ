@@ -97,7 +97,7 @@ void UserSpectrumWidget::loadSpectrum(QString spectrumfilepath)
     auto numRows = rowLines.size();
     if(numRows == 0)
     {
-        qDebug()<<"Error in parsing the .csv file "<<tmpFile <<" in UserDefinedDatabase::parseCSV file";
+        qDebug()<<"Error in parsing the .csv file "<<tmpFile.fileName() <<" in UserDefinedDatabase::parseCSV file";
         return;
     }
     int row_num = 0;
@@ -113,7 +113,7 @@ void UserSpectrumWidget::loadSpectrum(QString spectrumfilepath)
             {
                 // try spacings
                 separator = "\\s+";
-                tmpData = it.split(QRegExp(separator));
+                tmpData = it.split(QRegularExpression(separator));
             }
             auto tmpT = tmpData.at(0).toDouble();
             auto tmpSa = tmpData.at(1).toDouble();

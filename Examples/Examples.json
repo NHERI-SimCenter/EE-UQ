@@ -53,5 +53,11 @@
       "description": "This example uses pre-trained GP to obtain statistic for seismic structural responses.",
       "inputFile": "eeuq-0010/src/input.json"
     }
+    ,
+    {
+      "name": "E11: Multi-fidelity Monte Carlo",
+      "description": "This example uses low-fidelity model to inform high-fidelity response statistics",
+      "inputFile": "eeuq-0011/src/input.json"
+    }
   ]
 }

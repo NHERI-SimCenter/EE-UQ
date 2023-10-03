@@ -77,7 +77,7 @@ private:
 
     // periods
     QLineEdit *periodsLineEdit;
-    QRegExpValidator *LEValidator;
+    QRegularExpressionValidator *LEValidator;
     QList<double> periodArray;
 
     // run
