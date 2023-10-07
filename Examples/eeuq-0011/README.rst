@@ -91,7 +91,7 @@ Both models have spatial dimensions of 2 and have 3 degrees of freedom per node.
 
    .. note::   
 
-      In case the structural models have uncertain parameters, the current implementation of MFMC requires the two models to share the same random variables as input. For example, if the floor height is the input random variable of the high-fidelity model, the low-fidelity model should also have the floor height as input. In this example, the structure is considered deterministic, and only the uncertainty in the ground motion model (moment magnitude and random time history) is considered.
+      In case the structural models have uncertain parameters, MFMC requires the two models to share the same random variables as input. For example, if the floor height is the input random variable of the high-fidelity model, the low-fidelity model should also have the floor height as input. In this example, the structure is considered deterministic, and only the uncertainty in the ground motion model (moment magnitude and random time history) is considered.
 
 
 4. In **EVT tab**, **Stochastic Ground Motion** option is selected. In particular, **Vlachos et al. (2018)** is selected among alternatives. Let us assume the Moment Magnitude is a random variable by putting the letter ``M`` instead of a number. The random distribution can be specified later in the **RV tab**
