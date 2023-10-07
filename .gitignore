@@ -63,7 +63,6 @@ postprocessDAKOTA
 *.pyc
 *.autosave
 debug.log
-*.json
 MDOF_BuildingModelToSAM
 tmp.SimCenter
 build
