@@ -1,0 +1,1 @@
+{"Application": "OpenSees-Simulation", "algorithm": "Newton", "analysis": "Transient -numSubLevels 2 -numSubSteps 10", "convergenceTest": "NormUnbalance 1.0e-2 10", "dampingModel": "Rayleigh Damping", "firstMode": 1, "integration": "Newmark 0.5 0.25", "modalRayleighTangentRatio": 0, "numModesModal": -1, "rayleighTangent": "Initial", "secondMode": -1, "solver": "Umfpack"}

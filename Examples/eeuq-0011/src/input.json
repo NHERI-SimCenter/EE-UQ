@@ -1,0 +1,241 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "StochasticGroundMotion",
+                "ApplicationData": {
+                    "modelName": "VlachosSiteSpecificEQ",
+                    "seed": "RV.StochasticSeed"
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Modeling"
+            }
+        },
+        "Simulation": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Simulation"
+            }
+        },
+        "UQ": {
+            "Application": "SimCenter-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "modelName": "Vlachos et al. (2018)",
+            "momentMagnitude": "RV.M",
+            "protectModel": false,
+            "ruptureDist": 40,
+            "seed": "RV.StochasticSeed",
+            "type": "StochasticMotion",
+            "vs30": 500
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 3,
+        "PlanArea": 14400,
+        "StructureType": "RM1",
+        "YearBuilt": 1990,
+        "depth": 120,
+        "height": 39,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 14400,
+        "stories": 3,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 120
+    },
+    "MFres": {
+    },
+    "Modeling": {
+        "modelToRun": "RV.MultiModel-Modeling",
+        "models": [
+            {
+                "Application": "OpenSeesInput",
+                "ApplicationData": {
+                    "fileName": "benchmark_9st_model.tcl",
+                    "filePath": "{Current_Dir}/model1"
+                },
+                "belief": 1,
+                "data": {
+                    "dampingRatio": 0.02,
+                    "ndf": 3,
+                    "ndm": 2,
+                    "randomVar": [
+                        {
+                            "name": "eqScale",
+                            "value": "RV.eqScale"
+                        }
+                    ],
+                    "responseNodes": [
+                        7,
+                        13,
+                        19,
+                        25,
+                        31,
+                        37,
+                        43,
+                        49,
+                        55,
+                        61
+                    ],
+                    "type": "OpenSeesInput"
+                }
+            },
+            {
+                "Application": "OpenSeesInput",
+                "ApplicationData": {
+                    "fileName": "Alt_ROM_Simulation_BoucWen_Drift.tcl",
+                    "filePath": "{Current_Dir}/model2"
+                },
+                "belief": 1,
+                "data": {
+                    "dampingRatio": 0.02,
+                    "ndf": 3,
+                    "ndm": 2,
+                    "randomVar": [
+                    ],
+                    "responseNodes": [
+                        10,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9
+                    ],
+                    "type": "OpenSeesInput"
+                }
+            }
+        ]
+    },
+    "Simulation": {
+        "modelToRun": "RV.MultiModel-Simulation",
+        "models": [
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Rayleigh Damping",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0,
+                    "numModesModal": -1,
+                    "rayleighTangent": "Initial",
+                    "secondMode": -1,
+                    "solver": "Umfpack"
+                }
+            },
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Rayleigh Damping",
+                    "fileName": "AnalysisScript.tcl",
+                    "filePath": "{Current_Dir}/model2",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0,
+                    "numModesModal": -1,
+                    "rayleighTangent": "Initial",
+                    "secondMode": -1,
+                    "solver": "Umfpack"
+                }
+            }
+        ]
+    },
+    "UQ": {
+        "samplingMethodData": {
+            "advancedCheckBox": true,
+            "logTransform": true,
+            "maxTime": 60,
+            "method": "Multi-fidelity Monte Carlo",
+            "numPilot": 30,
+            "seed": 30
+        },
+        "uqType": "Forward Propagation"
+    },
+    "correlationMatrix": [
+        1
+    ],
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "a": 5.25,
+            "b": 7.2,
+            "distribution": "Truncated exponential",
+            "inputType": "Parameters",
+            "lambda": 2.0723,
+            "name": "M",
+            "refCount": 1,
+            "value": "RV.M",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsMFSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir_surrogate"
+}

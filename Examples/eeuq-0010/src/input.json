@@ -1,0 +1,819 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "SurrogateEDP",
+            "ApplicationData": {
+                "EDP": [
+                    {
+                        "length": 1,
+                        "name": "1-PFA-0-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-0-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-1-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-1-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-1-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-1-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PID-1-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-2-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-2-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-2-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-2-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PID-2-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-3-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFA-3-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-3-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PFD-3-2",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PID-3-1",
+                        "type": "scalar"
+                    },
+                    {
+                        "length": 1,
+                        "name": "1-PRD-1-1",
+                        "type": "scalar"
+                    }
+                ]
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake",
+                "subtype": "PEER NGA Records"
+            }
+        ],
+        "Modeling": {
+            "Application": "SurrogateGPBuildingModel",
+            "ApplicationData": {
+                "MS_Path": "C:/Users/SimCenter/Sangri/build-EE-UQ-Desktop_Qt_5_15_0_MSVC2019_64bit-Debug/Debug/Examples/eeuq-0010/src",
+                "mainScript": "SimGpModel.json",
+                "postprocessScript": ""
+            },
+            "femOption": "continue",
+            "gpSeed": 1,
+            "predictionOption": "Random sample under prediction uncertainty",
+            "type": "SurrogateGPBuildingModel",
+            "varThres": 0
+        },
+        "Simulation": {
+            "Application": "SurrogateSimulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "SurrogateEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 8.8354,
+                            "fileName": "RSN1_HELENA.A_A-HMC180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 8.8354,
+                            "fileName": "RSN1_HELENA.A_A-HMC270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-1",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 1.7271,
+                            "fileName": "RSN6_IMPVALL.I_I-ELC180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 1.7271,
+                            "fileName": "RSN6_IMPVALL.I_I-ELC270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-6",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.6795,
+                            "fileName": "RSN14_KERN_SBA042.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.6795,
+                            "fileName": "RSN14_KERN_SBA132.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-14",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.0095,
+                            "fileName": "RSN15_KERN_TAF021.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.0095,
+                            "fileName": "RSN15_KERN_TAF111.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-15",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.364,
+                            "fileName": "RSN20_NCALIF.FH_H-FRN044.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.364,
+                            "fileName": "RSN20_NCALIF.FH_H-FRN314.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-20",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 4.4392,
+                            "fileName": "RSN26_HOLLISTR_B-HCH181.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 4.4392,
+                            "fileName": "RSN26_HOLLISTR_B-HCH271.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-26",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 1.4901,
+                            "fileName": "RSN30_PARKF_C05085.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 1.4901,
+                            "fileName": "RSN30_PARKF_C05355.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-30",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.5667,
+                            "fileName": "RSN31_PARKF_C08050.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.5667,
+                            "fileName": "RSN31_PARKF_C08320.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-31",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 2.6898,
+                            "fileName": "RSN33_PARKF_TMB205.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 2.6898,
+                            "fileName": "RSN33_PARKF_TMB295.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-33",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 5.2577,
+                            "fileName": "RSN34_NCALIF.AG_C-FRN224.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 5.2577,
+                            "fileName": "RSN34_NCALIF.AG_C-FRN314.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-34",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 7.5423,
+                            "fileName": "RSN36_BORREGO_A-ELC180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 7.5423,
+                            "fileName": "RSN36_BORREGO_A-ELC270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-36",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.4985,
+                            "fileName": "RSN50_LYTLECR_WTW115.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.4985,
+                            "fileName": "RSN50_LYTLECR_WTW205.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-50",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 1.8635,
+                            "fileName": "RSN57_SFERN_ORR021.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 1.8635,
+                            "fileName": "RSN57_SFERN_ORR291.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-57",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.6311,
+                            "fileName": "RSN68_SFERN_PEL090.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.6311,
+                            "fileName": "RSN68_SFERN_PEL180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-68",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.9584,
+                            "fileName": "RSN70_SFERN_L01021.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.9584,
+                            "fileName": "RSN70_SFERN_L01111.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-70",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 5.2109,
+                            "fileName": "RSN71_SFERN_L12021.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 5.2109,
+                            "fileName": "RSN71_SFERN_L12291.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-71",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 6.3689,
+                            "fileName": "RSN72_SFERN_L04111.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 6.3689,
+                            "fileName": "RSN72_SFERN_L04201.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-72",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 15.0072,
+                            "fileName": "RSN73_SFERN_L09021.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 15.0072,
+                            "fileName": "RSN73_SFERN_L09291.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-73",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 0.5218,
+                            "fileName": "RSN77_SFERN_PUL164.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 0.5218,
+                            "fileName": "RSN77_SFERN_PUL254.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-77",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 4.7767,
+                            "fileName": "RSN78_SFERN_PDL120.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 4.7767,
+                            "fileName": "RSN78_SFERN_PDL210.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-78",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 5.2148,
+                            "fileName": "RSN79_SFERN_PAS000.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 5.2148,
+                            "fileName": "RSN79_SFERN_PAS090.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-79",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 6.4692,
+                            "fileName": "RSN80_SFERN_PSL180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 6.4692,
+                            "fileName": "RSN80_SFERN_PSL270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-80",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 9.103,
+                            "fileName": "RSN81_SFERN_PPP000.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 9.103,
+                            "fileName": "RSN81_SFERN_PPP270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-81",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 15.774,
+                            "fileName": "RSN87_SFERN_SAD003.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 15.774,
+                            "fileName": "RSN87_SFERN_SAD273.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-87",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 7.3858,
+                            "fileName": "RSN88_SFERN_FSD172.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 7.3858,
+                            "fileName": "RSN88_SFERN_FSD262.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-88",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 7.5442,
+                            "fileName": "RSN93_SFERN_WND143.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 7.5442,
+                            "fileName": "RSN93_SFERN_WND233.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-93",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 1.2243,
+                            "fileName": "RSN95_MANAGUA_A-ESO090.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 1.2243,
+                            "fileName": "RSN95_MANAGUA_A-ESO180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-95",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 2.2497,
+                            "fileName": "RSN96_MANAGUA_B-ESO090.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 2.2497,
+                            "fileName": "RSN96_MANAGUA_B-ESO180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-96",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 4.867,
+                            "fileName": "RSN97_PTMUGU_PHN180.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 4.867,
+                            "fileName": "RSN97_PTMUGU_PHN270.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-97",
+                    "type": "PeerEvent"
+                },
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": 3.5777,
+                            "fileName": "RSN99_HOLLISTR_A-HCH181.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        },
+                        {
+                            "dirn": 2,
+                            "factor": 3.5777,
+                            "fileName": "RSN99_HOLLISTR_A-HCH271.AT2",
+                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.myVYOn"
+                        }
+                    ],
+                    "name": "PEER-Record-99",
+                    "type": "PeerEvent"
+                }
+            ],
+            "TargetSpectrum": {
+                "Edition": "2014 v4.2.0 (Dynamic)",
+                "ReturnPeriod": "2475",
+                "SpectrumType": "Uniform Hazard Spectrum (USGS NSHMP)",
+                "Vs30": "760 (B/C)"
+            },
+            "components": "SRSS",
+            "distanceMax": "",
+            "distanceMin": "",
+            "distanceRange": false,
+            "durationMax": "",
+            "durationMin": "",
+            "durationRange": false,
+            "faultType": "All Types",
+            "magnitudeMax": "",
+            "magnitudeMin": "",
+            "magnitudeRange": false,
+            "periodPoints": "0.5, 0.5",
+            "pulse": "All",
+            "records": "30",
+            "scaling": "Single Period",
+            "singlePeriod": "0.5",
+            "type": "ExistingPEER_Events",
+            "vs30Max": "",
+            "vs30Min": "",
+            "vs30Range": false,
+            "weights": "1.0,1.0"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 3,
+        "PlanArea": 129600,
+        "StructureType": "RM1",
+        "YearBuilt": 1990,
+        "depth": 360,
+        "height": 432,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 129600,
+        "stories": 3,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Modeling": {
+    },
+    "Simulation": {
+        "Application": "SurrogateSimulation"
+    },
+    "UQ": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 30,
+            "seed": 413
+        },
+        "saveWorkDir": true,
+        "uqType": "Forward Propagation"
+    },
+    "correlationMatrix": [
+        1
+    ],
+    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 120,
+            "name": "K",
+            "refCount": 5,
+            "stdDev": 5,
+            "value": "RV.K",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir"
+}
