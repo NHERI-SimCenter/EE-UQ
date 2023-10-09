@@ -210,7 +210,7 @@
             "logTransform": true,
             "maxTime": 60,
             "method": "Multi-fidelity Monte Carlo",
-            "numPilot": 40,
+            "numPilot": 30,
             "seed": 30
         },
         "uqType": "Forward Propagation"
@@ -221,8 +221,8 @@
     "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
     "randomVariables": [
         {
-            "a": 6,
-            "b": 8,
+            "a": 5.25,
+            "b": 7.2,
             "distribution": "Truncated exponential",
             "inputType": "Parameters",
             "lambda": 2.0723,
