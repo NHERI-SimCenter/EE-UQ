@@ -24,6 +24,7 @@ RUN apt-get update \
     && sudo add-apt-repository -y  ppa:beineri/opt-qt-5.15.2-bionic \
     && sudo apt update \
     && sudo apt-get install -y build-essential freeglut3-dev python3-pip git \
+    && sudo python3 -m pip install -U pip \
     && pip3 install conan==1.60.1 \
     && sudo apt-get install -y qt515base qt5153d qt515charts-no-lgpl qt515webengine
 
@@ -32,9 +33,9 @@ RUN apt-get update \
 #
 
 RUN  source /opt/qt515/bin/qt515-env.sh \
-    && git clone -b $versionSimCenterCommon https://github.com/NHERI-SimCenter/SimCenterCommon.git \
+    && git clone -b $versionSimCenterCommon --single-branch https://github.com/NHERI-SimCenter/SimCenterCommon.git \
     && git clone https://github.com/NHERI-SimCenter/QS3hark.git \    
-    && git clone -b $versionEE https://github.com/NHERI-SimCenter/EE-UQ.git \
+    && git clone -b $versionEE --single-branch https://github.com/NHERI-SimCenter/EE-UQ.git \
     && cd EE-UQ \
     && mkdir build \
     && cd build \
@@ -143,7 +144,5 @@ RUN strip --remove-section=.note.ABI-tag /opt/qt515/lib/libQt5Core.so.5
 #
 
 RUN useradd -ms /bin/bash simcenter
-
-COPY ./tacc/run1.sh /simcenter/run.sh
 
 USER simcenter
