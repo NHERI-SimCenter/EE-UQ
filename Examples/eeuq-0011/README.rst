@@ -17,7 +17,7 @@ This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short 
 
 
 .. [Ohtori2004]
-   Ohtori Y, Christenson R, Spencer B Jr, Dyke S (2004) Benchmark control problems for seismically excited nonlinear buildings. *J Eng Mech* 130(4):366–385
+   Ohtori Y, Christenson R, Spencer B Jr, Dyke S (2004) Benchmark control problems for seismically excited nonlinear buildings. *J Eng Mech* 130(4):366-385
 
 .. [Patsialis2023]
    Patsialis, D., Taflanidis, A. A., & Vamvatsikos, D. (2023). Improving the computational efficiency of seismic building-performance assessment through reduced order modeling and multi-fidelity Monte Carlo techniques. *Bulletin of Earthquake Engineering*, 21(2), 811-847.
