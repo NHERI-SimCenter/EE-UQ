@@ -2,13 +2,13 @@
 AutoSDA and Nonlinear Response Analysis
 =========================================
 
-This example demonstrate the use of a python-based computation platform to automate seismic desing and analysis of 
+This example demonstrates the use of a Python-based computation platform to automate seismic design and analysis of 
 of steel moment resisting frames (**AutoSDA**) ([GBS20]_).
    
-Design and create numerical model
+Design and create a numerical model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Navigate to the **SIM** tab in the left menu. In is panel, select the **Steel Building Model** as the 
+1. Navigate to the **SIM** tab in the left menu. In this panel, select the **Steel Building Model** as the 
    **Building Model Generator**. In the user interface, five major input sections: (1) 
    Building Information, (2) ELF Parameters, (3) Member Depth, (4) Loading, and (5) Building Data Files. 
 
@@ -19,7 +19,7 @@ Design and create numerical model
    :figclass: align-center
 
 2. In the Building Information section, we define the number of stories of the example steel moment frame to 3 and 
-   the uniform story height to 13.0 ft. There are 4 bays in both horizontal directions with the uniform bay width 
+   the uniform story height to 13.0 ft. There are 4 bays in both horizontal directions with a uniform bay width 
    of 30 ft. 
 
 .. figure:: figures/bim.png
@@ -38,9 +38,9 @@ Design and create numerical model
    :width: 400
    :figclass: align-center
 
-4. In the Member Depth section, users can specify cross sections in the the table list
+4. In the Member Depth section, users can specify cross sections in the table list
    for the interior columns, exterior columns, and beams. Starting from top to bottom, each row 
-   corresponding to one story from bottom story to top story. In this example, we simplify all columns to have 
+   corresponds to one story from bottom story to top story. In this example, we simplify all columns to have 
    the same :math:`W14` section, and use three sections for beams.
 
 .. figure:: figures/mem.png
@@ -63,7 +63,7 @@ Design and create numerical model
    files in the user-defined location (:download:`ELFParameters.csv <src/ELFParameters.csv>`, 
    :download:`Geometry.csv <src/Geometry.csv>`, :download:`Loads.csv <src/Loads.csv>`, and 
    :download:`MemberDepth.csv <src/MemberDepth.csv>`). These four files store the data from the four discussed 
-   sections above. Users can also directly modified these data tables. 
+   sections above. Users can also directly modify these data tables. 
 
 .. figure:: figures/bdf.png
    :name: fig_bdf
@@ -76,13 +76,13 @@ Select and scale ground motion records
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Navigate to the **EVT** panel and select the **PEER NGA Records** as the **Load Generator**. We can use the 
-   **Uniform Hazard Spectrum** as an example target spectrum here. We can specify the site lcoation, the 
-   site class (D) and return period (2500 years). Then on the left panel, please specify the number of records with optional 
+   **Uniform Hazard Spectrum** as an example target spectrum here. We can specify the site location, the 
+   site class (D) and the return period (2500 years). Then on the left panel, please specify the number of records with optional 
    filters on the earthquake magnitude, site-source distance, and :math:`V_{S30}`.
 
 2. In the **Scaling** panel, we could use the **Minimize MSE** as the **Scaling Method** which will compute and 
    minimize the mean standard error between the average response spectrum and the target spectrum. You can specify 
-   a set of periods and corresponding error-calucation weights.
+   a set of periods and corresponding error-calculation weights.
 
 .. note::
 
@@ -94,7 +94,7 @@ Select and scale ground motion records
 
 4. Once set up the configurations above, please click the **Select Records** which will connect the `PEER NGA West 
    Ground Motion Database <https://ngawest2.berkeley.edu/users/sign_in?unauthenticated=true>`_. You could use your 
-   account and password to login and execute the selection and scaling.
+   account and password to log in and execute the selection and scaling.
 
 .. figure:: figures/evt.png
    :name: fig_evt
@@ -103,7 +103,7 @@ Select and scale ground motion records
    :figclass: align-center
 
 
-Run the analysis and postprocess results
+Run the analysis and post-process results
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Navigate to the **UQ** panel, use the default **Forward Propagation** method with the **# Sample** same as 
@@ -116,7 +116,7 @@ Run the analysis and postprocess results
    :figclass: align-center
 
 2. Next click on the **Run** button. This will cause the backend application to launch the analysis. When done 
-   the **RES** panel will be selected and the results will be displayed. The results show the values the mean 
+   the **RES** panel will be selected and the results will be displayed. The results show the values of the mean 
    and standard deviation as before but now only for the one quantity of interest.
 
 .. figure:: figures/res.png

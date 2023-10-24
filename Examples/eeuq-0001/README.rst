@@ -5,7 +5,7 @@
 Shear Building: Sampling, Reliability and Sensitivity
 =====================================================
 
-Consider the problem of uncertainty quantification in a three story shear building
+Consider the problem of uncertainty quantification in a three-story shear building
 
 .. figure:: figures/model.png
    :align: center
@@ -14,7 +14,7 @@ Consider the problem of uncertainty quantification in a three story shear buildi
 
    Three Story Shear Building Model (P10.2.9, "Dynamics of Structures", A.K.Chopra)
 
-The structure has uncertain properties that all follow normal distribution:
+The structure has uncertain properties that all follow a normal distribution:
 
 #. Weight of Typical Floor (``w``): mean :math:`\mu_E=100 \mathrm{kip}` and standard deviation :math:`\sigma_E =10 \mathrm{kip}` (COV = 10%)
 #. Weight of Roof (``wR``): mean :math:`\mu_E=50 \mathrm{kip}` and standard deviation :math:`\sigma_E =5 \mathrm{kip}` (COV = 10%)
@@ -33,7 +33,7 @@ The exercise will use both the MDOF, :ref:`lblMDOFSIM`,  and OpenSees, :ref:`lbl
 
 .. warning::
 
-   Do not place the file in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing this file multiple times (a copy will be made for each sample specified). If you are like us, your root, Downloads or Documents folders contains and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!
+   Do not place the file in your root, downloads, or desktop folder as when the application runs it will copy the contents on the directories and subdirectories containing this file multiple times (a copy will be made for each sample specified). If you are like us, your root, Downloads or Documents folders contain and awful lot of files and when the backend workflow runs you will slowly find you will run out of disk space!
 
 Sampling Analysis with El Centro
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -55,7 +55,7 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 	      
 2. The **GI** panel will not be used for this run; For the time being leave the default values as is, and they will be automatically updated based on the information entered in the remaining tabs.
 
-3. Next select the **SIM** panel from the input panel. This will default in the MDOF model generator. We will use this generator (the NOTE below contains instruction on how to use the OpenSees script instead). In the building information panel, specify number of stories as **3** (this will change the graphic). Also in the Building information frame specify **w** for the floor weights and **k** for story stiffness. Finally in the table below, go to the third row and enter **wR** for the roof weight (you will notice that when you enter that table cell the node at the top of the model will turn red, indicating you are editing the information for the top most node).
+3. Next select the **SIM** panel from the input panel. This will default in the MDOF model generator. We will use this generator (the NOTE below contains instructions on how to use the OpenSees script instead). In the building information panel, specify the number of stories as **3** (this will change the graphic). Also in the Building information frame specify **w** for the floor weights and **k** for story stiffness. Finally, in the table below, go to the third row and enter **wR** for the roof weight (you will notice that when you enter that table cell the node at the top of the model will turn red, indicating you are editing the information for the top most node).
 
 .. figure:: figures/shearSIM.png
    :align: center
@@ -63,13 +63,13 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 
 .. note::
 
-   To specify instead to use the OpenSees script, from the **Model Generator** pull down menu select **OpenSees**. For the fields in the panel presented enter the path to the ``ShearBuilding3d.tcl`` script. Also specify three Response Nodes as **1 2 3 4** in the panel. This field will tell the model generator which nodes correspond to nodes at the four floor levels at which responses are to be obtained when using the standard earthquake EDPs.
+   To specify instead to use the OpenSees script, from the **Model Generator** pull-down menu select **OpenSees**. For the fields in the panel presented enter the path to the ``ShearBuilding3d.tcl`` script. Also, specify three Response Nodes as **1 2 3 4** in the panel. This field will tell the model generator which nodes correspond to nodes at the four-floor levels at which responses are to be obtained when using the standard earthquake EDPs.
 
    .. figure:: figures/shearSIM-OpenSees.png
       :align: center
       :figclass: align-center
 
-4. Next select the **EVT** panel. From the **Load Generator** pull down menu select the **Multiple PEER** option. This will present a panel with three buttons: **Add**, **Remove** and **Load Directory**. Click the **Add** button. Give the motion a name, here enter ``elCentro`` in the first line edit. Now for the motion, enter the path to the ``elCentro.AT2`` motion. Leave the motion acting in the **1** dof direction and for the scale factor in this direction, enter **factorEC**.
+4. Next select the **EVT** panel. From the **Load Generator** pull-down menu select the **Multiple PEER** option. This will present a panel with three buttons: **Add**, **Remove** and **Load Directory**. Click the **Add** button. Give the motion a name, here enter ``elCentro`` in the first line edit. Now for the motion, enter the path to the ``elCentro.AT2`` motion. Leave the motion acting in the **1** dof direction and for the scale factor in this direction, enter **factorEC**.
 
 .. figure:: figures/shearEVT.png
    :align: center
@@ -90,10 +90,10 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
       :figclass: align-center
 
 
-6. We will skip the **EDP** panel leaving it in it's default condition, that being to use the **Standard Earthquake** EDP generator.
+6. We will skip the **EDP** panel leaving it in its default condition, that being to use the **Standard Earthquake** EDP generator.
 
 
-7. For the **RV** panel, we will enter the distributions and values for our random variables. Because of the steps we have followed and entries we have made, when this tab is opened it should contain the four random variables and they should all be set constant. For the ``w``, ``wR`` and ``k`` random variables we change the distributions to normal and enter the values given for the problem, as shown in figure below. For the ``factorEC`` variable, change the distribution to **uniform** and enter the values in the figure.
+7. For the **RV** panel, we will enter the distributions and values for our random variables. Because of the steps we have followed and entries we have made, when this tab is opened it should contain the four random variables and they should all be set constant. For the ``w``, ``wR`` and ``k`` random variables we change the distributions to normal and enter the values given for the problem, as shown in the figure below. For the ``factorEC`` variable, change the distribution to **uniform** and enter the values in the figure.
 
 .. figure:: figures/shearRV.png
    :align: center
@@ -103,19 +103,19 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 
    The user cannot leave any of the distributions for these values as constant for the Dakota UQ engine.
 
-8. Next click on the **Run** button. This will cause the backend application to launch Dakota. When the analysis is complete the **RES** tab will be selected and the results will be displayed. The results show the values for the mean and standard deviation. The relative displacement of the roof is the quantity **1-PFD-3-1**. This identifier signifies the first event, 3rd floor (in the US the ground floor is considered 0), and first dof direction.
+8. Next click on the **Run** button. This will cause the backend application to launch Dakota. When the analysis is complete the **RES** tab will be selected and the results will be displayed. The results show the values for the mean and standard deviation. The relative displacement of the roof is the quantity **1-PFD-3-1**. This identifier signifies the first event, 3rd floor (in the US the ground floor is considered 0), and the first dof direction.
 
 .. figure:: figures/shearRES1.png
    :align: center
    :figclass: align-center
 
-If the user selects the **Data** tab in the **RES** panel, they will be presented with both a graphical plot and a tabular listing of the data. By left- and right-clicking with the mouse in the individual columns the axis changes (left mouse click controls vertical axis, right mouse click the horizontal axis).
+If the user selects the **Data** tab in the **RES** panel, they will be presented with both a graphical plot and a tabular listing of the data. By left- and right-clicking with the mouse in the individual columns the axis changes (the left mouse click controls the vertical axis, right mouse clicks the horizontal axis).
 
 .. figure:: figures/shearRES7.png
    :align: center
    :figclass: align-center
 
-Various views of the graphical display can be obtained by left- and right-clicking in the columns of the tabular data. If a singular column of the tabular data is selected with both right and left mouse buttons, a frequency and CDF plot will be displayed, as shown in figure below.
+Various views of the graphical display can be obtained by left- and right-clicking in the columns of the tabular data. If a singular column of the tabular data is selected with both right and left mouse buttons, a frequency and CDF plot will be displayed, as shown in the figure below.
 
 .. figure:: figures/shearRES6.png
    :align: center
@@ -125,11 +125,11 @@ Various views of the graphical display can be obtained by left- and right-clicki
 Sampling Analysis with ElCentro and Reduced Output
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the previous example we got the standard output, which can be both a lot and also limited (in sense you don't get the information you want). In this example we will present how to obtain results just for the roof displacement, the displacement of node **4** in both the **MDOF** and **OpenSees** model generator examples. The examples could be extended to output for example the story shear forces, element forces, element end rotations, ...
+In the previous example we got the standard output, which can be both a lot and also limited (in the sense you don't get the information you want). In this example we will present how to obtain results just for the roof displacement, the displacement of node **4** in both the **MDOF** and **OpenSees** model generator examples. The examples could be extended to output for example the story shear forces, element forces, element end rotations, ...
 
 For this example you will need two additional file `recorderCommands.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/recorderCommands.tcl>`_ and `postprocess.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/postprocess.tcl>`_. 
 
-The ``recorderCommands.tcl`` script as shown below will record the envelope displacements in the first two degrees-of-freedom for nodes **1** through **4**. 
+The ``recorderCommands.tcl`` script as shown below will record the envelope displacements in the first two degrees of freedom for nodes **1** through **4**. 
 
 .. literalinclude:: recorderCommands.tcl
    :language: tcl
@@ -141,21 +141,21 @@ The postprocess.tcl script shown below will accept as input any of the 4 nodes *
 
 .. note::
 
-   The use has the option to provide no postprocess script (in which case the main script must create a ``results.out`` file containing a single line with as many space separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. An example of a postprocessing Python script is `postprocess.py <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/examples/ShearBuilding3/postprocess.py>`_. 
+   The user has the option to provide no postprocess script (in which case the main script must create a ``results.out`` file containing a single line with as many space-separated numbers as QoI or the user may provide a Python script that also performs the postprocessing. An example of a postprocessing Python script is `postprocess.py <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/examples/ShearBuilding3/postprocess.py>`_. 
 
    .. literalinclude:: postprocess.py
       :language: python
 
-The steps are the same as the previous example, with exception of step 4 defining the **EDP**. 5. 
+The steps are the same as the previous example, with the exception of step 4 defining the **EDP**. 5. 
 
-1. For the **EDP** panel, we will change the generator to **User Defined**. In the panel that presents itself the user must provide the paths to both the recorder commands and the postprocessing script. Next the user must provide information on the response parameters they are interested in. The user presses the **Add** button and the enters ``Node_4_Disp_1`` in the entry field as shown in figure below.
+1. For the **EDP** panel, we will change the generator to **User Defined**. In the panel that presents itself the user must provide the paths to both the recorder commands and the postprocessing script. Next, the user must provide information on the response parameters they are interested in. The user presses the **Add** button and enters ``Node_4_Disp_1`` in the entry field as shown in the figure below.
 
 .. figure:: figures/shearEDP-U.png
    :align: center
    :figclass: align-center
 
 
-2. Next click on the **Run** button. This will cause the backend application to launch dakota. When done the **RES** panel will be selected and the results will be displayed. The results show the values the mean and standard deviation as before but now only for the one quantity of interest.
+2. Next click on the **Run** button. This will cause the backend application to launch dakota. When done the **RES** panel will be selected and the results will be displayed. The results show the values of the mean and standard deviation as before but now only for the one quantity of interest.
 
 .. figure:: figures/shearRES-UO.png
    :align: center
@@ -165,9 +165,9 @@ The steps are the same as the previous example, with exception of step 4 definin
 Global Sensitivity
 ^^^^^^^^^^^^^^^^^^
 
-In a global sensitivity analysis the user is wishing to understand what is the influence of the individual random variables on the quantities of interest. This is typically done before the user launches large scale forward uncertainty problems in order to limit the number of random variables used so as to limit the number of simulations performed.
+In a global sensitivity analysis, the user wishes to understand what is the influence of the individual random variables on the quantities of interest. This is typically done before the user launches large-scale forward uncertainty problems in order to limit the number of random variables used so as to limit the number of simulations performed.
 
-To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the global reliability method for this problem the user would follow the same sequence of steps as previously. The difference would be in the **UQ** panel in which the user would select a **Reliability** as the Dakota Method Category and then choose GLobal reliability. In the figure the user is specifying that they are interested in the probability that the displacement will exceed certain response levels.
+To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the global reliability method for this problem the user would follow the same sequence of steps as previously. The difference would be in the **UQ** panel in which the user would select a **Reliability** as the Dakota Method Category and then choose GLobal reliability. In the figure, the user is specifying that they are interested in the probability that the displacement will exceed certain response levels.
 
 
 .. figure:: figures/shearSensitivityUQ.png
@@ -180,12 +180,12 @@ After the user fills in the rest of the tabs as per the previous section, the us
    :align: center
    :figclass: align-center
 
-The results showing that the earthquake factor has the largest influence on the response followed  by the stiffness value k, as the results graphically would indicate.
+The results showing that the earthquake factor has the largest influence on the response followed by the stiffness value k, as the results graphically would indicate.
 
 Reliability Analysis
 ^^^^^^^^^^^^^^^^^^^^
 
-If the user is interested in the probability that certain response measure will be exceeded an alternative strategy is to perform a reliability analysis. To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the Global Reliability method presented in Dakota choose the **Global Reliability** methods from the methods drop down menu. In the response levels enter a value of **2.5**, specifying that we are interested in the value of the CDF for a displacement of the roof of 2.5in, i.e. what is probability that displacement will be less than 2.5in.
+If the user is interested in the probability that certain response measures will be exceeded an alternative strategy is to perform a reliability analysis. To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the Global Reliability method presented in Dakota choose the **Global Reliability** methods from the methods drop-down menu. In the response levels enter a value of **2.5**, specifying that we are interested in the value of the CDF for a displacement of the roof of 2.5in, i.e. what is the probability that displacement will be less than 2.5in.
 
 
 .. figure:: figures/shearReliabilityUQ.png

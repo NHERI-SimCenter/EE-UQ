@@ -35,7 +35,7 @@ Set Up Forward Propagation Configuration
 Define Target Structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-2. The **GI tab** is kept as default. (GI tab is not used when surrogate model is used in SIM tab)
+2. The **GI tab** is kept as default. (GI tab is not used when a surrogate model is used in SIM tab)
 
 3. In **SIM tab**, the surrogate model (.json) trained in :ref:`Example 09<eeuq-0009>` is imported as shown in the figure.
 
@@ -56,7 +56,7 @@ Define Target Structure
 Select Ground Motions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-4. In **EVT tab**, **PEER NGA ground motion records** option is selected. Let us consider the site of interest located at (37.8715, -122.273), of which we would like to select ground motions that follows USGS Uniform Hazard Spectrum (2014 v4.2.0) with return period 2475. Vs30 is assumed 760 m/s. Let us select 30 ground motion time histories that match this spectrum by clicking **Select records** button. The target response spectrum curve and the selected ground motions will be displayed on the right-hand side panel as shown below.
+4. In **EVT tab**, **PEER NGA ground motion records** option is selected. Let us consider the site of interest located at (37.8715, -122.273), of which we would like to select ground motions that follow USGS Uniform Hazard Spectrum (2014 v4.2.0) with return period 2475. Vs30 is assumed 760 m/s. Let us select 30 ground motion time histories that match this spectrum by clicking **Select records** button. The target response spectrum curve and the selected ground motions will be displayed on the right-hand side panel as shown below.
 
       .. figure:: figures/EE10_EVT1.png
          :name: UQ inputs
@@ -164,7 +164,7 @@ Run the Analysis and Process Results
 
    .. note::
 
-         The user can interact with the plot as following.
+         The user can interact with the plot as follows.
 
          - Windows: left-click sets the Y axis (ordinate).  right-click sets the X axis (abscissa).
          - MAC: fn-clink, option-click, and command-click all set the Y axis (ordinate).  ctrl-click sets the X axis (abscissa).
@@ -186,7 +186,7 @@ Run the Analysis and Process Results
 
          Comparing median of log-EDP
 
-The same comparison in the original scale shown below.
+The same comparison in the original scale is shown below.
 
    .. figure:: figures/EE10_RES4_2.png
          :name: UQ inputs
@@ -196,7 +196,7 @@ The same comparison in the original scale shown below.
 
          Comparison of log-standard deviation
 
-On the other hand, log-standard deviation of the EDPs from 30 samples are obtained as below.
+On the other hand, the log-standard deviation of the EDPs from 30 samples is obtained as below.
 
    .. figure:: figures/EE10_RES4_3.png
          :name: UQ inputs
@@ -204,6 +204,6 @@ On the other hand, log-standard deviation of the EDPs from 30 samples are obtain
          :width: 700
          :figclass: align-center
 
-         Comparing standard deviation of log-EDP
+         Comparing the standard deviation of log-EDP
 
-The estimated medians of EDPs from the surrogate and the original model show in general good agreement. The standard deviation of the surrogate model is larger partly because of the added uncertainty in surrogate model approximation. The difference in the statistics may also attribute to the small sample size of 30.
+The estimated medians of EDPs from the surrogate and the original model show in general good agreement. The standard deviation of the surrogate model is larger partly because of the added uncertainty in the surrogate model approximation. The difference in the statistics may also be attributed to the small sample size of 30.
