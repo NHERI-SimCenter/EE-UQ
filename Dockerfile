@@ -86,7 +86,7 @@ RUN wget https://github.com/snl-dakota/dakota/releases/download/v6.15.0/dakota-6
 #    note: need newer gcc, gcc-10 which necessitates removing old conan 
 #
 
-RUN git -b $versionSimCenterBackend clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git \
+RUN git clone -b $versionSimCenterBackend https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git \
     && cp ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt.UBUNTU ./SimCenterBackendApplications/modules/performUQ/SimCenterUQ/nataf_gsa/CMakeLists.txt \
     && rm -fr ~/.conan \
     && sudo apt-get install -y liblapack-dev libomp-dev libssl-dev apt-transport-https ca-certificates \        
