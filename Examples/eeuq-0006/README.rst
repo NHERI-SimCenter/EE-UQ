@@ -5,11 +5,11 @@ Surrogate Model for Structural Response Prediction (Probabilistic Learning on Ma
 One essential step in seismic structural performance assessment is evaluating structural responses 
 under earthquake ground motion inputs. The typical workflow is demonstrated in `Example 4.3 
 <https://nheri-simcenter.github.io/EE-UQ-Documentation/common/user_manual/examples/desktop/eeuq-0003/README.html>`_.
-The trade-off between computational efficiency and accuracy is one of major challenges in problems that 
-requires large number of time history analyses (e.g., risk analysis, structural optimization). One 
+The trade-off between computational efficiency and accuracy is one of the major challenges in problems that 
+require a large number of time history analyses (e.g., risk analysis, and structural optimization). One 
 possible solution is using surrogate models (e.g., response surface, kriging). The surrogate models are first 
 trained for interested responses given a set of relatively expensive simulations. The resulting models can then be 
-applied to predic new realizations more efficiently.
+applied to predict new realizations more efficiently.
 
 This example demonstrates using a novel method, Probabilistic Learning on Manifolds (PLoM) [Soize2016]_, to develop surrogate models 
 for structural responses under earthquake ground motion inputs.
@@ -17,8 +17,8 @@ for structural responses under earthquake ground motion inputs.
 Configure UQ Engine
 ^^^^^^^^^^^^^^^^^^^^^
 
-1. Navigate to the **UQ** tab in the left menu. In is panel, select the **SimCenterUQ** as the 
-   **UQ Engine**. In the **SimCenterUQ Method Category**, select tehe **PLoM Model** method. There are
+1. Navigate to the **UQ** tab in the left menu. In this panel, select the **SimCenterUQ** as the 
+   **UQ Engine**. In the **SimCenterUQ Method Category**, select the **PLoM Model** method. There are
    two options for defining a training dataset, **Import Data File** and **Sampling and Simulation**. We 
    start with **Sampling and Simulation** here while the former will be introduced later. **LHS** is 
    used as the sampling method with 20 samples (corresponding to the 20 ground motions in the run). And we 
@@ -63,7 +63,7 @@ Configure Structural Analysis
    :width: 600
    :figclass: align-center
 
-3. For the **FEM** and **EDP** panels, we use defualt setups to analyze the structural model and record the 
+3. For the **FEM** and **EDP** panels, we use default setups to analyze the structural model and record the 
    standard earthquake EDPs, i.e., peak displacement, drift ratio, and acceleration demands.
 
 .. figure:: figures/fem.png
@@ -82,7 +82,7 @@ Configure Structural Analysis
    files in the user-defined location (:download:`ELFParameters.csv <src/ELFParameters.csv>`, 
    :download:`Geometry.csv <src/Geometry.csv>`, :download:`Loads.csv <src/Loads.csv>`, and 
    :download:`MemberDepth.csv <src/MemberDepth.csv>`). These four files store the data from the four discussed 
-   sections above. Users can also directly modified these data tables. 
+   sections above. Users can also directly modify these data tables. 
 
 .. figure:: figures/bdf.png
    :name: fig_bdf
@@ -90,7 +90,7 @@ Configure Structural Analysis
    :width: 600
    :figclass: align-center
 
-Run the analysis and postprocess results
+Run the analysis and post-process results
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Next click on the **Run** button. This will call the backend application to launch the analysis. When done 
@@ -110,7 +110,7 @@ Run the analysis and postprocess results
    :width: 400
    :figclass: align-center
 
-2. One could save the PLoM model by clicking on **Save PLoM Model** - a HDF-formatted database along with supplemental 
+2. One could save the PLoM model by clicking on **Save PLoM Model** - an HDF-formatted database along with supplemental 
    files will be stored in the user-defined directory. The saved model can be imported for generating new realizations 
    which will be introduced in a second.
 
@@ -128,7 +128,7 @@ Run the analysis and postprocess results
    :width: 600
    :figclass: align-center
 
-4. The two figures below compares the data scatter plots between the simulation samples (training set) and 
+4. The two figures below compare the data scatter plots between the simulation samples (training set) and 
    surrogate samples (prediction set) which are in good agreement.
 
 .. figure:: figures/res_comp1.png

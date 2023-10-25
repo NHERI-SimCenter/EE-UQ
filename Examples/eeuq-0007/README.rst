@@ -2,8 +2,8 @@
 Target Spectrum by Surrogate Hazard GP Model
 ==============================================
 
-In some cases, users may want to specify target response spectrum in ground motion selection using pre-trained surrogate
-hazard model. This example demonstrates using quoFEM-trained Gaussian Process hazard model to get target response spectrum 
+In some cases, users may want to specify the target response spectrum in ground motion selection using a pre-trained surrogate
+hazard model. This example demonstrates using quoFEM-trained Gaussian Process hazard model to get a target response spectrum 
 at a specific site location in San Francisco Bay Area given the seismicity from the Hayward Fault.
    
 Pre-trained Gaussian Process Surrogate Model
@@ -25,7 +25,7 @@ Pre-trained Gaussian Process Surrogate Model
    `quoFEM <https://nheri-simcenter.github.io/quoFEM-Documentation/common/user_manual/usage/desktop/SimCenterUQSurrogate.html>`_ 
    to train a GP model where the Longitude and Latitude are input variables and the median response spectrum 
    at that site location is the output. The training takes about 25 sec and shows good performance and accuracy in the 
-   cross validation. The trained mdoel is saved into two files (:download:`SimGpModel.json <./src/SimGpModel.json>` and 
+   cross-validation. The trained model is saved into two files (:download:`SimGpModel.json <./src/SimGpModel.json>` and 
    :download:`SimGpModel.pkl <./src/SimGpModel.pkl>`) for the use in EE-UQ.
 
 .. figure:: figures/trainingConfig.png
@@ -49,7 +49,7 @@ Configure Surrogate Target Spectrum
 2. Click **Choose** buttons to select and load the **SimGpModel.json** and **SimGpModel.pkl** files as the 
    hazard surrogate GP model.
 
-3. In the **Intensity Measure Periods (sec):** textbox, fill in the periods for the response spectral acceleartions which 
+3. In the **Intensity Measure Periods (sec):** textbox, fill in the periods for the response spectral accelerations which 
    are "0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 3, 4, 5, 7.5, 10" in this example.
 
 4. Two random variables ("RV_column1" and "RV_column2") are automatically populated from the loaded surrogate model, and 
@@ -61,12 +61,12 @@ Configure Surrogate Target Spectrum
    :width: 600
    :figclass: align-center
 
-5. Once above configurations are set up, click **Get Spectrum** button which will launch backend surrogate applications 
+5. Once the above configurations are set up, click **Get Spectrum** button which will launch backend surrogate applications 
    to predict the response spectrum at the provided location. Note although this example shows the application for 
-   predicting response spectrum at a given location, the surrogate model can be trained on other input variables (not necessarily 
-   to be Longitude and Latitude).
+   predicting the response spectrum at a given location, the surrogate model can be trained on other input variables (not necessarily 
+   Longitude and Latitude).
 
-6. Once the prediction completed, the Target Spectrum widget will automatically switch to **User Specified** option with the 
+6. Once the prediction is completed, the Target Spectrum widget will automatically switch to **User Specified** option with the 
    tabulated response spectrum predicted for the given input variables.
 
 .. figure:: figures/resSpectrum.png
@@ -109,8 +109,8 @@ Select Ground Motion and Run Analysis
    :width: 600
    :figclass: align-center
 
-3. By clicking **Run** button, one could launch the analysis and the application will automatically switch to the **RES** tab 
-   once the analysis completed. One could navigate to the **Data Value** panel to visualize and save the new realizations.
+3. By clicking **Run** button, one can launch the analysis and the application will automatically switch to the **RES** tab 
+   once the analysis is completed. One could navigate to the **Data Value** panel to visualize and save the new realizations.
 
 .. figure:: figures/res1.png
    :name: fig_res_data

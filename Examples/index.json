@@ -306,6 +306,10 @@
         "eeuq-0011/figures/ee11_SIM1.png",
         "eeuq-0011/figures/ee11_SIM2.png",
         "eeuq-0011/figures/ee11_UQ.png",
+        "eeuq-0011/figures/ee11_res1_seed3.svg",
+        "eeuq-0011/figures/ee11_res2_seed3.svg",
+        "eeuq-0011/figures/ee11_res1_seed30.svg",
+        "eeuq-0011/figures/ee11_res2_seed30.svg",
         "eeuq-0011/README.rst"
       ],
       "entry_point": "eeuq-0011/./input.json",
