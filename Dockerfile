@@ -29,7 +29,7 @@ RUN apt-get update \
     && sudo apt-get install -y qt515base qt5153d qt515charts-no-lgpl qt515webengine
 
 #
-# Build the EE-UQ frontend
+# Build the EE-UQ frontend & copy tacc config.json
 #
 
 RUN  source /opt/qt515/bin/qt515-env.sh \
@@ -42,7 +42,8 @@ RUN  source /opt/qt515/bin/qt515-env.sh \
     && qmake ../EE-UQ.pro \
     && make \
     && rm -fr .obj \
-    && cd ../..
+    && cp ../tacc/config.json ./ \
+    && cd ../.. 
 
 
 #
