@@ -1,0 +1,7 @@
+{
+    "screenSize":"fullScreen",
+    "helpLocation":{
+	"position":"Right"
+    },
+    "handleWorkDirsOnExit":"zipThem"
+}
