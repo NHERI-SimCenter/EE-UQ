@@ -171,4 +171,4 @@ distinct characteristics of pulse-like and non-pulse-like records.
    Vlachos, C., Papakonstantinou, K. G., & Deodatis, G. (2018). Predictive model for site specific simulation of ground motions based on earthquake scenarios. Earthquake Engineering & Structural Dynamics, 47(1), 195-218.
 
 .. [DD18]
-Dabaghi, M., & Der Kiureghian, A. (2018). Simulation of orthogonal horizontal components of near‐fault ground motion for specified earthquake source and site characteristics. Earthquake Engineering & Structural Dynamics, 47(6), 1369-1393.
+Dabaghi, M., & Der Kiureghian, A. (2018). Simulation of orthogonal horizontal components of near-fault ground motion for specified earthquake source and site characteristics. Earthquake Engineering & Structural Dynamics, 47(6), 1369-1393.

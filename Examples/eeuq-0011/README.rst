@@ -4,7 +4,7 @@ Multi-fidelity Monte Carlo Simulation
 ===========================================================================================================
 
 
-This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short tool id|. The high- and low-fidelity building models of a benchmark 9-story steel structure ([Ohtori2004]_) is used for the demonstration, following the implementation in ([Patsialis2023]_). 
+This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short tool id|. The high- and low-fidelity building models of a benchmark 9-story steel structure ([Ohtori2004]_) are used for the demonstration, following the implementation in ([Patsialis2023]_). 
 
 
       .. figure:: figures/ee11_main.png
@@ -17,7 +17,7 @@ This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short 
 
 
 .. [Ohtori2004]
-   Ohtori Y, Christenson R, Spencer B Jr, Dyke S (2004) Benchmark control problems for seismically excited nonlinear buildings. *J Eng Mech* 130(4):366–385
+   Ohtori Y, Christenson R, Spencer B Jr, Dyke S (2004) Benchmark control problems for seismically excited nonlinear buildings. *J Eng Mech* 130(4):366-385
 
 .. [Patsialis2023]
    Patsialis, D., Taflanidis, A. A., & Vamvatsikos, D. (2023). Improving the computational efficiency of seismic building-performance assessment through reduced order modeling and multi-fidelity Monte Carlo techniques. *Bulletin of Earthquake Engineering*, 21(2), 811-847.
@@ -25,10 +25,10 @@ This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short 
 Target structure
 ^^^^^^^^^^^^^^^^^^^^
 
-The target structure is a nine-story moment-resisting five-bay frame with a total height 37.19 m and length 45.73 m. 
+The target structure is a nine-story moment-resisting five-bay frame with a total height of 37.19 m and a length of 45.73 m. 
 
 The 
-`High-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1>`_ (main script: `benchmark_9st_model.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1/benchmark_9st_model.tcl>`_) is a nonlinear finite element model developed in OpenSees. Material characteristics are: modulus of elasticity E=1.99 105 MPa for both beams and columns, yield stress for the columns 345 MPa and 248 MPa for the beams using values proposed in [Ohtori2004]_. For modeling material inelastic behavior, the Giufre'-Menegotto-Pinto model with isotropic strain hardening is chosen for the steel fibers. The fundamental period is 2.274 sec, and under Rayleigh damping assumption, the damping ratio is selected as 2% for 1st and 3rd modes.
+`High-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1>`_ (main script: `benchmark_9st_model.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1/benchmark_9st_model.tcl>`_) is a nonlinear finite element model developed in OpenSees. Material characteristics are modulus of elasticity E=1.99 105 MPa for both beams and columns, yield stress for the columns 345 MPa and 248 MPa for the beams using values proposed in [Ohtori2004]_. For modeling material inelastic behavior, the Giufre'-Menegotto-Pinto model with isotropic strain hardening is chosen for the steel fibers. The fundamental period is 2.274 sec, and under the Rayleigh damping assumption, the damping ratio is selected as 2% for the 1st and 3rd modes.
 
 The `Low-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2>`_ (main script: `Alt_ROM_Simulation_BoucWen_Drift.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2/Alt_ROM_Simulation_BoucWen_Drift.tcl>`_) is the reduced-order model (ROM) of the high-fidelity model. The detailed development procedures can be found in [Patsialis2020A]_ and [Patsialis2020B]_. As promoted in the papers, Bouc-Wen hysteretic model is chosen for the nonlinear connections of the ROM. The parameters of the ROM are chosen to minimize the error from the high-fidelity response, where three ground motion records are used to generate the reference high-fidelity prediction and optimize low-fidelity predictions.
 
@@ -54,11 +54,11 @@ Procedure
 
          UQ tab 
 
-   Let us set the maximum computation time to be 60 mins. Random seed can be any positive integer and is only for reproducibility purposes. Check the **Advanced Options** and set the minimum number of simulations to 40. Additionally, the the statistics will be estimated in a log scale by checking **perform log-transform** check box.
+   Let us set the maximum computation time to be 60 minutes. Random seed can be any positive integer and is only for reproducibility purposes. Check the **Advanced Options** and set the minimum number of simulations to 30. Additionally, the the statistics will be estimated in a log scale by checking **perform log-transform** check box.
 
    .. note::   
 
-      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 40 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time. 
+      Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 30 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time.
 
 
 2. The **GI tab** is kept as default. (GI tab is not used when opensees models are imported in SIM tab)
@@ -87,7 +87,7 @@ Both models have spatial dimensions of 2 and have 3 degrees of freedom per node.
 
    .. note::   
 
-      To run MFMC, it is important to make sure the two models have the exact same number of **response nodes**, and each of these nodes should have one-to-one match between the two models.
+      To run MFMC, it is important to make sure the two models have the exact same number of **response nodes**, and each of these nodes should have a one-to-one match between the two models.
 
    .. note::   
 
@@ -168,7 +168,7 @@ Run the Analysis
 
          RES tab - summary of response statistics
 
-   The results additionally show **Speed Up** factors by comparing the total analysis time with the expected analysis time required to get the same precision of the estimator using only the high-fidelity simulations. The computation time per model evaluation is "wall-clock" time, and because the example is computed using 8 processors, the actual analysis time of each model in a single processor is 8 times longer.
+   The results additionally show **Speed Up** factors by comparing the total analysis time with the expected analysis time required to get the same precision of the estimator using only the high-fidelity simulations. Note that the elapsed analysis time (65 mins) exceeded the specified max computation time (60 mins) by 10% for the reasons explained earlier in this page. The computation time per model evaluation is "wall-clock" time, and because the example is computed using 8 processors, the actual analysis time of each model in a single processor is 8 times longer.
 
 10. In the "Data Values" tab, one can plot the histogram and cumulative density function (CDF) of the samples, as well as scatter plots between the input and output of surrogate predictions. Using this feature, one can draw a scatter plot between low- and high-fidelity model responses. This is useful because it gives intuition on how informative the low-fidelity model run is.
 
@@ -182,7 +182,45 @@ Run the Analysis
 
    .. note::
 
-         The user can interact with the plot as following.
+         The user can interact with the plot as follows.
 
          - Windows: left-click sets the Y axis (ordinate).  right-click sets the X axis (abscissa).
          - MAC: fn-clink, option-click, and command-click all set the Y axis (ordinate).  ctrl-click sets the X axis (abscissa).
+
+Comparison to High-fidelity-only and low-fidelity-only simulations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Only for validation purposes, high-fidelity simulations are performed 1000 times and the resulting statistics (reference) are compared with the above multifidelity (MF) estimates. Recall that the estimation was based on 32 high-fidelity (HF) simulations and 1027 low-fidelity (LF) simulations.  
+
+   .. figure:: figures/ee11_res1_seed30.svg
+         :name: UQ inputs
+         :align: center
+         :width: 100%
+         :figclass: align-center
+ 
+   .. figure:: figures/ee11_res2_seed30.svg
+         :name: UQ inputs
+         :align: center
+         :width: 100%
+         :figclass: align-center
+
+         Error in MF, HF-only, and LF-only estimations of the first- and second-order moments. MF effectively reduces the sample variability observed in HF-only estimates and corrects the bias in LF-only estimates (Seed = 30).
+
+The presented error (y-axis) is the absolute un-normalized difference between the reference and the estimated moments. Note that **the large errors in HF results are attributed to sample variability originating from the small sample size. As more HF simulations are performed, HF error will approach zero.** On the other hand, the errors in LF results are attributed to inherent bias, and therefore, it is not likely to be reduced by adding more samples. Meanwhile, MF results successfully correct the bias in the LF estimations, by additionally utilizing the 32 HF simulation samples. To emphasize the different nature of the errors observed in HF and LF estimates (i.e., the former representing sample variability and the latter representing inherent model bias), the Multi-fidelity Monte Carlo is performed once more with a different initial random seed (seed is specified in the  UQ Tab). The corresponding validation results are presented below. 
+
+   .. figure:: figures/ee11_res1_seed3.svg
+         :name: UQ inputs
+         :align: center
+         :width: 100%
+         :figclass: align-center
+
+  
+   .. figure:: figures/ee11_res2_seed3.svg
+         :name: UQ inputs
+         :align: center
+         :width: 100%
+         :figclass: align-center
+
+         Error in MF, HF, and LF estimations. MF reduces the sample variability observed in HF and corrects the bias in LF estimation (Seed = 3).
+
+Note that the level of error observed in the LF model (green) is almost consistent in the two analyses, while HF error (orange) is highly dependent on the sample quality. 
