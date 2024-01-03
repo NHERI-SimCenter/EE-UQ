@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.4.0");
+    QCoreApplication::setApplicationVersion("3.4.1");
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -195,10 +195,11 @@ int main(int argc, char *argv[])
         a.setStyleSheet(file.readAll());
         file.close();
     } else {
-        qDebug() << "could not open stylesheet";
+      qDebug() << "could not open stylesheet";
     }
 
     //Setting Google Analytics Tracking Information
+    /* *******************************************************
     GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
     GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
     GoogleAnalytics::CreateSessionId();
@@ -210,7 +211,7 @@ int main(int argc, char *argv[])
     view.resize(1024, 750);
     view.show();
     view.hide();
-    /* ******************************************************************* */
+    ******************************************************************* */
     
     //
     // exe application event-loop
