@@ -3,20 +3,19 @@
 appName="EE-UQ"
 appFile="EE_UQ.app"
 dmgFile="EE-UQ_Mac_Download.dmg"
+APP_NAME="EE_UQ"
+DMG_FILE_NAME="${APP_NAME}-MacDownload.dmg"
+VOLUME_NAME="${APP_NAME}"
+SOURCE_FOLDER_PATH="app"
 
 QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 
-pathToBackendApps="/Users/fmckenna/release/SimCenterBackendApplications"
+pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
 pathToOpenSees="/Users/fmckenna/bin/OpenSees3.2.2"
 pathToDakota="/Users/fmckenna/dakota-6.12.0"
 
 #pathToPython="/Users/fmckenna/PythonEnvR2D"
 
-#
-# source userID file containig stuff dor signing, ok if not there
-#
-
-source userID.sh
 
 #
 # build it
@@ -38,7 +37,7 @@ fi
 # macdeployqt it
 #
 
-macdeployqt ./EE_UQ.app -qmldir=$HOME/release/s3hark
+macdeployqt ./EE_UQ.app -qmldir=$HOME/NHERI/QS3hark
 
 #
 # add missing files from macdeployqt (a known bug)
@@ -105,9 +104,12 @@ find ./$appFile -name __pycache__ -exec rm -rf {} +;
 
 #
 # load my credential file
-#
 
-if [ -z "$appleID" ]; then
+
+userID="../userID.sh"
+
+if [ ! -f "$userID" ]; then
+
     echo "creating dmg $dmgFile"
     rm $dmgFile
     hdiutil create $dmgFile -fs HFS+ -srcfolder ./$appFile -format UDZO -volname $appName
@@ -116,13 +118,33 @@ if [ -z "$appleID" ]; then
     exit
 fi
 
+source $userID
+echo $appleID
+
 #codesign
 echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $appFile"
 codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $appFile
 
 # create dmg
-echo "hdiutil create $dmgFile -fs HFS+ -srcfolder ./$appFile -format UDZO -volname $appName"
-hdiutil create $dmgFile -fs HFS+ -srcfolder ./$appFile -format UDZO -volname $appName
+#echo "hdiutil create $dmgFile -fs HFS+ -srcfolder ./$appFile -format UDZO -volname $appName"
+#hdiutil create $dmgFile -fs HFS+ -srcfolder ./$appFile -format UDZO -volname $appName
+mkdir app
+mv $appFile ./app
+
+create-dmg \
+  --volname "${VOLUME_NAME}" \
+  --background "../backgroundMacInstall.png" \
+  --window-pos 200 120 \
+  --window-size 550 400 \
+  --icon-size 150 \
+  --icon "${APP_NAME}.app" 150 190 \
+  --hide-extension "${APP_NAME}.app" \
+  --app-drop-link 400 185 \
+  "${DMG_FILE_NAME}" \
+  "${SOURCE_FOLDER_PATH}"
+
+mv ./app/$appFile ./
+rm -fr app
 
 #codesign dmg
 echo "codesign --force --sign "$appleCredential" $dmgFile"
