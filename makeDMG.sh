@@ -166,9 +166,10 @@ mv $APP_FILE app
 #horizontal
 create-dmg \
   --volname "${APP_NAME}" \
-  --background "../background/background5.png" \
+  --background "../background/background3.png" \
   --window-pos 200 120 \
   --window-size 600 350 \
+  --no-internet-enable \
   --icon-size 125 \
   --icon "${APP_NAME}.app" 125 130 \
   --hide-extension "${APP_NAME}.app" \
