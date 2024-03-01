@@ -1,5 +1,15 @@
 # remove & rebuild app and macdeploy it
 
+NEW_METHOD=""
+
+while [[ "${1:0:1}" = "-" ]]; do
+	case $1 in
+		--new)
+			NEW_METHOD="NEW"
+			shift; 
+	esac
+done		
+
 APP_NAME="EE_UQ"
 APP_FILE="EE_UQ.app"
 DMG_FILENAME="${APP_NAME}_Mac_Download.dmg"
@@ -7,7 +17,7 @@ DMG_FILENAME="${APP_NAME}_Mac_Download.dmg"
 QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 
 pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
-pathToOpenSees="/Users/fmckenna/bin/OpenSees3.2.2"
+pathToOpenSees="/Users/fmckenna/bin/OpenSees3.6.0"
 pathToDakota="/Users/fmckenna/dakota-6.12.0"
 
 #pathToPython="/Users/fmckenna/PythonEnvR2D"
@@ -40,13 +50,13 @@ macdeployqt ./EE_UQ.app -qmldir=$HOME/NHERI/QS3hark
 #
 
 
-mkdir -p ./$APP_FILE/Contents/plugins/renderers/
-cp -R $QTDIR/plugins/renderers/libopenglrenderer.dylib ./$APP_FILE/Contents/plugins/renderers/
+#mkdir -p ./$APP_FILE/Contents/plugins/renderers/
+#cp -R $QTDIR/plugins/renderers/libopenglrenderer.dylib ./$APP_FILE/Contents/plugins/renderers/
+#codesign --force --verbose --options=runtime  --sign "$appleCredential" ./$APP_FILE/Contents/plugins/renderers/libopenglrenderer.dylib
 
-echo "cp -R $QTDIR/plugins/renderplugins/libscene2d.dylib ./$APP_FILE/Contents/plugins/renderplugins/"
-
-mkdir -p ./$APP_FILE/Contents/plugins/renderplugins/
-cp -R $QTDIR/plugins/renderplugins/libscene2d.dylib ./$APP_FILE/Contents/plugins/renderplugins/
+#mkdir -p ./$APP_FILE/Contents/plugins/renderplugins/
+#cp -R $QTDIR/plugins/renderplugins/libscene2d.dylib ./$APP_FILE/Contents/plugins/renderplugins/
+#codesign --force --verbose --options=runtime  --sign "$appleCredential" ./$APP_FILE/Contents/plugins/renderplugins/libscene2d.dylib
 
 
 # copy applications folderm opensees and dakota
@@ -117,72 +127,83 @@ fi
 source $userID
 echo $appleID
 
-#codesign
-echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"
-codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE
 
 #
 # create dmg
 #
 
-# OLD
-#echo "hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME"
-#hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME
 
-#
-# mv app into empty folder for create-dmg to work
-# brew install create-dmg
-#
+if [[ -n "${NEW_METHOD}" && "${NEW_METHOD}" != "-null-" ]]; then
+    
+    #
+    # mv app into empty folder for create-dmg to work
+    # brew install create-dmg
+    #
 
-mkdir app
-mv $APP_FILE app
+    echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"
+    codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE    
+    
+    mkdir app
+    mv $APP_FILE app
+    
+    # swoop
+    #create-dmg \
+	#  --volname "${APP_NAME}" \
+	#  --background "../background/background1.png" \
+	#  --window-pos 200 120 \
+	#  --window-size 550 400 \
+	#  --icon-size 150 \
+	#  --icon "${APP_NAME}.app" 150 190 \
+	#  --hide-extension "${APP_NAME}.app" \
+	#  --app-drop-link 400 185 \
+	#  "${DMG_FILENAME}" \
+	#  "app"
+    
+    # vertical 
+    #create-dmg \
+	#  --volname "${APP_NAME}" \
+	#  --background "../background/background2.png" \
+	#  --window-pos 200 120 \
+	#  --window-size 475 550 \
+	#  --icon-size 150 \
+	#  --icon "${APP_NAME}.app" 235 125 \
+	#  --hide-extension "${APP_NAME}.app" \
+	#  --app-drop-link 235 400 \
+	#  "${DMG_FILENAME}" \
+	#  "app"
+    
+    #horizontal
+    ../macInstall/create-dmg \
+	--volname "${APP_NAME}" \
+	--background "../macInstall/background3.png" \
+	--window-pos 200 120 \
+	--window-size 600 350 \
+	--no-internet-enable \
+	--icon-size 125 \
+	--icon "${APP_NAME}.app" 125 130 \
+	--hide-extension "${APP_NAME}.app" \
+	--app-drop-link 450 130 \
+	--codesign $appleCredential \
+	"${DMG_FILENAME}" \
+	"app"
+    
+    #  --notarize $appleID $appleAppPassword \
+	
+    mv ./app/$APP_FILE ./
+    rm -fr app
 
-# swoop
-#create-dmg \
-#  --volname "${APP_NAME}" \
-#  --background "../background/background1.png" \
-#  --window-pos 200 120 \
-#  --window-size 550 400 \
-#  --icon-size 150 \
-#  --icon "${APP_NAME}.app" 150 190 \
-#  --hide-extension "${APP_NAME}.app" \
-#  --app-drop-link 400 185 \
-#  "${DMG_FILENAME}" \
-#  "app"
+else
 
-# vertical 
-#create-dmg \
-#  --volname "${APP_NAME}" \
-#  --background "../background/background2.png" \
-#  --window-pos 200 120 \
-#  --window-size 475 550 \
-#  --icon-size 150 \
-#  --icon "${APP_NAME}.app" 235 125 \
-#  --hide-extension "${APP_NAME}.app" \
-#  --app-drop-link 235 400 \
-#  "${DMG_FILENAME}" \
-#  "app"
+    echo "codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE"
+    codesign --deep --force --verbose --options=runtime  --sign "$appleCredential" $APP_FILE
+        
+    echo "hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME"
+    hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME
 
-#horizontal
-create-dmg \
-  --volname "${APP_NAME}" \
-  --background "../background/background3.png" \
-  --window-pos 200 120 \
-  --window-size 600 350 \
-  --no-internet-enable \
-  --icon-size 125 \
-  --icon "${APP_NAME}.app" 125 130 \
-  --hide-extension "${APP_NAME}.app" \
-  --app-drop-link 450 130 \
-  "${DMG_FILENAME}" \
-  "app"
-
-mv ./app/$APP_FILE ./
-rm -fr app
-
-#codesign dmg
-echo "codesign --force --sign "$appleCredential" $DMG_FILENAME"
-codesign --force --sign "$appleCredential" $DMG_FILENAME
+    echo "Issue: codesign --force --sign "$appleCredential" $DMG_FILENAME"
+    #codesign --force --sign "$appleCredential" $DMG_FILENAME
+    
+fi
 
 echo "Issue the following: " 
 echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$DMG_FILENAME --primary-bundle-id altool"
