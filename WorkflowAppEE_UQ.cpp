@@ -574,17 +574,6 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     
     QJsonObject citations;
 
-    QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, & Wael Elhaddad. (2023). NHERI-SimCenter/EE-UQ: Version 3.4.0 (v3.4.0). Zenodo. https:\/\/doi.org\/10.5281\/zenodo.8396128\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Mat J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389\/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
-
-    QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
-    if(!docC.isNull()) {
-      if(docC.isObject()) {
-	citations = docC.object();        
-      }  else {
-	qDebug() << "WorkflowdAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
-      }
-    }
-    
     this->createCitation(citations);
     json.insert("citations",citations);
     
@@ -647,12 +636,24 @@ WorkflowAppEE_UQ::getMaxNumParallelTasks() {
 
 int
 WorkflowAppEE_UQ::createCitation(QJsonObject &citation) {
+
+  QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, & Wael Elhaddad. (2023). NHERI-SimCenter/EE-UQ: Version 3.4.0 (v3.4.0). Zenodo. https:\/\/doi.org\/10.5281\/zenodo.8396128\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Mat J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389\/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+
+  QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
+  if(!docC.isNull()) {
+    if(docC.isObject()) {
+      citation = docC.object();        
+    }  else {
+      qDebug() << "WorkflowdAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
+    }
+  }
   
-    theSIM->outputCitation(citation);
-    theEventSelection->outputCitation(citation);
-    theAnalysisSelection->outputCitation(citation);
-    theUQ_Selection->outputCitation(citation);
-    theEDP_Selection->outputCitation(citation);
-    return 0;    
+  theSIM->outputCitation(citation);
+  theEventSelection->outputCitation(citation);
+  theAnalysisSelection->outputCitation(citation);
+  theUQ_Selection->outputCitation(citation);
+  theEDP_Selection->outputCitation(citation);
+  
+  return 0;    
 }
 
