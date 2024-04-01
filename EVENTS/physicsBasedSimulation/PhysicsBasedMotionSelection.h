@@ -1,5 +1,5 @@
-#ifndef EARTHQUAKE_EVENT_SELECTION_H
-#define EARTHQUAKE_EVENT_SELECTION_H
+#ifndef PHYSICS_BASED_MOTION_SELECTION_H
+#define PHYSICS_BASED_MOTION_SELECTION_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -47,17 +47,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 class QComboBox;
 class QStackedWidget;
-class UserDefinedApplication;
-class RockOutcrop;
-
 class RandomVariablesContainer;
 
-class EarthquakeEventSelection : public  SimCenterAppWidget
+class PhysicsBasedMotionSelection : public  SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, GeneralInformationWidget* generalInfoWidget, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
+    explicit PhysicsBasedMotionSelection(GeneralInformationWidget* generalInfoWidget, QWidget *parent = 0);
+    ~PhysicsBasedMotionSelection();
 
     bool outputToJSON(QJsonObject &rvObject);
     bool inputFromJSON(QJsonObject &rvObject);
@@ -78,17 +75,8 @@ private:
    SimCenterAppWidget *theCurrentEvent;
 
    //   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   //SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
-   SimCenterAppWidget* peerNgaRecords;
-   SimCenterAppWidget* userDefinedDatabase;
-   SimCenterAppWidget* physicsBased;  
-   RandomVariablesContainer *theRandomVariablesContainer;
+   SimCenterAppWidget *theM9;
    QString currentEventType; 
-
 };
 
-#endif // EARTHQUAKE_EVENT_SELECTION_H
+#endif // PHYSICS_BASED_MOTION_SELECTION_H
