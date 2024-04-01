@@ -83,6 +83,8 @@ public:
     void onRemoteGetButtonClicked();
     void onExitButtonClicked();
     int getMaxNumParallelTasks();
+
+    int createCitation(QJsonObject &citationToAddTo);
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
