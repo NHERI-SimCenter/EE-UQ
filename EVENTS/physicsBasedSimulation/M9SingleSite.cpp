@@ -85,7 +85,8 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   theLayout->addWidget(new QLabel("tmp Directory"),3,0);  
   tmpLocation = new SC_DirEdit("tmpLocation");
   tmpLocation->setDirName(dirPath);
-  theLayout->addWidget(tmpLocation,3,1,1,2);
+  theLayout->addWidget(tmpLocation,3,1,1,3);
+
 
   QPushButton *getMotions = new QPushButton("Get Motions");
   theLayout->addWidget(getMotions, 4,1,1,3);
@@ -93,7 +94,12 @@ M9SingleSite::M9SingleSite(QWidget *parent)
     this->downloadMotions();
   });
 
-  theLayout->setRowStretch(5,1);
+  QLabel *citation = new QLabel("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034");
+  citation->setWordWrap(true);
+  
+  theLayout->addWidget(citation, 5,0,1,4);  
+  
+  theLayout->setRowStretch(6,1);
   theLayout->setColumnStretch(1,1);
   theLayout->setColumnStretch(3,1); 
   theLayout->setColumnStretch(4,1);     
@@ -306,7 +312,11 @@ M9SingleSite::clear(void)
 bool
 M9SingleSite::outputCitation(QJsonObject &jsonObject)
 {
-  Q_UNUSED(jsonObject);
+  jsonObject.insert("citation",QString("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034"));
+  jsonObject.insert("description",QString("The ground motions used in the simulations were created as part of the M9 project led by the University of Washington. The M9 project generated a number of motions to study the  potential impacts of a magnitude 9 (M9) earthquake on the Cascadia Subduction Zone, which is located off the coast of the Pacific Northwest region of the United States"));
+
+  qDebug() << jsonObject;
+  
   return true;
 }
 

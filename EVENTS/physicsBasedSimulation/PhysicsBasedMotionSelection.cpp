@@ -273,3 +273,8 @@ PhysicsBasedMotionSelection::replyEventType(void) {
         emit typeEVT("None");
     }
 }
+
+bool
+PhysicsBasedMotionSelection::outputCitation(QJsonObject &jsonObject) {
+  theCurrentEvent->outputCitation(jsonObject);
+}

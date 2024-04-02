@@ -61,6 +61,7 @@ public:
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
     bool copyFiles(QString &destName);
+    bool outputCitation(QJsonObject &jsonObject);
 
 signals:
     void typeEVT(QString type);
