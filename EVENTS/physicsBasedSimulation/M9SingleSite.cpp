@@ -53,14 +53,14 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStringList>
 #include <SimCenterPreferences.h>
 #include <ModularPython.h>
+#include <RunPythonInThread.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
 
-
 M9SingleSite::M9SingleSite(QWidget *parent)
-  :SimCenterAppWidget(parent), count(0), ok(false)
+:SimCenterAppWidget(parent), count(0), downloadedMotions(false), motionsDownloading(false)
 {
   QGridLayout *theLayout = new QGridLayout();
   this->setLayout(theLayout);
@@ -88,7 +88,7 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   theLayout->addWidget(tmpLocation,3,1,1,3);
 
 
-  QPushButton *getMotions = new QPushButton("Get Motions");
+  getMotions = new QPushButton("Get Motions");
   theLayout->addWidget(getMotions, 4,1,1,3);
   connect(getMotions, &QPushButton::clicked, this, [=](){
     this->downloadMotions();
@@ -131,7 +131,7 @@ M9SingleSite::downloadMotions(void)
     destinationDirectory.mkpath(destDir);
 
   if (!destinationDirectory.exists()) {
-    errorMessage(QString("M9SingleSite SHOULD NOT HAPPEN BUT NO ") + destDir);
+    errorMessage(QString("a BUG in M9SingleSite as this SHOULD NOT HAPPEN .. NO directory: ") + destDir);
     return;
   }
   
@@ -187,13 +187,33 @@ M9SingleSite::downloadMotions(void)
   QStringList args; args << informationFile;
   */
   
-  ModularPython *thePythonApp = new ModularPython(tmpLocation->getDirName());
-  errorMessage("STARTING PYTHON");
-  thePythonApp->run(m9Script,args);
-  errorMessage("PYTHON DONE");  
-  delete thePythonApp;
+  // ModularPython *thePythonApp = new ModularPython(tmpLocation->getDirName());
+  // errorMessage("M9 Downloading Motions .. this takes about 3 minutes per motion!");
+  // thePythonApp->run(m9Script,args);
+  // errorMessage("M9 Motions Downloaded");
+  // delete thePythonApp;  
+
+  //
+  // run the download in a Thread using RunPythinInThread
+  //    NOTE: do not  invoke destructor .. class kills itself when python app finishes
+  //
+  
+  errorMessage("M9 Downloading Motions .. this takes about 3 minutes per motion");
+  getMotions->setEnabled(false);
+  downloadedMotions = false;
+  motionsDownloading = true;
+  RunPythonInThread *thePythonProcess = new RunPythonInThread(m9Script, args, tmpLocation->getDirName());
+  connect(thePythonProcess, &RunPythonInThread::processFinished, this, &M9SingleSite::motionsDownloaded);
+  thePythonProcess->runProcess();
 }
 
+void
+M9SingleSite::motionsDownloaded(int exitCode) {
+  motionsDownloading = false;
+  if (exitCode == 0)
+    downloadedMotions = true;
+  getMotions->setEnabled(true);
+}
 
 bool
 M9SingleSite::outputAppDataToJSON(QJsonObject &jsonObject)
@@ -251,20 +271,38 @@ M9SingleSite::inputFromJSON(QJsonObject &jsonObject)
 bool
 M9SingleSite::copyFiles(QString &destDir)
 {
+
+  //
+  // check we are not still downloading
+  //
+  
+  if (motionsDownloading == true) {
+    errorMessage(QString("M9: Motions Still Downloading"));
+    return false;
+  }
+  
   QString downloadedDir = tmpLocation->getDirName();
   QDir downloadDirectory(downloadedDir);
   QStringList motions = downloadDirectory.entryList(QStringList() << "*.json",QDir::Files);
 
   //
-  // first check we have actual files to copy
-  // 
-  if (motions.count() == 0) {
+  // ccheck we have actual files to copy
+  //
+  
+  if (downloadedMotions == false && motions.count() == 0) {
     
-    statusMessage(QString("M9 no motions Downloaded"));      
+    errorMessage(QString("M9: No motions Exist"));
+    statusMessage(QString("Return to the EVT panel and press 'Download Records' to start the download process. Then wait till downloaded appears in the program output"));    
+    return false;
+  }
+
+  else if (downloadedMotions == false) {
+    
+    statusMessage(QString("M9: No New Downloaded Motions"));      
     switch( QMessageBox::question( 
 				  this, 
 				  tr("M9"), 
-				  tr("M9 has detected that no motions exist in the tmp folder. You may have requested too many motions or you did not run the 'Select Records' after entering your search criteria. If you  trying to Run a Workflow, the workflow will FAIL to run or you will be presented with NANs (not a number) and zeroes. To select motions, return to the M8 EVENT and press the 'Download Records' Button. NOTE: The motions from present server take about 2min a record to download. Do you wish to continue anyway?"), 
+				  tr("M9 has detected that motions exist in the tmp folder, but these are old from a previous download selection. Do you wish to continue?"),
 				  QMessageBox::Yes | 
 				  QMessageBox::No,
 				  QMessageBox::Yes ) )
@@ -279,7 +317,7 @@ M9SingleSite::copyFiles(QString &destDir)
 	break;
       }
   }
-
+  
   //
   // now copy files to input_data instead of dest_dir
   //

@@ -53,6 +53,7 @@ class SC_DoubleLineEdit;
 class SC_IntLineEdit;
 class SC_DirEdit;
 class SC_ComboBox;
+class QPushButton;
 
 class M9SingleSite : public SimCenterAppWidget
 {
@@ -70,9 +71,10 @@ public:
     virtual bool outputCitation(QJsonObject &jsonObject);  
 
 signals:
-
+    
 public slots:
   void downloadMotions(void);
+  void motionsDownloaded(int returnCode);  
   
 private:
   SC_DoubleLineEdit *lat;
@@ -81,8 +83,10 @@ private:
   SC_DirEdit       *tmpLocation;
   SC_ComboBox       *gridType;
   int count;
-  bool ok;
-  
+
+  QPushButton *getMotions;
+  bool downloadedMotions;
+  bool motionsDownloading;
 };
 
 #endif // M9_SINGLE_SITE_WIDGET_H
