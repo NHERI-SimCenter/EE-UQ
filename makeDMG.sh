@@ -1,14 +1,21 @@
 # remove & rebuild app and macdeploy it
 
-NEW_METHOD=""
+#
+# parse args
+#
 
-while [[ "${1:0:1}" = "-" ]]; do
-	case $1 in
-		--new)
-			NEW_METHOD="NEW"
-			shift; 
-	esac
-done		
+DMG_METHOD="NEW"
+
+for arg in "$@"
+do
+    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
+	DMG_METHOD="OLD"
+    fi
+done
+
+#
+# Paramaters
+#
 
 APP_NAME="EE_UQ"
 APP_FILE="EE_UQ.app"
@@ -27,6 +34,7 @@ pathToDakota="/Users/fmckenna/dakota-6.12.0"
 # build it
 #
 
+rm -fr ./build/$APP_FILE ./build/$DMG_FILENAME
 ./makeEXE.sh
 cd build
 
@@ -59,7 +67,10 @@ macdeployqt ./EE_UQ.app -qmldir=$HOME/NHERI/QS3hark
 #codesign --force --verbose --options=runtime  --sign "$appleCredential" ./$APP_FILE/Contents/plugins/renderplugins/libscene2d.dylib
 
 
-# copy applications folderm opensees and dakota
+#
+# copy applications folder opensees and dakota
+#
+
 echo "cp -fR $pathToBackendApps/applications ./$APP_FILE/Contents/MacOS"
 cp -fR $pathToBackendApps/applications ./$APP_FILE/Contents/MacOS
 mkdir  ./$APP_FILE/Contents/MacOS/applications/opensees
@@ -110,14 +121,13 @@ find ./$APP_FILE -name __pycache__ -exec rm -rf {} +;
 
 #
 # load my credential file
-
+#
 
 userID="../userID.sh"
 
 if [ ! -f "$userID" ]; then
 
     echo "creating dmg $DMG_FILENAME"
-    rm $DMG_FILENAME
     hdiutil create $DMG_FILENAME -fs HFS+ -srcfolder ./$APP_FILE -format UDZO -volname $APP_NAME
 
     echo "No password & credential file to continue with codesig and App store verification"
@@ -133,7 +143,7 @@ echo $appleID
 #
 
 
-if [[ -n "${NEW_METHOD}" && "${NEW_METHOD}" != "-null-" ]]; then
+if [ "${DMG_METHOD}" == "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work

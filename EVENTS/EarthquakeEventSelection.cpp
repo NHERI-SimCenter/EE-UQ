@@ -68,6 +68,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "RockOutcrop.h"
 #include "peerNGA/PEER_NGA_Records.h"
 #include "userDefinedDatabase/User_Defined_Database.h"
+#include "physicsBasedSimulation/PhysicsBasedMotionSelection.h"
 #include <QScrollArea>
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariableIW, GeneralInformationWidget* generalInfoWidget, QWidget *parent)
@@ -93,6 +94,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Multiple PEER"));
     eventSelection->addItem(tr("Multiple SimCenter"));
     eventSelection->addItem(tr("User Specified Database"));
+    eventSelection->addItem(tr("Physics Based Simulations"));    
     // eventSelection->addItem(tr("Hazard Based Event"));
     // eventSelection->addItem(tr("User Application"));
 
@@ -164,6 +166,9 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     //Adding user defined database ground motion widget
     userDefinedDatabase = new User_Defined_Database(generalInfoWidget, this);
     theStackedWidget->addWidget(userDefinedDatabase);
+
+    physicsBased = new PhysicsBasedMotionSelection(generalInfoWidget, this);
+    theStackedWidget->addWidget(physicsBased);    
 
 
     //layout->addWidget(theStackedWidget);
@@ -304,6 +309,12 @@ void EarthquakeEventSelection::eventSelectionChanged(const QString &arg1)
         theCurrentEvent = userDefinedDatabase;
 	currentEventType="UserDatabase";
     }
+
+    else if(arg1 == "Physics Based Simulations") {
+        theStackedWidget->setCurrentIndex(6);
+        theCurrentEvent = physicsBased;
+	currentEventType="physicsBased";
+    }    
     else {
         qDebug() << "ERROR .. EarthquakeEventSelection selection .. type unknown: " << arg1;
     }
@@ -413,4 +424,13 @@ EarthquakeEventSelection::replyEventType(void) {
         // the Site Response and User-Defined Database are excluded
         emit typeEVT("None");
     }
+}
+
+bool
+EarthquakeEventSelection::outputCitation(QJsonObject &jsonObject) {
+  QJsonObject appSpecificCitation;
+  theCurrentEvent->outputCitation(appSpecificCitation);
+  if (!appSpecificCitation.isEmpty()) {
+    jsonObject.insert(currentEventType, appSpecificCitation);
+  }  
 }

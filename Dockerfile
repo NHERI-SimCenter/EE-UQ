@@ -41,7 +41,7 @@ RUN  source /opt/qt515/bin/qt515-env.sh \
     && cd build \
     && qmake ../EE-UQ.pro \
     && make \
-    && rm -fr .obj \
+    && rm -fr .obj *.o *.cpp \
     && cp ../tacc/config.json ./ \
     && cd ../.. 
 
