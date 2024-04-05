@@ -79,7 +79,7 @@ PhysicsBasedMotionSelection::PhysicsBasedMotionSelection(GeneralInformationWidge
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     SectionTitle *label=new SectionTitle();
     label->setMinimumWidth(250);
-    label->setText(QString("Physics Based Motion Type"));
+    label->setText(QString("Simulated Motions Dataset"));
 
     eventSelection = new QComboBox();
     eventSelection->setObjectName("LoadingTypeCombox");
