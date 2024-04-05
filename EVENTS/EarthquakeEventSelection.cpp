@@ -432,5 +432,6 @@ EarthquakeEventSelection::outputCitation(QJsonObject &jsonObject) {
   theCurrentEvent->outputCitation(appSpecificCitation);
   if (!appSpecificCitation.isEmpty()) {
     jsonObject.insert(currentEventType, appSpecificCitation);
-  }  
+  }
+  return true;
 }
