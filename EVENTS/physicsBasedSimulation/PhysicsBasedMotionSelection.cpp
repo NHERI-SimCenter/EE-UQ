@@ -276,5 +276,5 @@ PhysicsBasedMotionSelection::replyEventType(void) {
 
 bool
 PhysicsBasedMotionSelection::outputCitation(QJsonObject &jsonObject) {
-  theCurrentEvent->outputCitation(jsonObject);
+  return theCurrentEvent->outputCitation(jsonObject);
 }
