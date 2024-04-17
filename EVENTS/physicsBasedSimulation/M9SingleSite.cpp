@@ -65,7 +65,7 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   QGridLayout *theLayout = new QGridLayout();
   this->setLayout(theLayout);
 
-  theLayout->addWidget(new QLabel("grid type"),0,0);
+  theLayout->addWidget(new QLabel("Grid"),0,0);
   QStringList listGrids; listGrids << "A" << "B" << "C" << "D" << "All";
   gridType = new SC_ComboBox("gridType",listGrids);
   theLayout->addWidget(gridType, 0, 1);
@@ -352,8 +352,6 @@ M9SingleSite::outputCitation(QJsonObject &jsonObject)
 {
   jsonObject.insert("citation",QString("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034"));
   jsonObject.insert("description",QString("The ground motions used in the simulations were created as part of the M9 project led by the University of Washington. The M9 project generated a number of motions to study the  potential impacts of a magnitude 9 (M9) earthquake on the Cascadia Subduction Zone, which is located off the coast of the Pacific Northwest region of the United States"));
-
-  qDebug() << jsonObject;
   
   return true;
 }
