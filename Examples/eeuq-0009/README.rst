@@ -9,7 +9,7 @@ Training a Surrogate Model (Gaussian Process)
 Training Gaussian Process Surrogate Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example shows how to train a surrogate model that can be imported into EE-UQ and replace structural dynamic simulations. The training of a surrogate model requires some number of structural dynamic simulations for representative scenarios [i.e. training set]. In this example, these simulations are performed using recorded ground motions selected from the PEER NGA database. The ground motions are selected such that it covers a wide domain of intensity measure (IM) space, as uniform as possible. Three IMs are considered in the example: pseudo-spectral acceleration at period 0.5 sec (PSA), 5-75% duration (D5-75), and SaRatio following the work in [Zhong2023]_. We additionally consider the stiffness of the target structure (3 story building) as input for the surrogate model.
+This example shows how to train a surrogate model that can be imported into EE-UQ and replace structural dynamic simulations. The training of a surrogate model requires some number of structural dynamic simulations for representative scenarios [i.e. training set]. In this example, these simulations are performed using recorded ground motions selected from the PEER NGA database. The ground motions are selected such that they cover a wide domain of intensity measure (IM) space, as uniform as possible. Three IMs are considered in the example: pseudo-spectral acceleration at period 0.5 sec (PSA), 5-75% duration (D5-75), and SaRatio following the work in [Zhong2023]_. We additionally consider the stiffness of the target structure (3-story building) as input for the surrogate model.
 
       .. figure:: figures/EE09_main2.png
          :name: UQ inputs
@@ -61,7 +61,7 @@ Define Target Structure
          :width: 900
          :figclass: align-center
 
-         GI tab - Specify 3 story building
+         GI tab - Specify 3-story building
 
 
 2. In **SIM tab**, the specifics of the target structural model is provided via **MDOF** building generator. A three-story building is created having stiffness as an input parameter.
