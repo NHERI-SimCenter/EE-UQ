@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui charts concurrent webenginewidgets network sql qml 3dcore 3drender 3dextras printsupport quick
+QT += core gui charts concurrent webenginewidgets network sql qml 3dcore 3drender 3dextras printsupport quick opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,6 +24,8 @@ TEMPLATE = app
 VERSION=2.2.5
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 DEFINES += NOINTERNALFEM
+
+QMAKE_APPLE_DEVICE_ARCHS="x86_64"
 
 include($$PWD/ConanHelper.pri)
 

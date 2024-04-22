@@ -988,9 +988,28 @@ bool PEER_NGA_Records::inputAppDataFromJSON(QJsonObject &jsonObject)
 bool PEER_NGA_Records::copyFiles(QString &destDir)
 {
     // QDir recordsFolder(groundMotionsFolder.path());
-    QDir recordsFolder(RecordsDir);
-    QDir destinationFolder(destDir);
+    QDir recordsFolder(RecordsDir);  
+  
+    // 
+    // copying files to folder input_data dir instead of dirName .. input_data as same level as dirName
+    //    
 
+    // make sure input_data exists
+    QDir destinationFolder(destDir);
+    destinationFolder.cdUp();
+    QString inputDataDirPath = destinationFolder.absoluteFilePath("input_data");
+    
+    if (destinationFolder.mkpath(inputDataDirPath) == false) {
+      this->errorMessage("PEER_NGA failed to create folder: ");
+      this->errorMessage(inputDataDirPath);
+      return false;
+    }
+    destinationFolder.cd(inputDataDirPath);
+
+    //
+    // now copy files
+    //
+    
     bool ok = true;
     QString msg;
     int count = 0;
