@@ -565,7 +565,7 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
     // QString citeFile = destinationDirectory.filePath("plases_cite.json"); // file getting deleted
     this->createCitation(citations, citeFile);
-    json.insert("citations",citations);
+    // json.insert("citations",citations);
 
     QJsonDocument doc(json);
     file.write(doc.toJson());
