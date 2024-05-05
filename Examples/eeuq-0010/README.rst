@@ -1,16 +1,16 @@
 .. _eeuq-0010:
 
-Structural Response Prediction Using a Surrogate Model (Gaussian Process)
-===========================================================================================================
+Prediction from GP Surrogate Model
+======================================
 
 .. warning:: To reproduce the result of this example, the user should first click **EVT** and **Select Records**, and then click the **RUN** button. See the below procedure for details.
 
 This example shows how to replace structural dynamic simulations using a pre-trained Gaussian process (GP) surrogate model for running forward uncertainty propagation (Monte Carlo Simulation). The ground motions are selected from the PEER NGA database matching the Design Spectrum of ASCE 7-16 standard.
 
-      .. figure:: figures/EE10_main2.png
+      .. figure:: figures/EE10_main3.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 40%
          :figclass: align-center
 
          Prediction of response statistics using a surrogate model
@@ -35,7 +35,7 @@ Set Up Forward Propagation Configuration
 Define Target Structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-2. The **GI tab** is kept as default. (GI tab is not used when a surrogate model is used in SIM tab)
+2. The **GI tab** is kept as default. (The GI tab is not used when a surrogate model is used in the SIM tab)
 
 3. In **SIM tab**, the surrogate model (.json) trained in :ref:`Example 09<eeuq-0009>` is imported as shown in the figure.
 
@@ -49,7 +49,7 @@ Define Target Structure
 
    .. note::   
 
-      :ref:`Example 09<eeuq-0009>` describes how to train GP surrogate model and save it as `.json` format. 
+      :ref:`Example 09<eeuq-0009>` describes how to train the GP surrogate model and save it as `.json` format. 
 
    When the option "Random sample under prediction uncertainty" is selected, the predictions from GP are random realizations that account for both model uncertainty and a portion of uncertainty in the ground motion time histories (i.e. the remaining uncertainty after given intensity measures (IMs)). Alternatively, when the user is interested in only the mean of the response, disregarding all the uncertainties, the user can select "Median (representative) prediction".
 
@@ -169,13 +169,13 @@ Run the Analysis and Process Results
          - Windows: left-click sets the Y axis (ordinate).  right-click sets the X axis (abscissa).
          - MAC: fn-clink, option-click, and command-click all set the Y axis (ordinate).  ctrl-click sets the X axis (abscissa).
 
-   In the scatter plot, the gray square markers represent the mean prediction from the surrogate, gray bounds denote 90% prediction interval, orange bounds denote 90% confidence interval of the mean prediction, and blue dots represent the sample obtained from the surrogate prediction. 
+   In the scatter plot, the gray square markers represent the mean prediction from the surrogate, gray bounds denote the 90% prediction interval, orange bounds denote the 90% confidence interval of the mean prediction, and blue dots represent the sample obtained from the surrogate prediction. 
 
    .. note::
       * The term "90% prediction interval" is the interval in which the exact "response", i.e. dynamic simulation output, will fall with 90% probability.
       * The term "90% confidence interval" is the estimated range of the "mean response". Therefore, the confidence interval is always tighter than the prediction interval.
 
-11. **[Verification]** Only for verification purposes, an additional forward propagation is performed using the exact simulation model instead of the surrogate model, using the exact same ground motion/structural parameters. For this, UQ, GI, EVT, RV tabs are kept unchanged, and SIM, FEM, EDP tabs are modified to replace the surrogate with the original model, i.e. for SIM, FEM, EDP tabs, the exact same configuration used in :ref:`example 09<eeuq-0009>` was used.  Below is a comparison of the obtained mean log-EDPs from 30 samples:
+11. **[Verification]** Only for verification purposes, an additional forward propagation is performed using the exact simulation model instead of the surrogate model, using the exact same ground motion/structural parameters. For this, UQ, GI, EVT, and RV tabs are kept unchanged, and SIM, FEM, and EDP tabs are modified to replace the surrogate with the original model, i.e. for SIM, FEM, EDP tabs, the exact same configuration used in :ref:`example 09<eeuq-0009>` was used.  Below is a comparison of the obtained mean log-EDPs from 30 samples:
 
 
    .. figure:: figures/EE10_RES4_1.png

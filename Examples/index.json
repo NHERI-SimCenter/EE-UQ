@@ -81,7 +81,13 @@
         "eeuq-0003/figures/fem.png",
         "eeuq-0003/README.rst",
         "eeuq-0003/figures/evt.png",
-        "eeuq-0003/figures/frame.png"
+        "eeuq-0003/figures/frame.png",
+        "eeuq-0003/MRF_4Story_Concentrated_model.tcl",
+        "eeuq-0003/MRF_4Story_Concentrated_solver.tcl",
+        "eeuq-0003/postprocess.tcl",
+        "eeuq-0003/postprocess.py",
+        "eeuq-0003/recorderCommands.tcl",
+        "eeuq-0003/ShearBuilding3.tcl"
       ],
       "entry_point": "eeuq-0003/./input.json",
       "summary": "This example shows how to select ground motion records and run nonlinear time history analysis for the OpenSees/tcl model of interest.",
