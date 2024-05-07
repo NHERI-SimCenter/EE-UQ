@@ -102,6 +102,8 @@ class StochasticMotionInput : public SimCenterAppWidget {
    */
   bool outputAppDataToJSON(QJsonObject& rvObject) override;
 
+  bool outputCitation(QJsonObject& citationObject) override;
+
  signals:
   void sendErrorMessage(QString message);
 
