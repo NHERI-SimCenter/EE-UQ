@@ -1150,7 +1150,7 @@ bool PEER_NGA_Records::outputCitation(QJsonObject &jsonObject){
 
     QJsonObject GMCitation;
     GMCitation.insert("citation",QString("Ancheta, T., Darragh, R., Stewart, J., Seyhan, E., Silva, W.J., Chiou, B.S.J., Wooddell, K.E., Graves, R.W., Kottke, A.R., Boore, D.M. and Kishida, T., 2013. PEER 2013/03: PEER NGA-West2 Database. Pacific Earthquake Engineering Research."));
-    GMCitation.insert("description",QString("This is to acknolwedge that the ground motions are selected from the PEER NGA West 2 DataBase, possibly using their ground motion selection algorithms."));
+    GMCitation.insert("description",QString("This is to acknowledge that the ground motions are selected from the PEER NGA West 2 DataBase, possibly using their ground motion selection algorithms."));
 
     if (spectrumTypeComboBox->currentText()=="Conditional Mean Spectrum (USGS Disagg.)") {
 
