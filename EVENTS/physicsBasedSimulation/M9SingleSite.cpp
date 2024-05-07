@@ -41,6 +41,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SC_IntLineEdit.h>
 #include <SC_DirEdit.h>
 #include <SC_ComboBox.h>
+#include <SC_CheckBox.h>
 
 #include <QJsonObject>
 #include <QDir>
@@ -87,9 +88,18 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   tmpLocation->setDirName(dirPath);
   theLayout->addWidget(tmpLocation,3,1,1,3);
 
+  // Add a checkbox to allow the user to select if they want to use API or not
+  theLayout->addWidget(new QLabel("API"), 4, 0);            // Column 4
+  useAPI = new SC_CheckBox("useAPI", false);
+  theLayout->addWidget(useAPI, 4, 1); 
+  // add the explanation for the API 
+  QLabel *apiExplanation = new QLabel("Check this box if you want to use the API to get the motions. If you do not check this box, the motions will be Extracted from Designsafe repository.");
+  apiExplanation->setWordWrap(true);
+  theLayout->addWidget(apiExplanation, 4, 2, 1, 2);
+
 
   getMotions = new QPushButton("Get Motions");
-  theLayout->addWidget(getMotions, 4,1,1,3);
+  theLayout->addWidget(getMotions, 5,1,1,3);
   connect(getMotions, &QPushButton::clicked, this, [=](){
     this->downloadMotions();
   });
@@ -97,9 +107,9 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   QLabel *citation = new QLabel("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034");
   citation->setWordWrap(true);
   
-  theLayout->addWidget(citation, 5,0,1,4);  
+  theLayout->addWidget(citation, 6,0,1,4);  
   
-  theLayout->setRowStretch(6,1);
+  theLayout->setRowStretch(7,1);
   theLayout->setColumnStretch(1,1);
   theLayout->setColumnStretch(3,1); 
   theLayout->setColumnStretch(4,1);     
@@ -251,6 +261,7 @@ M9SingleSite::outputToJSON(QJsonObject &jsonObject)
     numRealizations->outputToJSON(jsonObject);
     gridType->outputToJSON(jsonObject);
     tmpLocation->outputToJSON(jsonObject);
+    useAPI->outputToJSON(jsonObject);
     
     return true;
 }
@@ -263,6 +274,7 @@ M9SingleSite::inputFromJSON(QJsonObject &jsonObject)
     numRealizations->inputFromJSON(jsonObject);
     gridType->inputFromJSON(jsonObject);
     tmpLocation->inputFromJSON(jsonObject);
+    useAPI->inputFromJSON(jsonObject);
     
     return true;
 }
