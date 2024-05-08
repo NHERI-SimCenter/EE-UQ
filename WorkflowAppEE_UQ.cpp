@@ -560,19 +560,22 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     }
     json["runDir"]=tmpDirectory;
     json["WorkflowType"]="Building Simulation";
-    
-    QJsonObject citations;
-    QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
-    // QString citeFile = destinationDirectory.filePath("plases_cite.json"); // file getting deleted
-    this->createCitation(citations, citeFile);
-    // json.insert("citations",citations);
 
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
 
-    statusMessage("SetUp Done .. Now starting application");
+    
+    //
+    // ouput citation
+    //
+    
+    QJsonObject citations;
+    QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
+    this->createCitation(citations, citeFile);
 
+
+    statusMessage("SetUp Done .. Now starting application");
     emit setUpForApplicationRunDone(tmpDirectory, inputFile);
 }
 
