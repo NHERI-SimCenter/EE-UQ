@@ -532,7 +532,11 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     destinationDirectory.mkpath(templateDirectory);
 
     // copyPath(path, tmpDirectory, false);
-    theSIM->copyFiles(templateDirectory);
+    //theSIM->copyFiles(templateDirectory);
+    if (theSIM->copyFiles(templateDirectory) == false) {
+      errorMessage("Workflow Failed to start as SIM failed in copyFiles");
+      return;
+    }
     if (theEventSelection->copyFiles(templateDirectory) == false) {
       errorMessage("Workflow Failed to start as EVENT failed in copyFiles");
       return;

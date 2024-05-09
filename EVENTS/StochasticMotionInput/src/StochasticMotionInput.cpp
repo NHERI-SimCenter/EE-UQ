@@ -212,3 +212,21 @@ void StochasticMotionInput::modelSelectionChanged(int index) {
 void StochasticMotionInput::errorMessage(QString message) {
   emit sendErrorMessage(message);
 }
+
+
+bool StochasticMotionInput::outputCitation(QJsonObject &jsonObject){
+
+
+    if (model_selection_->currentText() == "Vlachos et al. (2018)") {
+
+        jsonObject.insert("citation",QString("Vlachos, C., Papakonstantinou, K.G. and Deodatis, G., (2018). Predictive model for site specific simulation of ground motions based on earthquake scenarios. Earthquake Engineering & Structural Dynamics, 47(1), pp.195-218."));
+        jsonObject.insert("description",QString("This module generates ground motion time histories following the implementation in Vlachos et al. (2018) using the information such as moment magnitude, closest-to-site rupture distance and vs30."));
+
+    } else if (model_selection_->currentText() == "Dabaghi & Der Kiureghian (2018)") {
+        jsonObject.insert("citation",QString("Dabaghi, M., and Der Kiureghian, A. (2018). Simulation of orthogonal horizontal components of near‐fault ground motion for specified earthquake source and site characteristics. Earthquake Engineering & Structural Dynamics, 47(6), 1369-1393."));
+        jsonObject.insert("description",QString("This module generates ground motion time histories following the implementation in Dabaghi, and Kiureghian (2018) using the information such as moment magnitude, closest-to-site rupture distance and vs30."));
+
+    }
+
+    return true;
+}
