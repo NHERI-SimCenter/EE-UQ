@@ -18,8 +18,8 @@
 ---
 
 <div style="display: flex; justify-content: center;">
-    <img src="./icons/NHERI-EEUQ_GUI_Perspective.png" alt="An EE-UQ Workflow's Graphical User-Interface" width="46%" />
-    <img src="./icons/OpenSees_VTKO_Jose_DRM_Shaking.gif" alt="OpenSees model with a DRM pattern visualized in VTKO. By Jose Abell." width="37%" />
+    <img src="./icons/NHERI-EEUQ_GUI_Perspective.png" alt="An EE-UQ Workflow's Graphical User-Interface" width="42%" />
+    <img src="./icons/OpenSees_VTKO_Jose_DRM_Shaking.gif" alt="OpenSees model with a DRM pattern visualized in VTKO. By Jose Abell." width="34%" />
 </div>
 
 ---
