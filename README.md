@@ -49,19 +49,19 @@ Get ground motions that fit your workflow:
   - Provide your own ground motion time histories.
 
 Multiple ways to create structural models that characterize your design:
-    - Automatic generation of an idealized Opensees shear column model from basic building information.
-    - Automatic generation of a steel or reinforced concrete OpenSees frame model from detailed design.
-    - User-specified OpenSees model in Tcl or Python format.
-    - User-specified Python script that prepares a structural model and performs the response simulation.
-    - Import a user-specified structural-response surrogate model.
-    - A multi-model approach, which allows you to specify multiple combinations of the above options.
-    - Multi-fidelity Monte Carlo (MFMC) routines for accurate and expedient results by using both high and low fidelity models.
+  - Automatic generation of an idealized Opensees shear column model from basic building information.
+  - Automatic generation of a steel or reinforced concrete OpenSees frame model from detailed design.
+  - User-specified OpenSees model in Tcl or Python format.
+  - User-specified Python script that prepares a structural model and performs the response simulation.
+  - Import a user-specified structural-response surrogate model.
+  - A multi-model approach, which allows you to specify multiple combinations of the above options.
+  - Multi-fidelity Monte Carlo (MFMC) routines for accurate and expedient results by using both high and low fidelity models.
 
 Robust catalogue of drop-in uncertainty quantification:
-    - Forward propagation: Define a set of random input parameters and perform Monte Carlo simulations to obtain a corresponding sample of output parameters.
-    - Sensitivity analysis: Measure the influence of variability in each input on the uncertainty of outputs.
-    - Reliability analysis: Algorithms to estimate the probability of exceeding a failure threshold.
-    - Surrogate models: Generate training data and develop surrogate models using Gaussian Process (GP) and Probabilistic Learning on Manifolds techniques (PLoM).
+  - Forward propagation: Define a set of random input parameters and perform Monte Carlo simulations to obtain a corresponding sample of output parameters.
+  - Sensitivity analysis: Measure the influence of variability in each input on the uncertainty of outputs.
+  - Reliability analysis: Algorithms to estimate the probability of exceeding a failure threshold.
+  - Surrogate models: Generate training data and develop surrogate models using Gaussian Process (GP) and Probabilistic Learning on Manifolds techniques (PLoM).
   
 
 ## Quick Links
