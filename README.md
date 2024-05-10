@@ -18,7 +18,7 @@
 ---
 
 <div style="display: flex; justify-content: center;">
-    <img src="./icons/NHERI-EEUQ_GUI_Perspective.png" alt="An EE-UQ Workflow's Graphical User-Interface" width="47%" height="70%" />
+    <img src="./icons/NHERI-EEUQ_GUI_Perspective.png" alt="An EE-UQ Workflow's Graphical User-Interface" width="50%" height="70%" />
     &nbsp; 
     &nbsp; 
     &nbsp; 
