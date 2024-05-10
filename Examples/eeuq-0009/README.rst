@@ -1,20 +1,20 @@
 .. _eeuq-0009:
 
 
-Training a Surrogate Model (Gaussian Process)
+Training GP Surrogate Model
 ===========================================================================================================
 
 .. warning:: To reproduce the result of this example, the user should first click **EVT** and **Select Records**, and then click the **RUN** button. See the below procedure for details.
 
-Training Gaussian Process Surrogate Model
+Training Gaussian Process (GP) Surrogate Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example shows how to train a surrogate model that can be imported into EE-UQ and replace structural dynamic simulations. The training of a surrogate model requires some number of structural dynamic simulations for representative scenarios [i.e. training set]. In this example, these simulations are performed using recorded ground motions selected from the PEER NGA database. The ground motions are selected such that it covers a wide domain of intensity measure (IM) space, as uniform as possible. Three IMs are considered in the example: pseudo-spectral acceleration at period 0.5 sec (PSA), 5-75% duration (D5-75), and SaRatio following the work in [Zhong2023]_. We additionally consider the stiffness of the target structure (3 story building) as input for the surrogate model.
+This example shows how to train a surrogate model that can be later imported into EE-UQ and replace structural dynamic simulations. The training of a surrogate model requires some number of structural dynamic simulations for representative scenarios [i.e. training set]. In this example, these simulations are performed using recorded ground motions selected from the PEER NGA database. The ground motions are selected such that they cover a wide domain of intensity measure (IM) space, as uniform as possible. Three IMs are considered in the example: pseudo-spectral acceleration at period 0.5 sec (PSA), 5-75% duration (D5-75), and SaRatio following the work in [Zhong2023]_. We additionally consider the stiffness of the target structure (3-story building) as input for the surrogate model.
 
-      .. figure:: figures/EE09_main2.png
+      .. figure:: figures/EE09_main3.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 40%
          :figclass: align-center
 
          Training a surrogate model for seismic response
@@ -25,12 +25,12 @@ This example shows how to train a surrogate model that can be imported into EE-U
 Set Up GP Surrogate Modeling Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. In the **UQ tab** select the **Surrogate Modeling** as **UQ Method**. Then, select the **Train GP Surrogate Model**.
+1. In the **UQ tab** select the **Surrogate Modeling** as **UQ Method**. Then, select the **Train GP Surrogate Model**.
 
       .. figure:: figures/EE09_UQ.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          UQ tab
@@ -52,24 +52,24 @@ More information can be found in the :ref:`User Guide<lblSimSurrogate>`.
 Define Target Structure
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-1. In **GI tab**, set the number of stories, 3.
+2. In **GI tab**, set the number of stories, 3.
 
 
       .. figure:: figures/EE09_GI.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
-         GI tab - Specify 3 story building
+         GI tab - Specify 3-story building
 
 
-2. In **SIM tab**, the specifics of the target structural model is provided via **MDOF** building generator. A three-story building is created having stiffness as an input parameter.
+3. In **SIM tab**, the specifics of the target structural model is provided via **MDOF** building generator. A three-story building is created having stiffness as an input parameter.
 
       .. figure:: figures/EE09_SIM.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          SIM tab
@@ -77,12 +77,12 @@ Define Target Structure
 Select Ground Motions for the Training
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3. In **EVT tab**, the option to retrieve ground motions from **PEER NGA records** is selected. To allow the surrogate models to cover a wide variety of ground motions (represented as "wide IM domain"), let us select **No Spectrum - Uniform IMs** for the analysis. Set the **Number of samples per bin** 1, and add three intensity measures that are specified in the UQ tab as the input of surrogate, i.e. "5-75% Significant Duration", "Pseudo Spectral Acceleration (with a natural period of 0.5 sec)", and "SaRatio (at 1.0 sec in range of 0.1-1.5 sec). Set the coverage ranges respectively to [2.5, 30], [0.1, 2.0], and [0.25, 1.2]. For the former two IMs, the number of bins is set as 5, and the SaRatio will have 4 bins. Therefore, the total number of bins (i.e. grid points in 3-dimensional space) is 100. 
+4. In **EVT tab**, the option to retrieve ground motions from **PEER NGA records** is selected. To allow the surrogate models to cover a wide variety of ground motions (represented as "wide IM domain"), let us select **No Spectrum - Uniform IMs** for the analysis. Set the **Number of samples per bin** 1, and add three intensity measures that are specified in the UQ tab as the input of surrogate, i.e. "5-75% Significant Duration", "Pseudo Spectral Acceleration (with a natural period of 0.5 sec)", and "SaRatio (at 1.0 sec in range of 0.1-1.5 sec). Set the coverage ranges respectively to [2.5, 30], [0.1, 2.0], and [0.25, 1.2]. For the former two IMs, the number of bins is set as 5, and the SaRatio will have 4 bins. Therefore, the total number of bins (i.e. grid points in 3-dimensional space) is 100. 
 
       .. figure:: figures/EE09_EVT1.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          EVT tab - configuration of IM bins
@@ -99,7 +99,7 @@ Select Ground Motions for the Training
       .. figure:: figures/EE09_EVT2.png
          :name: UQ inputs
          :align: center
-         :width: 600
+         :width: 70%
          :figclass: align-center
 
          EVT tab - Selected ground motions in a table
@@ -123,13 +123,13 @@ Note that *approximated* IM values are used for this ground motion selection. Th
 
 .. warning::  Note that the surrogate modeling algorithms are stronger in "interpolation" rather than extrapolation. Therefore, when later using the pre-trained surrogate model to predict the response of the structure subjected to new (untrained) IM values (e.g. :ref:`example 10<eeuq-0010>`), it is important to make sure the IMs of the new ground motions are well covered by the domain of the training samples, i.e. it should lie the area that is shown blue in the above figure. Otherwise, the prediction from the surrogate model is likely not reliable.
 
-4. The **FEM tab** is kept as default.
+5. The **FEM tab** is kept as default.
 
 .. warning::   
 
    Do NOT select the "None (only for the surrogate)" option in the FEM tab. This option is not for training a surrogate model but for using a pre-trained surrogate model. (See :ref:`example 10<eeuq-0010>`)
 
-5. The **EDP tab** is kept as default. For the surrogate model to be compatible with the PBE and other applications, it should follow the naming of the Standard Earthquake. Under the **Standard Earthquake**, in this example, the structural model will automatically output peak floor acceleration (PFA), peak floor displacement respective to the ground (PFD), Peak inter-story drift ratio (PID), peak roof drift ratio (PRD). 
+6. The **EDP tab** is kept as default. For the surrogate model to be compatible with the PBE and other applications, it should follow the naming of the Standard Earthquake. Under the **Standard Earthquake**, in this example, the structural model will automatically output peak floor acceleration (PFA), peak floor displacement respective to the ground (PFD), Peak inter-story drift ratio (PID), peak roof drift ratio (PRD). 
 
 .. warning::   
 
@@ -138,12 +138,12 @@ Note that *approximated* IM values are used for this ground motion selection. Th
 Set Up Training Domain
 ^^^^^^^^^^^^^^^^^^^^^^
 
-#. In **RV tab** set the range of stiffness to be [50, 150] as shown in the below image. This is equivalent to the range of stiffness of which the response can be predicted using the surrogate. The selected IMs (Sa, D5-75, and SaRatio) in each two horizontal directions will be additional inputs of the surrogate model. Therefore, the total dimension of the surrogate model input is 7.
+7. In **RV tab** set the range of stiffness to be [50, 150] as shown in the below image. This is equivalent to the range of stiffness of which the response can be predicted using the surrogate. The selected IMs (Sa, D5-75, and SaRatio) in each two horizontal directions will be additional inputs of the surrogate model. Therefore, the total dimension of the surrogate model input is 7.
 
       .. figure:: figures/EE09_RV.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          RV tab
@@ -152,7 +152,7 @@ Set Up Training Domain
 Run the Analysis and Process Results
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6. Click **Run** button. The analysis may take several minutes to run. The **RES tab** will be highlighted when the analysis is completed.
+8. Click **Run** button. The analysis may take several minutes to run. The **RES tab** will be highlighted when the analysis is completed.
 
    The EDP name consists of the quantity of interest, story number, and the direction of interest - for example:
 
@@ -161,19 +161,19 @@ Run the Analysis and Process Results
       * 1-PID-3-1 : **peak inter-story drift ratio** of the **3rd floor**, **component 1** (x-dir)   
       * 1-PRD-1-1 : **peak roof drift ratio**, **component 1** (x-dir)   
 
-7. Two Goodness-of-fit measures are provided : Inter-quartile ratio (IQR) and normality (Cramer-Von Mises test) score. Using the leave-one-out cross-validation predictions, the IQR provides the ratio of the sample QoIs that lies in 25-75% LOOCV prediction bounds (interquartile range). The IQR values should theoretically approach 0.5 if the prediction is accurate.
+9. Two Goodness-of-fit measures are provided : Inter-quartile ratio (IQR) and normality (Cramer-Von Mises test) score. Using the leave-one-out cross-validation predictions, the IQR provides the ratio of the sample QoIs that lies in 25-75% LOOCV prediction bounds (interquartile range). The IQR values should theoretically approach 0.5 if the prediction is accurate.
 
    .. figure:: figures/EE09_RES1.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          RES tab - summary
 
    
 
-8. Additionally the comparison between the original simulation samples and leave-one-out cross-validation (LOOCV) predictions from the surrogate is provided as the scatter plot. When we have a large variance in the response observations, as in this example, the LOOCV mean is not expected to match exactly the data samples observed. Instead, they are expected to lie on a reasonable prediction bound. The below graph shows the inter-quartile prediction bounds, i.e. 25%-75%, which are expected to cover 50% of the sample observations. 
+10. Additionally the comparison between the original simulation samples and leave-one-out cross-validation (LOOCV) predictions from the surrogate is provided as the scatter plot. When we have a large variance in the response observations, as in this example, the LOOCV mean is not expected to match exactly the data samples observed. Instead, they are expected to lie on a reasonable prediction bound. The below graph shows the inter-quartile prediction bounds, i.e. 25%-75%, which are expected to cover 50% of the sample observations. 
 
       .. figure:: figures/EE09_RES2.png
          :name: UQ inputs
@@ -185,12 +185,12 @@ Run the Analysis and Process Results
 
 Please see the :ref:`User Guide <lblSimSurrogate>` for more details on the verification measures. 
 
-9. The LOOCV predictions can be compared for different input realizations under "Data Values" tab.
+11. The LOOCV predictions can be compared for different input realizations under "Data Values" tab.
 
       .. figure:: figures/EE09_RES3.png
          :name: UQ inputs
          :align: center
-         :width: 900
+         :width: 100%
          :figclass: align-center
 
          RES tab - Scatter plots
@@ -202,7 +202,7 @@ Please see the :ref:`User Guide <lblSimSurrogate>` for more details on the verif
          - Windows: left-click sets the Y axis (ordinate).  right-click sets the X axis (abscissa).
          - MAC: fn-clink, option-click, and command-click all set the Y axis (ordinate).  ctrl-click sets the X axis (abscissa).
 
-10. The surrogate model can be saved in a json file by clicking the "Save GP Model" button at the bottom of the "Summary" tab. One main file and one auxiliary folder will be saved.
+12. The surrogate model can be saved in a json file by clicking the "Save GP Model" button at the bottom of the "Summary" tab. One main file and one auxiliary folder will be saved.
 
       .. figure:: figures/EE09_RES_buttons.png
          :name: UQ inputs

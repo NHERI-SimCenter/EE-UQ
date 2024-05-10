@@ -60,7 +60,8 @@ public:
     enum GroundMotionComponents{One, Two, Three};
     Q_ENUM(GroundMotionComponents)
 
-    void setOutputDirectory(QString filename);
+    void setOutputDirectory(QString filename);    
+    bool outputCitation(QJsonObject &jsonObject) override;
 
 signals:
 

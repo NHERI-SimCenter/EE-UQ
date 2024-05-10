@@ -2,12 +2,12 @@
 .. _eeuq-0001:
 
 
-Shear Building: Sampling, Reliability and Sensitivity
-=====================================================
+Sampling, Reliability and Sensitivity Analysis of a Shear Building
+=================================================================
 
-Consider the problem of uncertainty quantification in a three-story shear building
+Consider the problem of uncertainty quantification for a three-story shear building
 
-.. figure:: figures/model.png
+.. figure:: figures/model2.png
    :align: center
    :width: 400
    :figclass: align-center
@@ -29,7 +29,7 @@ The exercise will use both the MDOF, :ref:`lblMDOFSIM`,  and OpenSees, :ref:`lbl
 
 .. note::
    
-   1. The first lines containing ``pset`` will be read by the application when the file is selected and the application will autopopulate the random variables ``w``, ``wR``, and ``k`` in the **RV**  panel with these same variable names. It is of course possible to explicitly use Random Variables without the ``pset`` command by "RV.**variable name" in the input file. However, no random variables will be autopopulated if user chooses this route.
+   1. The first lines containing ``pset`` will be read by the application when the file is selected and the application will autopopulate the random variables ``w``, ``wR``, and ``k`` in the **RV**  panel with these same variable names. 
 
 .. warning::
 
@@ -90,7 +90,7 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
       :figclass: align-center
 
 
-6. We will skip the **EDP** panel leaving it in its default condition, that being to use the **Standard Earthquake** EDP generator.
+6. We will skip the **EDP** panel leaving it in its default condition, that is to use the **Standard Earthquake** EDP generator.
 
 
 7. For the **RV** panel, we will enter the distributions and values for our random variables. Because of the steps we have followed and entries we have made, when this tab is opened it should contain the four random variables and they should all be set constant. For the ``w``, ``wR`` and ``k`` random variables we change the distributions to normal and enter the values given for the problem, as shown in the figure below. For the ``factorEC`` variable, change the distribution to **uniform** and enter the values in the figure.
@@ -125,18 +125,16 @@ Various views of the graphical display can be obtained by left- and right-clicki
 Sampling Analysis with ElCentro and Reduced Output
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the previous example we got the standard output, which can be both a lot and also limited (in the sense you don't get the information you want). In this example we will present how to obtain results just for the roof displacement, the displacement of node **4** in both the **MDOF** and **OpenSees** model generator examples. The examples could be extended to output for example the story shear forces, element forces, element end rotations, ...
+In the previous example, we got the standard output, which can be both a lot and also limited (in the sense you don't get the information you want). In this example we will present how to obtain results just for the roof displacement, the displacement of node **4** in both the **MDOF** and **OpenSees** model generator examples. The examples could be extended to output for example the story shear forces, element forces, element end rotations, etc.
 
-For this example you will need two additional file `recorderCommands.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/recorderCommands.tcl>`_ and `postprocess.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/postprocess.tcl>`_. 
+For this example, you will need two additional files `recorderCommands.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/recorderCommands.tcl>`_ and `postprocess.tcl <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/ShearBuilding3/postprocess.tcl>`_. The ``recorderCommands.tcl`` script as shown below will record the envelope displacements in the first two degrees of freedom for nodes **1** through **4**. 
 
-The ``recorderCommands.tcl`` script as shown below will record the envelope displacements in the first two degrees of freedom for nodes **1** through **4**. 
-
-.. literalinclude:: recorderCommands.tcl
+.. literalinclude:: src/recorderCommands.tcl
    :language: tcl
 
 The postprocess.tcl script shown below will accept as input any of the 4 nodes *in the domain and for each of the two dof directions.
 
-.. literalinclude:: postprocess.tcl
+.. literalinclude:: src/postprocess.tcl
    :language: tcl
 
 .. note::
@@ -148,7 +146,7 @@ The postprocess.tcl script shown below will accept as input any of the 4 nodes *
 
 The steps are the same as the previous example, with the exception of step 4 defining the **EDP**. 5. 
 
-1. For the **EDP** panel, we will change the generator to **User Defined**. In the panel that presents itself the user must provide the paths to both the recorder commands and the postprocessing script. Next, the user must provide information on the response parameters they are interested in. The user presses the **Add** button and enters ``Node_4_Disp_1`` in the entry field as shown in the figure below.
+1. For the **EDP** panel, we will change the generator to **User Defined**. In the panel that presents itself, the user must provide the paths to both the recorder commands and the postprocessing script. Next, the user must provide information on the response parameters they are interested in. The user presses the **Add** button and enters ``Node_4_Disp_1`` in the entry field as shown in the figure below.
 
 .. figure:: figures/shearEDP-U.png
    :align: center
@@ -167,7 +165,7 @@ Global Sensitivity
 
 In a global sensitivity analysis, the user wishes to understand what is the influence of the individual random variables on the quantities of interest. This is typically done before the user launches large-scale forward uncertainty problems in order to limit the number of random variables used so as to limit the number of simulations performed.
 
-To perform a reliability analysis the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the global reliability method for this problem the user would follow the same sequence of steps as previously. The difference would be in the **UQ** panel in which the user would select a **Reliability** as the Dakota Method Category and then choose GLobal reliability. In the figure, the user is specifying that they are interested in the probability that the displacement will exceed certain response levels.
+To perform a reliability analysis, the steps above would be repeated with the exception that the user would select a reliability analysis method instead of a Forward Propagation method. To obtain reliability results using the global reliability method for this problem the user would follow the same sequence of steps as previously. The difference would be in the **UQ** panel in which the user would select a **Reliability** as the Dakota Method Category and then choose GLobal reliability. In the figure, the user is specifying that they are interested in the probability that the displacement will exceed certain response levels.
 
 
 .. figure:: figures/shearSensitivityUQ.png
@@ -192,7 +190,7 @@ If the user is interested in the probability that certain response measures will
    :align: center
    :figclass: align-center
 
-After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results, which as shown below, indicate that the probability is **91.5%**/
+After the user fills in the rest of the tabs as per the previous section, the user would then press the **RUN** button. The application (after spinning for a while with the wheel of death) will present the user with the results, which as shown below, indicate that the probability is **91.5%**.
 
 .. figure:: figures/shearReliabilityRes.png
    :align: center

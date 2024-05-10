@@ -7,6 +7,12 @@ This example showcases the use of multiple structural models and finite element 
 Non-linear time history analysis is conducted using OpenSees, employing a simple model of a 5-story structure, subjected to recorded ground acceleration time history during an earthquake. The response of the model is used to extract commonly used engineering demand parameters while considering uncertainties in the value of story stiffnesses and model formulation. By including or excluding the uncertainty in the story stiffness and using modal or Rayleigh damping, four possible models are obtained, with each model having an equal chance of being randomly picked to predict the response of the structure. The resulting distribution of the engineering demand parameters is that obtained by propagating model form uncertainty as well as uncertainty about the value of a parameter of the model.
 
    
+.. figure:: figures/ee8-main.png
+   :align: center
+   :width: 40%
+   :figclass: align-center
+
+
 Configure UQ Engine
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -15,7 +21,7 @@ Configure UQ Engine
 
 .. figure:: figures/ee8-UQ.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 Configure Structural Analysis
@@ -25,12 +31,12 @@ Configure Structural Analysis
 
 .. figure:: figures/ee8-SIM1.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 .. figure:: figures/ee8-SIM2.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 2. Navigate to the **EVT** tab and select the **Multiple PEER**. We will use a single ground motion in this example. Select the file that contains the acceleration values from the El Centro earthquake. This file can be found in the `Examples` folder that is in the EE-UQ application on your filesystem, under the `eeuq-0001/src` directory. 
@@ -40,12 +46,12 @@ Configure Structural Analysis
 
 .. figure:: figures/ee8-FEM1.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 .. figure:: figures/ee8-FEM2.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 
@@ -54,7 +60,7 @@ Configure Structural Analysis
 
 .. figure:: figures/ee8-EDP.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 
@@ -62,7 +68,7 @@ Configure Structural Analysis
 
 .. figure:: figures/ee8-RV.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 
@@ -81,7 +87,7 @@ Run the analysis and observe the results
 
 .. figure:: figures/ee8-RES.png
    :align: center
-   :width: 600
+   :width: 80%
    :figclass: align-center
 
 In this figure, it is observed that if there is uncertainty about the story stiffness, there is a resulting uncertainty in the predicted engineering demand parameters, which can be characterized by performing the forward propagation analysis as shown in this example. To precisely characterize the uncertainty in the predicted EDPs, a large number of sample values (at least in the order of 1000) must be used. Running such a large number of model evaluations easily is facilitated by EE-UQ through the **RUN at DesignSafe** option. This allows the users of the tool to utilize the high-performance computing resources provided by DesignSafe. A DesignSafe account, which is free to obtain, is required to use this facility.

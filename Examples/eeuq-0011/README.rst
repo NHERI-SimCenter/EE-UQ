@@ -7,10 +7,10 @@ Multi-fidelity Monte Carlo Simulation
 This example demonstrates Multi-fidelity Monte Carlo (MFMC) supported in |short tool id|. The high- and low-fidelity building models of a benchmark 9-story steel structure ([Ohtori2004]_) are used for the demonstration, following the implementation in ([Patsialis2023]_). 
 
 
-      .. figure:: figures/ee11_main.png
+      .. figure:: figures/ee11_main2.png
          :name: UQ inputs
          :align: center
-         :width: 700
+         :width: 50%
          :figclass: align-center
 
          Illustration of Multi-fidelity Monte Carlo
@@ -30,7 +30,7 @@ The target structure is a nine-story moment-resisting five-bay frame with a tota
 The 
 `High-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1>`_ (main script: `benchmark_9st_model.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model1/benchmark_9st_model.tcl>`_) is a nonlinear finite element model developed in OpenSees. Material characteristics are modulus of elasticity E=1.99 105 MPa for both beams and columns, yield stress for the columns 345 MPa and 248 MPa for the beams using values proposed in [Ohtori2004]_. For modeling material inelastic behavior, the Giufre'-Menegotto-Pinto model with isotropic strain hardening is chosen for the steel fibers. The fundamental period is 2.274 sec, and under the Rayleigh damping assumption, the damping ratio is selected as 2% for the 1st and 3rd modes.
 
-The `Low-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2>`_ (main script: `Alt_ROM_Simulation_BoucWen_Drift.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2/Alt_ROM_Simulation_BoucWen_Drift.tcl>`_) is the reduced-order model (ROM) of the high-fidelity model. The detailed development procedures can be found in [Patsialis2020A]_ and [Patsialis2020B]_. As promoted in the papers, Bouc-Wen hysteretic model is chosen for the nonlinear connections of the ROM. The parameters of the ROM are chosen to minimize the error from the high-fidelity response, where three ground motion records are used to generate the reference high-fidelity prediction and optimize low-fidelity predictions.
+The `Low-Fidelity model <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2>`_ (main script: `Alt_ROM_Simulation_BoucWen_Drift.tcl <https://github.com/NHERI-SimCenter/EE-UQ/tree/master/Examples/eeuq-0011/src/model2/Alt_ROM_Simulation_BoucWen_Drift.tcl>`_) is the reduced-order model (ROM) of the high-fidelity model. The detailed development procedures can be found in [Patsialis2020A]_ and [Patsialis2020B]_. As promoted in the papers, the Bouc-Wen hysteretic model is chosen for the nonlinear connections of the ROM. The parameters of the ROM are chosen to minimize the error from the high-fidelity response, where three ground motion records are used to generate the reference high-fidelity prediction and optimize low-fidelity predictions.
 
 In the example, the computation time of the low-fidelity model is expected to be 40-50 times faster than that of the high-fidelity model. 
 
@@ -61,7 +61,7 @@ Procedure
       Note that the maximum computation time is a 'soft' target, rather than a hard time limit. The total number of simulations is decided after a few pilot simulations (# = 30 in this example) considering the remaining budgets (time), and the process is not enforced to finish even if the target time is exceeded. Therefore, there could be a few minutes of estimation error in the max computation time.
 
 
-2. The **GI tab** is kept as default. (GI tab is not used when opensees models are imported in SIM tab)
+2. The **GI tab** is kept as default. (GI tab is not used when OpenSees models are imported in SIM tab)
 
 3. In **SIM tab**, select the **Multiple Models** option. Use **Add** button to import two models. The model with a lower index value should be a higher fidelity model. Therefore, high-fidelity and low-fidelity models should respectively be loaded in **Model 1** and **Model 2** tabs. In **Model 1**, import the main file, and set the response nodes by picking one node per story starting from the ground floor. In the current example, the ten nodes specified in the **response nodes** field, 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, represent respectively from the ground floor(7) to the top story (61) ceiling. This is the list of nodes that will be used to evaluate the engineering demand parameters.
 

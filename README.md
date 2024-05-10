@@ -73,7 +73,7 @@ applications, FAQ, and how to collaborate.
 - [Download Application](https://www.designsafe-ci.org/data/browser/public/designsafe.storage.community/SimCenter/Software/EE_UQ)
 - [Step-by-Step Examples](https://nheri-simcenter.github.io/EE-UQ-Documentation/common/user_manual/examples/desktop/examples)
 - [Documentation & Guides](https://nheri-simcenter.github.io/EE-UQ-Documentation)
-- [Overview Web-Page](https://simcenter.designsafe-ci.org/research-tools/ee-uq)
+- [Overview Web-Page](https://simcenter.designsafe-ci.org/research-tools/ee-uq-application)
 - [Forum & Feature Requests](http://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=17.0)
 
 
