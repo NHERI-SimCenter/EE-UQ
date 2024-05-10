@@ -42,7 +42,7 @@ cd build
 # Check to see if the app built
 #
 
-if ! [ -x "$(command -v open $pathApp)" ]; then
+if ! [ -x "$(command -v open ./$APP_FILE)" ]; then
 	echo "$APP_FILE did not build. Exiting."
 	exit 
 fi

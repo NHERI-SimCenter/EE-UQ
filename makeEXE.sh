@@ -6,7 +6,7 @@
 
 mkdir -p build
 cd build
-rm -fr *.dmg EE_UQ.app
+rm -fr *.dmg *.app
 
 # conan install
 conan install .. --build missing
