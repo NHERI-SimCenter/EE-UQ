@@ -84,7 +84,7 @@ public:
     void onExitButtonClicked();
     int getMaxNumParallelTasks();
 
-  int createCitation(QJsonObject &citationToAddTo, QString citeFile);
+    int createCitation(QJsonObject &citationToAddTo, QString citeFile);
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);

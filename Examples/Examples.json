@@ -1,28 +1,28 @@
 {
     "Examples": [
     {
-      "name": "E1: Shear Building: Sampling, Reliability and Sensitivity",
-      "description": "This example takes a brief look at uncertainty quantification in a three story shear frame subjected to earthquake loading.",
+      "name": "E1: Sampling, Reliability and Sensitivity Analysis of a Shear Building",
+      "description": "This example takes a brief look at uncertainty quantification in a three-story shear frame subjected to earthquake loading.",
       "inputFile": "eeuq-0001/src/input.json"
     },	
     {
-      "name": "E2: Including Spatial Variability in Site Response Event",
-      "description": "This page shows two examples on how to incorporate spatial variability into UQ analysis by using various special materials, namely ElasticIsotropic, PM4Sand, and PDMY03, in Site Response option under EVENT tab.",
+      "name": "E2: Site Response Analysis with Spatial Variability",
+      "description": "This page shows two examples of how to incorporate spatial variability into UQ analysis by using various materials, namely ElasticIsotropic, PM4Sand, and PDMY03, in the Site Response option under EVENT tab.",
       "inputFile": "eeuq-0002/src/input.json"
     },
     {
-      "name": "E3: Ground Motion Selection and Nonlinear Response Analysis",
+      "name": "E3: PEER Ground Motion Selection and Nonlinear Response Analysis",
       "description": "This example shows how to select ground motion records and run nonlinear time history analysis for the OpenSees/tcl model of interest.",
       "inputFile": "eeuq-0003/src/input.json"
     },	
     {
       "name": "E4: AutoSDA and Nonlinear Response Analysis",
-      "description": "This example demonstrate the use of a python-based computation platform to automate seismic desing and analysis of of steel moment resisting frames (AutoSDA) ([GBS20]).",
+      "description": "This example demonstrates the use of a python-based computation platform to automate seismic design and analysis of steel moment resisting frames (AutoSDA) ([GBS20]).",
       "inputFile": "eeuq-0004/src/input.json"
     },	
     {
-      "name": "E5: Shear Building: Synthetic Ground Motion",
-      "description": "This example considers the problem of uncertainty quantification in a three story shear building where the ground shaking is represented by sythetic ground motion records based on two methods; Vlachos, Papakonstantinou and Deodatis (2018), and Dabaghi and Der Kiureghian (2018).",
+      "name": "E5: Synthetic Ground Motion Applied to a Shear Buildilng",
+      "description": "This example considers the problem of uncertainty quantification in a three-story shear building where the ground shaking is represented by synthetic ground motion records based on two methods: Vlachos, Papakonstantinou and Deodatis (2018), and Dabaghi and Der Kiureghian (2018).",
       "inputFile": "eeuq-0005/src/input.json"
     },
     {
@@ -33,7 +33,7 @@
     ,
     {
       "name": "E7: Target Spectrum by Surrogate Hazard GP Model",
-      "description": "This example demonstrates using pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
+      "description": "This example demonstrates using a pre-trained Gaussian Process (GP) model to get target response spectrum for ground motion selection and scaling.",
       "inputFile": "eeuq-0007/src/input.json"
     },
     {
@@ -44,19 +44,19 @@
     ,
     {
       "name": "E9: Training GP Surrogate Model",
-      "description": "This example demonstrates to develop surrogate models for seismic structural responses.",
+      "description": "This example demonstrates how to develop surrogate models for seismic structural responses.",
       "inputFile": "eeuq-0009/src/input.json"
     }
     ,
     {
       "name": "E10: Prediction from GP Surrogate Model",
-      "description": "This example uses pre-trained GP to obtain statistic for seismic structural responses.",
+      "description": "This example uses pre-trained GP to obtain statistics for seismic structural responses.",
       "inputFile": "eeuq-0010/src/input.json"
     }
     ,
     {
       "name": "E11: Multi-fidelity Monte Carlo",
-      "description": "This example uses low-fidelity model to inform high-fidelity response statistics",
+      "description": "This example uses a low-fidelity model to inform high-fidelity response statistics",
       "inputFile": "eeuq-0011/src/input.json"
     }
   ]

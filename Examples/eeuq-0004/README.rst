@@ -1,3 +1,4 @@
+.. _eeuq-0004:
 
 AutoSDA and Nonlinear Response Analysis
 =========================================
@@ -5,6 +6,14 @@ AutoSDA and Nonlinear Response Analysis
 This example demonstrates the use of a Python-based computation platform to automate seismic design and analysis of 
 of steel moment resisting frames (**AutoSDA**) ([GBS20]_).
    
+.. figure:: figures/sbm2.png
+   :name: fig_frame
+   :align: center
+   :width: 50%
+   :figclass: align-center
+
+   Basic building information in AutoSDA
+
 Design and create a numerical model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -15,7 +24,7 @@ Design and create a numerical model
 .. figure:: figures/sbm.png
    :name: fig_sbm
    :align: center
-   :width: 800
+   :width: 100%
    :figclass: align-center
 
 2. In the Building Information section, we define the number of stories of the example steel moment frame to 3 and 
@@ -25,7 +34,7 @@ Design and create a numerical model
 .. figure:: figures/bim.png
    :name: fig_bim
    :align: center
-   :width: 400
+   :width: 50%
    :figclass: align-center
 
 3. In the ELF Parameters section, the seismic design parameters box contains the Equivalent Lateral Force 
@@ -35,7 +44,7 @@ Design and create a numerical model
 .. figure:: figures/elf.png
    :name: fig_elf
    :align: center
-   :width: 400
+   :width: 50%
    :figclass: align-center
 
 4. In the Member Depth section, users can specify cross sections in the table list
@@ -46,7 +55,7 @@ Design and create a numerical model
 .. figure:: figures/mem.png
    :name: fig_mem
    :align: center
-   :width: 600
+   :width: 100%
    :figclass: align-center
 
 5. In the Loading section, users can specify the loading values for the floors, beams, and columns. And for the top 
@@ -56,19 +65,19 @@ Design and create a numerical model
 .. figure:: figures/ldg.png
    :name: fig_ldg
    :align: center
-   :width: 600
+   :width: 100%
    :figclass: align-center
 
 5. In the Building Data Files section, clicking the Save File button will automatically generate four modeling data 
-   files in the user-defined location (:download:`ELFParameters.csv <src/ELFParameters.csv>`, 
-   :download:`Geometry.csv <src/Geometry.csv>`, :download:`Loads.csv <src/Loads.csv>`, and 
-   :download:`MemberDepth.csv <src/MemberDepth.csv>`). These four files store the data from the four discussed 
+   files in the user-defined location (:eeuq-0004:`ELFParameters.csv <src/Test/ELFParameters.csv>`, 
+   :eeuq-0004:`Geometry.csv <src/Test/Geometry.csv>`, :eeuq-0004:`Loads.csv <src/Test/Loads.csv>`, and 
+   :eeuq-0004:`MemberDepth.csv <src/Test/MemberDepth.csv>`). These four files store the data from the four discussed 
    sections above. Users can also directly modify these data tables. 
 
 .. figure:: figures/bdf.png
    :name: fig_bdf
    :align: center
-   :width: 400
+   :width: 50%
    :figclass: align-center
 
 
@@ -99,7 +108,7 @@ Select and scale ground motion records
 .. figure:: figures/evt.png
    :name: fig_evt
    :align: center
-   :width: 750
+   :width: 100%
    :figclass: align-center
 
 
@@ -112,7 +121,7 @@ Run the analysis and post-process results
 .. figure:: figures/uq.png
    :name: fig_uq
    :align: center
-   :width: 800
+   :width: 100%
    :figclass: align-center
 
 2. Next click on the **Run** button. This will cause the backend application to launch the analysis. When done 
@@ -122,7 +131,7 @@ Run the analysis and post-process results
 .. figure:: figures/res.png
    :name: fig_res
    :align: center
-   :width: 800
+   :width: 100%
    :figclass: align-center
 
 .. [GBS20]

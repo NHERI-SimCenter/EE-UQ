@@ -1,17 +1,15 @@
 .. _eeuq-0003:
 
-Ground Motion Selection and Nonlinear Response Analysis
-========================================================
+PEER Ground Motion Selection and Nonlinear Response Analysis
+==============================================================
 
-Shown in :numref:`fig_frame` is an OpenSees model sketch of a 2D steel moment frame building. 
-The building has a four-bay lateral frame with gravity system 
-which is modeled by the leaning column in the model. The bottom two stories 
-use the column section of :math:`W24 \times 207` and beam section of :math:`30 \times 108`.  The top two stories 
-use the column section of :math:`W24 \times 162`and beam section of :math:`24 \times 84`. The reduced beam section 
-(RBS) connections are adopted in all beams. This OpenSees model can be 
-:download:`downloaded <src/MRF_4Story_Concentrated_model.tcl>`.
+.. warning:: To reproduce the result of this example, the user should first click **EVT** and **Select Records**, and then click the **RUN** button. See the below procedure for details.
 
-.. figure:: figures/frame.png
+Shown below is an OpenSees model sketch of a 2D steel-moment frame building. The building has a four-bay lateral frame with gravity system which is modeled by the leaning column in the model. The bottom two stories 
+use the column section of :math:`W24 \times 207` and the beam section of :math:`30 \times 108`.  The top two stories use the column section of :math:`W24 \times 162`and the beam section of :math:`24 \times 84`. The reduced beam section 
+(RBS) connections are adopted in all beams. This OpenSees model can be `downloaded  <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/eeuq-0003/src/MRF_4Story_Concentrated_model.tcl>`_.
+
+.. figure:: figures/frame2.png
    :name: fig_frame
    :align: center
    :width: 800
@@ -25,9 +23,8 @@ model of interest.
 Load OpenSees/tcl model and analysis script
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Navigate to the **SIM** tab in the left menu. In is panel, select the **OpenSees** as the 
-   **Building Model Generator**. Use the **Choose** button to select the 
-   :download:`OpenSees tcl file <src/MRF_4Story_Concentrated_model.tcl>` as the **Input** **Script**. For 
+1. Navigate to the **SIM** tab in the left menu. In this panel, select the **OpenSees** as the 
+   **Building Model Generator**. Use the **Choose** button to select the `OpenSees tcl file <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/eeuq-0003/src/MRF_4Story_Concentrated_model.tcl>`_ as the **Input** **Script**. For 
    the **Response** **Nodes**, specify the node numbers on any one column line (e.g., 11, 12, 13, 14, 15 on 
    the left column line). The problem will then automatically create recorders to save the peak story responses 
    given the specified nodes.
@@ -38,8 +35,7 @@ Load OpenSees/tcl model and analysis script
    :width: 800
    :figclass: align-center
 
-2. Navigate to the **FEM** tab and **Choose** the user-defined :download:`analysis script <src/MRF_4Story_Concentrated_solver.tcl>`.
-   Note that the user-defined analysis script will overwrite other specifications in the fill-in boxes above.
+2. Navigate to the **FEM** tab and **Choose** the user-defined `analysis script <https://github.com/NHERI-SimCenter/EE-UQ/blob/master/Examples/eeuq-0003/src/MRF_4Story_Concentrated_solver.tcl>`_. Note that the user-defined analysis script will overwrite other specifications in the fill-in boxes above.
 
 .. figure:: figures/fem.png
    :name: fig_fem
@@ -92,7 +88,7 @@ Run the analysis and postprocess results
    :figclass: align-center
 
 2. Next click on the **Run** button. This will cause the backend application to launch the analysis. When done 
-   the **RES** panel will be selected and the results will be displayed. The results show the values the mean 
+   the **RES** panel will be selected and the results will be displayed. The results show the values of the mean 
    and standard deviation as before but now only for the one quantity of interest.
 
 .. figure:: figures/res.png
@@ -102,7 +98,7 @@ Run the analysis and postprocess results
    :figclass: align-center
 
 3. Users can save the analysis results in the **Data Value** window to a text file (e.g., csv file) which 
-   can be further processed for different purposes. For example, the figure below show the maximum story 
+   can be further processed for different purposes. For example, the figure below shows the maximum story 
    drift ratios and peak floor accelerations of the 4-story frame.
 
 .. figure:: figures/sdr_pfa.png
