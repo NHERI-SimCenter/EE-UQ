@@ -25,7 +25,7 @@
     &nbsp; 
     &nbsp; 
     &nbsp; 
-    <img src="./icons/OpenSees_VTKO_Jose_DRM_Shaking.gif" alt="OpenSees model with a DRM pattern visualized in VTKO. By Jose Abell." width="37%" height="70%" />
+    <img src="./icons/OpenSees_VTKO_Jose_DRM_Shaking_White.gif" alt="OpenSees model with a DRM pattern visualized in VTKO. By Jose Abell." width="37%" height="70%" />
 </div>
 
 ---
