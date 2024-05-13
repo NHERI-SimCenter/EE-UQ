@@ -97,7 +97,11 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     eventSelection->addItem(tr("Physics Based Simulations"));    
     // eventSelection->addItem(tr("Hazard Based Event"));
     // eventSelection->addItem(tr("User Application"));
-    eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+
+   // eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    // eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+
     eventSelection->setItemData(1, "A Seismic event using Seismic Hazard Analysis and Record Selection/Scaling", Qt::ToolTipRole);
 
     eventSelection->setMinimumWidth(250);
