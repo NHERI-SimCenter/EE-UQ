@@ -121,6 +121,7 @@ for {set colLine1  1} {$colLine1 < $numCline} {incr colLine1 1} {
 
 set eigenValues [eigen 2]
 puts "Moment Frame Eigenvalues: $eigenValues"
+wipeAnalysis
 
 #
 # use eigevalues to impose load on structure
@@ -150,22 +151,26 @@ set d3 [nodeDisp 14 1]
 
 wipe
 
-model Basic -ndm 1 -ndf 1
+model Basic -ndm 2 -ndf 2
 set k1 [expr ($P1+$P2+$P3)/$d1]
 set k2 [expr ($P2+$P3)/($d2-$d1)]
 set k3 [expr $P3/($d3-$d2)]
 
-node 11 0
-node 12 0 -mass $floorMass
-node 13 0 -mass $floorMass
-node 14 0 -mass $roofMass
+set floorLoc [lindex $floorLocations [expr $floor-1]]
+node 11 0 [lindex $floorLocations 0]
+node 12 0 [lindex $floorLocations 1] -mass $floorMass 0.
+node 13 0 [lindex $floorLocations 2] -mass $floorMass 0.
+node 14 0 [lindex $floorLocations 3] -mass $roofMass  0.
 
 uniaxialMaterial Elastic 1 $k1
 uniaxialMaterial Elastic 2 $k2
 uniaxialMaterial Elastic 3 $k3
 
-element zeroLength 1 11 12 -mat 1 -dir 1
-element zeroLength 2 12 13 -mat 2 -dir 1
-element zeroLength 3 13 14 -mat 3 -dir 1
-fix 11 1
+element zeroLength 1 11 12 -mat 1 -dir 1 -doRayleigh
+element zeroLength 2 12 13 -mat 2 -dir 1 -doRayleigh
+element zeroLength 3 13 14 -mat 3 -dir 1 -doRayleigh
+fix 11 1 1
+fix 12 0 1
+fix 13 0 1
+fix 14 0 1
 
