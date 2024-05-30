@@ -18,6 +18,7 @@ For the moment frame and stick model, the columns of each story are provided a u
 
 .. figure:: figures/LA_3Story.png
    :align: center
+   :alt: A black and white technical drawing with three sections labeled PLAN, ELEVATION, and MOMENT FRAMES, representing a 3-story building's structural design. The PLAN shows a top view with a grid indicating 6 bays at 30 feet by 4 bays at 30 feet, one shaded area in the grid center. The ELEVATION depicts the side view of a building with three levels on support columns. The MOMENT FRAMES show another grid with labeled columns A through E. Below the diagrams, tables list the specifications for columns and beams for the North-South moment resisting frame and gravity frames, including steel beam designations like W14X257 and girder sizes like W30X116.
    :width: 400
    :figclass: align-center
 
