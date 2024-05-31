@@ -11,7 +11,7 @@ use the column section of :math:`W24 \times 207` and the beam section of :math:`
 
 .. figure:: figures/frame2.png
    :name: fig_frame
-   :alt: The image displays a schematic diagram of a structural analysis model, which consists of a grid of nodes interconnected by lines representing elements of a frame structure. Red nodes indicate connection points for the frame elements, and blue lines represent beams or columns. On the left side, one node is labeled 'Geschoorde plastische hinge' (Braced plastic hinge) and another node below is labeled 'Kolom-/ligger element' (Column/beam element). On the right side, a yellow node is connected to a red node by a line labeled 'Truss element', and to another yellow node by a line with an arrow labeled 'Moment release spring'. Node numbers are marked as '1.1' to '5.5' in a grid formation. The background of the image is black, with text and schematics in red, blue, yellow, and white colors.
+   :alt: The image displays a schematic diagram of a structural analysis model, which consists of a grid of nodes interconnected by lines representing elements of a frame structure. Red nodes indicate connection points for the frame elements, and blue lines represent beams or columns. The red nodes are labeled as being 'Concentrated plastisc hinge' The blue lines are labeled as being "elastic beam column elements". On the right side, a yellow line are used to indicate "truss elements". These connect the floor nodes to the nodes of the gravity column. The yellow nodes on the gravity volumn indicate "moment release springs".
    :align: center
    :width: 800
    :figclass: align-center

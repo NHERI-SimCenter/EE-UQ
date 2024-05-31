@@ -9,7 +9,7 @@ Consider the problem of uncertainty quantification for a three-story shear build
 
 .. figure:: figures/model2.png
    :align: center
-   :alt: A diagram depicting a structure with three horizontally aligned rigid beams, each separated by an equally distributed vertical force labeled "w". At the top beam, the force is labeled "w/2". The beams are supported on each end by a symbol indicating a fixed support, and the structure appears to be a simplified representation of a statically determinate beam or bridge under distributed loads.
+   :alt: A diagram depicting a three storyone bay  structure with three horizontally aligned rigid beams. The first and second floors have a mass labeled "w". At the top floor, the mass is labeled "w/2". The columns at the based end by a symbol indicating a fixed support.
    :width: 400
    :figclass: align-center
 
@@ -48,7 +48,7 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 
 .. figure:: figures/shearUQ.png
    :align: center
-   :alt: Screenshot of a user interface with a left-side menu showing categories like UQ, GI, SIM, EVT, FEM, EDP, RV, and RES. On the right, there is a section titled "UQ Engine" with a dropdown menu selecting "Dakota," another dropdown for "Dakota Method Category" selecting "Forward Propagation," with options below for "Method" choosing "LHS," a field to input the number of samples (set to 1000), and a field for the seed value (set to 20). The interface has a clean design with mainly blue and gray colors.
+   :alt: Screenshot of a user interface with a left-side menu showing categories like UQ, GI, SIM, EVT, FEM, EDP, RV, and RES. On the right, there is a section titled "UQ Engine" with a dropdown menu selecting "Dakota," another dropdown for "Dakota Method Category" selecting "Forward Propagation," with options below for "Method" choosing "LHS," a field to input the number of samples (set to 1000), and a field for the seed value (set to 20).
    :figclass: align-center
 
 .. note::
@@ -70,7 +70,7 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 
    .. figure:: figures/shearSIM-OpenSees.png
       :align: center
-   :alt: Screenshot of a Building Model Generator software interface showing a selected file path for an Input Script labeled "ShearBuilding3.tcl", fields for specifying Response Nodes, Spatial Dimension, and Degrees Of Freedom (DOF) at Nodes. There are tabs on the left side for various modules like UQ, GI, SIM, EVT, FEM, EDP, RV, and RES, with SIM currently selected or highlighted. A drop-down menu at the top right corner indicates the software is integrated with or supports OpenSees.
+      :alt: Screenshot of a Building Model Generator software interface showing a selected file path for an Input Script labeled "ShearBuilding3.tcl", fields for specifying Response Nodes, Spatial Dimension, and Degrees Of Freedom (DOF) at Nodes. There are tabs on the left side for various modules like UQ, GI, SIM, EVT, FEM, EDP, RV, and RES, with SIM currently selected or highlighted. A drop-down menu at the top right corner indicates the software is integrated with or supports OpenSees.
       :figclass: align-center
 
 4. Next select the **EVT** panel. From the **Load Generator** pull-down menu select the **Multiple PEER** option. This will present a panel with three buttons: **Add**, **Remove** and **Load Directory**. Click the **Add** button. Give the motion a name, here enter ``elCentro`` in the first line edit. Now for the motion, enter the path to the ``elCentro.AT2`` motion. Leave the motion acting in the **1** dof direction and for the scale factor in this direction, enter **factorEC**.
@@ -93,7 +93,7 @@ To perform a Sampling or Forward propagation uncertainty analysis the user would
 
    .. figure:: figures/shearFEM-OpenSees.png
       :align: center
-   :alt: Screenshot of a software interface with the title "FE Application" selected from a menu. The interface is divided into various settings grouped under Analysis, Integration, Algorithm, ConvergenceTest, Solver, and Damping Model, with parameters like "Transient -numSubLevels 2 -numSubSteps 10", "Newmark 0.5 0.25", "Newton", "NormUnbalance 1.0e-2 10", and "Umfpack" filled in the respective text fields. There is also a section for Damping Model showing "Rayleigh Damping" selected from a dropdown menu, alongside fields for Damping Ratio, Selected Tangent Stiffness, Mode 1, and Mode 2 with numerical values set. A button labeled "Choose" next to an empty field for Analysis Script is located at the bottom of the interface.
+      :alt: Screenshot of a software interface with the title "FE Application" selected from a menu. The interface is divided into various settings grouped under Analysis, Integration, Algorithm, ConvergenceTest, Solver, and Damping Model, with parameters like "Transient -numSubLevels 2 -numSubSteps 10", "Newmark 0.5 0.25", "Newton", "NormUnbalance 1.0e-2 10", and "Umfpack" filled in the respective text fields. There is also a section for Damping Model showing "Rayleigh Damping" selected from a dropdown menu, alongside fields for Damping Ratio, Selected Tangent Stiffness, Mode 1, and Mode 2 with numerical values set. A button labeled "Choose" next to an empty field for Analysis Script is located at the bottom of the interface.
       :figclass: align-center
 
 

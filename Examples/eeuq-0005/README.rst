@@ -8,7 +8,7 @@ represented by synthetic ground motion records based on two methods ([VPD18]_, [
 
 .. figure:: figures/model2.png
    :align: center
-   :alt: A simplified engineering diagram depicting a vertical stack of three rigid beams connected by equally spaced joints with a force 'w' at the center of each joint. The structure is symmetric with forces labeled 'w/2' at the topmost and bottommost connection points to the beams. The bottom of the structure appears fixed to the ground with diagonal hatching, indicating it is immovable or anchored.
+   :alt: A diagram depicting a three storyone bay  structure with three horizontally aligned rigid beams. The first and second floors have a mass labeled "w". At the top floor, the mass is labeled "w/2". The columns at the based end by a symbol indicating a fixed support.
    :width: 400
    :figclass: align-center
 
