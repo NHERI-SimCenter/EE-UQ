@@ -48,6 +48,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDebug>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QGroupBox>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+#include <QSplitter>
 
 #include <QGridLayout>
 #include <QLabel>
@@ -63,11 +67,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 M9SingleSite::M9SingleSite(QWidget *parent)
 :SimCenterAppWidget(parent), count(0), downloadedMotions(false), motionsDownloading(false)
 {
-  QGridLayout *theLayout = new QGridLayout();
-  this->setLayout(theLayout);
+  this->setWindowTitle("Splitting Widgets Example");
+  this->setGeometry(100, 100, 600, 400);
+  QHBoxLayout *mainLayout = new QHBoxLayout(this);
+  
+  QWidget *leftWidget = new QWidget();
 
+  QGridLayout *leftLayout = new QGridLayout(leftWidget);
+  leftLayout->setAlignment(Qt::AlignTop);
+  // this->setLayout(theLayout);
+  QGroupBox *inputParameters = new QGroupBox("Input Parameters");
+
+  QGridLayout *theLayout = new QGridLayout(inputParameters);
+  
   theLayout->addWidget(new QLabel("Grid"),0,0);
-  QStringList listGrids; listGrids << "A" << "B" << "C" << "D" << "All";
+  QStringList listGrids; listGrids  << "All" << "A" << "B" << "C" << "D";
   gridType = new SC_ComboBox("gridType",listGrids);
   theLayout->addWidget(gridType, 0, 1);
   
@@ -112,7 +126,56 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   theLayout->setRowStretch(7,1);
   theLayout->setColumnStretch(1,1);
   theLayout->setColumnStretch(3,1); 
-  theLayout->setColumnStretch(4,1);     
+  theLayout->setColumnStretch(4,1);
+
+  leftLayout->addWidget(inputParameters,0,0);  
+
+
+  QGroupBox *mapboxM9 = new QGroupBox("Grid Location");
+
+  // ===========================================================
+  // creating right widget
+  // ===========================================================
+  QWidget *rightWidget = new QWidget();
+
+  QGridLayout *rightLayout = new QGridLayout(rightWidget);
+
+  QGroupBox *mapbox = new QGroupBox("Google Maps");
+  QGridLayout *maplayout = new QGridLayout(mapbox);
+
+  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+
+  // webView1->page()->setDevToolsPage(new QWebEnginePage());
+  webView1 = new QWebEngineView();
+  QString appDir = SimCenterPreferences::getInstance()->getAppDir();
+  QString mappscript = appDir + QDir::separator() + "applications" + QDir::separator()
+    + "createEVENT" + QDir::separator() + "M9" + QDir::separator();
+  // webView1->setUrl(QUrl("https://www.google.com/maps"));
+  webView1->load(QUrl::fromLocalFile(mappscript+"All_grid.html"));
+  webView1->show();
+  maplayout->addWidget(webView1,0,0);
+  rightLayout->addWidget(mapbox,0,0);
+
+
+
+  leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  mainLayout->addWidget(leftWidget);
+  mainLayout->addWidget(rightWidget);
+
+
+
+
+
+
+
+  // create a signal if gridType changed to change the map
+  connect(gridType, &QComboBox::currentTextChanged, this, [=](){
+    QString currentGrid=gridType->currentText();
+    webView1->load(QUrl::fromLocalFile(mappscript+currentGrid+"_grid.html"));
+  });
 }
 
 M9SingleSite::~M9SingleSite()
@@ -160,13 +223,14 @@ M9SingleSite::downloadMotions(void)
 
   QString appDir = SimCenterPreferences::getInstance()->getAppDir();
   QString m9Script = appDir + QDir::separator() + "applications" + QDir::separator()
-    + "createEVENT" + QDir::separator() + "M9" + QDir::separator() + "M9.py";
+    + "createEVENT" + QDir::separator() + "M9" + QDir::separator() + "M9Run.py";
   
   QStringList args; args << QString("--lat") << QString::number(latitude)
 			 << QString("--lng") << QString::number(longitude)
 			 << QString("-g") << currentGrid
 			 << QString("-n") << QString::number(numMotion)
-			 << QString("-o") << destDir;
+			 << QString("-o") << destDir
+       << QString("--API") << QString::number(useAPI->isChecked());
   
   /*
   QJsonObject information;
@@ -207,8 +271,13 @@ M9SingleSite::downloadMotions(void)
   // run the download in a Thread using RunPythinInThread
   //    NOTE: do not  invoke destructor .. class kills itself when python app finishes
   //
-  
-  errorMessage("M9 Downloading Motions .. this takes about 3 minutes per motion");
+  // I useAPI is checked, then use the API print the message to the user
+  if (useAPI->isChecked()) {
+    errorMessage("M9 Downloading Motions using API .. this takes about 3 minutes per motion");
+
+  } else {
+    errorMessage("M9 running a app in Designsafe to download motions");
+  }
   getMotions->setEnabled(false);
   downloadedMotions = false;
   motionsDownloading = true;

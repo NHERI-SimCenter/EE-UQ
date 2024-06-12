@@ -48,7 +48,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 #include <SimCenterAppWidget.h>
-
+#include <QWebEngineView>
 class SC_DoubleLineEdit;
 class SC_IntLineEdit;
 class SC_DirEdit;
@@ -84,6 +84,8 @@ private:
   SC_DirEdit        *tmpLocation;
   SC_ComboBox       *gridType;
   SC_CheckBox       *useAPI;
+  QWebEngineView    *webView1;
+  QWebEngineView    *webView2;
   int count;
 
   QPushButton *getMotions;
