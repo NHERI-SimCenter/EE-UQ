@@ -1,5 +1,5 @@
-#ifndef PHYSICS_BASED_MOTION_SELECTION_H
-#define PHYSICS_BASED_MOTION_SELECTION_H
+#ifndef ISTANBUL_SINGLE_SITE_WIDGET_H
+#define ISTANBUL_SINGLE_SITE_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -20,7 +20,7 @@ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
 ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -37,47 +37,53 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
+/**
+ *  @author  fmckenna
+ *  @date    03/2024
+ *  @version 1.0
+ *
+ *  @section DESCRIPTION
+ *
+ * The purpose of this class is to define interface for Istanbul ground motions
+ */
 
 #include <SimCenterAppWidget.h>
+#include <QWebEngineView>
+class SC_DoubleLineEdit;
+class SC_IntLineEdit;
+class SC_DirEdit;
+class SC_ComboBox;
 
-#include <QGroupBox>
-#include <QVector>
-#include <GeneralInformationWidget.h>
-
-class QComboBox;
-class QStackedWidget;
-class RandomVariablesContainer;
-
-class PhysicsBasedMotionSelection : public  SimCenterAppWidget
+class IstanbulSingleSite : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    explicit PhysicsBasedMotionSelection(GeneralInformationWidget* generalInfoWidget, QWidget *parent = 0);
-    ~PhysicsBasedMotionSelection();
+    IstanbulSingleSite(QWidget *parent = 0);
+    virtual ~IstanbulSingleSite();
+    bool outputToJSON(QJsonObject &jsonObject);
+    bool inputFromJSON(QJsonObject &jsonObject);  
+    bool outputAppDataToJSON(QJsonObject &jsonObject);
+    bool inputAppDataFromJSON(QJsonObject &jsonObject);
+    bool copyFiles(QString &destDir);
+    virtual void clear(void);
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
+    virtual bool outputCitation(QJsonObject &jsonObject);  
 
 signals:
-    void typeEVT(QString type);
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
-   void replyEventType(void);
-
+  void downloadMotions(void);
+  
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
-
-   //   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theM9;
-   SimCenterAppWidget *theIstanbul;
-   QString currentEventType; 
+  SC_DoubleLineEdit *lat;
+  SC_DoubleLineEdit *lng;
+  SC_IntLineEdit    *numRealizations;
+  SC_DirEdit       *tmpLocation;
+  SC_ComboBox       *gridType;
+  QWebEngineView    *webView1;
+  int count;
+  bool ok;
+  
 };
 
-#endif // PHYSICS_BASED_MOTION_SELECTION_H
+#endif // ISTANBUL_SINGLE_SITE_WIDGET_H
