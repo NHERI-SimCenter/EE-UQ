@@ -140,7 +140,7 @@ M9SingleSite::M9SingleSite(QWidget *parent)
 
   QGridLayout *rightLayout = new QGridLayout(rightWidget);
 
-  QGroupBox *mapbox = new QGroupBox("Google Maps");
+  QGroupBox *mapbox = new QGroupBox("Grid Maps");
   QGridLayout *maplayout = new QGridLayout(mapbox);
 
   QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
