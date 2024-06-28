@@ -78,7 +78,7 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     this->addComponent(tr("Physics Based Simulations"), "PhysicsBasedMotion", physicsBased);
 
   if (doMulti == true) {
-    SimCenterAppWidget *multi = new SimCenterAppMulti(QString("Event"), QString("MultiModel-Events"),this, this);
+    SimCenterAppWidget *multi = new SimCenterAppMulti(QString("Events"), QString("MultiModel-Events"),this, this);
     this->addComponent(QString("Multiple Models"), QString("MultiModel"), multi);
   }        
 }
