@@ -1,5 +1,5 @@
-#ifndef M9_SINGLE_SITE_WIDGET_H
-#define M9_SINGLE_SITE_WIDGET_H
+#ifndef ISTANBUL_SINGLE_SITE_WIDGET_H
+#define ISTANBUL_SINGLE_SITE_WIDGET_H
 
 /* *****************************************************************************
 Copyright (c) 2016-2017, The Regents of the University of California (Regents).
@@ -44,7 +44,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  *  @section DESCRIPTION
  *
- * The purpose of this class is to define interface for M9 ground motions
+ * The purpose of this class is to define interface for Istanbul ground motions
  */
 
 #include <SimCenterAppWidget.h>
@@ -53,15 +53,13 @@ class SC_DoubleLineEdit;
 class SC_IntLineEdit;
 class SC_DirEdit;
 class SC_ComboBox;
-class QPushButton;
-class SC_CheckBox;
 
-class M9SingleSite : public SimCenterAppWidget
+class IstanbulSingleSite : public SimCenterAppWidget
 {
     Q_OBJECT
 public:
-    M9SingleSite(QWidget *parent = 0);
-    virtual ~M9SingleSite();
+    IstanbulSingleSite(QWidget *parent = 0);
+    virtual ~IstanbulSingleSite();
     bool outputToJSON(QJsonObject &jsonObject);
     bool inputFromJSON(QJsonObject &jsonObject);  
     bool outputAppDataToJSON(QJsonObject &jsonObject);
@@ -72,25 +70,20 @@ public:
     virtual bool outputCitation(QJsonObject &jsonObject);  
 
 signals:
-    
+
 public slots:
   void downloadMotions(void);
-  void motionsDownloaded(int returnCode);  
   
 private:
   SC_DoubleLineEdit *lat;
   SC_DoubleLineEdit *lng;
   SC_IntLineEdit    *numRealizations;
-  SC_DirEdit        *tmpLocation;
+  SC_DirEdit       *tmpLocation;
   SC_ComboBox       *gridType;
-  SC_CheckBox       *useAPI;
   QWebEngineView    *webView1;
-  QWebEngineView    *webView2;
   int count;
-
-  QPushButton *getMotions;
-  bool downloadedMotions;
-  bool motionsDownloading;
+  bool ok;
+  
 };
 
-#endif // M9_SINGLE_SITE_WIDGET_H
+#endif // ISTANBUL_SINGLE_SITE_WIDGET_H

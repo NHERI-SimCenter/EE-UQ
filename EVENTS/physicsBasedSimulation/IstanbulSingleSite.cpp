@@ -36,12 +36,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include "M9SingleSite.h"
+#include "IstanbulSingleSite.h"
 #include <SC_DoubleLineEdit.h>
 #include <SC_IntLineEdit.h>
 #include <SC_DirEdit.h>
 #include <SC_ComboBox.h>
-#include <SC_CheckBox.h>
 
 #include <QJsonObject>
 #include <QDir>
@@ -58,80 +57,68 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QStringList>
 #include <SimCenterPreferences.h>
 #include <ModularPython.h>
-#include <RunPythonInThread.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
 
-M9SingleSite::M9SingleSite(QWidget *parent)
-:SimCenterAppWidget(parent), count(0), downloadedMotions(false), motionsDownloading(false)
+
+IstanbulSingleSite::IstanbulSingleSite(QWidget *parent)
+  :SimCenterAppWidget(parent), count(0), ok(false)
 {
+
   this->setWindowTitle("Splitting Widgets Example");
   this->setGeometry(100, 100, 600, 400);
   QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  
   QWidget *leftWidget = new QWidget();
-
   QGridLayout *leftLayout = new QGridLayout(leftWidget);
   leftLayout->setAlignment(Qt::AlignTop);
   // this->setLayout(theLayout);
   QGroupBox *inputParameters = new QGroupBox("Input Parameters");
 
   QGridLayout *theLayout = new QGridLayout(inputParameters);
-  
-  theLayout->addWidget(new QLabel("Grid"),0,0);
-  QStringList listGrids; listGrids  << "All" << "A" << "B" << "C" << "D";
+  this->setLayout(theLayout);
+
+  theLayout->addWidget(new QLabel("grid type"),0,0);
+  QStringList listGrids; listGrids << "All";
   gridType = new SC_ComboBox("gridType",listGrids);
   theLayout->addWidget(gridType, 0, 1);
   
   theLayout->addWidget(new QLabel("num Motions"),0,2);
-  numRealizations = new SC_IntLineEdit("numRealizations",10);
+  numRealizations = new SC_IntLineEdit("numRealizations",1);
   theLayout->addWidget(numRealizations,0,3);
   
   theLayout->addWidget(new QLabel("latitude"),2,0);
-  lat = new SC_DoubleLineEdit("latitude",47.620422);
+  lat = new SC_DoubleLineEdit("latitude",40.9940);
   theLayout->addWidget(lat,2,1);
   theLayout->addWidget(new QLabel("longitude"),2,2);
-  lng = new SC_DoubleLineEdit("longitude",-122.349358);
+  lng = new SC_DoubleLineEdit("longitude",28.8990);
   theLayout->addWidget(lng,2,3);
 
-  QString dirPath = SimCenterPreferences::getInstance()->getLocalWorkDir() + QDir::separator() + "M9";
+
+
+
+  QString dirPath = SimCenterPreferences::getInstance()->getLocalWorkDir() + QDir::separator() + "Istanbul";
   theLayout->addWidget(new QLabel("tmp Directory"),3,0);  
   tmpLocation = new SC_DirEdit("tmpLocation");
   tmpLocation->setDirName(dirPath);
-  theLayout->addWidget(tmpLocation,3,1,1,3);
+  theLayout->addWidget(tmpLocation,3,1,1,2);
 
-  // Add a checkbox to allow the user to select if they want to use API or not
-  theLayout->addWidget(new QLabel("API"), 4, 0);            // Column 4
-  useAPI = new SC_CheckBox("useAPI", false);
-  theLayout->addWidget(useAPI, 4, 1); 
-  // add the explanation for the API 
-  QLabel *apiExplanation = new QLabel("Check this box if you want to use the API to get the motions. If you do not check this box, the motions will be Extracted from Designsafe repository.");
-  apiExplanation->setWordWrap(true);
-  theLayout->addWidget(apiExplanation, 4, 2, 1, 2);
-
-
-  getMotions = new QPushButton("Get Motions");
-  theLayout->addWidget(getMotions, 5,1,1,3);
+  QPushButton *getMotions = new QPushButton("Get Motions");
+  theLayout->addWidget(getMotions, 4,1,1,3);
   connect(getMotions, &QPushButton::clicked, this, [=](){
     this->downloadMotions();
   });
-
-  QLabel *citation = new QLabel("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034");
+  QLabel *citation = new QLabel("Zhang, W., J. Crempien, K. Zhong, P. Chen, P. Arduino, E. Taciroglu. (2023), A suite of 57 broadband physics-based ground motion simulations for the Istanbul region, in Regional-scale physics-based ground motion simulation for Istanbul, Turkey. DesignSafe-CI.");
   citation->setWordWrap(true);
-  
-  theLayout->addWidget(citation, 6,0,1,4);  
-  
-  theLayout->setRowStretch(7,1);
+  theLayout->addWidget(citation,5,0,1,4);
+  theLayout->setRowStretch(6,1);
   theLayout->setColumnStretch(1,1);
   theLayout->setColumnStretch(3,1); 
-  theLayout->setColumnStretch(4,1);
-
+  theLayout->setColumnStretch(4,1);   
   leftLayout->addWidget(inputParameters,0,0);  
 
-
-  QGroupBox *mapboxM9 = new QGroupBox("Grid Location");
+  QGroupBox *mapboxIstanbul = new QGroupBox("Grid Location");
 
   // ===========================================================
   // creating right widget
@@ -140,7 +127,7 @@ M9SingleSite::M9SingleSite(QWidget *parent)
 
   QGridLayout *rightLayout = new QGridLayout(rightWidget);
 
-  QGroupBox *mapbox = new QGroupBox("Grid Maps");
+  QGroupBox *mapbox = new QGroupBox("Grid Map");
   QGridLayout *maplayout = new QGridLayout(mapbox);
 
   QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
@@ -150,9 +137,9 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   webView1 = new QWebEngineView();
   QString appDir = SimCenterPreferences::getInstance()->getAppDir();
   QString mappscript = appDir + QDir::separator() + "applications" + QDir::separator()
-    + "createEVENT" + QDir::separator() + "M9" + QDir::separator();
+    + "createEVENT" + QDir::separator() + "Istanbul" + QDir::separator();
   // webView1->setUrl(QUrl("https://www.google.com/maps"));
-  webView1->load(QUrl::fromLocalFile(mappscript+"All_grid.html"));
+  webView1->load(QUrl::fromLocalFile(mappscript+"Istanbul_AllSites_grid.html"));
   webView1->show();
   maplayout->addWidget(webView1,0,0);
   rightLayout->addWidget(mapbox,0,0);
@@ -167,18 +154,11 @@ M9SingleSite::M9SingleSite(QWidget *parent)
 
 
 
-
-
-
-
-  // create a signal if gridType changed to change the map
-  connect(gridType, &QComboBox::currentTextChanged, this, [=](){
-    QString currentGrid=gridType->currentText();
-    webView1->load(QUrl::fromLocalFile(mappscript+currentGrid+"_grid.html"));
-  });
+  mainLayout->addWidget(leftWidget);
+  mainLayout->addWidget(rightWidget);
 }
 
-M9SingleSite::~M9SingleSite()
+IstanbulSingleSite::~IstanbulSingleSite()
 {
 
   
@@ -187,9 +167,9 @@ M9SingleSite::~M9SingleSite()
 }
 
 void
-M9SingleSite::downloadMotions(void)
+IstanbulSingleSite::downloadMotions(void)
 {
-  qDebug() << "M9SingleSite::downloadMotions called";
+  qDebug() << "IstanbulSingleSite::downloadMotions called";
   
   //
   // get tmp directory to store motions, if it exists remove
@@ -204,7 +184,7 @@ M9SingleSite::downloadMotions(void)
     destinationDirectory.mkpath(destDir);
 
   if (!destinationDirectory.exists()) {
-    errorMessage(QString("a BUG in M9SingleSite as this SHOULD NOT HAPPEN .. NO directory: ") + destDir);
+    errorMessage(QString("IstanbulSingleSite SHOULD NOT HAPPEN BUT NO ") + destDir);
     return;
   }
   
@@ -222,15 +202,14 @@ M9SingleSite::downloadMotions(void)
   //
 
   QString appDir = SimCenterPreferences::getInstance()->getAppDir();
-  QString m9Script = appDir + QDir::separator() + "applications" + QDir::separator()
-    + "createEVENT" + QDir::separator() + "M9" + QDir::separator() + "M9Run.py";
+  QString IstanbulScript = appDir + QDir::separator() + "applications" + QDir::separator()
+    + "createEVENT" + QDir::separator() + "Istanbul" + QDir::separator() + "IstanbulRun.py";
   
   QStringList args; args << QString("--lat") << QString::number(latitude)
 			 << QString("--lng") << QString::number(longitude)
 			 << QString("-g") << currentGrid
 			 << QString("-n") << QString::number(numMotion)
-			 << QString("-o") << destDir
-       << QString("--API") << QString::number(useAPI->isChecked());
+			 << QString("-o") << destDir;
   
   /*
   QJsonObject information;
@@ -254,68 +233,44 @@ M9SingleSite::downloadMotions(void)
       outputFile.write(jsonData);
       outputFile.close();
   } else {
-    QString msg("M9SingleSite::Could not open file" + informationFile);
+    QString msg("IstanbulSingleSite::Could not open file" + informationFile);
     errorMessage(msg);
     return;
   }
   QStringList args; args << informationFile;
   */
   
-  // ModularPython *thePythonApp = new ModularPython(tmpLocation->getDirName());
-  // errorMessage("M9 Downloading Motions .. this takes about 3 minutes per motion!");
-  // thePythonApp->run(m9Script,args);
-  // errorMessage("M9 Motions Downloaded");
-  // delete thePythonApp;  
-
-  //
-  // run the download in a Thread using RunPythinInThread
-  //    NOTE: do not  invoke destructor .. class kills itself when python app finishes
-  //
-  // I useAPI is checked, then use the API print the message to the user
-  if (useAPI->isChecked()) {
-    errorMessage("M9 Downloading Motions using API .. this takes about 3 minutes per motion");
-
-  } else {
-    errorMessage("M9 running a app in Designsafe to download motions");
-  }
-  getMotions->setEnabled(false);
-  downloadedMotions = false;
-  motionsDownloading = true;
-  RunPythonInThread *thePythonProcess = new RunPythonInThread(m9Script, args, tmpLocation->getDirName());
-  connect(thePythonProcess, &RunPythonInThread::processFinished, this, &M9SingleSite::motionsDownloaded);
-  thePythonProcess->runProcess();
+  ModularPython *thePythonApp = new ModularPython(tmpLocation->getDirName());
+  errorMessage("Getting Motions from Designsafe repository. This may take a few minutes");
+  errorMessage("STARTING PYTHON");
+  thePythonApp->run(IstanbulScript,args);
+  errorMessage("PYTHON DONE");  
+  delete thePythonApp;
 }
 
-void
-M9SingleSite::motionsDownloaded(int exitCode) {
-  motionsDownloading = false;
-  if (exitCode == 0)
-    downloadedMotions = true;
-  getMotions->setEnabled(true);
-}
 
 bool
-M9SingleSite::outputAppDataToJSON(QJsonObject &jsonObject)
+IstanbulSingleSite::outputAppDataToJSON(QJsonObject &jsonObject)
 {
-  qDebug() << "M9SingleSite::outputAppDataToJSON() - should not be called";
+  qDebug() << "IstanbulSingleSite::outputAppDataToJSON() - should not be called";
   Q_UNUSED(jsonObject);
   return false;
 }
 
 bool
-M9SingleSite::inputAppDataFromJSON(QJsonObject &jsonObject)
+IstanbulSingleSite::inputAppDataFromJSON(QJsonObject &jsonObject)
 {
-  qDebug() << "M9SingleSite::inputAppDataFromJSON() - should not be called";
+  qDebug() << "IstanbulSingleSite::inputAppDataFromJSON() - should not be called";
   Q_UNUSED(jsonObject);
   return false;  
 }
 
 bool
-M9SingleSite::outputToJSON(QJsonObject &jsonObject)
+IstanbulSingleSite::outputToJSON(QJsonObject &jsonObject)
 {
     jsonObject["EventClassification"]="Earthquake";
     jsonObject["type"] = "PhysicsBasedMotion"; // for backend processing
-    jsonObject["sub_type"] = "M9";    
+    jsonObject["sub_type"] = "Istanbul";    
     QString downloadedDir = tmpLocation->getDirName();
     QDir downloadDirectory(downloadedDir);
     QStringList motions = downloadDirectory.entryList(QStringList() << "*.json",QDir::Files);
@@ -330,60 +285,40 @@ M9SingleSite::outputToJSON(QJsonObject &jsonObject)
     numRealizations->outputToJSON(jsonObject);
     gridType->outputToJSON(jsonObject);
     tmpLocation->outputToJSON(jsonObject);
-    useAPI->outputToJSON(jsonObject);
     
     return true;
 }
 
 bool
-M9SingleSite::inputFromJSON(QJsonObject &jsonObject)
+IstanbulSingleSite::inputFromJSON(QJsonObject &jsonObject)
 {
     lat->inputFromJSON(jsonObject);
     lng->inputFromJSON(jsonObject);
     numRealizations->inputFromJSON(jsonObject);
     gridType->inputFromJSON(jsonObject);
     tmpLocation->inputFromJSON(jsonObject);
-    useAPI->inputFromJSON(jsonObject);
     
     return true;
 }
 
 
 bool
-M9SingleSite::copyFiles(QString &destDir)
+IstanbulSingleSite::copyFiles(QString &destDir)
 {
-
-  //
-  // check we are not still downloading
-  //
-  
-  if (motionsDownloading == true) {
-    errorMessage(QString("M9: Motions Still Downloading"));
-    return false;
-  }
-  
   QString downloadedDir = tmpLocation->getDirName();
   QDir downloadDirectory(downloadedDir);
   QStringList motions = downloadDirectory.entryList(QStringList() << "*.json",QDir::Files);
 
   //
-  // ccheck we have actual files to copy
-  //
-  
-  if (downloadedMotions == false && motions.count() == 0) {
+  // first check we have actual files to copy
+  // 
+  if (motions.count() == 0) {
     
-    errorMessage(QString("M9: No motions Exist"));
-    statusMessage(QString("Return to the EVT panel and press 'Download Records' to start the download process. Then wait till downloaded appears in the program output"));    
-    return false;
-  }
-
-  else if (downloadedMotions == false) {
-    
-    statusMessage(QString("M9: No New Downloaded Motions"));      
+    statusMessage(QString("Istanbul no motions Downloaded"));      
     switch( QMessageBox::question( 
 				  this, 
-				  tr("M9"), 
-				  tr("M9 has detected that motions exist in the tmp folder, but these are old from a previous download selection. Do you wish to continue?"),
+				  tr("Istanbul"), 
+				  tr("Istanbul has detected that no motions exist in the tmp folder. You may have requested too many motions or you did not run the 'Select Records' after entering your search criteria. If you trying to Run a Workflow, the workflow will FAIL to run or you will be presented with NANs (not a number) and zeroes. To select motions, return to the Istanbul EVENT and press the 'Download Records' Button. NOTE: The motions from present server take about 2min a record to download. Do you wish to continue anyway?"), 
 				  QMessageBox::Yes | 
 				  QMessageBox::No,
 				  QMessageBox::Yes ) )
@@ -398,7 +333,7 @@ M9SingleSite::copyFiles(QString &destDir)
 	break;
       }
   }
-  
+
   //
   // now copy files to input_data instead of dest_dir
   //
@@ -411,7 +346,7 @@ M9SingleSite::copyFiles(QString &destDir)
   QString inputDataDirPath = destinationFolder.absoluteFilePath("input_data");
     
   if (destinationFolder.mkpath(inputDataDirPath) == false) {
-    this->errorMessage("M9 failed to create folder: ");
+    this->errorMessage("Istanbul failed to create folder: ");
     this->errorMessage(inputDataDirPath);
     return false;
   }
@@ -423,17 +358,16 @@ M9SingleSite::copyFiles(QString &destDir)
 }
 
 void
-M9SingleSite::clear(void)
+IstanbulSingleSite::clear(void)
 {
 
 }
 
 bool
-M9SingleSite::outputCitation(QJsonObject &jsonObject)
+IstanbulSingleSite::outputCitation(QJsonObject &jsonObject)
 {
-  jsonObject.insert("citation",QString("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034"));
-  jsonObject.insert("description",QString("The ground motions used in the simulations were created as part of the M9 project led by the University of Washington. The M9 project generated a number of motions to study the  potential impacts of a magnitude 9 (M9) earthquake on the Cascadia Subduction Zone, which is located off the coast of the Pacific Northwest region of the United States"));
-  
+  jsonObject.insert("citation", QString("Zhang, W., J. Crempien, K. Zhong, P. Chen, P. Arduino, E. Taciroglu. (2023) A suite of 57 broadband physics-based ground motion simulations for the Istanbul region, in Regional-scale physics-based ground motion simulation for Istanbul, Turkey. DesignSafe-CI. https://doi.org/10.17603/ds2-e7nq-8d52 v1"));
+  jsonObject.insert("description", QString("A suite of 57 broadband physics-based ground motion simulations for the Istanbul region"));
   return true;
 }
 
