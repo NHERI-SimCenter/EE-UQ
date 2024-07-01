@@ -31,7 +31,6 @@
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
 {
     setupUI(generalInfoWidget);
-
     setupConnections();
 }
 
