@@ -4,15 +4,13 @@
 #include <QPushButton>
 #include <QtCharts/QLegendMarker>
 
-RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
+RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) :
+  QWidget(parent),
+  addMean(false),addPlus(false),addMinus(false), addTarget(false)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     spectraChart.setTitle("Response Spectra");
-    spectraChart.addSeries(&meanSeries);
-    spectraChart.addSeries(&plusSigmaSeries);
-    spectraChart.addSeries(&minusSigmaSeries);
-    spectraChart.addSeries(&targetSeries);
 
     QPen meanPen;
     meanPen.setColor(Qt::black);
@@ -73,10 +71,28 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) : QWidget(parent)
 
     this->setMinimumWidth(200);
     this->setMinimumHeight(200);
+
 }
 
+
+RecordSelectionPlot::~RecordSelectionPlot() {
+    meanSeries.clear();
+    plusSigmaSeries.clear();
+    minusSigmaSeries.clear();
+    targetSeries.clear();
+    spectraChart.removeSeries(&meanSeries);
+    spectraChart.removeSeries(&plusSigmaSeries);
+    spectraChart.removeSeries(&minusSigmaSeries);
+    spectraChart.removeSeries(&targetSeries);                
+}
+  
 void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
 {
+  if (addMean == false) {
+    addMean = true;
+    spectraChart.addSeries(&meanSeries);
+  }
+
     meanSeries.clear();
 
     for(int i = 0; i < periods.size(); i++)
@@ -97,7 +113,11 @@ void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
 
 void RecordSelectionPlot::setMeanPlusSigma(QVector<double> periods, QVector<double> sa)
 {
-    plusSigmaSeries.clear();
+  if (addPlus == false) {
+    addPlus = true;
+    spectraChart.addSeries(&plusSigmaSeries);    
+  }    
+  plusSigmaSeries.clear();
 
     for(int i = 0; i < periods.size(); i++)
     {
@@ -108,6 +128,10 @@ void RecordSelectionPlot::setMeanPlusSigma(QVector<double> periods, QVector<doub
 
 void RecordSelectionPlot::setMeanMinusSigma(QVector<double> periods, QVector<double> sa)
 {
+  if (addMinus == false) {
+    addMinus = true;
+    spectraChart.addSeries(&minusSigmaSeries);
+  }  
     minusSigmaSeries.clear();
 
     for(int i = 0; i < periods.size(); i++)
@@ -119,6 +143,14 @@ void RecordSelectionPlot::setMeanMinusSigma(QVector<double> periods, QVector<dou
 
 void RecordSelectionPlot::setTargetSpectrum(QVector<double> periods, QVector<double> sa)
 {
+
+  if (addTarget == false) {
+    addTarget = true;
+    spectraChart.addSeries(&targetSeries);    
+  /*
+    spectraChart.addSeries(&plusSigmaSeries);
+  */
+  }    
     targetSeries.clear();
 
     for(int i = 0; i < periods.size(); i++)

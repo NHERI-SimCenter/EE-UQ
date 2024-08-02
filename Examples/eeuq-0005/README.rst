@@ -8,6 +8,7 @@ represented by synthetic ground motion records based on two methods ([VPD18]_, [
 
 .. figure:: figures/model2.png
    :align: center
+   :alt: A diagram depicting a three storyone bay  structure with three horizontally aligned rigid beams. The first and second floors have a mass labeled "w". At the top floor, the mass is labeled "w/2". The columns at the based end by a symbol indicating a fixed support.
    :width: 400
    :figclass: align-center
 
@@ -34,6 +35,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
 
 .. figure:: figures/uq.png
    :align: center
+   :alt: Screenshot of a software application titled "EE-UQ: Response of Building to Earthquake" with a user interface comprising various tabs on the left, such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES. The UQ tab is currently selected and displays settings for a 'UQ Engine' named 'Dakota', including 'Dakota Method Category' set to 'Forward Propagation' and 'Method' set to 'LHS'. There are fields for 'Number of Samples' set to 100, 'Seed' set to 530, and an unchecked option to 'Keep Samples'. There are buttons at the bottom for 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'. Additionally, there is a 'Login' button at the top right corner.
    :width: 100%
    :figclass: align-center
 
@@ -46,6 +48,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
 
 .. figure:: figures/sim.png
    :align: center
+   :alt: Screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake". The interface includes a section labeled "Building Model Generator" with options for software selection and input fields for an input script, response nodes, spatial dimension, and degrees of freedom at nodes. A navigation panel on the left lists categories like UQ, SIM, EVT, FEM, EDP, RV, and RES. At the bottom are buttons for running simulations, including "RUN", "RUN at DesignSafe", and "GET from DesignSafe". There is also a "Login" button on the top right corner of the window.
    :width: 100%
    :figclass: align-center
 
@@ -56,6 +59,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
 
 .. figure:: figures/evt.png
    :align: center
+   :alt: Screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake" with multiple tabs and input fields related to stochastic ground motion. The displayed tab, "Load Generator," includes a dropdown menu for selecting a stochastic loading model and input fields for moment magnitude, closest-to-site rupture distance, and average shear-wave velocity, with a provided seed value field set to 500. There are buttons for running the analysis and additional options for DesignSafe integration at the bottom.
    :width: 100%
    :figclass: align-center
 
@@ -64,6 +68,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
 
 .. figure:: figures/fem.png
    :align: center
+   :alt: A screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake". The interface has a menu bar at the top with options like File, Help, and Windows, and a login button at the top-right corner. On the left side, there's a vertical navigation menu with items such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES highlighted. The main part of the window shows options for a Finite Element (FE) Application with various parameters for analysis, integration, algorithm, convergence test, solver, damping model, and selected tangent stiffness. There are input fields, dropdown menus, and a 'Choose' button for an analysis script. At the bottom, there are buttons to "RUN", "RUN at DesignSafe", "GET from DesignSafe", and "Exit". The interface design is clean with mostly grayscale colors and blue highlights.
    :width: 100%
    :figclass: align-center
 
@@ -76,6 +81,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
 
 .. figure:: figures/rv.png
    :align: center
+   :alt: A screenshot of an engineering software interface titled "EE-UQ: Response of Building to Earthquake." The screen displays a section with "Input Random Variables" where three variables (M, R, V) are listed with their corresponding distribution type (Normal), mean values (7, 20, 259), and standard deviations (1, 5, 50), with buttons to "Show PDF" for each variable. On the left side, there is a vertical menu with options such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES highlighted. At the bottom, there are buttons for "RUN," "RUN at DesignSafe," and "GET from DesignSafe," along with an "Exit" button on the bottom right. The user is not logged in as indicated by the Login button in the top right corner.
    :width: 100%
    :figclass: align-center
 
@@ -83,6 +89,7 @@ on structural dynamic responses, using the Vlacho-Papakonstantinou-Deodatis synt
    
 .. figure:: figures/res1.png
    :align: center
+   :alt: Screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake," displaying tabs for 'UQ,' 'GI,' 'SIM,' 'EVT,' 'FEM,' 'EDP,' 'RV,' and 'RES'. The visible tab shows a table with statistical data including 'Name', 'Mean', 'StdDev', 'Skewness', and 'Kurtosis' for various building response parameters. The interface includes navigation buttons 'RUN', 'RUN at DesignSafe', and 'Exit' at the bottom.
    :width: 100%
    :figclass: align-center
 
@@ -94,16 +101,19 @@ ratio (:math:`1-PID-1-1`).
 
 .. figure:: figures/inf_m1.png
    :align: center
+   :alt: The image is a scatter plot with a horizontal axis labeled "1-PID-1-1" and a vertical axis labeled "M." The horizontal axis ranges from approximately 0.0003 to 0.0309, and the vertical axis ranges from approximately 4.1 to 10.3. The plot features a distribution of individual points, primarily concentrated between the 0.003 and 0.0156 marks on the horizontal axis, and between the 5.6 and 7.2 marks on the vertical axis, suggesting a potential correlation or trend within that particular range. There are a few outlier points scattered horizontally towards the higher end of the horizontal axis. The background is white with gray grid lines, and the points are shaded in a light blue color.
    :width: 100%
    :figclass: align-center
 
 .. figure:: figures/inf_r1.png
    :align: center
+   :alt: A scatter plot with a cluster of data points along the horizontal axis labeled '1-PID-1-1' ranging approximately from 0.0003 to 0.0309 and along the vertical axis labeled 'R' ranging approximately from 4.1 to 34.6. The data points are concentrated mostly within the middle of the graph, suggesting some form of correlation or data distribution pattern. The background is white with labeled axes, and the data points are blue.
    :width: 100%
    :figclass: align-center
 
 .. figure:: figures/inf_v1.png
    :align: center
+   :alt: A scatter plot with numerous light blue dots representing data points. The horizontal axis is labeled "1-PID-1-1" and ranges from approximately 0.0003 to 0.0309. The vertical axis, labeled with a right-pointing arrow, indicates a range from about 85.6 to 447.2, though the specific units are not visible. The distribution of dots does not show a clear pattern or correlation, with a somewhat even spread across the graph canvas. No trend line is visible.
    :width: 100%
    :figclass: align-center
 
@@ -127,6 +137,7 @@ distinct characteristics of pulse-like and non-pulse-like records.
 
 .. figure:: figures/evt2.png
    :align: center
+   :alt: Screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake" displaying various input fields and settings for simulating earthquake responses on structures. On the left side of the interface, there's a column with sections like "Load Generator", "EVT", "RV", and "RES" which include drop-down menus and numerical input fields for selecting earthquake characteristics such as the "Stochastic Loading Model," "Moment Magnitude," and "Average shear-wave velocity." On the right side, there are schematic diagrams illustrating "Strike Slip" and "Dip Slip" fault movements with a "Vertical Section" and "Plan View," showing the relationship between the fault lines and a site on the surface. Below the input sections, there's a "RUN" button and additional options to "RUN at DesignSafe" or "Get from DesignSafe." At the top right corner of the window is a "Login" button.
    :width: 100%
    :figclass: align-center
 
@@ -134,6 +145,7 @@ distinct characteristics of pulse-like and non-pulse-like records.
 
 .. figure:: figures/rv2.png
    :align: center
+   :alt: Screenshot of a software interface for "EE-UQ: Response of Building to Earthquake" featuring a menu to input random variables. The interface is currently displaying one variable named "V" with a normal distribution, a mean value of 259, and a standard deviation of 50. There are options to add and remove variables as well as a "Show PDF" button. On the left sidebar, options such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES are selectable, with 'RV' currently highlighted. At the bottom, there are buttons for "RUN," "RUN at DesignSafe," "GET from DesignSafe," and "Exit." The "Login" option is available on the top right corner.
    :width: 100%
    :figclass: align-center
 
@@ -143,16 +155,19 @@ distinct characteristics of pulse-like and non-pulse-like records.
 
 .. figure:: figures/all_sdr1.png
    :align: center
+   :alt: A line graph showing a cumulative probability distribution. The x-axis is labeled "1-PID-1-1" with values ranging from approximately -0.0008 to 0.002, and the y-axis is labeled "Cumulative Probability" with values ranging from 0.00 to 1.00. The line progresses steeply upwards in the negative range of the x-axis and flattens as it approaches the positive range, indicating a high probability as one moves from left to right on the graph.
    :width: 100%
    :figclass: align-center
 
 .. figure:: figures/all_pfa3.png
    :align: center
+   :alt: The image is a line graph displaying a cumulative probability distribution. The x-axis is labeled with numerical values ranging from approximately -82.4 to 1958.7, and the y-axis ranges from 0.00 to 1.00 in increments of 0.25, symbolizing probability. The graph features a continuously ascending line starting near the origin and flattening out as it approaches a cumulative probability of 1. It suggests a dataset where values accumulate towards a maximum probability of 1, characteristic of a cumulative distribution function. The specific details on the x-axis (e.g., '1-PFA-3-1') cannot be interpreted without additional context.
    :width: 100%
    :figclass: align-center
 
 .. figure:: figures/inf_v2.png
    :align: center
+   :alt: A scatter plot with numerous points plotted on a Cartesian coordinate system. The horizontal axis is labeled '1-PID-1-1' with values ranging from approximately 0.0008 to 0.0202. The vertical axis is on the left side and appears to represent some quantity or measurement scale, possibly in the hundreds, with values varying from about 106.6 to 434.9. The distribution of points does not suggest a clear trend or correlation, as they are spread out across the chart without forming a distinct pattern.
    :width: 100%
    :figclass: align-center
 
@@ -163,6 +178,7 @@ distinct characteristics of pulse-like and non-pulse-like records.
 
 .. figure:: figures/sdr_pfa_comp.png
    :align: center
+   :alt: Two cumulative distribution function (CDF) plots side by side. The left plot shows the CDF of 'Roof PFA (g)' with lines representing 'Pulse-like' in blue and 'Non-pulse-like' in orange. The right plot shows the CDF of '1st story PID (in/in)' also with 'Pulse-like' in blue and 'Non-pulse-like' in orange. The plots are designed to compare the distribution of peak floor acceleration and peak inter-story drift for pulse-like and non-pulse-like scenarios, indicated by the reference lines and color key in the legend below each graph.
    :width: 100%
    :figclass: align-center
 

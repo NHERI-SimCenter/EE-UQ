@@ -39,57 +39,29 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // Written: fmckenna
 
-#include <SimCenterAppWidget.h>
-
-#include <QGroupBox>
-#include <QVector>
-#include <GeneralInformationWidget.h>
-
-class QComboBox;
-class QStackedWidget;
-class UserDefinedApplication;
-class RockOutcrop;
-
+#include <SimCenterEventAppSelection.h>
 class RandomVariablesContainer;
+class GeneralInformationWidget;
 
-class EarthquakeEventSelection : public  SimCenterAppWidget
+class EarthquakeEventSelection : public  SimCenterEventAppSelection
 {
     Q_OBJECT
 public:
-    explicit EarthquakeEventSelection(RandomVariablesContainer *, GeneralInformationWidget* generalInfoWidget, QWidget *parent = 0);
-    ~EarthquakeEventSelection();
+  EarthquakeEventSelection(RandomVariablesContainer *, GeneralInformationWidget* generalInfoWidget, bool doMulti = true, QWidget *parent = 0);
+  ~EarthquakeEventSelection();
 
-    bool outputToJSON(QJsonObject &rvObject);
-    bool inputFromJSON(QJsonObject &rvObject);
-    bool outputAppDataToJSON(QJsonObject &rvObject);
-    bool inputAppDataFromJSON(QJsonObject &rvObject);
-    bool copyFiles(QString &destName);
-    bool outputCitation(QJsonObject &jsonObject);
+  SimCenterAppWidget *getClone();  
 
 signals:
     void typeEVT(QString type);
 
 public slots:
-   void eventSelectionChanged(const QString &arg1);
    void replyEventType(void);
 
+  
 private:
-   QComboBox   *eventSelection;
-   QStackedWidget *theStackedWidget;
-   SimCenterAppWidget *theCurrentEvent;
-
-   //   SimCenterAppWidget *theSHA_MotionWidget;
-   SimCenterAppWidget *theExistingEvents;
-   SimCenterAppWidget *theExistingPeerEvents;
-   //SimCenterAppWidget *theUserDefinedApplication;
-   SimCenterAppWidget *theStochasticMotionWidget;
-   SimCenterAppWidget *theRockOutcrop;
-   SimCenterAppWidget* peerNgaRecords;
-   SimCenterAppWidget* userDefinedDatabase;
-   SimCenterAppWidget* physicsBased;  
-   RandomVariablesContainer *theRandomVariablesContainer;
-   QString currentEventType; 
-
+  RandomVariablesContainer *theRVs;
+  GeneralInformationWidget *theGI;
 };
 
 #endif // EARTHQUAKE_EVENT_SELECTION_H

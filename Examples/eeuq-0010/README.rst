@@ -9,6 +9,7 @@ This example shows how to replace structural dynamic simulations using a pre-tra
 
       .. figure:: figures/EE10_main3.png
          :name: UQ inputs
+         :alt: A complex graphical presentation on a black background. On the left, there is a two-dimensional waveform plot with a red dot indicating a particular point of interest. The center features a three-dimensional bar graph depicting varying heights of bars with a connecting trend line, and red dots scattered at the base, possibly representing data points. To the right, there are abstract shapes including a bell curve and a series of circle diagrams in a vertical arrangement, each with a varying number of circles, perhaps illustrating different datasets or statistical distributions.
          :align: center
          :width: 40%
          :figclass: align-center
@@ -24,6 +25,7 @@ Set Up Forward Propagation Configuration
 
       .. figure:: figures/EE10_UQ.png
          :name: UQ inputs
+         :alt: Screenshot of a user interface for a software tool, with a navigation menu on the left labeled with acronyms "G1," "SIM," and "EVT," highlighted on "UQ." On the right is the main content section titled "UQ Method" with dropdown options for "Forward Propagation" and "UQ Engine: Dakota." There are checkboxes for "Parallel Execution" and "Save Working dirs." Under "Method LHS," there are input fields for "# Samples" set to "30" and "Seed" set to "413."
          :align: center
          :width: 900
          :figclass: align-center
@@ -41,6 +43,7 @@ Define Target Structure
 
       .. figure:: figures/EE10_SIM.png
          :name: UQ inputs
+         :alt: Screenshot of a user interface from a software application, showing the 'Building Model Generator' section with a dropdown menu titled 'Surrogate (GP)' selected. Below it, there is an input field for 'SurrogateGP Info (.json)' with a file path entered and a 'Choose' button to its right. The options section includes 'GP output' dropdown menu with 'Random sample under prediction uncertainty' selected and an unchecked 'Advanced Options' checkbox. To the left, vertical navigation tabs are partially visible with labels 'UQ', 'GI', 'SIM', and 'EVT', where 'SIM' is highlighted.
          :align: center
          :width: 900
          :figclass: align-center
@@ -60,6 +63,7 @@ Select Ground Motions
 
       .. figure:: figures/EE10_EVT1.png
          :name: UQ inputs
+         :alt: Screenshot of a software interface for seismic analysis with two sections: "Target Spectrum" on the left and "Record Selection" on the right. The "Target Spectrum" section has fields for Type, with "Uniform Hazard Spectrum (USGS NSHMP)" selected from a dropdown menu, Latitude set to 37.8715, Longitude set to -122.273, Edition set to "2014 v4.2.0 (Dynamic)" from a dropdown menu, Vs30 set to "760 (B/C)" with m/s unit, and Return Period set to 2475 years. The "Record Selection" section includes a field for "Number of Records" set to 30, drop-down menus for "Fault Type" with "All Types" selected, and "Pulse" with "All" selected. There are checkboxes for "Magnitude," "Distance," "Vs30," and "D5-95," each followed by an empty text box with units indicated as km, m/s, and sec.
          :align: center
          :width: 900
          :figclass: align-center
@@ -68,6 +72,7 @@ Select Ground Motions
 
       .. figure:: figures/EE10_EVT3.png
          :name: UQ inputs
+         :alt: A graph titled "Response Spectra" showing a collection of curves that represent spectral acceleration versus period in seconds. A dense plot of thin grey lines likely represents individual response spectra. There are highlighted lines indicating the mean (thick blue line), mean plus standard deviation and mean minus standard deviation (thin black lines around the mean), and target spectrum (dotted red lines). The axes are logarithmic, with spectral acceleration on the y-axis and period on the x-axis. The graph displays data variability and conformities to a target response spectrum in engineering or seismology.
          :align: center
          :width: 600
          :figclass: align-center
@@ -78,6 +83,7 @@ The list of the selected ground motions is shown in the table.
 
       .. figure:: figures/EE10_EVT2.png
          :name: UQ inputs
+         :alt: Screenshot of a computer interface related to seismic activity analysis with a section labeled "Temporary records Directory" displaying a file path, and a table titled "Ground Motion Components" showing entries related to earthquakes, including columns for RSN, Scale, Earthquake, Station, Magnitude, Distance, Vs30, and Hc. Below are additional settings for "Scaling/Selection Criteria" with options for scaling method, selection error weight function, and a blue "Select Records" button at the bottom.
          :align: center
          :width: 600
          :figclass: align-center
@@ -97,6 +103,7 @@ The actual time histories are saved in the "Temporary Records Directory".
 
       .. figure:: figures/EE10_FEM.png
          :name: UQ inputs
+         :alt: A user interface with a left-side vertical nav bar featuring the labels "UQ" at the top and "GI" at the bottom. The main panel is titled "FE Application" and includes a dropdown menu with the option "None (only for surrogate)" selected. The interface has a minimalist design with grayscale colors.
          :align: center
          :width: 900
          :figclass: align-center
@@ -107,6 +114,7 @@ The actual time histories are saved in the "Temporary Records Directory".
 
       .. figure:: figures/EE10_EDP.png
          :name: UQ inputs
+         :alt: Screenshot of a software interface with a vertical toolbar on the left side containing acronyms such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES, highlighted in dark shades. On the right, a selected tab reads "Engineering Demand Parameter Generator" with a drop-down menu stating "None (only for surrogate)" and a list of alphanumeric codes below it such as "1-PFA-0-1," "1-PFD-1-1," "1-PID-1-1," and similar patterns, suggesting parameters or settings within the engineering software.
          :align: center
          :width: 900
          :figclass: align-center
@@ -120,6 +128,7 @@ Distribution of Random Variables
 
       .. figure:: figures/EE10_RV.png
          :name: UQ inputs
+         :alt: "Screenshot of a user interface for inputting random variables, showing a sidebar with the labels UQ, GI, and SIM. The main panel is titled 'Input Random Variables' with fields for 'Variable Name', 'Input Type', 'Distribution', 'Mean', and 'Standard Dev'. The variable name 'K' is entered with 'Parameters' selected as the input type, 'Normal' distribution, a mean of 120, and a standard deviation of 5. There are buttons for 'Add', 'Clear All', 'Correlation Matrix', 'Show PDF', 'Export', and 'Import'."
          :align: center
          :width: 900
          :figclass: align-center
@@ -138,6 +147,7 @@ Run the Analysis and Process Results
 
       .. figure:: figures/EE10_RES1.png
          :name: UQ inputs
+         :alt: A screenshot of a statistical analysis interface showing a table with various entries under the headings "Name," "Mean," "StdDev" (Standard Deviation), "Skewness," and "Kurtosis." Each row provides the name and statistical values for a different dataset, with names such as "1-DS575-0-1," "1-PSA(0.5s)-0-1," and "1-SaRatio-0-1." The data values vary across different rows, indicating diverse statistical properties of the datasets. The interface has a left-side navigation bar with shortened titles like "UQ," "GI," "SIM," with "RES" highlighted.
          :align: center
          :width: 900
          :figclass: align-center
@@ -148,6 +158,7 @@ Run the Analysis and Process Results
 
    .. figure:: figures/EE10_RES2.png
          :name: UQ inputs
+         :alt: A screenshot of a computer interface involving data analysis. On the left side, a vertical navigation menu with options like UQ, GI, SIM, EVT, FEM, EDP, RV, and RES is shown with RES highlighted. In the main pane, there are two tabs: "Summary" and "Data Values." The "Data Values" tab is active, showing a cumulative frequency distribution graph to the left. Next to the graph, there is a grid of data values with headers such as "1-DSS75-0-2," "1-PSA(0.5s)-0-2," "1-SaRatio-0-2," "1-PFA-0-1," and "1-PFA-0-1 Predictions." Below the data grid, there are options to "Save Table," "Save Columns Separately," "Save RVs," "Save QoIs," and "Save Surrogate Predictions." A checkbox labeled "Show surrogate model prediction bounds" is at the top next to the tabs.
          :align: center
          :width: 900
          :figclass: align-center
@@ -156,6 +167,7 @@ Run the Analysis and Process Results
 
    .. figure:: figures/EE10_RES3.png
          :name: UQ inputs
+         :alt: Screenshot of a computer interface with a scatterplot and a data table. The scatterplot shows various data points with error bars and is labeled with axes "1-SaRatio-0-1" and "1-PJD-3-1." A correlation coefficient of 0.72 is displayed. The data table to the right lists values under headings such as "1-PFA-3-2" and "1-PFD-3-1," with one value highlighted in blue. The interface includes tabs like "Summary" and "Data Values," and buttons for saving the table, columns, RVs, QoIs, and Surrogate Predictions. There is also a checkbox option titled "Show surrogate model prediction bounds."
          :align: center
          :width: 900
          :figclass: align-center
@@ -180,6 +192,7 @@ Run the Analysis and Process Results
 
    .. figure:: figures/EE10_RES4_1.png
          :name: UQ inputs
+         :alt: A bar chart titled 'Mean of log EDP' showing two sets of bars for each category on the x-axis labeled with various codes such as '1_PFRA-0-1', '1_PFRA-1-2', '1_PFED-3-1', etc. The categories represent different data groups, and each group has two bars adjacent to each other; one bar is colored blue, labeled 'original', and the other is colored orange, labeled 'surrogate'. The y-axis represents the mean of log EDP with values ranging from approximately -5 to 5. The pattern of the bars indicates a comparison between the "original" and "surrogate" data across the different categories.
          :align: center
          :width: 700
          :figclass: align-center
@@ -190,6 +203,7 @@ The same comparison in the original scale is shown below.
 
    .. figure:: figures/EE10_RES4_2.png
          :name: UQ inputs
+   :alt: The image shows two bar charts side by side. On the left, the chart is titled "Original scale (PSA)" and represents the median PSA values, which range from 0 to 250, for different categories labeled 1-PFA-0-1 to 1-PFA-3-2. The bars are arranged in pairs for each category, with colors alternating between blue and brown. On the right, the chart is titled "Original scale (PFD)" and illustrates the median PFD values, which vary between 0 and 6 for categories labeled 1-PFD-1-1 to 1-PFD-3-2, also with alternating blue and brown bars in pairs. Each pair in both charts likely represents a different condition or measurement within the category.
          :align: center
          :width: 700
          :figclass: align-center
@@ -200,6 +214,7 @@ On the other hand, the log-standard deviation of the EDPs from 30 samples is obt
 
    .. figure:: figures/EE10_RES4_3.png
          :name: UQ inputs
+         :alt: A bar chart comparing the standard deviation of log EDP (Engineering Demand Parameter) between original and surrogate data. The x-axis lists different data sets labeled 1-PFA-0-1, 1-PFA-1-1, and so on, up to 1-PRD-3-1. The y-axis ranges from 0 to 1 in increments of 0.2. Blue bars represent original data, and orange bars represent surrogate data. The bars vary in height, indicating differences in the standard deviation of log EDP for each data set. The orange bars generally appear to show a higher standard deviation than the blue bars.
          :align: center
          :width: 700
          :figclass: align-center

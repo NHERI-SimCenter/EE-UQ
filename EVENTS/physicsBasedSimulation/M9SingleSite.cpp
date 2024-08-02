@@ -41,12 +41,17 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SC_IntLineEdit.h>
 #include <SC_DirEdit.h>
 #include <SC_ComboBox.h>
+#include <SC_CheckBox.h>
 
 #include <QJsonObject>
 #include <QDir>
 #include <QDebug>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QGroupBox>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+#include <QSplitter>
 
 #include <QGridLayout>
 #include <QLabel>
@@ -62,11 +67,21 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 M9SingleSite::M9SingleSite(QWidget *parent)
 :SimCenterAppWidget(parent), count(0), downloadedMotions(false), motionsDownloading(false)
 {
-  QGridLayout *theLayout = new QGridLayout();
-  this->setLayout(theLayout);
+  this->setWindowTitle("Splitting Widgets Example");
+  this->setGeometry(100, 100, 600, 400);
+  QHBoxLayout *mainLayout = new QHBoxLayout(this);
+  
+  QWidget *leftWidget = new QWidget();
 
+  QGridLayout *leftLayout = new QGridLayout(leftWidget);
+  leftLayout->setAlignment(Qt::AlignTop);
+  // this->setLayout(theLayout);
+  QGroupBox *inputParameters = new QGroupBox("Input Parameters");
+
+  QGridLayout *theLayout = new QGridLayout(inputParameters);
+  
   theLayout->addWidget(new QLabel("Grid"),0,0);
-  QStringList listGrids; listGrids << "A" << "B" << "C" << "D" << "All";
+  QStringList listGrids; listGrids  << "All" << "A" << "B" << "C" << "D";
   gridType = new SC_ComboBox("gridType",listGrids);
   theLayout->addWidget(gridType, 0, 1);
   
@@ -87,9 +102,18 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   tmpLocation->setDirName(dirPath);
   theLayout->addWidget(tmpLocation,3,1,1,3);
 
+  // Add a checkbox to allow the user to select if they want to use API or not
+  theLayout->addWidget(new QLabel("API"), 4, 0);            // Column 4
+  useAPI = new SC_CheckBox("useAPI", false);
+  theLayout->addWidget(useAPI, 4, 1); 
+  // add the explanation for the API 
+  QLabel *apiExplanation = new QLabel("Check this box if you want to use the API to get the motions. If you do not check this box, the motions will be Extracted from Designsafe repository.");
+  apiExplanation->setWordWrap(true);
+  theLayout->addWidget(apiExplanation, 4, 2, 1, 2);
+
 
   getMotions = new QPushButton("Get Motions");
-  theLayout->addWidget(getMotions, 4,1,1,3);
+  theLayout->addWidget(getMotions, 5,1,1,3);
   connect(getMotions, &QPushButton::clicked, this, [=](){
     this->downloadMotions();
   });
@@ -97,12 +121,61 @@ M9SingleSite::M9SingleSite(QWidget *parent)
   QLabel *citation = new QLabel("Frankel, A., Wirth, E., Marafi, N., Vidale, J., and Stephenson, W. (2018), Broadband Synthetic Seismograms for Magnitude 9 Earthquakes on the Cascadia Megathrust Based on 3D Simulations and Stochastic Synthetics, Part 1: Methodology and Overall Results. Bulletin of the Seismological Society of America, 108 (5A), 2347–2369. doi: https://doi.org/10.1785/0120180034");
   citation->setWordWrap(true);
   
-  theLayout->addWidget(citation, 5,0,1,4);  
+  theLayout->addWidget(citation, 6,0,1,4);  
   
-  theLayout->setRowStretch(6,1);
+  theLayout->setRowStretch(7,1);
   theLayout->setColumnStretch(1,1);
   theLayout->setColumnStretch(3,1); 
-  theLayout->setColumnStretch(4,1);     
+  theLayout->setColumnStretch(4,1);
+
+  leftLayout->addWidget(inputParameters,0,0);  
+
+
+  QGroupBox *mapboxM9 = new QGroupBox("Grid Location");
+
+  // ===========================================================
+  // creating right widget
+  // ===========================================================
+  QWidget *rightWidget = new QWidget();
+
+  QGridLayout *rightLayout = new QGridLayout(rightWidget);
+
+  QGroupBox *mapbox = new QGroupBox("Grid Maps");
+  QGridLayout *maplayout = new QGridLayout(mapbox);
+
+  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+
+  // webView1->page()->setDevToolsPage(new QWebEnginePage());
+  webView1 = new QWebEngineView();
+  QString appDir = SimCenterPreferences::getInstance()->getAppDir();
+  QString mappscript = appDir + QDir::separator() + "applications" + QDir::separator()
+    + "createEVENT" + QDir::separator() + "M9" + QDir::separator();
+  // webView1->setUrl(QUrl("https://www.google.com/maps"));
+  webView1->load(QUrl::fromLocalFile(mappscript+"All_grid.html"));
+  webView1->show();
+  maplayout->addWidget(webView1,0,0);
+  rightLayout->addWidget(mapbox,0,0);
+
+
+
+  leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  mainLayout->addWidget(leftWidget);
+  mainLayout->addWidget(rightWidget);
+
+
+
+
+
+
+
+  // create a signal if gridType changed to change the map
+  connect(gridType, &QComboBox::currentTextChanged, this, [=](){
+    QString currentGrid=gridType->currentText();
+    webView1->load(QUrl::fromLocalFile(mappscript+currentGrid+"_grid.html"));
+  });
 }
 
 M9SingleSite::~M9SingleSite()
@@ -150,13 +223,14 @@ M9SingleSite::downloadMotions(void)
 
   QString appDir = SimCenterPreferences::getInstance()->getAppDir();
   QString m9Script = appDir + QDir::separator() + "applications" + QDir::separator()
-    + "createEVENT" + QDir::separator() + "M9" + QDir::separator() + "M9.py";
+    + "createEVENT" + QDir::separator() + "M9" + QDir::separator() + "M9Run.py";
   
   QStringList args; args << QString("--lat") << QString::number(latitude)
 			 << QString("--lng") << QString::number(longitude)
 			 << QString("-g") << currentGrid
 			 << QString("-n") << QString::number(numMotion)
-			 << QString("-o") << destDir;
+			 << QString("-o") << destDir
+       << QString("--API") << QString::number(useAPI->isChecked());
   
   /*
   QJsonObject information;
@@ -197,8 +271,13 @@ M9SingleSite::downloadMotions(void)
   // run the download in a Thread using RunPythinInThread
   //    NOTE: do not  invoke destructor .. class kills itself when python app finishes
   //
-  
-  errorMessage("M9 Downloading Motions .. this takes about 3 minutes per motion");
+  // I useAPI is checked, then use the API print the message to the user
+  if (useAPI->isChecked()) {
+    errorMessage("M9 Downloading Motions using API .. this takes about 3 minutes per motion");
+
+  } else {
+    errorMessage("M9 running a app in Designsafe to download motions");
+  }
   getMotions->setEnabled(false);
   downloadedMotions = false;
   motionsDownloading = true;
@@ -251,6 +330,7 @@ M9SingleSite::outputToJSON(QJsonObject &jsonObject)
     numRealizations->outputToJSON(jsonObject);
     gridType->outputToJSON(jsonObject);
     tmpLocation->outputToJSON(jsonObject);
+    useAPI->outputToJSON(jsonObject);
     
     return true;
 }
@@ -263,6 +343,7 @@ M9SingleSite::inputFromJSON(QJsonObject &jsonObject)
     numRealizations->inputFromJSON(jsonObject);
     gridType->inputFromJSON(jsonObject);
     tmpLocation->inputFromJSON(jsonObject);
+    useAPI->inputFromJSON(jsonObject);
     
     return true;
 }

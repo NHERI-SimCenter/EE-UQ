@@ -8,6 +8,7 @@ of steel moment resisting frames (**AutoSDA**) ([GBS20]_).
    
 .. figure:: figures/sbm2.png
    :name: fig_frame
+   :alt: A data table titled "Building Information" with input fields and values for various building parameters. It includes the number of stories (3), typical story height (13.0 ft), first story height (13.0 ft), number of bays in both X and Z directions (4 each), width of bays in both X and Z directions (30.0 ft each), and number of Lateral Force Resisting Systems (LFRS) in both X and Z directions (2 each).
    :align: center
    :width: 50%
    :figclass: align-center
@@ -23,6 +24,7 @@ Design and create a numerical model
 
 .. figure:: figures/sbm.png
    :name: fig_sbm
+   :alt: Screenshot of a software application titled "EE-UQ: Response of Building to Earthquake" with interface sections for inputting building model information, including parameters such as the number of stories, story height, and various loading data. There are options for saving and loading files, and buttons for running simulations, with additional references to ELF parameters and a literature citation for users to follow. The interface is designed with various tabs, input fields, drop-down menus, checkboxes, and buttons organized in a structured layout.
    :align: center
    :width: 100%
    :figclass: align-center
@@ -33,6 +35,7 @@ Design and create a numerical model
 
 .. figure:: figures/bim.png
    :name: fig_bim
+   :alt: Screenshot of a form labeled "Building Information" with fields and numeric values. It specifies details such as Number Stories (3), Typical Story Height (13.0), First Story Height (13.0), Number and Width of bays in X direction (4 and 30.0 respectively), Number and Width of bays in Z direction (4 and 30.0 respectively), and Number of LFRS (Lateral Force Resisting System) in X and Z directions (2 for each). All values are given in text boxes that seem editable.
    :align: center
    :width: 50%
    :figclass: align-center
@@ -43,6 +46,7 @@ Design and create a numerical model
 
 .. figure:: figures/elf.png
    :name: fig_elf
+   :alt: A screenshot of a table labeled "ELF Parameters - Reference: ASCE 7-10 Section 12.8" displaying seismic design parameters. The table includes fields for Ss (1.5g), TL (8), Cd (5.5), Ie (1), Site Class (D), S1 (0.6g), R (8), rho (1), Ct (0.028), and x (0.8), with some values filled in and others left blank for user input.
    :align: center
    :width: 50%
    :figclass: align-center
@@ -54,6 +58,7 @@ Design and create a numerical model
 
 .. figure:: figures/mem.png
    :name: fig_mem
+   :alt: Screenshot of a table with the header "Member Depth" and three columns titled "Exterior Column," "Interior Column," and "Beam." Each column lists "W14" in the first three rows under "Exterior Column" and "Interior Column," and "W27, W30, W33" in the first three rows under "Beam." There are no entries in the fourth row across all columns.
    :align: center
    :width: 100%
    :figclass: align-center
@@ -64,6 +69,7 @@ Design and create a numerical model
 
 .. figure:: figures/ldg.png
    :name: fig_ldg
+   :alt: A screenshot of a table labeled "Loading" with six columns titled Floor Weight [kips], Floor Dead Load [psf], Floor Live Load [psf], Beam Dead Load [lb/ft], Beam Live Load [lb/ft], Leaning Column Dead Load [kips], and Leaning Column Live Load [kips]. Each column contains three identical numerical entries, with "2289" under Floor Weight, "106" under Floor Dead Load, "50" under Floor Live Load, "1590" under Beam Dead Load, "750" under Beam Live Load, "954" under Leaning Column Dead Load, and "450" under Leaning Column Live Load.
    :align: center
    :width: 100%
    :figclass: align-center
@@ -76,6 +82,7 @@ Design and create a numerical model
 
 .. figure:: figures/bdf.png
    :name: fig_bdf
+   :alt: Screenshot of a user interface titled "Building Data Files" with options for "Building Data Folder," a text box displaying a file path "C:/Users/kuans/Desktop/Test," a "Choose" button, and two buttons below labeled "Save File" and "Load File."
    :align: center
    :width: 50%
    :figclass: align-center
@@ -107,6 +114,7 @@ Select and scale ground motion records
 
 .. figure:: figures/evt.png
    :name: fig_evt
+   :alt: Screenshot of the EE-UQ software interface showing the 'Response of Building to Earthquake' module with various input parameters and a graph of the response spectra. On the left side, input fields are visible for selection of earthquake records from the PEER NGA database with options like 'Target Spectrum,' 'Scaling,' and 'Ground Motions.' In the center, a table lists earthquake events with details such as scale, station, and magnitude. On the right side, the graph displays multiple lines representing the mean, mean plus and minus standard deviation, target, and selected response spectra for earthquakes, with the spectral acceleration on the y-axis and the period in seconds on the x-axis. The bottom of the interface has a 'RUN' button and two mentions to GET from DesignSafe and Exit options.
    :align: center
    :width: 100%
    :figclass: align-center
@@ -120,6 +128,7 @@ Run the analysis and post-process results
 
 .. figure:: figures/uq.png
    :name: fig_uq
+   :alt: Screenshot of a graphical user interface titled "EE-UQ: Response of Building to Earthquake" with a menu of options on the left including UQ, GI, SIM, EVT, FEM, EDP, RV, and RES. In the right panel, under UQ Engine, there are fields for selecting 'Dakota' and method settings with options like 'Forward Propagation' and 'LHS' selected, and fields for '# Samples' set to 11 and 'Seed' with a value of 633. At the bottom, there are buttons for 'RUN', 'RUN at DesignSafe', 'GET from DesignSafe', and 'Exit'. The overall layout suggests a software application for uncertainty quantification and simulation in engineering or scientific analysis related to earthquake response.
    :align: center
    :width: 100%
    :figclass: align-center
@@ -130,6 +139,7 @@ Run the analysis and post-process results
 
 .. figure:: figures/res.png
    :name: fig_res
+   :alt: Screenshot of a software interface titled "EE-UQ: Response of Building to Earthquake" that displays a tabbed panel with tabs like "Summary" and "Data Values". Several rows of data are shown including terms like 'Mean', 'StdDev', 'Skewness', 'Kurtosis' and numerical values associated with each term under event names like '1-PFA-0-1' and '1-PED-3-1'. The interface includes options like "RUN", "RUN at DesignSafe", "GET from DesignSafe", and "Exit" at the bottom. The software appears to be related to engineering or scientific analysis for earthquake response.
    :align: center
    :width: 100%
    :figclass: align-center

@@ -13,6 +13,7 @@ This example shows how to train a surrogate model that can be later imported int
 
       .. figure:: figures/EE09_main3.png
          :name: UQ inputs
+         :alt: The image showcases a variety of data visualization graphics against a black background. On the left, there are four 2D plots including a normal distribution curve, three scatter plots with varying densities and sizes of dots, and an audio waveform with one point highlighted in red. On the right, a 3D plot features a surface graph with peaks in a grid pattern, superimposed with red dots at various heights and corresponding to the peaks, and transparent bell curves extending from the surface. The axes suggest the plot may represent some multivariate data.
          :align: center
          :width: 40%
          :figclass: align-center
@@ -29,6 +30,7 @@ Set Up GP Surrogate Modeling Options
 
       .. figure:: figures/EE09_UQ.png
          :name: UQ inputs
+         :alt: Screenshot of a software interface for uncertainty quantification using surrogate modeling. The UQ Engine selected is SimCenterUQ, and the option to Train GP Surrogate Model is chosen. There are options for setting the number of samples, computation time, target accuracy, random seed, and allowing for parallel execution. Advanced options for a Gaussian Process Model are available, as well as earthquake-specific advanced options, including input postprocess for ground motion intensity and a section for adding intensity measure calculations with options such as significant duration and pseudo spectral acceleration.
          :align: center
          :width: 100%
          :figclass: align-center
@@ -57,6 +59,7 @@ Define Target Structure
 
       .. figure:: figures/EE09_GI.png
          :name: UQ inputs
+         :alt: Screenshot of a building information interface with various input fields for data. It includes sections for "Building Information" with an empty 'Name' field, "Properties" listing year built as 1990, number of stories as 3, structural type as RM1, and dimensions in height, width, depth, and plan area. The "Location" section provides latitude and longitude coordinates, and there is a "Units" section to select force, length, and temperature units like Kips, inches, and Celsius. On the left side of the interface, there are navigation menu options such as UQ, GI, SIM, EVT, FEM, EDP, RV, and RES.
          :align: center
          :width: 100%
          :figclass: align-center
@@ -68,6 +71,7 @@ Define Target Structure
 
       .. figure:: figures/EE09_SIM.png
          :name: UQ inputs
+         :alt: Screenshot of a Building Model Generator software interface, with an MDOF (Multiple Degrees of Freedom) tab selected. The interface displays input fields for building information such as Number Stories, Floor Weights, and Story Stiffness among others, complete with values and parameters for X and Y directions. It includes options for defining characteristics like Damping Ratio, Hardening Ratio, and Response Eccentricity. Additional parameters including Weight, Height, and stiffness and yield strength coefficients for X and Y directions are entered into a table format at the bottom.
          :align: center
          :width: 100%
          :figclass: align-center
@@ -81,6 +85,7 @@ Select Ground Motions for the Training
 
       .. figure:: figures/EE09_EVT1.png
          :name: UQ inputs
+         :alt: Screenshot of a Load Generator interface from a software application with sections for Target Spectrum and Intensity Measure Calculation. Options include selecting types of spectra, defining number of samples per bin, and intensity measure parameters such as significant duration, pseudo spectral acceleration, and SaRatio with input fields for periods, minimum, maximum values, and number of bins. A note at the bottom indicates that the number of ground motions to be selected is 100. There is also a path to a temporary records directory shown at the bottom right, indicating a local user directory on a Windows PC.
          :align: center
          :width: 100%
          :figclass: align-center
@@ -98,6 +103,7 @@ Select Ground Motions for the Training
 
       .. figure:: figures/EE09_EVT2.png
          :name: UQ inputs
+         :alt: Screenshot of a software interface displaying a table titled "Ground Motion Components" with columns for RSN, Scale, Earthquake, Station, Magnitude, Distance, and Vs30, containing data on various earthquakes and their attributes. An option menu titled "Acceleration Components" is set to "Suite Average" with dropdowns for SRSS and Geometric. Below the table, a section labeled "Scaling/Selection Criteria" with "Scaling Method:" followed by a dropdown menu set to "No Scaling" and a blue "Select Records" button.
          :align: center
          :width: 70%
          :figclass: align-center
@@ -113,6 +119,7 @@ Select Ground Motions for the Training
 
       .. figure:: figures/EE09_EVT3.png
          :name: UQ inputs
+         :alt: This is a 3D scatter plot displaying a range of data points classified by color to indicate ground motion coverage error levels. The axes are labeled as PSA(g) for the vertical axis, SaRatio for the depth axis, and DS575(sec) for the horizontal axis. Data points are differentiated by color intensity, from red through purple to blue, with a color scale legend on the right. Points are also categorized as either "anchor point" indicated by a solid black dot or "selected ground motion" represented by a hollow circle. The plot visually represents the relationship between these three variables in the context of ground motion coverage with varying error levels.
          :align: center
          :width: 500
          :figclass: align-center
@@ -142,6 +149,7 @@ Set Up Training Domain
 
       .. figure:: figures/EE09_RV.png
          :name: UQ inputs
+         :alt: Screenshot of a user interface for inputting random variables, including fields for naming the variable and selecting its distribution type, which in this case is set to 'Uniform' with a minimum of 50 and maximum of 150. Buttons for "Add", "Clear All", "Correlation Matrix", "Show PDF", "Export", and "Import" are displayed, accompanying three tabs on the left side labeled "UQ", "GI", and "SIM".
          :align: center
          :width: 100%
          :figclass: align-center
@@ -165,6 +173,7 @@ Run the Analysis and Process Results
 
    .. figure:: figures/EE09_RES1.png
          :name: UQ inputs
+         :alt: A screenshot showing a summary of a surrogate modeling process with the message "Surrogate Modeling Completed! - Process ended as the maximum allowable number of simulations is reached." The table includes details like the number of training samples (100), model simulations (100), and analysis time (17.3 min). It also displays a Goodness-of-Fit section with two metrics: "Inter-quartile ratio" and "Normality (Cramér-von Mises) test" for different model configurations, with values ranging from 0.510 to 0.710 for the inter-quartile ratio and from 0.031 to 0.988 for normality. One inter-quartile ratio value for the configuration '1-PFA-2-2' is highlighted in red at 0.600, and there is a note below stating that some or all of the QoIs have an inter-quartile ratio far from the target value (IQRatio=0.5).
          :align: center
          :width: 100%
          :figclass: align-center
@@ -177,6 +186,7 @@ Run the Analysis and Process Results
 
       .. figure:: figures/EE09_RES2.png
          :name: UQ inputs
+         :alt: An image depicting a scatter plot titled "Leave-One-Out Cross-Validation (LOOCV) Prediction." The plot shows individual data points along with vertical error bars indicating a 50% prediction interval. The y-axis is labeled "Training sample" and the x-axis is labeled "Predicted mean (LOOCV)," both with numerical values. There is an indication of a positive trend as the predicted mean increases with the training sample. Below the plot, there is a caption "Heteroscedastic nugget variance." The sidebar of the image contains menu options with various acronyms and a selected option "RES."
          :align: center
          :width: 600
          :figclass: align-center
@@ -189,6 +199,7 @@ Please see the :ref:`User Guide <lblSimSurrogate>` for more details on the verif
 
       .. figure:: figures/EE09_RES3.png
          :name: UQ inputs
+         :alt: Screenshot of a computer interface displaying statistical analysis data. On the left side, there is a scatter plot with many data points suggesting a trend and a correlation coefficient of 0.76 displayed. To the right, a data table with multiple columns shows various numerical values, with column headers like "1-PFD-1-1", "1-PFD-1-2", "1-PID-1-1", among others. Above the table, there are buttons labeled "Save Table," "Save Columns Separately," "Save RVs," "Save QoIs," and "Save Surrogate Predictions." The interface has a structured design with a dark sidebar containing options like "UQ," "GI," "SIM," and others highlighted, with "RES" selected at the bottom.
          :align: center
          :width: 100%
          :figclass: align-center
@@ -206,6 +217,7 @@ Please see the :ref:`User Guide <lblSimSurrogate>` for more details on the verif
 
       .. figure:: figures/EE09_RES_buttons.png
          :name: UQ inputs
+         :alt: "A user interface element labeled 'Saving Options' with four blue button options: 'Save GP Model,' 'Save GP Info,' 'RV Data,' and 'QoI Data.'"
          :align: center
          :width: 600
          :figclass: align-center
@@ -214,6 +226,7 @@ Please see the :ref:`User Guide <lblSimSurrogate>` for more details on the verif
 
       .. figure:: figures/EE09_RES4.jpg
          :name: UQ inputs
+         :alt: Screenshot of a computer file explorer window showing a folder named "SurrogateModel" with two items inside, "templatedir_SIM" folder and "SimGpModel.json" file, with a side panel on the right indicating "Select a file to preview."
          :align: center
          :width: 900
          :figclass: align-center

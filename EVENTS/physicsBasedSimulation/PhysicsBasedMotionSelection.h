@@ -61,7 +61,6 @@ public:
     bool outputAppDataToJSON(QJsonObject &rvObject);
     bool inputAppDataFromJSON(QJsonObject &rvObject);
     bool copyFiles(QString &destName);
-    bool outputCitation(QJsonObject &jsonObject);
 
 signals:
     void typeEVT(QString type);
@@ -77,6 +76,7 @@ private:
 
    //   SimCenterAppWidget *theSHA_MotionWidget;
    SimCenterAppWidget *theM9;
+   SimCenterAppWidget *theIstanbul;
    QString currentEventType; 
 };
 

@@ -1,0 +1,501 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "MultiModel",
+                "ApplicationData": {
+                    "appKey": "Events"
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],	
+        "Modeling": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Modeling"
+            }
+        },
+        "Simulation": {
+            "Application": "MultiModel",
+            "ApplicationData": {
+                "appKey": "Simulation"
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "modelToRun": "RV.MultiModel-Events",
+            "models": [
+                {
+                    "Application": "StochasticGroundMotion",
+                    "ApplicationData": {
+                        "modelName": "VlachosSiteSpecificEQ",
+                        "seed": "RV.StochasticSeed"
+                    },
+                    "EventClassification": "Earthquake",
+                    "belief": 1,
+                    "data": [
+                        {
+                            "EventClassification": "Earthquake",
+                            "modelName": "Vlachos et al. (2018)",
+                            "momentMagnitude": "RV.m1",
+                            "protectModel": true,
+                            "ruptureDist": 40,
+                            "seed": "RV.StochasticSeed",
+                            "type": "StochasticMotion",
+                            "vs30": 500
+                        }
+                    ]
+                },
+                {
+                    "Application": "StochasticGroundMotion",
+                    "ApplicationData": {
+                        "modelName": "VlachosSiteSpecificEQ",
+                        "seed": "RV.StochasticSeed"
+                    },
+                    "EventClassification": "Earthquake",
+                    "belief": 1,
+                    "data": [
+                        {
+                            "EventClassification": "Earthquake",
+                            "modelName": "Vlachos et al. (2018)",
+                            "momentMagnitude": "RV.m2",
+                            "protectModel": true,
+                            "ruptureDist": 40,
+                            "seed": "RV.StochasticSeed",
+                            "type": "StochasticMotion",
+                            "vs30": 500
+                        }
+                    ]
+                }
+            ]
+        }	
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 3,
+        "PlanArea": 14400,
+        "StructureType": "RM1",
+        "YearBuilt": 1990,
+        "depth": 120,
+        "height": 39,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "",
+        "planArea": 14400,
+        "stories": 3,
+        "units": {
+            "force": "kips",
+            "length": "in",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 120
+    },
+    "Modeling": {
+        "modelToRun": "RV.MultiModel-Modeling",
+        "models": [
+            {
+                "Application": "OpenSeesInput",
+                "ApplicationData": {
+                    "fileName": "Moment2d.tcl",
+                    "filePath": "{Current_Dir}/."
+                },
+                "belief": 1,
+                "data": {
+                    "centroidNodes": [
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "dampingRatio": 0.02,
+                    "ndf": 3,
+                    "ndm": 2,
+                    "randomVar": [
+                        {
+                            "name": "Es1",
+                            "value": "RV.Es1"
+                        },
+                        {
+                            "name": "Es2",
+                            "value": "RV.Es2"
+                        },
+                        {
+                            "name": "Es3",
+                            "value": "RV.Es3"
+                        },
+                        {
+                            "name": "Esb",
+                            "value": "RV.Esb"
+                        },
+                        {
+                            "name": "Fy1",
+                            "value": "RV.Fy1"
+                        },
+                        {
+                            "name": "Fy2",
+                            "value": "RV.Fy2"
+                        },
+                        {
+                            "name": "Fy3",
+                            "value": "RV.Fy3"
+                        },
+                        {
+                            "name": "Fyb",
+                            "value": "RV.Fyb"
+                        },
+                        {
+                            "name": "b1",
+                            "value": "RV.b1"
+                        },
+                        {
+                            "name": "b2",
+                            "value": "RV.b2"
+                        },
+                        {
+                            "name": "b3",
+                            "value": "RV.b3"
+                        },
+                        {
+                            "name": "bb",
+                            "value": "RV.bb"
+                        }
+                    ],
+                    "responseNodes": [
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "type": "OpenSeesInput"
+                }
+            },
+            {
+                "Application": "OpenSeesInput",
+                "ApplicationData": {
+                    "fileName": "Shear2d.tcl",
+                    "filePath": "{Current_Dir}/."
+                },
+                "belief": 1,
+                "data": {
+                    "centroidNodes": [
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "dampingRatio": 0.02,
+                    "ndf": 2,
+                    "ndm": 2,
+                    "randomVar": [
+                        {
+                            "name": "Es1",
+                            "value": "RV.Es1"
+                        },
+                        {
+                            "name": "Es2",
+                            "value": "RV.Es2"
+                        },
+                        {
+                            "name": "Es3",
+                            "value": "RV.Es3"
+                        },
+                        {
+                            "name": "Esb",
+                            "value": "RV.Esb"
+                        },
+                        {
+                            "name": "Fy1",
+                            "value": "RV.Fy1"
+                        },
+                        {
+                            "name": "Fy2",
+                            "value": "RV.Fy2"
+                        },
+                        {
+                            "name": "Fy3",
+                            "value": "RV.Fy3"
+                        },
+                        {
+                            "name": "Fyb",
+                            "value": "RV.Fyb"
+                        },
+                        {
+                            "name": "b1",
+                            "value": "RV.b1"
+                        },
+                        {
+                            "name": "b2",
+                            "value": "RV.b2"
+                        },
+                        {
+                            "name": "b3",
+                            "value": "RV.b3"
+                        },
+                        {
+                            "name": "bb",
+                            "value": "RV.bb"
+                        }
+                    ],
+                    "responseNodes": [
+                        11,
+                        12,
+                        13,
+                        14
+                    ],
+                    "type": "OpenSeesInput"
+                }
+            }
+        ]
+    },
+    "Simulation": {
+        "modelToRun": "RV.MultiModel-Simulation",
+        "models": [
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Modal Damping",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0.0001,
+                    "numModesModal": 2,
+                    "rayleighTangent": "Initial",
+                    "secondMode": 2,
+                    "solver": "Umfpack"
+                }
+            },
+            {
+                "Application": "OpenSees-Simulation",
+                "ApplicationData": {
+                },
+                "belief": 1,
+                "data": {
+                    "Application": "OpenSees-Simulation",
+                    "algorithm": "Newton",
+                    "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+                    "convergenceTest": "NormUnbalance 1.0e-2 10",
+                    "dampingModel": "Rayleigh Damping",
+                    "firstMode": 1,
+                    "integration": "Newmark 0.5 0.25",
+                    "modalRayleighTangentRatio": 0,
+                    "numModesModal": -1,
+                    "rayleighTangent": "Initial",
+                    "secondMode": 2,
+                    "solver": "Umfpack"
+                }
+            }
+        ]
+    },
+    "UQ": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 10,
+            "seed": 563
+        },
+        "saveWorkDir": true,
+        "uqType": "Forward Propagation"
+    },
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.02,
+            "name": "pDamp",
+            "refCount": 5,
+            "upperbound": 0.05,
+            "value": "RV.pDamp",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 29000,
+            "name": "Es1",
+            "refCount": 1,
+            "stdDev": 2900,
+            "value": "RV.Es1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Lognormal",
+            "inputType": "Moments",
+            "mean": 29000,
+            "name": "Es2",
+            "refCount": 1,
+            "stdDev": 2900,
+            "value": "RV.Es2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "alphas": 5,
+            "betas": 5,
+            "distribution": "Beta",
+            "inputType": "Parameters",
+            "lowerbound": 28000,
+            "name": "Es3",
+            "refCount": 1,
+            "upperbound": 30000,
+            "value": "RV.Es3",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 25000,
+            "name": "Esb",
+            "refCount": 0,
+            "upperbound": 33000,
+            "value": "RV.Esb",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Weibull",
+            "inputType": "Parameters",
+            "name": "Fy1",
+            "refCount": 0,
+            "scaleparam": 50,
+            "shapeparam": 5,
+            "value": "RV.Fy1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "alphaparam": 0.1,
+            "betaparam": 50,
+            "distribution": "Gumbel",
+            "inputType": "Parameters",
+            "name": "Fy2",
+            "refCount": 0,
+            "value": "RV.Fy2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Gamma",
+            "inputType": "Parameters",
+            "k": 50,
+            "lambda": 0.9,
+            "name": "Fy3",
+            "refCount": 0,
+            "value": "RV.Fy3",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Chisquare",
+            "inputType": "Parameters",
+            "k": 100,
+            "name": "Fyb",
+            "refCount": 0,
+            "value": "RV.Fyb",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Exponential",
+            "inputType": "Parameters",
+            "lambda": 100,
+            "name": "b1",
+            "refCount": 0,
+            "value": "RV.b1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "Values": [
+                0.05,
+                0.1,
+                0.15
+            ],
+            "Weights": [
+                .25,
+                .5,
+                .25
+            ],
+            "distribution": "Discrete",
+            "inputType": "Parameters",
+            "name": "b2",
+            "refCount": 0,
+            "value": "RV.b2",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.01,
+            "name": "b3",
+            "refCount": 0,
+            "stdDev": 0.001,
+            "value": "RV.b3",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 0.01,
+            "name": "bb",
+            "refCount": 0,
+            "stdDev": 0.001,
+            "value": "RV.bb",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 7,
+            "name": "m1",
+            "refCount": 1,
+            "stdDev": 0.1,
+            "value": "RV.m1",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 6,
+            "name": "m2",
+            "refCount": 1,
+            "stdDev": 0.1,
+            "value": "RV.m2",
+            "variableClass": "Uncertain"
+        }	
+    ]
+}

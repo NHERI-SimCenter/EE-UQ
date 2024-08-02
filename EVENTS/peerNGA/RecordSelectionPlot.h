@@ -11,6 +11,7 @@ class RecordSelectionPlot : public QWidget
     Q_OBJECT
 public:
     explicit RecordSelectionPlot(QWidget *parent = nullptr);
+    ~RecordSelectionPlot();  
     void setMean(QVector<double> periods, QVector<double> sa);
     void setMeanPlusSigma(QVector<double> periods, QVector<double> sa);
     void setMeanMinusSigma(QVector<double> periods, QVector<double> sa);
@@ -43,7 +44,10 @@ private:
     QtCharts::QLogValueAxis yAxis;
     QList<QtCharts::QLineSeries*> currentSelectedSeries;
 #endif
-    
+  bool addMean;
+  bool addPlus;
+  bool addMinus;
+  bool addTarget;
 };
 
 #endif // RECORDSELECTIONPLOT_H
