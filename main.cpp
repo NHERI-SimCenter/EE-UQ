@@ -9,7 +9,7 @@
 #include <QThread>
 #include <QObject>
 
-#include <AgaveCurl.h>
+#include <TapisV3.h>
 #include <WorkflowAppEE_UQ.h>
 #include <QCoreApplication>
 
@@ -71,7 +71,8 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("3.6.0");
+    //QCoreApplication::setApplicationVersion("3.6.0");
+    QCoreApplication::setApplicationVersion("4.0.0");    
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -129,10 +130,12 @@ int main(int argc, char *argv[])
     //
 
     QString tenant("designsafe");
-    QString storage("agave://designsafe.storage.default/");
+    //QString storage("agave://designsafe.storage.default/");
+    QString storage("designsafe.storage.default/");    
     QString dirName("EE-UQ");
 
-    AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+    // AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
+    TapisV3 *theRemoteService = new TapisV3(tenant, storage, &dirName);    
 
 
     //
