@@ -159,7 +159,8 @@ int main(int argc, char *argv[])
     QString manualURL("https://nheri-simcenter.github.io/EE-UQ-Documentation/");
     w.setDocumentationURL(manualURL);
 
-    QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=6.0");
+    //QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=6.0");
+    QString messageBoardURL("https://github.com/orgs/NHERI-SimCenter/discussions/categories/ee-uq");    
     w.setFeedbackURL(messageBoardURL);
 
     //
