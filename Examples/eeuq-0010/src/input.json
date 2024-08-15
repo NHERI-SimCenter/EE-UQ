@@ -99,7 +99,7 @@
         },
         "Events": [
             {
-                "Application": "ExistingPEER_Events",
+                "Application": "PEER NGA RECORDS",
                 "ApplicationData": {
                 },
                 "EventClassification": "Earthquake",
