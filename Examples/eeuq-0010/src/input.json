@@ -109,9 +109,8 @@
         "Modeling": {
             "Application": "SurrogateGPBuildingModel",
             "ApplicationData": {
-                "MS_Path": "{Current_Dir}/eeuq-0010/src",
-                "mainScript": "SimGpModel.json",
-                "postprocessScript": ""
+                "MS_Path": "{Current_Dir}/.",
+                "mainScript": "SimGpModel.json"
             },
             "femOption": "continue",
             "gpSeed": 1,
