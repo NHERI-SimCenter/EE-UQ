@@ -27,6 +27,7 @@ mkdir .\applications\createEDP
 mkdir .\applications\createEVENT
 mkdir .\applications\createSAM
 mkdir .\applications\performSIMULATION
+mkdir .\applications\performFEM
 mkdir .\applications\performUQ
 mkdir .\applications\Workflow
 mkdir .\applications\opensees
@@ -38,6 +39,7 @@ xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\createEDP  .\appl
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\createEVENT  .\applications\createEVENT
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\createSAM  .\applications\createSAM
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\performSIMULATION  .\applications\performSIMULATION
+xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\performFEM  .\applications\performFEM
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\performUQ  .\applications\performUQ
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\Workflow  .\applications\Workflow
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\OpenSees  .\applications\opensees
