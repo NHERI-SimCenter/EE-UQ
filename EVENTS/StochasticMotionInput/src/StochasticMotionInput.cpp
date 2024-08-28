@@ -85,7 +85,7 @@ StochasticMotionInput::StochasticMotionInput(
   // Connect model selection slot
   connect(model_selection_,
 	  SIGNAL(currentIndexChanged(int)),
-	  this,SLOT(modelSelectionChanged()));
+      this,SLOT(modelSelectionChanged(int)));
   /*
   connect(model_selection_,
           &QComboBox::currentIndexChanged, this,
