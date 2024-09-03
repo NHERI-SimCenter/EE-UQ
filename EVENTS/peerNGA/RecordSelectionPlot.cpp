@@ -71,7 +71,6 @@ RecordSelectionPlot::RecordSelectionPlot(QWidget *parent) :
 
     this->setMinimumWidth(200);
     this->setMinimumHeight(200);
-
 }
 
 
@@ -91,6 +90,8 @@ void RecordSelectionPlot::setMean(QVector<double> periods, QVector<double> sa)
   if (addMean == false) {
     addMean = true;
     spectraChart.addSeries(&meanSeries);
+    meanSeries.attachAxis(&xAxis);
+    meanSeries.attachAxis(&yAxis);    
   }
 
     meanSeries.clear();
@@ -115,7 +116,9 @@ void RecordSelectionPlot::setMeanPlusSigma(QVector<double> periods, QVector<doub
 {
   if (addPlus == false) {
     addPlus = true;
-    spectraChart.addSeries(&plusSigmaSeries);    
+    spectraChart.addSeries(&plusSigmaSeries);
+    plusSigmaSeries.attachAxis(&xAxis);
+    plusSigmaSeries.attachAxis(&yAxis);        
   }    
   plusSigmaSeries.clear();
 
@@ -131,6 +134,8 @@ void RecordSelectionPlot::setMeanMinusSigma(QVector<double> periods, QVector<dou
   if (addMinus == false) {
     addMinus = true;
     spectraChart.addSeries(&minusSigmaSeries);
+    minusSigmaSeries.attachAxis(&xAxis);
+    minusSigmaSeries.attachAxis(&yAxis);        
   }  
     minusSigmaSeries.clear();
 
@@ -146,10 +151,9 @@ void RecordSelectionPlot::setTargetSpectrum(QVector<double> periods, QVector<dou
 
   if (addTarget == false) {
     addTarget = true;
-    spectraChart.addSeries(&targetSeries);    
-  /*
-    spectraChart.addSeries(&plusSigmaSeries);
-  */
+    spectraChart.addSeries(&targetSeries);
+    targetSeries.attachAxis(&xAxis);
+    targetSeries.attachAxis(&yAxis);        
   }    
     targetSeries.clear();
 
