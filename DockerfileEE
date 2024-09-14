@@ -1,0 +1,50 @@
+# Dockerfile to build EE-UQ
+#   uses simcenter-common
+# written: fmk 00/24
+
+FROM simcenter-common
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /simcenter
+
+#
+# Build the EE-UQ frontend & copy tacc config.json
+#
+
+RUN  source /opt/qt515/bin/qt515-env.sh \
+    && git clone --depth 1 --branch master https://github.com/NHERI-SimCenter/SimCenterCommon.git \
+    && git clone --depth 1 --branch master https://github.com/NHERI-SimCenter/QS3hark.git \    
+    && git clone --depth 1 --branch master https://github.com/NHERI-SimCenter/EE-UQ.git \
+    && cd EE-UQ \
+    && mkdir build \
+    && cd build \
+    && qmake "QMAKE_CXXFLAGS+=-D_SC_RELEASE" ../EE-UQ.pro \
+    && make \
+    && rm -fr .obj *.o *.cpp \
+    && cd ../.. 
+
+#
+# Copy all files into correct locations for running & clean up
+#
+
+RUN cd EE-UQ/build \
+    && cp -r ../Examples ./ \
+    && cp -r ../../SimCenterBackendApplications/applications . \
+    && rm -fr /simcenter/SimCenterBackendApplications \
+    && rm -fr /simcenter/SimCenterCommon
+
+#
+# add following for the missing lib libQt5Core.so error that is related to running on some versions linux
+# with an older kernel, seemingly need kernel >= 3.5 on host .. soln from Sal T. found in an AskUbuntu thread
+#
+
+RUN strip --remove-section=.note.ABI-tag /opt/qt515/lib/libQt5Core.so.5
+
+#
+# Finally add a new user simcenter as root cannot run the Qt app
+#
+
+RUN useradd -ms /bin/bash simcenter
+
+USER simcenter
