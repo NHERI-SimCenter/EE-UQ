@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "WorkflowAppEE_UQ.h"
+#include <MainWindowWorkflowApp.h>
+
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -65,6 +67,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
+#include <QMenuBar>
 
 #include <SimCenterComponentSelection.h>
 #include "GeneralInformationWidget.h"
@@ -78,7 +81,10 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 #include <InputWidgetBIM.h>
-
+#include <SC_ToolDialog.h>
+#include <SC_RemoteAppTool.h>
+#include <QList>
+#include <RemoteAppTest.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
@@ -87,6 +93,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 // static pointer for global procedure set in constructor
 static WorkflowAppEE_UQ *theApp = 0;
+
+extern bool isSafeToRemoveRecursivily(const QString &directoryPath);
 
 // global procedure
 int getNumParallelTasks() {
@@ -197,6 +205,73 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     ProgramOutputDialog *theDialog=ProgramOutputDialog::getInstance();
     theDialog->appendInfoMessage("Welcome to EE-UQ");
 }
+
+void
+WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
+
+  this->WorkflowAppWidget::setMainWindow(window);
+
+  //
+  // Add a Tool option to menu bar & add options to it
+  //
+  
+  auto menuBar = theMainWindow->menuBar();
+  
+  QMenu *toolsMenu = new QMenu(tr("&Tools"),menuBar);
+  SC_ToolDialog *theToolDialog = new SC_ToolDialog(this);
+
+  //
+  // Add Simple Test
+  //
+  
+  RemoteAppTest *theTest = new RemoteAppTest();  
+  QString testAppName = "simple-tool-test";
+  QString testAppVersion = "1.0.0";
+  QString testMachine = "stampede3";
+  QList<QString> testQueues;
+  testQueues << "simcenter";
+
+  SC_RemoteAppTool *theTestTool = new SC_RemoteAppTool(testAppName,
+						       testAppVersion,
+						       testMachine,
+						       testQueues,
+						       theRemoteService,
+						       theTest,
+						       theToolDialog);
+  theToolDialog->addTool(theTestTool, "Simple Tool Test");
+
+  
+  //  // Set the path to the input file
+  QAction *showTest = toolsMenu->addAction("&Simple Tool Test");
+  connect(showTest, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theTestTool] {
+    theDialog->showTool("Simple Tool Test");
+  });
+
+  //
+  // Add Tools to menu bar
+  //
+  
+  QAction* menuAfter = nullptr;
+  foreach (QAction *action, menuBar->actions())
+  {
+    // First check for an examples menu and if that does not exist put it before the help menu
+    QString actionText = action->text();
+    if(actionText.compare("&Examples") == 0)
+    {
+        menuAfter = action;
+        break;
+    }
+    else if(actionText.compare("&Help") == 0)
+      {
+        menuAfter = action;
+        break;
+    }
+  }
+  menuBar->insertMenu(menuAfter, toolsMenu);
+  //menuBar->addMenu(toolsMenu);
+}
+
+
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
 {
@@ -524,10 +599,11 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
-    } else
-      destinationDirectory.mkpath(tmpDirectory);
-
+      if (isSafeToRemoveRecursivily(tmpDirectory))
+	destinationDirectory.removeRecursively();
+    }
+    
+    destinationDirectory.mkpath(tmpDirectory);
     QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
 

@@ -73,6 +73,8 @@ public:
     explicit WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent = 0);
     ~WorkflowAppEE_UQ();
 
+    void setMainWindow(MainWindowWorkflowApp* window);
+  
     bool outputToJSON(QJsonObject &jsonObject);
     bool inputFromJSON(QJsonObject &jsonObject);
     void clear(void);
