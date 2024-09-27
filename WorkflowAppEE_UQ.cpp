@@ -84,7 +84,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SC_ToolDialog.h>
 #include <SC_RemoteAppTool.h>
 #include <QList>
-#include <RemoteAppTest.h>
+// #include <RemoteAppTest.h>
+#include <ShakerMaker.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
@@ -224,28 +225,36 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   // Add Simple Test
   //
   
-  RemoteAppTest *theTest = new RemoteAppTest();  
-  QString testAppName = "simple-tool-test";
-  QString testAppVersion = "1.0.0";
-  QString testMachine = "stampede3";
-  QList<QString> testQueues;
-  testQueues << "simcenter";
+//   RemoteAppTest *theTest = new RemoteAppTest(); 
+  ShakerMaker *theShakerMaker = new ShakerMaker();
+   
+//   QString testAppName = "simple-tool-test";
+//   QString testAppVersion = "1.0.0";
+//   QString testMachine = "stampede3";
+//   QList<QString> testQueues;
+//   testQueues << "simcenter";
 
-  SC_RemoteAppTool *theTestTool = new SC_RemoteAppTool(testAppName,
-						       testAppVersion,
-						       testMachine,
-						       testQueues,
-						       theRemoteService,
-						       theTest,
-						       theToolDialog);
-  theToolDialog->addTool(theTestTool, "Simple Tool Test");
+//   SC_RemoteAppTool *theTestTool = new SC_RemoteAppTool(testAppName,
+// 						       testAppVersion,
+// 						       testMachine,
+// 						       testQueues,
+// 						       theRemoteService,
+// 						       theTest,
+// 						       theToolDialog);
+//   theToolDialog->addTool(theTest, "Simple Tool Test");
+  theToolDialog->addTool(theShakerMaker, "ShakerMaker");
 
   
   //  // Set the path to the input file
-  QAction *showTest = toolsMenu->addAction("&Simple Tool Test");
-  connect(showTest, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theTestTool] {
-    theDialog->showTool("Simple Tool Test");
-  });
+//   QAction *showTest = toolsMenu->addAction("&Simple Tool Test");
+  QAction *showShakerMaker = toolsMenu->addAction("&ShakerMaker");
+//   connect(showTest, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theTest] {
+//     theDialog->showTool("Simple Tool Test");
+//   });
+
+  connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
+    theDialog->showTool("ShakerMaker");
+    });
 
   //
   // Add Tools to menu bar
