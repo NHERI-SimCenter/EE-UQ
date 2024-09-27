@@ -81,10 +81,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 #include <InputWidgetBIM.h>
+#include <Stampede3Machine.h>
 #include <SC_ToolDialog.h>
 #include <SC_RemoteAppTool.h>
+#include <RemoteOpenSeesApp.h>
 #include <QList>
-#include <RemoteAppTest.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
@@ -223,30 +224,35 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   //
   // Add Simple Test
   //
-  
-  RemoteAppTest *theTest = new RemoteAppTest();  
-  QString testAppName = "simple-tool-test";
+
+  /*
+  RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
+
+  QString testAppName = "simcenter-opensees-frontera";
   QString testAppVersion = "1.0.0";
-  QString testMachine = "stampede3";
-  QList<QString> testQueues;
-  testQueues << "simcenter";
+  TapisMachine *theMachine = new Stampede3Machine();
+  SC_RemoteAppTool *theOpenSeesTool = new SC_RemoteAppTool(testAppName,
+							   testAppVersion,
+							   theMachine,
+							   theRemoteService,
+							   theOpenSeesApp,
+							   theToolDialog);  
+  
+  theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
+  //  // Set the path to the input file
+  QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
+  connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
+    theDialog->showTool("OpenSees@DesignSafe");
+  });
+  
+  */
 
-  SC_RemoteAppTool *theTestTool = new SC_RemoteAppTool(testAppName,
-						       testAppVersion,
-						       testMachine,
-						       testQueues,
-						       theRemoteService,
-						       theTest,
-						       theToolDialog);
-  theToolDialog->addTool(theTestTool, "Simple Tool Test");
 
   
-  //  // Set the path to the input file
-  QAction *showTest = toolsMenu->addAction("&Simple Tool Test");
-  connect(showTest, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theTestTool] {
-    theDialog->showTool("Simple Tool Test");
-  });
 
+
+
+  
   //
   // Add Tools to menu bar
   //
