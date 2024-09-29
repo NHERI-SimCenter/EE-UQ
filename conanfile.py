@@ -11,11 +11,14 @@ class EEUQ(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
     requires = "jansson/2.13.1", \
-               "libcurl/7.72.0", \
                "zlib/1.2.11"
 
     build_policy = "missing"
 
+    def requirements(self):
+        if self.settings.os != "Linux":
+            self.requires("libcurl/7.72.0")
+    
     def configure(self):
         if self.settings.os == "Windows":
             self.options["lapack"].visual_studio = True
