@@ -249,7 +249,7 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
 
   ShakerMaker *theShakerMaker = new ShakerMaker();
   theToolDialog->addTool(theShakerMaker, "ShakerMaker");
-
+  QAction *showShakerMaker = toolsMenu->addAction("&ShakerMaker");
   connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
     theDialog->showTool("ShakerMaker");
   });
