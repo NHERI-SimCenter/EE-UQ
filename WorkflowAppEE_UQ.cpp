@@ -86,6 +86,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <SC_RemoteAppTool.h>
 #include <RemoteOpenSeesApp.h>
 #include <QList>
+#include <ShakerMaker.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
@@ -225,7 +226,7 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   // Add Simple Test
   //
 
-  /*
+
   RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
 
   QString testAppName = "simcenter-opensees-frontera";
@@ -239,20 +240,20 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
 							   theToolDialog);  
   
   theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
-  //  // Set the path to the input file
   QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
   connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
     theDialog->showTool("OpenSees@DesignSafe");
   });
   
-  */
-
-
   
 
+  ShakerMaker *theShakerMaker = new ShakerMaker();
+  theToolDialog->addTool(theShakerMaker, "ShakerMaker");
 
-
-  
+  connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
+    theDialog->showTool("ShakerMaker");
+  });
+    
   //
   // Add Tools to menu bar
   //

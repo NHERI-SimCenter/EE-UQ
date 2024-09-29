@@ -42,8 +42,8 @@ win32{
 }
 
 
-linux{
-
+linux {
+   LIBS += -lcurl
 }
 
 win32 {
