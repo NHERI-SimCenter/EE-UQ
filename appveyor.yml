@@ -29,10 +29,10 @@ for:
        - rm -rf QS3hark
        - rm -rf SimCenterBackendApplications
        - rm -rf SimCenterCommon
-       - git clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git       
-       - git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git
-       - git clone https://github.com/NHERI-SimCenter/EE-UQ.git
-       - git clone https://github.com/NHERI-SimCenter/QS3hark.git
+       - git clone https://github.com/JustinBonus/SimCenterBackendApplications.git       
+       - git clone https://github.com/JustinBonus/SimCenterCommon.git
+       - git clone https://github.com/JustinBonus/EE-UQ.git
+       - git clone https://github.com/JustinBonus/QS3hark.git
 
     build_script:
 
@@ -79,10 +79,10 @@ for:
        - pip install conan==1.60.1
        - conan user
        - conan remote add simcenter https://nherisimcenter.jfrog.io/artifactory/api/conan/simcenter
-       - git clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git
-       - git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git
-       - git clone https://github.com/NHERI-SimCenter/EE-UQ.git
-       - git clone https://github.com/NHERI-SimCenter/QS3hark.git              
+       - git clone https://github.com/JustinBonus/SimCenterBackendApplications.git
+       - git clone https://github.com/JustinBonus/SimCenterCommon.git
+       - git clone https://github.com/JustinBonus/EE-UQ.git
+       - git clone https://github.com/JustinBonus/QS3hark.git              
        
     build_script:
        # build SimCenterBackendApplications
@@ -132,10 +132,10 @@ for:
        - cmd: rm -rf QS3hark
        - cmd: rm -rf SimCenterBackendApplications
        - cmd: rm -rf SimCenterCommon
-       - cmd: git clone https://github.com/NHERI-SimCenter/SimCenterBackendApplications.git
-       - cmd: git clone https://github.com/NHERI-SimCenter/SimCenterCommon.git
-       - cmd: git clone https://github.com/NHERI-SimCenter/EE-UQ.git
-       - cmd: git clone https://github.com/NHERI-SimCenter/QS3hark.git
+       - cmd: git clone https://github.com/JustinBonus/SimCenterBackendApplications.git
+       - cmd: git clone https://github.com/JustinBonus/SimCenterCommon.git
+       - cmd: git clone https://github.com/JustinBonus/EE-UQ.git
+       - cmd: git clone https://github.com/JustinBonus/QS3hark.git
        - cmd: dir
 
     build_script:
