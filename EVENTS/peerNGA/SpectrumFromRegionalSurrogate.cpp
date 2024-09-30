@@ -143,8 +143,8 @@ SpectrumFromRegionalSurrogate::SpectrumFromRegionalSurrogate(QWidget* parent): A
     sa->setLineWidth(0);
     sa->setFrameShape(QFrame::NoFrame);
     sa->setWidget(rvBox);
-    sa->setMinimumHeight(100);
-    sa->setMaximumHeight(200);
+    //sa->setMinimumHeight(100);
+    //sa->setMaximumHeight(200);
     vLayout->addWidget(sa);
     layout->addLayout(vLayout,4,0,1,3);
 

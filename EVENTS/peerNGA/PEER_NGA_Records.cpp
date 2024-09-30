@@ -1,4 +1,5 @@
 #include "PEER_NGA_Records.h"
+#include <QScrollArea>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -28,8 +29,22 @@
 #include <QMessageBox>
 #include "SpectrumFromRegionalSurrogate.h"
 #include <QWebEngineView>
-PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent), groundMotionsFolder(QDir::tempPath())
+#include <QDir>
+
+PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
+  QString pathToFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+    + QDir::separator() + QCoreApplication::applicationName() + QDir::separator() +
+    "LocalWorkDir" + QDir::separator() + "peerNGA";
+  
+  // make sure tool dir exists in Documentss folder
+  groundMotionsFolder = new QDir(pathToFolder);
+  if (!groundMotionsFolder->exists())
+    if (!groundMotionsFolder->mkpath(pathToFolder)) {
+      QString msg("PEER_NGA_Records could not create local work dir: "); msg += pathToFolder;
+      errorMessage(msg);
+    }
+    
     setupUI(generalInfoWidget);
     setupConnections();
 }
@@ -41,34 +56,50 @@ PEER_NGA_Records::~PEER_NGA_Records()
 
 void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 {
-    auto layout = new QGridLayout(this);
 
-    auto positiveIntegerValidator = new QIntValidator();
-    positiveIntegerValidator->setBottom(1);
+  // create a layout and put inside a scroll area
+  auto layout = new QGridLayout();
 
-    auto positiveDoubleValidator = new QDoubleValidator();
-    positiveDoubleValidator->setBottom(0.0);
+  // Create a main layout
+  QWidget *theWidget = new QWidget();
+  theWidget->setLayout(layout);
+  
+  // scroll area
+  QGridLayout *layoutWithScroll = new QGridLayout();
+  QScrollArea *sa = new QScrollArea;
+  sa->setWidgetResizable(true);
+  sa->setLineWidth(0);
+  sa->setFrameShape(QFrame::NoFrame);
+  sa->setWidget(theWidget);
+  layoutWithScroll->addWidget(sa);
+  this->setLayout(layoutWithScroll);
+  
+  
+  auto positiveIntegerValidator = new QIntValidator();
+  positiveIntegerValidator->setBottom(1);
 
-    auto targetSpectrumGroup = new QGroupBox("Target Spectrum");
+  auto positiveDoubleValidator = new QDoubleValidator();
+  positiveDoubleValidator->setBottom(0.0);
+  
+  auto targetSpectrumGroup = new QGroupBox("Target Spectrum");
 
-    auto targetSpectrumLayout = new QGridLayout(targetSpectrumGroup);
-    targetSpectrumLayout->setColumnMinimumWidth(1, 100);
-    targetSpectrumLayout->setColumnMinimumWidth(2, 30);
+  auto targetSpectrumLayout = new QGridLayout(targetSpectrumGroup);
 
-    targetSpectrumLayout->addWidget(new QLabel("Type      "), 0, 0);
-    spectrumTypeComboBox = new QComboBox();
+  targetSpectrumLayout->addWidget(new QLabel("Type      "), 0, 0);
+  spectrumTypeComboBox = new QComboBox();
 
-    targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1, Qt::AlignLeft);
-    spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
-    spectrumTypeComboBox->addItem("User Specified");
-    spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
-    spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
-    spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
-    spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
-    spectrumTypeComboBox->addItem("No Spectrum - Uniform IMs");
-
-    targetSpectrumDetails = new QStackedWidget(this);
-    targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
+  targetSpectrumLayout->addWidget(spectrumTypeComboBox, 0, 1, Qt::AlignLeft);
+  spectrumTypeComboBox->addItem("Design Spectrum (ASCE 7-10)");
+  spectrumTypeComboBox->addItem("User Specified");
+  spectrumTypeComboBox->addItem("Design Spectrum (USGS Web Service)");
+  spectrumTypeComboBox->addItem("Uniform Hazard Spectrum (USGS NSHMP)");
+  spectrumTypeComboBox->addItem("Conditional Mean Spectrum (USGS Disagg.)");
+  spectrumTypeComboBox->addItem("Spectrum from Hazard Surrogate");
+  spectrumTypeComboBox->addItem("No Spectrum - Uniform IMs");
+  
+  targetSpectrumDetails = new QStackedWidget(this);
+  targetSpectrumLayout->addWidget(targetSpectrumDetails, 1, 0, 1, 3);
+    
     auto asce710Target = new ASCE710Target(this);
     targetSpectrumDetails->addWidget(asce710Target);
     userSpectrumTarget = new UserSpectrumWidget(this);
@@ -85,11 +116,32 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     targetSpectrumDetails->addWidget(noSpect);
 
     recordSelectionGroup = new QGroupBox("Record Selection");
-    recordSelectionLayout = new QGridLayout(recordSelectionGroup);
+
+    recordSelectionLayout = new QGridLayout();
+
+
+    // yhrow inside a QScrollBar
+    /*
+    QWidget *theWidget2 = new QWidget();
+    theWidget2->setLayout(recordSelectionLayout);
+    
+    // scroll area
+    QGridLayout *layoutWithScroll2 = new QGridLayout();
+    QScrollArea *sa2 = new QScrollArea;
+    sa2->setWidgetResizable(true);
+    sa2->setLineWidth(0);
+    sa2->setFrameShape(QFrame::NoFrame);
+    sa2->setWidget(theWidget2);
+    layoutWithScroll2->addWidget(sa2);
+    recordSelectionGroup->setLayout(layoutWithScroll2);
+    */
+    recordSelectionGroup->setLayout(recordSelectionLayout);    
+    
+
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
     nRecordsEditBox->setValidator(positiveIntegerValidator);
-    recordSelectionLayout->addWidget(nRecordsEditBox, 0, 1);
+    recordSelectionLayout->addWidget(nRecordsEditBox, 0, 1, 1, 2);
 
     // Fault Type
     faultTypeBox = new QComboBox();
@@ -101,7 +153,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     faultTypeBox->addItem("SS+Reverse");
     faultTypeBox->addItem("Normal+Reverse");
     recordSelectionLayout->addWidget(new QLabel("Fault Type"), 1, 0);
-    recordSelectionLayout->addWidget(faultTypeBox, 1, 1);
+    recordSelectionLayout->addWidget(faultTypeBox, 1, 1, 1, 2);
 
     // Pulse Type
     pulseBox = new QComboBox();
@@ -109,7 +161,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     pulseBox->addItem("Only Pulse-like");
     pulseBox->addItem("No Pulse-like");
     recordSelectionLayout->addWidget(new QLabel("Pulse"), 2, 0);
-    recordSelectionLayout->addWidget(pulseBox, 2, 1);
+    recordSelectionLayout->addWidget(pulseBox, 2, 1, 1, 2);
 
     //Magnitude Range
     magnitudeCheckBox = new QCheckBox("Magnitude");
@@ -158,15 +210,15 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     durationMax->setValidator(positiveDoubleValidator);
     recordSelectionLayout->addWidget(durationMax, 6, 2);
     recordSelectionLayout->addWidget(new QLabel("sec"), 6, 3);
-
-//#ifdef _WIN32
-//    targetSpectrumGroup->setMaximumHeight(200);
-//    recordSelectionGroup->setMaximumHeight(200);
-//#else
     targetSpectrumLayout->setRowStretch(2,1);
-    targetSpectrumLayout->setColumnStretch(2,1);
+    //    targetSpectrumLayout->setColumnStretch(2,1);
     recordSelectionLayout->setRowStretch(7, 1);
-//#endif
+    recordSelectionLayout->setColumnStretch(0, 1);    
+    recordSelectionLayout->setColumnStretch(1, 1);
+    recordSelectionLayout->setColumnStretch(2, 1);
+    recordSelectionLayout->setColumnStretch(3, 1);
+    //recordSelectionLayout->setColumnStretch(4, 1);
+    
 
     auto scalingGroup = new QGroupBox("Scaling/Selection Criteria");
     auto scalingLayout = new QGridLayout(scalingGroup);
@@ -209,28 +261,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     scalingLayout->addWidget(weightsLineEdit, 3, 1);
     scalingLayout->addWidget(weightsLabel2, 3, 2);
 
-    selectRecordsButton = new QPushButton("Select Records");
-    scalingLayout->addWidget(selectRecordsButton, 4, 0, 1, 2);
-
     this->onScalingComboBoxChanged(0);
 
-    // User-defined output directory
-    auto outdirGroup = new QGroupBox("Temporary records Directory");
-    auto outdirLayout = new QGridLayout(outdirGroup);
-    // add stuff to enter Output Directory
-    QLabel *labelOD = new QLabel("Temporary records Directory");
-    outdirLE = new QLineEdit;
-    outdirLE->setPlaceholderText("(Opional) " + groundMotionsFolder.path());
-    QPushButton *chooseOutputDirectoryButton = new QPushButton();
-    chooseOutputDirectoryButton->setText(tr("Choose"));
-    connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
-    outdirLayout->addWidget(labelOD,0,0);
-    outdirLayout->addWidget(outdirLE,0,2);
-    outdirLayout->addWidget(chooseOutputDirectoryButton, 0, 4);
-
-    //Records Table
-    recordsTable = new QTableWidget();
-    recordsTable->setHidden(true);
 
     //Ground Motions
     auto groundMotionsGroup = new QGroupBox("Ground Motion Components");
@@ -258,9 +290,6 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     groundMotionsLayout->addWidget(groundMotionsComponentsBox, 0, 1);
     groundMotionsLayout->addWidget(new QLabel("Suite Average"), 1, 0);
     groundMotionsLayout->addWidget(suiteAverageBox, 1, 1);
-    recordsTable->setMinimumHeight(200);
-    groundMotionsLayout->addWidget(recordsTable, 2, 0, 1, 2);
-    groundMotionsLayout->setRowStretch(2, 1);
 
     progressBar = new QProgressBar();
     progressBar->setRange(0,0);
@@ -269,12 +298,28 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     groundMotionsLayout->addWidget(progressBar, 3, 0, 1, 2);
 
+
+    // User-defined output directory
+    auto outdirGroup = new QGroupBox("Output Directory");
+    auto outdirLayout = new QGridLayout(outdirGroup);
+    // add stuff to enter Output Directory
+    QLabel *labelOD = new QLabel("Output Directory");
+    outdirLE = new QLineEdit;
+    //    outdirLE->setPlaceholderText("(Opional) " + groundMotionsFolder->path());
+    outdirLE->setText(groundMotionsFolder->path());    
+    QPushButton *chooseOutputDirectoryButton = new QPushButton();
+    chooseOutputDirectoryButton->setText(tr("Choose"));
+    connect(chooseOutputDirectoryButton,SIGNAL(clicked()),this,SLOT(chooseOutputDirectory()));
+    outdirLayout->addWidget(labelOD,0,0);
+    outdirLayout->addWidget(outdirLE,0,2);
+    outdirLayout->addWidget(chooseOutputDirectoryButton, 0, 4);
+    
     layout->addWidget(targetSpectrumGroup, 0, 0);
     layout->addWidget(recordSelectionGroup, 0, 1);
-    // Output directory group location
-    layout->addWidget(outdirGroup, 1, 0, 1, 2);
-    layout->addWidget(groundMotionsGroup, 2, 0, 1, 2);
-    layout->addWidget(scalingGroup, 3, 0, 1, 2);
+
+    layout->addWidget(groundMotionsGroup, 1, 0, 1, 2);
+    layout->addWidget(scalingGroup, 2, 0, 1, 2);
+    layout->addWidget(outdirGroup, 3, 0, 1, 2);
 
     auto peerCitation = new QLabel("This tool uses PEER NGA West 2 Ground Motions Database. "
                                    "Users should cite the database as follows: PEER 2013/03 – PEER NGA-West2 Database, "
@@ -286,10 +331,21 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->addWidget(peerCitation, 4, 0, 1, 3);
 
     //add record selection plot
-    layout->addWidget(&recordSelectionPlot, 0,3,4,1);
+    layout->addWidget(&recordSelectionPlot,0,2,1,1);    
     recordSelectionPlot.setHidden(true);
 
+    //Records Table
+    recordsTable = new QTableWidget();
+    recordsTable->setHidden(true);
+    layout->addWidget(recordsTable, 1, 2, 2, 1);    
+        
+    selectRecordsButton = new QPushButton("Select Records");
+    layout->addWidget(selectRecordsButton, 3, 2, 1, 1);
 
+    layout->setColumnStretch(0,1);
+    layout->setColumnStretch(1,1);
+    layout->setColumnStretch(2,2);
+    
     //coverageImage = new QLabel();
     //layout->addWidget(coverageImage, 0,3,4,1);
     //coverageImage->setHidden(true);
@@ -305,7 +361,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     numDownloaded = 0; // for batchRSN
 
     layout->setRowStretch(0,1);
-    layout->setColumnStretch(layout->columnCount(), 1);
+    //layout->setColumnStretch(layout->columnCount(), 1);
 }
 
 void PEER_NGA_Records::setupConnections()
@@ -332,11 +388,11 @@ void PEER_NGA_Records::setupConnections()
 
     connect(&peerClient, &PeerNgaWest2Client::recordsDownloaded, this, [this](QString recordsFile)
     {
-        // auto tempRecordsDir = QDir(groundMotionsFolder.path());
+        // auto tempRecordsDir = QDir(groundMotionsFolder->path());
         // Adding user-defined output directory
         RecordsDir = this->outdirLE->text();
         if (RecordsDir.isEmpty()) {
-            RecordsDir = groundMotionsFolder.path();
+            RecordsDir = groundMotionsFolder->path();
         }
         auto tempRecordsDir = QDir(RecordsDir);
         //Cleaning up previous search results
@@ -414,14 +470,14 @@ void PEER_NGA_Records::setupConnections()
 
             recordSelectionGroup->setVisible(false);
             //targetSpectrumDetails->resize(newHeight, newWidth);
-            targetSpectrumDetails->setMinimumWidth(newWidth);
+            //targetSpectrumDetails->setMinimumWidth(newWidth);
             //widget->resize(165, widget->height());
             scalingComboBox->setDisabled(true);
             suiteAverageBox->setCurrentIndex(1);
             suiteAverageBox->setDisabled(true);
         } else {
             recordSelectionGroup->setVisible(true);
-            targetSpectrumDetails->setMinimumWidth(10); // some random number
+            //targetSpectrumDetails->setMinimumWidth(10); // some random number
             scalingComboBox->setDisabled(false);
             suiteAverageBox->setDisabled(false);
         }
@@ -622,7 +678,7 @@ void PEER_NGA_Records::selectRecords()
         QString imagePath;
         RecordsDir = this->outdirLE->text();
         if (RecordsDir.isEmpty()) {
-            RecordsDir = groundMotionsFolder.path();
+            RecordsDir = groundMotionsFolder->path();
         }
         unifrom_widget->getRSN(RecordsDir, RSN, additionalScaling, imagePath); // This will run a python script
         // additionalScaling are given in "sorted" RSN older.
@@ -803,7 +859,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
         QJsonObject recordH1Json;
         //Adding Horizontal1 in dof 1 direction
         recordH1Json["fileName"] = record.Horizontal1File;
-        // recordH1Json["filePath"] = groundMotionsFolder.path();
+        // recordH1Json["filePath"] = groundMotionsFolder->path();
         recordH1Json["filePath"] = RecordsDir;
         recordH1Json["dirn"] = 1;
         recordH1Json["factor"] = record.Scale;
@@ -816,7 +872,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
             QJsonObject recordH2Json;
             //Adding Horizontal2 in dof 2 direction
             recordH2Json["fileName"] = record.Horizontal2File;
-            // recordH2Json["filePath"] = groundMotionsFolder.path();
+            // recordH2Json["filePath"] = groundMotionsFolder->path();
             recordH2Json["filePath"] = RecordsDir;
             recordH2Json["dirn"] = 2;
             recordH2Json["factor"] = record.Scale;
@@ -829,7 +885,7 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
             QJsonObject recordH3Json;
             //Adding Horizontal3 in dof 3 direction
             recordH3Json["fileName"] = record.VerticalFile;
-            // recordH3Json["filePath"] = groundMotionsFolder.path();
+            // recordH3Json["filePath"] = groundMotionsFolder->path();
             recordH3Json["filePath"] = RecordsDir;
             recordH3Json["dirn"] = 3;
             recordH3Json["factor"] = record.Scale;
@@ -986,7 +1042,7 @@ bool PEER_NGA_Records::inputAppDataFromJSON(QJsonObject &jsonObject)
 
 bool PEER_NGA_Records::copyFiles(QString &destDir)
 {
-    // QDir recordsFolder(groundMotionsFolder.path());
+    // QDir recordsFolder(groundMotionsFolder->path());
     QDir recordsFolder(RecordsDir);  
   
     // 

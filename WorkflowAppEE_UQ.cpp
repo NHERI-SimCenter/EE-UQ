@@ -87,6 +87,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteOpenSeesApp.h>
 #include <QList>
 #include <ShakerMaker.h>
+#include <peerNGA/PEER_NGA_Records.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
@@ -190,13 +191,15 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     theComponentSelection->displayComponent("UQ");
 
     // access a web page which will increment the usage count for this tool
+    /*
     manager = new QNetworkAccessManager(this);
 
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
 
     manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
-
+    */
+    
 
     //
     // set the defults in the General Info
@@ -223,10 +226,26 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   SC_ToolDialog *theToolDialog = new SC_ToolDialog(this);
 
   //
-  // Add Simple Test
+  // Add Some Tools
   //
 
+  // peer ground motion selection
+  PEER_NGA_Records *peerNGA = new PEER_NGA_Records(theGI);
+  theToolDialog->addTool(peerNGA, "PEER Ground Motion Records");
+  QAction *showPEER = toolsMenu->addAction("&PEER Ground Motion Records");
+  connect(showPEER, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = peerNGA] {
+    theDialog->showTool("PEER Ground Motion Records");
+  });
+  
+  // shaker maker
+  ShakerMaker *theShakerMaker = new ShakerMaker();
+  theToolDialog->addTool(theShakerMaker, "ShakerMaker");
+  QAction *showShakerMaker = toolsMenu->addAction("&ShakerMaker");
+  connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
+    theDialog->showTool("ShakerMaker");
+  });
 
+  // opensees@designsafe  
   RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
 
   QString testAppName = "simcenter-opensees-frontera";
@@ -246,14 +265,6 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   });
   
   
-
-  ShakerMaker *theShakerMaker = new ShakerMaker();
-  theToolDialog->addTool(theShakerMaker, "ShakerMaker");
-  QAction *showShakerMaker = toolsMenu->addAction("&ShakerMaker");
-  connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
-    theDialog->showTool("ShakerMaker");
-  });
-    
   //
   // Add Tools to menu bar
   //

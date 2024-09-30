@@ -106,7 +106,7 @@ private:
     QCheckBox* vs30CheckBox;
     QLineEdit* vs30Min;
     QLineEdit* vs30Max;
-    QTemporaryDir groundMotionsFolder;
+    QDir *groundMotionsFolder;
 
     //D5-95 Range
     QCheckBox* durationCheckBox;
