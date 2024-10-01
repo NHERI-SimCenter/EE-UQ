@@ -91,6 +91,8 @@ private:
   QPushButton *getMotions;
   bool downloadedMotions;
   bool motionsDownloading;
+  QString username;
+  QString password;
 };
 
 #endif // M9_SINGLE_SITE_WIDGET_H

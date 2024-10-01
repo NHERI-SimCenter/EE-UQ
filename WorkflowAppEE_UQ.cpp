@@ -87,6 +87,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <RemoteOpenSeesApp.h>
 #include <QList>
 #include <ShakerMaker.h>
+#include <DRM_Model.h>
 #include <peerNGA/PEER_NGA_Records.h>
 #include "CustomizedItemModel.h"
 
@@ -244,6 +245,15 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
     theDialog->showTool("ShakerMaker");
   });
+
+    // DRM Model
+    DRM_Model *theDRM_Model = new DRM_Model();
+    theToolDialog->addTool(theDRM_Model, "Domain Reduction Method Analysis");
+    QAction *showDRM_Model = toolsMenu->addAction("&Domain Reduction Method Analysis");
+    connect(showDRM_Model, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theDRM_Model] {
+        theDialog->showTool("Domain Reduction Method Analysis");
+    });
+
 
   // opensees@designsafe  
   RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
