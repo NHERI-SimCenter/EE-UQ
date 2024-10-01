@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
     //QCoreApplication::setApplicationVersion("3.6.0");
-    QCoreApplication::setApplicationVersion("4.0.2");    
+    QCoreApplication::setApplicationVersion("4.1.0");    
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
     if (envVar.isEmpty())
         logToFile = true;
 
+
     qInstallMessageHandler(customMessageOutput);
 
     //
@@ -130,13 +131,11 @@ int main(int argc, char *argv[])
     //
 
     QString tenant("designsafe");
-    //QString storage("agave://designsafe.storage.default/");
     QString storage("designsafe.storage.default/");    
     QString dirName("EE-UQ");
 
     // AgaveCurl *theRemoteService = new AgaveCurl(tenant, storage, &dirName);
     TapisV3 *theRemoteService = new TapisV3(tenant, storage, &dirName);    
-
 
     //
     // create the main window
@@ -152,14 +151,13 @@ int main(int argc, char *argv[])
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
 
-    QString citeText("1)Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, & Wael Elhaddad. (2024). NHERI-SimCenter/quoFEM: Version 4.0.0 (v4.0.0). Zenodo. https://doi.org/10.5281/zenodo.13324130 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+    QString citeText("1)Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, Pedro Arduino, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 4.1.0 (v4.1.0). Zenodo. https://doi.org/10.5281/zenodo.13865428 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     w.setCite(citeText);
 
     
     QString manualURL("https://nheri-simcenter.github.io/EE-UQ-Documentation/");
     w.setDocumentationURL(manualURL);
 
-    //QString messageBoardURL("https://simcenter-messageboard.designsafe-ci.org/smf/index.php?board=6.0");
     QString messageBoardURL("https://github.com/orgs/NHERI-SimCenter/discussions/categories/ee-uq");    
     w.setFeedbackURL(messageBoardURL);
 
@@ -198,13 +196,16 @@ int main(int argc, char *argv[])
 
     if(file.open(QFile::ReadOnly)) {
         a.setStyleSheet(file.readAll());
+        qDebug() << "Stylesheet loaded: " << file.fileName();	
         file.close();
     } else {
       qDebug() << "could not open stylesheet";
     }
 
-    //Setting Google Analytics Tracking Information
+
 #ifdef _SC_RELEASE
+
+    //Setting Google Analytics Tracking Information    
     qDebug() << "RELEASE BUILD";
     GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
     GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
