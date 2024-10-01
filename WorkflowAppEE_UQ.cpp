@@ -93,11 +93,11 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <Utils/ProgramOutputDialog.h>
 #include <Utils/RelativePathResolver.h>
 #include <GoogleAnalytics.h>
+#include <Utils/FileOperations.h>
 
 // static pointer for global procedure set in constructor
 static WorkflowAppEE_UQ *theApp = 0;
 
-extern bool isSafeToRemoveRecursivily(const QString &directoryPath);
 
 // global procedure
 int getNumParallelTasks() {
@@ -256,7 +256,11 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
 							   theMachine,
 							   theRemoteService,
 							   theOpenSeesApp,
-							   theToolDialog);  
+							   theToolDialog);
+  QStringList filesToDownload; filesToDownload << "results.zip";
+  theOpenSeesTool->setFilesToDownload(filesToDownload, false);
+  
+				 
   
   theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
   QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
@@ -617,8 +621,14 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      if (isSafeToRemoveRecursivily(tmpDirectory))
+      if (SCUtils::isSafeToRemoveRecursivily(tmpDirectory))
 	destinationDirectory.removeRecursively();
+      else {
+	QString msg("The Program stopped, it was about to recursivily remove: ");
+	msg.append(tmpDirectory);
+	fatalMessage(msg);
+	return;	
+      }
     }
     
     destinationDirectory.mkpath(tmpDirectory);
