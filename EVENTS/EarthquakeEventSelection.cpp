@@ -91,7 +91,8 @@ EarthquakeEventSelection::~EarthquakeEventSelection()
 void
 EarthquakeEventSelection::replyEventType(void)
 {
-  qDebug() << "EarthquakeEventSelection::replyEventType(void)- HUH";
+    emit typeEVT("EQ");
+  //qDebug() << "EarthquakeEventSelection::replyEventType(void)- HUH";
   
 }
 
