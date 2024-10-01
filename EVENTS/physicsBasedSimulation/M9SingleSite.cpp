@@ -34,15 +34,15 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 *************************************************************************** */
 
-// Written: fmckenna
-
+// Written: fmckenna, Amin Pakzad
+#include "MainWindow.h"
 #include "M9SingleSite.h"
 #include <SC_DoubleLineEdit.h>
 #include <SC_IntLineEdit.h>
 #include <SC_DirEdit.h>
 #include <SC_ComboBox.h>
 #include <SC_CheckBox.h>
-
+#include <QApplication>
 #include <QJsonObject>
 #include <QDir>
 #include <QDebug>
@@ -51,7 +51,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QGroupBox>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
-#include <QSplitter>
 
 #include <QGridLayout>
 #include <QLabel>
@@ -63,6 +62,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QScreen>
 
 M9SingleSite::M9SingleSite(QWidget *parent)
 :SimCenterAppWidget(parent), count(0), downloadedMotions(false), motionsDownloading(false)
@@ -191,6 +191,50 @@ M9SingleSite::downloadMotions(void)
 {
   qDebug() << "M9SingleSite::downloadMotions called";
   
+  // if user has not checked 
+  if (!useAPI->isChecked()) {
+    // pop up a window to ask for username and password
+    QDialog *dialog = new QDialog();
+    dialog->setWindowTitle("Login to Tapis");
+    QVBoxLayout *layout = new QVBoxLayout(dialog);
+    QLineEdit *usernameEdit = new QLineEdit(dialog);
+    usernameEdit->setPlaceholderText("Username");
+    layout->addWidget(usernameEdit);
+    QLineEdit *passwordEdit = new QLineEdit(dialog);
+    passwordEdit->setPlaceholderText("Password");
+    passwordEdit->setEchoMode(QLineEdit::Password);
+    layout->addWidget(passwordEdit);
+    QPushButton *loginButton = new QPushButton("Login", dialog);
+    layout->addWidget(loginButton);
+    dialog->setLayout(layout);
+    connect(loginButton, &QPushButton::clicked, [=]() {
+        // check if the username and password are not empty
+        if (usernameEdit->text().isEmpty() || passwordEdit->text().isEmpty()) {
+            errorMessage("Error: Username and password cannot be empty");
+            return;
+        }
+        // close the dialog
+        dialog->accept();
+
+    });
+    // make the dialog appear in the center of the screen i nstead of the top left corner
+    // keep the dialog dimensions the same
+    QScreen *screen = qApp->primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+    int x = (screenGeometry.width() - dialog->width()) / 2;
+    int y = (screenGeometry.height() - dialog->height()) / 2;
+    dialog->move(x, y);
+    dialog->exec();
+    // save the username and password
+    username = usernameEdit->text();
+    password = passwordEdit->text();
+
+  }
+
+
+
+
+
   //
   // get tmp directory to store motions, if it exists remove
   //
@@ -230,7 +274,9 @@ M9SingleSite::downloadMotions(void)
 			 << QString("-g") << currentGrid
 			 << QString("-n") << QString::number(numMotion)
 			 << QString("-o") << destDir
-       << QString("--API") << QString::number(useAPI->isChecked());
+       << QString("--API") << QString::number(useAPI->isChecked())
+       << "--username" << username
+       << "--password" << password;
   
   /*
   QJsonObject information;
