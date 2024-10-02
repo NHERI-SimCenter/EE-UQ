@@ -269,6 +269,7 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
 							   theToolDialog);
   QStringList filesToDownload; filesToDownload << "results.zip";
   theOpenSeesTool->setFilesToDownload(filesToDownload, false);
+  theOpenSeesTool->setAppNameReport(QString("OpenSeesAtDesignSafe"));
   
 				 
   
