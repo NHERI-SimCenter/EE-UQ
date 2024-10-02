@@ -3,7 +3,7 @@ REM ## make the exe .. it assumes EE-UUQ_Windows_Download exists with vcredist a
 
 cd build
 conan install .. --build missing
-qmake ..\EE-UQ.pro
+qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ..\EE-UQ.pro
 nmake
 
 REM ## copy application into folder and winddeployqt it
