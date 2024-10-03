@@ -219,6 +219,28 @@ int main(int argc, char *argv[])
     view.show();
     view.hide();
 #endif
+
+#ifdef _ANALYTICS
+
+    //Setting Google Analytics Tracking Information    
+    qDebug() << "RELEASE BUILD";
+    GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
+    GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
+    GoogleAnalytics::CreateSessionId();
+    GoogleAnalytics::StartSession();
+    
+#endif
+
+#ifdef _GA_BEFORE
+    
+    // Opening a QWebEngineView and using github to get app geographic usage
+    QWebEngineView view;
+    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+    view.resize(1024, 750);
+    view.show();
+    view.hide();
+#endif    
+    
     
     //
     // exe application event-loop
@@ -226,6 +248,17 @@ int main(int argc, char *argv[])
 
     int res = a.exec();
 
+
+#ifdef _GA_AFTER
+    
+    // Opening a QWebEngineView and using github to get app geographic usage
+    QWebEngineView view;
+    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+    view.resize(1024, 750);
+    view.show();
+    view.hide();
+#endif        
+    
     //
     // on done with event loop, logout & stop the thread
     //
