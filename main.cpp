@@ -205,8 +205,8 @@ int main(int argc, char *argv[])
 
 #ifdef _SC_RELEASE
 
-    //Setting Google Analytics Tracking Information    
-    qDebug() << "RELEASE BUILD";
+    //Setting Google Analytics Tracking Information
+    qDebug() << "compiled with _SC_RELEASE";
     GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
     GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
     GoogleAnalytics::CreateSessionId();
@@ -222,8 +222,8 @@ int main(int argc, char *argv[])
 
 #ifdef _ANALYTICS
 
-    //Setting Google Analytics Tracking Information    
-    qDebug() << "RELEASE BUILD";
+    //Setting Google Analytics Tracking Information
+    qDebug() "compiled with: ANALYTICS"        
     GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
     GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
     GoogleAnalytics::CreateSessionId();
@@ -232,7 +232,8 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _GA_BEFORE
-    
+
+    qDebug() "compiled with: _GA_BEFORE"    
     // Opening a QWebEngineView and using github to get app geographic usage
     QWebEngineView view;
     view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
@@ -252,6 +253,7 @@ int main(int argc, char *argv[])
 #ifdef _GA_AFTER
     
     // Opening a QWebEngineView and using github to get app geographic usage
+    qDebug() "compiled with: _GA_AFTER"
     QWebEngineView view;
     view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
     view.resize(1024, 750);
