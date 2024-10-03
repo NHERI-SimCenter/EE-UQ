@@ -5,6 +5,16 @@
 #include <QLineSeries>
 #include <QLogValueAxis>
 #include <QChart>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QVXYModelMapper>
+#include <QtCharts/QLegendMarker>
+//using namespace QtCharts;
+#include <math.h>
+#include <QValueAxis>
+#include <QLogValueAxis>
 
 class RecordSelectionPlot : public QWidget
 {
