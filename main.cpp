@@ -231,18 +231,6 @@ int main(int argc, char *argv[])
     
 #endif
 
-#ifdef _GA_BEFORE
-
-    qDebug() << "compiled with: _GA_BEFORE";    
-    // Opening a QWebEngineView and using github to get app geographic usage
-    QWebEngineView view;
-    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
-    view.resize(1024, 750);
-    view.show();
-    view.hide();
-#endif    
-    
-    
     //
     // exe application event-loop
     //
