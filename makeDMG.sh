@@ -6,12 +6,7 @@
 
 DMG_METHOD="NEW"
 
-for arg in "$@"
-do
-    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
-	DMG_METHOD="OLD"
-    fi
-done
+release=${1:-"NO_RELEASE"}
 
 #
 # Paramaters
@@ -25,7 +20,7 @@ QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 
 pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
 pathToOpenSees="/Users/fmckenna/bin/OpenSees3.6.0"
-pathToDakota="/Users/fmckenna/dakota-6.12.0"
+pathToDakota="/Users/fmckenna/dakota/dakota-6.16.0"
 
 #pathToPython="/Users/fmckenna/PythonEnvR2D"
 
@@ -35,7 +30,7 @@ pathToDakota="/Users/fmckenna/dakota-6.12.0"
 #
 
 rm -fr ./build/$APP_FILE ./build/$DMG_FILENAME
-./makeEXE.sh
+./makeEXE.sh $release
 cd build
 
 #

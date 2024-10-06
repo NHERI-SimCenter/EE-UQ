@@ -10,24 +10,38 @@ rm -fr *.dmg *.app
 
 # conan install
 conan install .. --build missing
-status=$?
-if [[ $status != 0 ]]
+
+if [[ $0 != 0 ]];
 then
     echo "EE-UQ: conan install failed";
-    exit $status;
 fi
 
+#
 # qmake
-qmake ../EE-UQ.pro
-status=$?
-if [[ $status != 0 ]]
-then
-    echo "EE-UQ: qmake failed";
-    exit $status;
+#
+
+if [ -n "$release" ] && [ "$release" = "release" ]; then
+    echo "******** RELEASE BUILD *************"    
+    qmake QMAKE_CXXFLAGS+="-D_SC_RELEASE" ../EE-UQ.pro
+    status=$?; if [[ $status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $status; fi        
+else
+    echo "********* NON RELEASE BUILD ********"
+    qmake ../EE-UQ.pro
+    status=$?; if [[ $status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $status; fi    
 fi
 
+
+
+
+
+#
 # make
-make
+#
+
+touch ../WorkflowAppEE-UQ.cpp
+make -j 4
+
+
 status=$?;
 if [[ $status != 0 ]]
 then

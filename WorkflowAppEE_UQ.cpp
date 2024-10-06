@@ -77,6 +77,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_EngineSelection.h>
 #include <UQ_Results.h>
 #include <LocalApplication.h>
+#include <Stampede3Machine.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
@@ -126,14 +127,11 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
       
     theResults = theUQ_Selection->getResults();
 
+    TapisMachine *theMachine = new Stampede3Machine();
+    
     localApp = new LocalApplication("sWHALE.py");
-    remoteApp = new RemoteApplication("sWHALE.py", theService);
+    remoteApp = new RemoteApplication("sWHALE.py", theService, theMachine);
 
-    //    localApp = new LocalApplication("EE-UQ workflow.py");
-    //   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
-
-    // localApp = new LocalApplication("EE-UQ.py");
-    // remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
     SimCenterWidget *theWidgets[1];// =0;
@@ -143,30 +141,58 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // connect signals and slots
     //
 
-    connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
-    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
+    connect(localApp,SIGNAL(setupForRun(QString &,QString &)),
+	    this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(localApp,SIGNAL(processResults(QString&)),
+	    this, SLOT(processResults(QString&)));
+    connect(localApp,SIGNAL(runComplete()),
+	    this, SLOT(runComplete()));
+    connect(localApp,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(localApp,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(localApp,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));
+    
+    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)),
+	    this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(remoteApp,SIGNAL(successfullJobStart()),
+	    theRunWidget, SLOT(hide()));
+    connect(remoteApp,SIGNAL(successfullJobStart()),
+	    this, SLOT(runComplete()));
+    connect(remoteApp,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(remoteApp,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(remoteApp,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));        
 
-    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(theJobManager,SIGNAL(processResults(QString&)),
+	    this, SLOT(processResults(QString&)));
+    connect(theJobManager,SIGNAL(loadFile(QString&)),
+	    this, SLOT(loadFile(QString&)));
+    connect(theJobManager, SIGNAL(closeDialog()),
+	    this, SLOT(runComplete()));
+    connect(theJobManager,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(theJobManager,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(theJobManager,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));        
 
-    connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
-    connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
+    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)),
+	    theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
 
-    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
-
-    connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
-    connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
-    connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
-    connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
+    connect(theService, SIGNAL(closeDialog()),
+	    this, SLOT(runComplete()));
 
     // KZ connect queryEVT and the reply
     connect(theUQ_Selection, SIGNAL(queryEVT()), theEventSelection, SLOT(replyEventType()));
     connect(theEventSelection, SIGNAL(typeEVT(QString)), theUQ_Selection, SLOT(setEventType(QString)));
-
+    
     //
     // create layout to hold component selectio
     //
-
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
@@ -191,18 +217,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     theComponentSelection->displayComponent("UQ");
 
-    // access a web page which will increment the usage count for this tool
-    /*
-    manager = new QNetworkAccessManager(this);
-
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
-
-    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
-    */
-    
-
-    //
+     //
     // set the defults in the General Info
     //
 
@@ -237,7 +252,7 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showPEER, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = peerNGA] {
     theDialog->showTool("PEER Ground Motion Records");
   });
-  
+
   // shaker maker
   ShakerMaker *theShakerMaker = new ShakerMaker();
   theToolDialog->addTool(theShakerMaker, "ShakerMaker");
@@ -245,7 +260,7 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
     theDialog->showTool("ShakerMaker");
   });
-
+  
     // DRM Model
     DRM_Model *theDRM_Model = new DRM_Model();
     theToolDialog->addTool(theDRM_Model, "Domain Reduction Method Analysis");
@@ -253,7 +268,6 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
     connect(showDRM_Model, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theDRM_Model] {
         theDialog->showTool("Domain Reduction Method Analysis");
     });
-
 
   // opensees@designsafe  
   RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
@@ -278,7 +292,6 @@ WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
   connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
     theDialog->showTool("OpenSees@DesignSafe");
   });
-  
   
   //
   // Add Tools to menu bar
@@ -576,6 +589,7 @@ WorkflowAppEE_UQ::onRunButtonClicked() {
 
 void
 WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
+
     this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
@@ -584,7 +598,6 @@ WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
         theRunWidget->hide();
         theRunWidget->setMinimumWidth(this->width()*0.5);
         theRunWidget->showRemoteApplication();
-
     } else {
         errorMessage("ERROR - You Need to Login");
     }
