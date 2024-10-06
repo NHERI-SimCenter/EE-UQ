@@ -8,6 +8,8 @@ DMG_METHOD="NEW"
 
 release=${1:-"NO_RELEASE"}
 
+echo $release
+
 #
 # Paramaters
 #
@@ -74,8 +76,12 @@ echo "cp -fr $pathToOpenSees/* $pathApp/Contents/MacOS/applications/opensees"
 cp -fr $pathToOpenSees/* ./$APP_FILE/Contents/MacOS/applications/opensees
 cp -fr $pathToDakota/*  ./$APP_FILE/Contents/MacOS/applications/dakota
 
-cp /usr/local/opt/libomp/lib/libomp.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ
-install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
+#
+# done in makeAll.sh
+#
+
+cp /usr/local/opt/gcc/lib/gcc/current/libgomp.1.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ
+install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgomp.1.dylib @executable_path/libomp.1.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
 
 
 # clean up
@@ -138,7 +144,7 @@ echo $appleID
 #
 
 
-if [ "${DMG_METHOD}" == "NEW" ]; then
+if [ "${DMG_METHOD}" = "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work
@@ -214,7 +220,7 @@ echo "Issue the following: "
 echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$DMG_FILENAME --primary-bundle-id altool"
 echo ""
 echo "returns id: ID .. wait for email indicating success"
-echo "To check status"
+echo "To check cmd_status"
 echo "xcrun altool --notarization-info ID  -u $appleID  -p $appleAppPassword"
 echo ""
 echo "Finally staple the dmg"

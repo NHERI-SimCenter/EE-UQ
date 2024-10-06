@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
 #ifdef _SC_RELEASE
 
     //Setting Google Analytics Tracking Information
-    qDebug() << "compiled with _SC_RELEASE";
+    qDebug() << "Running a Release Version of EE-UQ";
     GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
     GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
     GoogleAnalytics::CreateSessionId();
@@ -218,6 +218,7 @@ int main(int argc, char *argv[])
     view.resize(1024, 750);
     view.show();
     view.hide();
+    
 #endif
 
 #ifdef _ANALYTICS
@@ -247,6 +248,7 @@ int main(int argc, char *argv[])
     view.resize(1024, 750);
     view.show();
     view.hide();
+    
 #endif        
     
     //
