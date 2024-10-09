@@ -1,6 +1,8 @@
 
 REM ## make the exe .. it assumes EE-UUQ_Windows_Download exists with vcredist and openssl there
 
+
+
 cd build
 conan install .. --build missing
 qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ..\EE-UQ.pro
@@ -66,6 +68,10 @@ rmdir /s /q .\applications\createEVENT\windTunnelExperiment
 
 
 
+REM ## zip it up with 7zip
 
+set sevenzip_path="C:\Program Files\7-Zip\7z.exe"
+cd ..
+%sevenzip_path% a -tzip .\EE-UQ_WindowsDownload.zip  .\EE-UQ_Windows_Download
 
 
