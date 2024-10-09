@@ -33,6 +33,7 @@ mkdir .\applications\Workflow
 mkdir .\applications\opensees
 mkdir .\applications\dakota
 mkdir .\applications\python
+mkdir .\applications\tools
 
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\common  .\applications\common
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\createEDP  .\applications\createEDP
@@ -45,6 +46,7 @@ xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\Workflow  .\appli
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\OpenSees  .\applications\opensees
 xcopy /s /e ..\..\..\SimCenterBackendApplications\applications\dakota  .\applications\dakota
 xcopy /s /e /Q ..\..\..\SimCenterBackendApplications\applications\python  .\applications\python
+xcopy /s /e  ..\..\..\SimCenterBackendApplications\applications\tools  .\applications\tools
 
 rmdir /s /q .\applications\createEVENT\ASCE7_WindSpeed
 rmdir /s /q .\applications\createEVENT\CFDEvent
