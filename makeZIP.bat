@@ -76,6 +76,6 @@ if exist .\EE-UQ_Windows_Download.zip (
     del .\EE-UQ_Windows_Download.zip
     echo File deleted.
 )
-%sevenzip_path% a -tzip .\EE-UQ_WindowsDownload.zip  .\EE-UQ_Windows_Download
+%sevenzip_path% a -tzip .\EE-UQ_Windows_Download.zip  .\EE-UQ_Windows_Download
 
 
