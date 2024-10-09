@@ -72,6 +72,10 @@ REM ## zip it up with 7zip
 
 set sevenzip_path="C:\Program Files\7-Zip\7z.exe"
 cd ..
+if exist .\EE-UQ_Windows_Download.zip (
+    del .\EE-UQ_Windows_Download.zip
+    echo File deleted.
+)
 %sevenzip_path% a -tzip .\EE-UQ_WindowsDownload.zip  .\EE-UQ_Windows_Download
 
 
