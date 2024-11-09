@@ -37,6 +37,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Written: fmckenna
 
 #include "WorkflowAppEE_UQ.h"
+#include <MainWindowWorkflowApp.h>
+
 #include <QPushButton>
 #include <QScrollArea>
 #include <QJsonArray>
@@ -65,6 +67,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QHostInfo>
+#include <QMenuBar>
 
 #include <SimCenterComponentSelection.h>
 #include "GeneralInformationWidget.h"
@@ -74,19 +77,29 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_EngineSelection.h>
 #include <UQ_Results.h>
 #include <LocalApplication.h>
+#include <Stampede3Machine.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
 #include <InputWidgetBIM.h>
-
+#include <Stampede3Machine.h>
+#include <SC_ToolDialog.h>
+#include <SC_RemoteAppTool.h>
+#include <RemoteOpenSeesApp.h>
+#include <QList>
+#include <ShakerMaker.h>
+#include <DRM_Model.h>
+#include <peerNGA/PEER_NGA_Records.h>
 #include "CustomizedItemModel.h"
 
 #include <Utils/ProgramOutputDialog.h>
 #include <Utils/RelativePathResolver.h>
 #include <GoogleAnalytics.h>
+#include <Utils/FileOperations.h>
 
 // static pointer for global procedure set in constructor
 static WorkflowAppEE_UQ *theApp = 0;
+
 
 // global procedure
 int getNumParallelTasks() {
@@ -114,14 +127,11 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
       
     theResults = theUQ_Selection->getResults();
 
+    TapisMachine *theMachine = new Stampede3Machine();
+    
     localApp = new LocalApplication("sWHALE.py");
-    remoteApp = new RemoteApplication("sWHALE.py", theService);
+    remoteApp = new RemoteApplication("sWHALE.py", theService, theMachine);
 
-    //    localApp = new LocalApplication("EE-UQ workflow.py");
-    //   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
-
-    // localApp = new LocalApplication("EE-UQ.py");
-    // remoteApp = new RemoteApplication("EE-UQ.py", theService);
     theJobManager = new RemoteJobManager(theService);
 
     SimCenterWidget *theWidgets[1];// =0;
@@ -131,30 +141,58 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     // connect signals and slots
     //
 
-    connect(localApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
-    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)), theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
-    connect(localApp,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
+    connect(localApp,SIGNAL(setupForRun(QString &,QString &)),
+	    this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(localApp,SIGNAL(processResults(QString&)),
+	    this, SLOT(processResults(QString&)));
+    connect(localApp,SIGNAL(runComplete()),
+	    this, SLOT(runComplete()));
+    connect(localApp,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(localApp,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(localApp,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));
+    
+    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)),
+	    this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(remoteApp,SIGNAL(successfullJobStart()),
+	    theRunWidget, SLOT(hide()));
+    connect(remoteApp,SIGNAL(successfullJobStart()),
+	    this, SLOT(runComplete()));
+    connect(remoteApp,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(remoteApp,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(remoteApp,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));        
 
-    connect(remoteApp,SIGNAL(setupForRun(QString &,QString &)), this, SLOT(setUpForApplicationRun(QString &,QString &)));
+    connect(theJobManager,SIGNAL(processResults(QString&)),
+	    this, SLOT(processResults(QString&)));
+    connect(theJobManager,SIGNAL(loadFile(QString&)),
+	    this, SLOT(loadFile(QString&)));
+    connect(theJobManager, SIGNAL(closeDialog()),
+	    this, SLOT(runComplete()));
+    connect(theJobManager,SIGNAL(sendErrorMessage(QString)),
+	    this,SLOT(errorMessage(QString)));
+    connect(theJobManager,SIGNAL(sendStatusMessage(QString)),
+	    this,SLOT(statusMessage(QString)));
+    connect(theJobManager,SIGNAL(sendFatalMessage(QString)),
+	    this,SLOT(fatalMessage(QString)));        
 
-    connect(theJobManager,SIGNAL(processResults(QString&)), this, SLOT(processResults(QString&)));
-    connect(theJobManager,SIGNAL(loadFile(QString&)), this, SLOT(loadFile(QString&)));
+    connect(this,SIGNAL(setUpForApplicationRunDone(QString&, QString &)),
+	    theRunWidget, SLOT(setupForRunApplicationDone(QString&, QString &)));
 
-    connect(remoteApp,SIGNAL(successfullJobStart()), theRunWidget, SLOT(hide()));
-
-    connect(localApp,SIGNAL(runComplete()), this, SLOT(runComplete()));
-    connect(remoteApp,SIGNAL(successfullJobStart()), this, SLOT(runComplete()));
-    connect(theService, SIGNAL(closeDialog()), this, SLOT(runComplete()));
-    connect(theJobManager, SIGNAL(closeDialog()), this, SLOT(runComplete()));
+    connect(theService, SIGNAL(closeDialog()),
+	    this, SLOT(runComplete()));
 
     // KZ connect queryEVT and the reply
     connect(theUQ_Selection, SIGNAL(queryEVT()), theEventSelection, SLOT(replyEventType()));
     connect(theEventSelection, SIGNAL(typeEVT(QString)), theUQ_Selection, SLOT(setEventType(QString)));
-
+    
     //
     // create layout to hold component selectio
     //
-
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
@@ -179,16 +217,7 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     theComponentSelection->displayComponent("UQ");
 
-    // access a web page which will increment the usage count for this tool
-    manager = new QNetworkAccessManager(this);
-
-    connect(manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
-
-    manager->get(QNetworkRequest(QUrl("http://opensees.berkeley.edu/OpenSees/developer/eeuq/use.php")));
-
-
-    //
+     //
     // set the defults in the General Info
     //
 
@@ -197,6 +226,98 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     ProgramOutputDialog *theDialog=ProgramOutputDialog::getInstance();
     theDialog->appendInfoMessage("Welcome to EE-UQ");
 }
+
+void
+WorkflowAppEE_UQ::setMainWindow(MainWindowWorkflowApp* window) {
+
+  this->WorkflowAppWidget::setMainWindow(window);
+
+  //
+  // Add a Tool option to menu bar & add options to it
+  //
+  
+  auto menuBar = theMainWindow->menuBar();
+  
+  QMenu *toolsMenu = new QMenu(tr("&Tools"),menuBar);
+  SC_ToolDialog *theToolDialog = new SC_ToolDialog(this);
+
+  //
+  // Add Some Tools
+  //
+
+  // peer ground motion selection
+  PEER_NGA_Records *peerNGA = new PEER_NGA_Records(theGI);
+  theToolDialog->addTool(peerNGA, "PEER Ground Motion Records");
+  QAction *showPEER = toolsMenu->addAction("&PEER Ground Motion Records");
+  connect(showPEER, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = peerNGA] {
+    theDialog->showTool("PEER Ground Motion Records");
+  });
+
+  // shaker maker
+  ShakerMaker *theShakerMaker = new ShakerMaker();
+  theToolDialog->addTool(theShakerMaker, "ShakerMaker");
+  QAction *showShakerMaker = toolsMenu->addAction("&ShakerMaker");
+  connect(showShakerMaker, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theShakerMaker] {
+    theDialog->showTool("ShakerMaker");
+  });
+  
+    // DRM Model
+    DRM_Model *theDRM_Model = new DRM_Model();
+    theToolDialog->addTool(theDRM_Model, "Domain Reduction Method Analysis");
+    QAction *showDRM_Model = toolsMenu->addAction("&Domain Reduction Method Analysis");
+    connect(showDRM_Model, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theDRM_Model] {
+        theDialog->showTool("Domain Reduction Method Analysis");
+    });
+
+  // opensees@designsafe  
+  RemoteOpenSeesApp *theOpenSeesApp = new RemoteOpenSeesApp();
+
+  QString testAppName = "simcenter-opensees-frontera";
+  QString testAppVersion = "1.0.0";
+  TapisMachine *theMachine = new Stampede3Machine();
+  SC_RemoteAppTool *theOpenSeesTool = new SC_RemoteAppTool(testAppName,
+							   testAppVersion,
+							   theMachine,
+							   theRemoteService,
+							   theOpenSeesApp,
+							   theToolDialog);
+  QStringList filesToDownload; filesToDownload << "results.zip";
+  theOpenSeesTool->setFilesToDownload(filesToDownload, false);
+  theOpenSeesTool->setAppNameReport(QString("OpenSeesAtDesignSafe"));
+  
+				 
+  
+  theToolDialog->addTool(theOpenSeesTool, "OpenSees@DesignSafe");
+  QAction *showOpenSees = toolsMenu->addAction("&OpenSees@DesignSafe");
+  connect(showOpenSees, &QAction::triggered, this,[this, theDialog=theToolDialog, theEmp = theOpenSeesApp] {
+    theDialog->showTool("OpenSees@DesignSafe");
+  });
+  
+  //
+  // Add Tools to menu bar
+  //
+  
+  QAction* menuAfter = nullptr;
+  foreach (QAction *action, menuBar->actions())
+  {
+    // First check for an examples menu and if that does not exist put it before the help menu
+    QString actionText = action->text();
+    if(actionText.compare("&Examples") == 0)
+    {
+        menuAfter = action;
+        break;
+    }
+    else if(actionText.compare("&Help") == 0)
+      {
+        menuAfter = action;
+        break;
+    }
+  }
+  menuBar->insertMenu(menuAfter, toolsMenu);
+  //menuBar->addMenu(toolsMenu);
+}
+
+
 
 WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
 {
@@ -468,6 +589,7 @@ WorkflowAppEE_UQ::onRunButtonClicked() {
 
 void
 WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
+
     this->errorMessage("");
 
     bool loggedIn = theRemoteService->isLoggedIn();
@@ -476,7 +598,6 @@ WorkflowAppEE_UQ::onRemoteRunButtonClicked(){
         theRunWidget->hide();
         theRunWidget->setMinimumWidth(this->width()*0.5);
         theRunWidget->showRemoteApplication();
-
     } else {
         errorMessage("ERROR - You Need to Login");
     }
@@ -524,15 +645,26 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     QDir destinationDirectory(tmpDirectory);
 
     if(destinationDirectory.exists()) {
-      destinationDirectory.removeRecursively();
-    } else
-      destinationDirectory.mkpath(tmpDirectory);
-
+      if (SCUtils::isSafeToRemoveRecursivily(tmpDirectory))
+	destinationDirectory.removeRecursively();
+      else {
+	QString msg("The Program stopped, it was about to recursivily remove: ");
+	msg.append(tmpDirectory);
+	fatalMessage(msg);
+	return;	
+      }
+    }
+    
+    destinationDirectory.mkpath(tmpDirectory);
     QString templateDirectory  = destinationDirectory.absoluteFilePath(subDir);
     destinationDirectory.mkpath(templateDirectory);
 
     // copyPath(path, tmpDirectory, false);
-    theSIM->copyFiles(templateDirectory);
+    //theSIM->copyFiles(templateDirectory);
+    if (theSIM->copyFiles(templateDirectory) == false) {
+      errorMessage("Workflow Failed to start as SIM failed in copyFiles");
+      return;
+    }
     if (theEventSelection->copyFiles(templateDirectory) == false) {
       errorMessage("Workflow Failed to start as EVENT failed in copyFiles");
       return;
@@ -560,19 +692,24 @@ WorkflowAppEE_UQ::setUpForApplicationRun(QString &workingDir, QString &subDir) {
     }
     json["runDir"]=tmpDirectory;
     json["WorkflowType"]="Building Simulation";
-    
-    QJsonObject citations;
-    QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
-    // QString citeFile = destinationDirectory.filePath("plases_cite.json"); // file getting deleted
-    this->createCitation(citations, citeFile);
-    // json.insert("citations",citations);
 
     QJsonDocument doc(json);
     file.write(doc.toJson());
     file.close();
 
-    statusMessage("SetUp Done .. Now starting application");
+    
+    //
+    // ouput citation
+    //
+    
+    QJsonObject citations;
+    QString citeFile = templateDirectory + QDir::separator() + tr("please_cite.json");    
+    // QString citeFile = destinationDirectory.filePath("please_cite.json"); // file getting deleted
 
+    this->createCitation(citations, citeFile);
+
+
+    statusMessage("SetUp Done .. Now starting application");
     emit setUpForApplicationRunDone(tmpDirectory, inputFile);
 }
 
@@ -627,14 +764,14 @@ WorkflowAppEE_UQ::getMaxNumParallelTasks() {
 int
 WorkflowAppEE_UQ::createCitation(QJsonObject &citation, QString citeFile) {
 
-  QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 3.5.0 (v3.5.0). Zenodo. https://doi.org/10.5281/zenodo.10902075\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Mat J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment.It  is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+  QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, Pedro Arduino, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 4.1.0 (v4.1.0).\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment. It is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
 
   QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
   if(!docC.isNull()) {
     if(docC.isObject()) {
       citation = docC.object();        
     }  else {
-      qDebug() << "WorkflowdAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
+      qDebug() << "WorkflowAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
     }
   }
   
@@ -643,7 +780,7 @@ WorkflowAppEE_UQ::createCitation(QJsonObject &citation, QString citeFile) {
   theAnalysisSelection->outputCitation(citation);
   theUQ_Selection->outputCitation(citation);
   theEDP_Selection->outputCitation(citation);
-
+   
   // write the citation to a citeFile if provided
   
   if (!citeFile.isEmpty()) {

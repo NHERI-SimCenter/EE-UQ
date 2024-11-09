@@ -40,6 +40,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "PhysicsBasedMotionSelection.h"
 #include "M9SingleSite.h"
+#include "IstanbulSingleSite.h"
 #include <GoogleAnalytics.h>
 
 #include <QHBoxLayout>
@@ -79,12 +80,13 @@ PhysicsBasedMotionSelection::PhysicsBasedMotionSelection(GeneralInformationWidge
     QHBoxLayout *theSelectionLayout = new QHBoxLayout();
     SectionTitle *label=new SectionTitle();
     label->setMinimumWidth(250);
-    label->setText(QString("Simulated Motions Dataset"));
+    label->setText(QString("Physics Based Motion Type"));
 
     eventSelection = new QComboBox();
     eventSelection->setObjectName("LoadingTypeCombox");
 
     eventSelection->addItem(tr("M9"));
+    eventSelection->addItem(tr("Istanbul"));
     eventSelection->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
     eventSelection->setMinimumWidth(250);
@@ -107,9 +109,25 @@ PhysicsBasedMotionSelection::PhysicsBasedMotionSelection(GeneralInformationWidge
     theStackedWidget = new QStackedWidget();
     layout->addWidget(theStackedWidget,2,1,6,1);
 
+
+
+
     // Adding M9
     theM9 = new M9SingleSite();
     theStackedWidget->addWidget(theM9);
+
+    // Adding Istanbul
+    theIstanbul = new IstanbulSingleSite();
+    theStackedWidget->addWidget(theIstanbul);
+
+    // // check if is M9 or Istanbul
+    // if (eventSelection->currentText() == "M9") {
+    //     theStackedWidget->setCurrentIndex(1); // Set index to M9
+    //     theCurrentEvent = theM9; // Set the current event to M9
+    // } else if (eventSelection->currentText() == "Istanbul") {
+    //     theStackedWidget->setCurrentIndex(0); // Set index to Istanbul
+    //     theCurrentEvent = theIstanbul; // Set the current event to Istanbul
+    // }
 
     QGroupBox *allWidgets = new QGroupBox();
     allWidgets->setLayout(layout);
@@ -196,7 +214,9 @@ void PhysicsBasedMotionSelection::eventSelectionChanged(const QString &arg1)
         theStackedWidget->setCurrentIndex(0);
         theCurrentEvent = theM9;
 	currentEventType="M9";
-	
+    } else if (arg1 == "Istanbul") {
+        theStackedWidget->setCurrentIndex(1);
+        theCurrentEvent = theIstanbul;
     } else {
         qDebug() << "ERROR .. PhysicsBasedMotionSelection selection .. type unknown: " << arg1;
     }
@@ -272,9 +292,4 @@ PhysicsBasedMotionSelection::replyEventType(void) {
         // the Site Response and User-Defined Database are excluded
         emit typeEVT("None");
     }
-}
-
-bool
-PhysicsBasedMotionSelection::outputCitation(QJsonObject &jsonObject) {
-  return theCurrentEvent->outputCitation(jsonObject);
 }

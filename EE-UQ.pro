@@ -4,7 +4,10 @@
 #
 #-------------------------------------------------
 
-QT += core gui charts concurrent webenginewidgets network sql qml 3dcore 3drender 3dextras printsupport quick opengl
+QT += core gui charts concurrent network sql qml 3dcore 3drender 3dextras printsupport quick opengl
+QT += webengine webenginewidgets 
+QT += webenginecore
+QT += webchannel
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,8 +42,8 @@ win32{
 }
 
 
-linux{
-
+linux {
+   LIBS += -lcurl
 }
 
 win32 {
@@ -49,6 +52,8 @@ win32 {
     mac {
     ICON = icons/NHERI-EEUQ-Icon.icns
     DEFINES += _GRAPHICS_Qt3D
+    target.path = /usr/local/bin
+    INSTALLS += target    
     QMAKE_INFO_PLIST=$$PWD/Info.plist
     }
 }

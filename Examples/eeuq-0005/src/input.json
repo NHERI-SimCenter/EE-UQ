@@ -41,6 +41,7 @@
             "EventClassification": "Earthquake",
             "modelName": "Vlachos et al. (2018)",
             "momentMagnitude": "RV.M",
+            "protectModel": false,
             "ruptureDist": "RV.R",
             "seed": 500,
             "type": "StochasticMotion",
@@ -121,7 +122,7 @@
             "mean": 7,
             "name": "M",
             "refCount": 1,
-            "stdDev": 1,
+            "stdDev": 0.1,
             "value": "RV.M",
             "variableClass": "Uncertain"
         },

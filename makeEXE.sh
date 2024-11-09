@@ -1,38 +1,53 @@
 #!/bin/bash 
 
+release=${1:-"NO_RELEASE"}
+
 #
 # create build dir if does not exist, cd to build, conan install and then qmake
 # 
 
 mkdir -p build
 cd build
-rm -fr *.dmg EE_UQ.app
+rm -fr *.dmg *.app
 
 # conan install
 conan install .. --build missing
-status=$?
-if [[ $status != 0 ]]
-then
+
+if [[ $0 != 0 ]]; then
     echo "EE-UQ: conan install failed";
-    exit $status;
 fi
 
+#
 # qmake
-qmake ../EE-UQ.pro
-status=$?
-if [[ $status != 0 ]]
-then
-    echo "EE-UQ: qmake failed";
-    exit $status;
+#
+
+if [ -n "$release" ] && [ "$release" = "release" ]; then
+    echo "******** RELEASE BUILD *************"    
+    qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ../EE-UQ.pro
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $cmd_status; fi        
+else
+    echo "********* NON RELEASE BUILD ********"
+    qmake ../EE-UQ.pro
+    cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $cmd_status; fi    
 fi
 
+
+
+
+
+#
 # make
-make
-status=$?;
-if [[ $status != 0 ]]
+#
+
+touch ../WorkflowAppEE-UQ.cpp
+make -j 4
+
+
+cmd_status=$?;
+if [[ $cmd_status != 0 ]]
 then
     echo "EE-UQ: make failed";
-    exit $status;
+    exit $cmd_status;
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]

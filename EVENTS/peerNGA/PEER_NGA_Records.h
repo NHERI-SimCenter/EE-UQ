@@ -60,7 +60,8 @@ public:
     enum GroundMotionComponents{One, Two, Three};
     Q_ENUM(GroundMotionComponents)
 
-    void setOutputDirectory(QString filename);
+    void setOutputDirectory(QString filename);    
+    bool outputCitation(QJsonObject &jsonObject) override;
 
 signals:
 
@@ -105,7 +106,7 @@ private:
     QCheckBox* vs30CheckBox;
     QLineEdit* vs30Min;
     QLineEdit* vs30Max;
-    QTemporaryDir groundMotionsFolder;
+    QDir *groundMotionsFolder;
 
     //D5-95 Range
     QCheckBox* durationCheckBox;

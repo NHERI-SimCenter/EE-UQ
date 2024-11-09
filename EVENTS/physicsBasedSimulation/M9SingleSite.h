@@ -48,12 +48,13 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
 #include <SimCenterAppWidget.h>
-
+#include <QWebEngineView>
 class SC_DoubleLineEdit;
 class SC_IntLineEdit;
 class SC_DirEdit;
 class SC_ComboBox;
 class QPushButton;
+class SC_CheckBox;
 
 class M9SingleSite : public SimCenterAppWidget
 {
@@ -80,13 +81,18 @@ private:
   SC_DoubleLineEdit *lat;
   SC_DoubleLineEdit *lng;
   SC_IntLineEdit    *numRealizations;
-  SC_DirEdit       *tmpLocation;
+  SC_DirEdit        *tmpLocation;
   SC_ComboBox       *gridType;
+  SC_CheckBox       *useAPI;
+  QWebEngineView    *webView1;
+  QWebEngineView    *webView2;
   int count;
 
   QPushButton *getMotions;
   bool downloadedMotions;
   bool motionsDownloading;
+  QString username;
+  QString password;
 };
 
 #endif // M9_SINGLE_SITE_WIDGET_H

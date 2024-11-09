@@ -6,10 +6,27 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QDebug>
+#include <QScrollArea>
 
 UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(parent)
 {
-    auto layout = new QGridLayout(this);
+
+  // create a layout and put inside a scroll area
+  auto layout = new QGridLayout();
+
+  // Create a main layout
+  QWidget *theWidget = new QWidget();
+  theWidget->setLayout(layout);
+  
+  // scroll area
+  QGridLayout *layoutWithScroll = new QGridLayout();
+  QScrollArea *sa = new QScrollArea;
+  sa->setWidgetResizable(true);
+  sa->setLineWidth(0);
+  sa->setFrameShape(QFrame::NoFrame);
+  sa->setWidget(theWidget);
+  layoutWithScroll->addWidget(sa);
+  this->setLayout(layoutWithScroll);
 
     auto table = new QTableView(this);
     model = new UserSpectrumModel(this);
@@ -32,7 +49,6 @@ UserSpectrumWidget::UserSpectrumWidget(QWidget* parent): AbstractTargetWidget(pa
     auto loadButton = new QPushButton("Load CSV");
     layout->addWidget(loadButton, 1, 2);
     connect(loadButton, SIGNAL(clicked()), this, SLOT(loadCSV()));
-
 }
 
 QJsonObject UserSpectrumWidget::serialize() const

@@ -6,12 +6,9 @@
 
 DMG_METHOD="NEW"
 
-for arg in "$@"
-do
-    if [ "$arg" == "--old" ] || [ "$arg" == "-o" ] || [ $arg == "-OLD" ]; then
-	DMG_METHOD="OLD"
-    fi
-done
+release=${1:-"NO_RELEASE"}
+
+echo $release
 
 #
 # Paramaters
@@ -25,7 +22,7 @@ QTDIR="/Users/fmckenna/Qt/5.15.2/clang_64/"
 
 pathToBackendApps="/Users/fmckenna/NHERI/SimCenterBackendApplications"
 pathToOpenSees="/Users/fmckenna/bin/OpenSees3.6.0"
-pathToDakota="/Users/fmckenna/dakota-6.12.0"
+pathToDakota="/Users/fmckenna/dakota/dakota-6.16.0"
 
 #pathToPython="/Users/fmckenna/PythonEnvR2D"
 
@@ -35,14 +32,14 @@ pathToDakota="/Users/fmckenna/dakota-6.12.0"
 #
 
 rm -fr ./build/$APP_FILE ./build/$DMG_FILENAME
-./makeEXE.sh
+./makeEXE.sh $release
 cd build
 
 #
 # Check to see if the app built
 #
 
-if ! [ -x "$(command -v open $pathApp)" ]; then
+if ! [ -x "$(command -v open ./$APP_FILE)" ]; then
 	echo "$APP_FILE did not build. Exiting."
 	exit 
 fi
@@ -79,8 +76,12 @@ echo "cp -fr $pathToOpenSees/* $pathApp/Contents/MacOS/applications/opensees"
 cp -fr $pathToOpenSees/* ./$APP_FILE/Contents/MacOS/applications/opensees
 cp -fr $pathToDakota/*  ./$APP_FILE/Contents/MacOS/applications/dakota
 
-cp /usr/local/opt/libomp/lib/libomp.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ
-install_name_tool -change /usr/local/opt/libomp/lib/libomp.dylib @executable_path/libomp.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
+#
+# done in makeAll.sh
+#
+
+cp /usr/local/opt/gcc/lib/gcc/current/libgomp.1.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ
+install_name_tool -change /usr/local/opt/gcc/lib/gcc/current/libgomp.1.dylib @executable_path/libomp.1.dylib ./$APP_FILE/Contents/MacOS/applications/performUQ/SimCenterUQ/nataf_gsa
 
 
 # clean up
@@ -143,7 +144,7 @@ echo $appleID
 #
 
 
-if [ "${DMG_METHOD}" == "NEW" ]; then
+if [ "${DMG_METHOD}" = "NEW" ]; then
     
     #
     # mv app into empty folder for create-dmg to work
@@ -219,7 +220,7 @@ echo "Issue the following: "
 echo "xcrun altool --notarize-app -u $appleID -p $appleAppPassword -f ./$DMG_FILENAME --primary-bundle-id altool"
 echo ""
 echo "returns id: ID .. wait for email indicating success"
-echo "To check status"
+echo "To check cmd_status"
 echo "xcrun altool --notarization-info ID  -u $appleID  -p $appleAppPassword"
 echo ""
 echo "Finally staple the dmg"

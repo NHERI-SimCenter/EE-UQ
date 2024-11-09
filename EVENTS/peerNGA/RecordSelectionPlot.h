@@ -5,12 +5,23 @@
 #include <QLineSeries>
 #include <QLogValueAxis>
 #include <QChart>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QVXYModelMapper>
+#include <QtCharts/QLegendMarker>
+//using namespace QtCharts;
+#include <math.h>
+#include <QValueAxis>
+#include <QLogValueAxis>
 
 class RecordSelectionPlot : public QWidget
 {
     Q_OBJECT
 public:
     explicit RecordSelectionPlot(QWidget *parent = nullptr);
+    ~RecordSelectionPlot();  
     void setMean(QVector<double> periods, QVector<double> sa);
     void setMeanPlusSigma(QVector<double> periods, QVector<double> sa);
     void setMeanMinusSigma(QVector<double> periods, QVector<double> sa);
@@ -43,7 +54,10 @@ private:
     QtCharts::QLogValueAxis yAxis;
     QList<QtCharts::QLineSeries*> currentSelectedSeries;
 #endif
-    
+  bool addMean;
+  bool addPlus;
+  bool addMinus;
+  bool addTarget;
 };
 
 #endif // RECORDSELECTIONPLOT_H

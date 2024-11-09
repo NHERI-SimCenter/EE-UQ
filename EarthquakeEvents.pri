@@ -32,6 +32,7 @@ SOURCES +=  \
     $$PWD/EVENTS/peerNGA/surrogateGpParser.cpp \
     $$PWD/EVENTS/physicsBasedSimulation/PhysicsBasedMotionSelection.cpp \
     $$PWD/EVENTS/physicsBasedSimulation/M9SingleSite.cpp \
+    $$PWD/EVENTS/physicsBasedSimulation/IstanbulSingleSite.cpp \
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.cpp \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.cpp
 
@@ -58,7 +59,8 @@ HEADERS +=  \
     $$PWD/EVENTS/peerNGA/UserSpectrumWidget.h \
     $$PWD/EVENTS/peerNGA/surrogateGpParser.h \
     $$PWD/EVENTS/physicsBasedSimulation/PhysicsBasedMotionSelection.h \
-    $$PWD/EVENTS/physicsBasedSimulation/M9SingleSite.h \    
+    $$PWD/EVENTS/physicsBasedSimulation/M9SingleSite.h \  
+    $$PWD/EVENTS/physicsBasedSimulation/IstanbulSingleSite.h \  
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.h
 

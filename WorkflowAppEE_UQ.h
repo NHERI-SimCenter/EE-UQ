@@ -73,6 +73,8 @@ public:
     explicit WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent = 0);
     ~WorkflowAppEE_UQ();
 
+    void setMainWindow(MainWindowWorkflowApp* window);
+  
     bool outputToJSON(QJsonObject &jsonObject);
     bool inputFromJSON(QJsonObject &jsonObject);
     void clear(void);
@@ -84,7 +86,7 @@ public:
     void onExitButtonClicked();
     int getMaxNumParallelTasks();
 
-  int createCitation(QJsonObject &citationToAddTo, QString citeFile);
+    int createCitation(QJsonObject &citationToAddTo, QString citeFile);
     
 signals:
     void setUpForApplicationRunDone(QString &tmpDirectory, QString &inputFile);
