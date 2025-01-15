@@ -66,7 +66,7 @@ public:
     QRadioButton *button;  // used to mark if Event intended for deletion
     QLineEdit    *file;    // full path to file name
     QSpinBox     *dirn;
-    LineEditRV    *factor;  // load factor
+    LineEditRV   *factor;  // load factor
 
 public slots:
     void chooseFileName(void);
@@ -96,7 +96,8 @@ public:
     QRadioButton *button; // used to mark if Event intended for deletion
     QLineEdit    *theName; // a QLineEdit with name of Event (filename minus path and extension)
     QVector<PeerRecord  *>theRecords;
-
+    QJsonObject  metadata; // peer meta data
+				    
 public slots:
     void onRemoveRecord(bool);
     void onAddRecord(bool);

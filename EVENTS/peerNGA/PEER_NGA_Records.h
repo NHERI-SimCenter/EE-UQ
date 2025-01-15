@@ -38,7 +38,7 @@ struct PeerScaledRecord
     double Magnitude;
     double Distance;
     double Vs30;
-
+    QJsonObject metadata;
 };
 
 class PEER_NGA_Records : public SimCenterAppWidget
@@ -165,6 +165,8 @@ private:
 
     SpectrumFromRegionalSurrogate *spectrumSurrogate;
     UserSpectrumWidget *userSpectrumTarget;
+
+    QGridLayout *layout;
 
 };
 
