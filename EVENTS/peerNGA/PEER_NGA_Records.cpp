@@ -30,6 +30,9 @@
 #include "SpectrumFromRegionalSurrogate.h"
 #include <QWebEngineView>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonArray>
+
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
@@ -58,7 +61,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 {
 
   // create a layout and put inside a scroll area
-  auto layout = new QGridLayout();
+  layout = new QGridLayout();
 
   // Create a main layout
   QWidget *theWidget = new QWidget();
@@ -346,17 +349,10 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     layout->setColumnStretch(1,1);
     layout->setColumnStretch(2,2);
     
-    //coverageImage = new QLabel();
-    //layout->addWidget(coverageImage, 0,3,4,1);
-    //coverageImage->setHidden(true);
 
     // sy - **NOTE** QWebEngineView display is VERY SLOW in debug mode / Max size of figure is limited to 2MB
-    coverageImage = new QWebEngineView();
-    coverageImage->page()->setBackgroundColor(Qt::transparent);
-    //coverageImage->setHtml("Loading coverage image...");
-    layout->addWidget(coverageImage, 0,3,4,1);
-    coverageImage->setHidden(true);
-    //coverageImage->load(QUrl::fromLocalFile(("C:/Users/SimCenter/AppData/Local/Temp.oohpbs/gridIM_coverage.html")));
+    coverageImage = 0;
+
     RSN=QStringList(); // for batchRSN
     numDownloaded = 0; // for batchRSN
 
@@ -398,6 +394,8 @@ void PEER_NGA_Records::setupConnections()
         //Cleaning up previous search results
         if(tempRecordsDir.exists("_SearchResults.csv"))
             tempRecordsDir.remove("_SearchResults.csv");
+        if(tempRecordsDir.exists("recordsMetadata.json"))
+            tempRecordsDir.remove("recordsMetadata.json");	
         if(tempRecordsDir.exists("_readME.txt"))
             tempRecordsDir.remove("_readME.txt");
         QDir it(RecordsDir, {"grid_IM*"});
@@ -554,23 +552,69 @@ void PEER_NGA_Records::setRecordsTable(QList<PeerScaledRecord> records)
     recordsTable->setHorizontalHeaderLabels(QStringList({"RSN","Scale", "Earthquake", "Station",
                                                          "Magnitude", "Distance", "Vs30",
                                                          "Horizontal 1 File", "Horizontal 2 File", "Vertical File"}));
-    for(auto& record: records)
-    {
-        addTableItem(row, 0, QString::number(record.RSN));
-        addTableItem(row, 1, QString::number(record.Scale, 'g', 2));
-        addTableItem(row, 2, record.Earthquake);
-        addTableItem(row, 3, record.Station);
-        addTableItem(row, 4, QString::number(record.Magnitude));
-        addTableItem(row, 5, QString::number(record.Distance));
-        addTableItem(row, 6, QString::number(record.Vs30));
-        addTableItem(row, 7, record.Horizontal1File);
-        addTableItem(row, 8, record.Horizontal2File);
-        addTableItem(row, 9, record.VerticalFile);
-        row++;
+
+    // create JSON output file with the info
+    QJsonArray arrayObj;
+    
+    for(auto& record: records) {
+
+      /*
+      QJsonObject recordObj ;
+      recordObj["RSN"]=QString::number(record.RSN);
+      recordObj["Scale"]=QString::number(record.Scale, 'g', 2);
+      recordObj["Earthquake"]=record.Earthquake;
+      recordObj["Station"]=record.Station;
+      recordObj["Magnitude"]=QString::number(record.Magnitude);
+      recordObj["Distance"]=QString::number(record.Distance);
+      recordObj["vs30"]=QString::number(record.Vs30);
+      recordObj["accelH1"]=record.Horizontal1File;
+      recordObj["accelH2"]=record.Horizontal2File;
+      recordObj["accelV"]=record.VerticalFile;
+      arrayObj.append(recordObj);
+      recordObject[metaData] = recordObject;
+      */
+      arrayObj.append(record.metadata);      
+      
+      addTableItem(row, 0, QString::number(record.RSN));
+      addTableItem(row, 1, QString::number(record.Scale, 'g', 2));
+      addTableItem(row, 2, record.Earthquake);
+      addTableItem(row, 3, record.Station);
+      addTableItem(row, 4, QString::number(record.Magnitude));
+      addTableItem(row, 5, QString::number(record.Distance));
+      addTableItem(row, 6, QString::number(record.Vs30));
+      addTableItem(row, 7, record.Horizontal1File);
+      addTableItem(row, 8, record.Horizontal2File);
+      addTableItem(row, 9, record.VerticalFile);
+      row++;
     }
     recordsTable->resizeColumnsToContents();
     recordsTable->setHidden(false);
+    
+    //
+    // Write metadata json file
+    //
 
+    // open a file in outputDir name "ngaMetadata.json"
+    QDir recordsDir = QDir(RecordsDir);
+    RecordsDir = this->outdirLE->text();
+    if (RecordsDir.isEmpty()) {
+      RecordsDir = groundMotionsFolder->path();
+    }
+    QString metadataFilePath = RecordsDir + QDir::separator() + QString("ngaMetadata.json");    
+    QFile file(metadataFilePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file:" << file.errorString();
+        return;
+    }
+
+    // create a QDocument
+    QJsonDocument jsonDoc(arrayObj);
+
+    // write QDoc to file & close the file
+    QTextStream out(&file);
+    out << jsonDoc.toJson(QJsonDocument::Indented); // Indented for pretty printing
+    file.close();
+    
 }
 
 void PEER_NGA_Records::clearSpectra()
@@ -587,8 +631,9 @@ void PEER_NGA_Records::plotSpectra()
 {
     //Spectra can be plotted here using the data in
     //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
-
+  if (coverageImage != 0)
     coverageImage->setHidden(true);
+  
     recordSelectionPlot.setHidden(true);
     if (spectrumTypeComboBox->currentIndex()!=6) {
         recordSelectionPlot.setHidden(false);
@@ -602,6 +647,7 @@ void PEER_NGA_Records::plotSpectra()
         size.setWidth(size.height());
         recordSelectionPlot.setMinimumSize(size);
     } else {
+      if (coverageImage != 0)
         coverageImage->setHidden(false);
     }
 
@@ -699,12 +745,18 @@ void PEER_NGA_Records::selectRecords()
         QFile searchImageFile(imagePath); //html image
         if(searchImageFile.exists()) {
             //coverageImage->setPixmap(QPixmap(imagePath)); // for png
-            coverageImage->load(QUrl::fromLocalFile((imagePath)));
-            coverageImage->show();
+	  if (coverageImage == 0) {
+	    coverageImage = new QWebEngineView();
+	    coverageImage->page()->setBackgroundColor(Qt::transparent);
+	    layout->addWidget(coverageImage, 0,3,4,1);
+	  }
+	  coverageImage->load(QUrl::fromLocalFile((imagePath)));
+	  coverageImage->show();
+	  
         } else {
+	  if (coverageImage != 0)
             coverageImage->setHidden(true);
         }
-
      }
     else
     {
@@ -768,6 +820,7 @@ void PEER_NGA_Records::addTableItem(int row, int column, QString value)
 
 QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResultsFilePath)
 {
+  
     QList<PeerScaledRecord> records;
     records.reserve(nRecordsEditBox->text().toInt());
     QFile searchResultsFile(searchResultsFilePath);
@@ -804,6 +857,18 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
+
+		QJsonObject recordObj;
+		record.metadata["RSN"]=record.RSN;
+		record.metadata["Scale"]=record.Scale;
+		record.metadata["Earthquake"]=record.Earthquake;
+		record.metadata["Station"]=record.Station;
+		record.metadata["Magnitude"]=record.Magnitude;
+		record.metadata["Distance"]=record.Distance;
+		record.metadata["vs30"]=record.Vs30;
+		record.metadata["accelH1"]=record.Horizontal1File;
+		record.metadata["accelH2"]=record.Horizontal2File;
+		record.metadata["accelV3"]=record.VerticalFile;
 
                 records.push_back(record);
                 line = searchResultsStream.readLine();
@@ -897,9 +962,12 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
         eventJson["type"] = "PeerEvent";
         eventJson["EventClassification"] = "Earthquake";
         eventJson["name"] = QString("PEER-Record-") + QString::number(record.RSN);
+	eventJson["metadata"]=record.metadata;
 
-        eventsArray.append(eventJson);
+	// add to array
+	eventsArray.append(eventJson);	
     }
+    
     /*
     if (numRecords == 0) {
       statusMessage(QString("PEER-NGA no motions yet selected"));      
@@ -1104,7 +1172,6 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
       }
 
 
-    //FMKFMK
     if (ok == false || count == 0) {
       statusMessage(QString("PEER-NGA no motions Downloaded"));      
       switch( QMessageBox::question( 
