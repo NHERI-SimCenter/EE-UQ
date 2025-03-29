@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QStatusBar>
 #include <QWebEngineView>
+#include <Utils/FileOperations.h>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -82,15 +83,12 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-      + QDir::separator() + QCoreApplication::applicationName();
+    bool pathExists = true;
+    logFilePath = SCUtils::getAppWorkDir(pathExists);
 
-    // make sure tool dir exists in Documentss folder
-    QDir dirWork(logFilePath);
-    if (!dirWork.exists())
-        if (!dirWork.mkpath(logFilePath)) {
-            qDebug() << QString("Could not create Working Dir: ") << logFilePath;
-        }
+    if (pathExists == false) {
+      exit(-1);
+    } 
 
     // full path to debug.log file
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");

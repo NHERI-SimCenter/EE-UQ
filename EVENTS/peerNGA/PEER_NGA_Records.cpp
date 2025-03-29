@@ -32,13 +32,14 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <Utils/FileOperations.h>
 
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
-  QString pathToFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-    + QDir::separator() + QCoreApplication::applicationName() + QDir::separator() +
-    "LocalWorkDir" + QDir::separator() + "peerNGA";
+  bool pathExists = true;
+  QString workDirPath = SCUtils::getAppWorkDir(pathExists);  
+  QString pathToFolder = workDirPath + QDir::separator() + "LocalWorkDir" + QDir::separator() + "peerNGA";
   
   // make sure tool dir exists in Documentss folder
   groundMotionsFolder = new QDir(pathToFolder);
