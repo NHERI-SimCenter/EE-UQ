@@ -23,6 +23,7 @@
 class QComboBox;
 class QLabel;
 class QGroupBox;
+class QTabWidget;
 class SpectrumFromRegionalSurrogate;
 class UserSpectrumWidget;
 
@@ -167,6 +168,7 @@ private:
     UserSpectrumWidget *userSpectrumTarget;
 
     QGridLayout *layout;
+  QTabWidget *theTabWidget;
 
 };
 
