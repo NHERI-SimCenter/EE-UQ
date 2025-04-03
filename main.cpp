@@ -92,11 +92,10 @@ int main(int argc, char *argv[])
     QFile debugFile(logFilePath);
     debugFile.remove();
 
-    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-
+    //  check if the app is run in Qt Creator .. if not turn on logging    
+    QByteArray envVar = qgetenv("QTDIR");       
     if (envVar.isEmpty())
         logToFile = true;
-
 
     qInstallMessageHandler(customMessageOutput);
 
