@@ -51,20 +51,25 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QWebEngineView>
 #include <QWebEngineSettings>
 #include <QSplitter>
-
+#include <QApplication>
 #include <QGridLayout>
 #include <QLabel>
 #include <QStringList>
 #include <SimCenterPreferences.h>
 #include <ModularPython.h>
+#include <RunPythonInThread.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QScreen>
+#include <QDialog>
+#include <QLineEdit>
+#include <QVBoxLayout>
 
 
 IstanbulSingleSite::IstanbulSingleSite(QWidget *parent)
-  :SimCenterAppWidget(parent), count(0), ok(false)
+  :SimCenterAppWidget(parent), count(0), ok(false), downloadedMotions(false), motionsDownloading(false)
 {
 
   this->setWindowTitle("Splitting Widgets Example");
@@ -104,7 +109,7 @@ IstanbulSingleSite::IstanbulSingleSite(QWidget *parent)
   tmpLocation->setDirName(dirPath);
   theLayout->addWidget(tmpLocation,3,1,1,2);
 
-  QPushButton *getMotions = new QPushButton("Get Motions");
+  getMotions = new QPushButton("Get Motions");
   theLayout->addWidget(getMotions, 4,1,1,3);
   connect(getMotions, &QPushButton::clicked, this, [=](){
     this->downloadMotions();
@@ -171,6 +176,48 @@ IstanbulSingleSite::downloadMotions(void)
 {
   qDebug() << "IstanbulSingleSite::downloadMotions called";
   
+  // pop up a window to ask for username and password
+  QDialog *dialog = new QDialog();
+  dialog->setWindowTitle("Login to Tapis");
+  QVBoxLayout *layout = new QVBoxLayout(dialog);
+  QLineEdit *usernameEdit = new QLineEdit(dialog);
+  usernameEdit->setPlaceholderText("Username");
+  layout->addWidget(usernameEdit);
+  QLineEdit *passwordEdit = new QLineEdit(dialog);
+  passwordEdit->setPlaceholderText("Password");
+  passwordEdit->setEchoMode(QLineEdit::Password);
+  layout->addWidget(passwordEdit);
+  QPushButton *loginButton = new QPushButton("Login", dialog);
+  layout->addWidget(loginButton);
+  dialog->setLayout(layout);
+  connect(loginButton, &QPushButton::clicked, [=]() {
+      // check if the username and password are not empty
+      if (usernameEdit->text().isEmpty() || passwordEdit->text().isEmpty()) {
+          errorMessage("Error: Username and password cannot be empty");
+          return;
+      }
+      // close the dialog
+      dialog->accept();
+  });
+  
+  // make the dialog appear in the center of the screen instead of the top left corner
+  // keep the dialog dimensions the same
+  QScreen *screen = qApp->primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  int x = (screenGeometry.width() - dialog->width()) / 2;
+  int y = (screenGeometry.height() - dialog->height()) / 2;
+  dialog->move(x, y);
+  dialog->exec();
+  
+  // save the username and password
+  username = usernameEdit->text();
+  password = passwordEdit->text();
+  
+  // If user canceled the dialog, return
+  if (username.isEmpty() || password.isEmpty()) {
+    return;
+  }
+
   //
   // get tmp directory to store motions, if it exists remove
   //
@@ -206,48 +253,35 @@ IstanbulSingleSite::downloadMotions(void)
     + "createEVENT" + QDir::separator() + "Istanbul" + QDir::separator() + "IstanbulRun.py";
   
   QStringList args; args << QString("--lat") << QString::number(latitude)
-			 << QString("--lng") << QString::number(longitude)
-			 << QString("-g") << currentGrid
-			 << QString("-n") << QString::number(numMotion)
-			 << QString("-o") << destDir;
+                         << QString("--lng") << QString::number(longitude)
+                         << QString("-g") << currentGrid
+                         << QString("-n") << QString::number(numMotion)
+                         << QString("-o") << destDir
+                         << "--username" << username
+                         << "--password" << password;
   
-  /*
-  QJsonObject information;
-  information["LocationFlag"]=true;
-  information["APIFLAG"]=true;
-  information["latitude"]=latitude;
-  information["longitude"]=longitude;
-  information["grid_type"]=currentGrid;
-  information["number_of_realizations"]=numMotion;
-  information["directory"]=destDir;
-
-  QJsonDocument jsonDoc(information);
-
-  // Convert QJsonDocument to JSON string
-  QByteArray jsonData = jsonDoc.toJson(QJsonDocument::Indented);
+  //
+  // run the download in a Thread using RunPythonInThread
+  //    NOTE: do not invoke destructor .. class kills itself when python app finishes
+  //
   
-  // Write JSON data to a file
-  QString informationFile = destDir + QDir::separator() + "information.json";
-  QFile outputFile(informationFile);
-  if(outputFile.open(QIODevice::WriteOnly)) {
-      outputFile.write(jsonData);
-      outputFile.close();
-  } else {
-    QString msg("IstanbulSingleSite::Could not open file" + informationFile);
-    errorMessage(msg);
-    return;
-  }
-  QStringList args; args << informationFile;
-  */
-  
-  ModularPython *thePythonApp = new ModularPython(tmpLocation->getDirName());
-  errorMessage("Getting Motions from Designsafe repository. This may take a few minutes");
-  errorMessage("STARTING PYTHON");
-  thePythonApp->run(IstanbulScript,args);
-  errorMessage("PYTHON DONE");  
-  delete thePythonApp;
+  errorMessage("Istanbul: Getting Motions from Designsafe repository. This may take a few minutes");
+  getMotions->setEnabled(false);
+  downloadedMotions = false;
+  motionsDownloading = true;
+  RunPythonInThread *thePythonProcess = new RunPythonInThread(IstanbulScript, args, tmpLocation->getDirName());
+  connect(thePythonProcess, &RunPythonInThread::processFinished, this, &IstanbulSingleSite::motionsDownloaded);
+  thePythonProcess->runProcess();
 }
 
+void
+IstanbulSingleSite::motionsDownloaded(int exitCode) {
+  motionsDownloading = false;
+  if (exitCode == 0)
+    downloadedMotions = true;
+  getMotions->setEnabled(true);
+  errorMessage("Istanbul motions download completed");
+}
 
 bool
 IstanbulSingleSite::outputAppDataToJSON(QJsonObject &jsonObject)
@@ -305,32 +339,49 @@ IstanbulSingleSite::inputFromJSON(QJsonObject &jsonObject)
 bool
 IstanbulSingleSite::copyFiles(QString &destDir)
 {
+  //
+  // check we are not still downloading
+  //
+  
+  if (motionsDownloading == true) {
+    errorMessage(QString("Istanbul: Motions Still Downloading"));
+    return false;
+  }
+  
   QString downloadedDir = tmpLocation->getDirName();
   QDir downloadDirectory(downloadedDir);
   QStringList motions = downloadDirectory.entryList(QStringList() << "*.json",QDir::Files);
 
   //
   // first check we have actual files to copy
-  // 
-  if (motions.count() == 0) {
+  //
+  
+  if (downloadedMotions == false && motions.count() == 0) {
     
-    statusMessage(QString("Istanbul no motions Downloaded"));      
+    errorMessage(QString("Istanbul: No motions Exist"));
+    statusMessage(QString("Return to the EVT panel and press 'Get Motions' to start the download process. Then wait till downloaded appears in the program output"));    
+    return false;
+  }
+
+  else if (downloadedMotions == false) {
+    
+    statusMessage(QString("Istanbul: No New Downloaded Motions"));      
     switch( QMessageBox::question( 
-				  this, 
-				  tr("Istanbul"), 
-				  tr("Istanbul has detected that no motions exist in the tmp folder. You may have requested too many motions or you did not run the 'Select Records' after entering your search criteria. If you trying to Run a Workflow, the workflow will FAIL to run or you will be presented with NANs (not a number) and zeroes. To select motions, return to the Istanbul EVENT and press the 'Download Records' Button. NOTE: The motions from present server take about 2min a record to download. Do you wish to continue anyway?"), 
-				  QMessageBox::Yes | 
-				  QMessageBox::No,
-				  QMessageBox::Yes ) )
+                  this, 
+                  tr("Istanbul"), 
+                  tr("Istanbul has detected that motions exist in the tmp folder, but these are old from a previous download selection. Do you wish to continue?"),
+                  QMessageBox::Yes | 
+                  QMessageBox::No,
+                  QMessageBox::Yes ) )
       {
       case QMessageBox::Yes:
-	break;
+        break;
       case QMessageBox::No:
-	return false;
-	break;
+        return false;
+        break;
       default:
-	
-	break;
+        
+        break;
       }
   }
 
