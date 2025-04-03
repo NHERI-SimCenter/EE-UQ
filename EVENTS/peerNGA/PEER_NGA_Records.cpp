@@ -39,8 +39,7 @@
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
-  bool pathExists = true;
-  QString workDirPath = SCUtils::getAppWorkDir(pathExists);  
+  QString workDirPath = SCUtils::getAppWorkDir();  
   QString pathToFolder = workDirPath + QDir::separator() + "LocalWorkDir" + QDir::separator() + "peerNGA";
   
   // make sure tool dir exists in Documentss folder

@@ -83,12 +83,7 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-    bool pathExists = true;
-    logFilePath = SCUtils::getAppWorkDir(pathExists);
-
-    if (pathExists == false) {
-      exit(-1);
-    } 
+    QString logFilePath = SCUtils::getAppWorkDir();
 
     // full path to debug.log file
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");
@@ -199,6 +194,7 @@ int main(int argc, char *argv[])
     } else {
       qDebug() << "could not open stylesheet";
     }
+
 
 
 #ifdef _SC_RELEASE
