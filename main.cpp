@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-    QString logFilePath = SCUtils::getAppWorkDir();
+    logFilePath = SCUtils::getAppWorkDir();
 
     // full path to debug.log file
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");
