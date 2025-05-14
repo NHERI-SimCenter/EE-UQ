@@ -338,7 +338,22 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     // Select Records Button
     selectRecordsButton = new QPushButton("Select Records");
-      
+
+    QPushButton *previousSelectionButton = new QPushButton("Load Previous");
+
+    connect(previousSelectionButton, &QPushButton::clicked, this, [this]() {
+      QString tempRecordsPath = outdirLE->text();
+      QDir tempRecordsDir = QDir(tempRecordsPath);
+      if(tempRecordsDir.exists("_SearchResults.csv"))      
+	this->processPeerRecords(tempRecordsPath);
+      else {
+	QString msg("PEER_NGA_Records no file: _SearchResults.csv exists in directory: "); msg += tempRecordsPath;
+	errorMessage(msg);
+      }
+    });
+
+
+    
     bool newLayout = true;
     if (newLayout == false) {
 
@@ -351,6 +366,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
       
 
       layout->addWidget(selectRecordsButton, 3, 2, 1, 1);
+      
       layout->addWidget(peerCitation, 4, 0, 1, 3);
       
       layout->setColumnStretch(0,1);
@@ -370,7 +386,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
       QWidget *tab1 = new QWidget();
       tab1->setLayout(layout);
-      layout->addWidget(selectRecordsButton, 4, 0, 1, 2);
+      layout->addWidget(selectRecordsButton, 4, 1, 1, 1);
+      layout->addWidget(previousSelectionButton, 4, 0, 1, 1);      
       layout->addWidget(peerCitation, 5, 0, 1, 2);
 
       QGridLayout *layout2 = new QGridLayout();
@@ -404,8 +421,8 @@ void PEER_NGA_Records::setupConnections()
     if(outdirpath.compare("NULL") == 0)
         this->chooseOutputDirectory();
 
-    connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
-    {
+    connect(selectRecordsButton, &QPushButton::clicked, this, [this]() {
+      
         currentRecords.clear();
         if(!peerClient.loggedIn())
         {
@@ -1331,7 +1348,6 @@ bool PEER_NGA_Records::outputCitation(QJsonObject &jsonObject){
 
     return true;
 }
-
 
 
 
