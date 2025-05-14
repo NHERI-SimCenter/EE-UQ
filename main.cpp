@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QStatusBar>
 #include <QWebEngineView>
+#include <Utils/FileOperations.h>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
     //QCoreApplication::setApplicationVersion("3.6.0");
-    QCoreApplication::setApplicationVersion("4.1.0");    
+    QCoreApplication::setApplicationVersion("4.1.1");    
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -82,15 +83,7 @@ int main(int argc, char *argv[])
     // set up logging of output messages for user debugging
     //
 
-    logFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-      + QDir::separator() + QCoreApplication::applicationName();
-
-    // make sure tool dir exists in Documentss folder
-    QDir dirWork(logFilePath);
-    if (!dirWork.exists())
-        if (!dirWork.mkpath(logFilePath)) {
-            qDebug() << QString("Could not create Working Dir: ") << logFilePath;
-        }
+    logFilePath = SCUtils::getAppWorkDir();
 
     // full path to debug.log file
     logFilePath = logFilePath + QDir::separator() + QString("debug.log");
@@ -99,11 +92,10 @@ int main(int argc, char *argv[])
     QFile debugFile(logFilePath);
     debugFile.remove();
 
-    QByteArray envVar = qgetenv("QTDIR");       //  check if the app is run in Qt Creator
-
+    //  check if the app is run in Qt Creator .. if not turn on logging    
+    QByteArray envVar = qgetenv("QTDIR");       
     if (envVar.isEmpty())
         logToFile = true;
-
 
     qInstallMessageHandler(customMessageOutput);
 
@@ -201,6 +193,7 @@ int main(int argc, char *argv[])
     } else {
       qDebug() << "could not open stylesheet";
     }
+
 
 
 #ifdef _SC_RELEASE

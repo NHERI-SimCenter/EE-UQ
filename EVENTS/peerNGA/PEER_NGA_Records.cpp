@@ -1,6 +1,7 @@
 #include "PEER_NGA_Records.h"
 #include <QScrollArea>
 #include <QGridLayout>
+#include <QVBoxLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QComboBox>
@@ -32,13 +33,14 @@
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QTabWidget>
+#include <Utils/FileOperations.h>
 
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
-  QString pathToFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-    + QDir::separator() + QCoreApplication::applicationName() + QDir::separator() +
-    "LocalWorkDir" + QDir::separator() + "peerNGA";
+  QString workDirPath = SCUtils::getAppWorkDir();  
+  QString pathToFolder = workDirPath + QDir::separator() + "LocalWorkDir" + QDir::separator() + "peerNGA";
   
   // make sure tool dir exists in Documentss folder
   groundMotionsFolder = new QDir(pathToFolder);
@@ -65,7 +67,6 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
   // Create a main layout
   QWidget *theWidget = new QWidget();
-  theWidget->setLayout(layout);
   
   // scroll area
   QGridLayout *layoutWithScroll = new QGridLayout();
@@ -76,8 +77,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
   sa->setWidget(theWidget);
   layoutWithScroll->addWidget(sa);
   this->setLayout(layoutWithScroll);
-  
-  
+    
   auto positiveIntegerValidator = new QIntValidator();
   positiveIntegerValidator->setBottom(1);
 
@@ -331,23 +331,64 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
                                    "David M. Boore, Tadahiro Kishida, and Jennifer L. Donahue.");
 
     peerCitation->setWordWrap(true);
-    layout->addWidget(peerCitation, 4, 0, 1, 3);
 
-    //add record selection plot
-    layout->addWidget(&recordSelectionPlot,0,2,1,1);    
-    recordSelectionPlot.setHidden(true);
 
     //Records Table
     recordsTable = new QTableWidget();
-    recordsTable->setHidden(true);
-    layout->addWidget(recordsTable, 1, 2, 2, 1);    
-        
-    selectRecordsButton = new QPushButton("Select Records");
-    layout->addWidget(selectRecordsButton, 3, 2, 1, 1);
 
-    layout->setColumnStretch(0,1);
-    layout->setColumnStretch(1,1);
-    layout->setColumnStretch(2,2);
+    // Select Records Button
+    selectRecordsButton = new QPushButton("Select Records");
+      
+    bool newLayout = true;
+    if (newLayout == false) {
+
+      //add record selection plot
+      layout->addWidget(&recordSelectionPlot,0,2,1,1);    
+      recordSelectionPlot.setHidden(true);
+      recordsTable->setHidden(true);      
+
+      layout->addWidget(recordsTable, 1, 2, 2, 1);    
+      
+
+      layout->addWidget(selectRecordsButton, 3, 2, 1, 1);
+      layout->addWidget(peerCitation, 4, 0, 1, 3);
+      
+      layout->setColumnStretch(0,1);
+      layout->setColumnStretch(1,1);
+      layout->setColumnStretch(2,2);
+
+      layout->setRowStretch(0,1);
+      //layout->setColumnStretch(layout->columnCount(), 1);
+
+      theWidget->setLayout(layout);
+      theTabWidget = 0;
+      
+    } else {
+
+      theTabWidget = new QTabWidget();
+      QVBoxLayout *tabLayout = new QVBoxLayout(theTabWidget);
+
+      QWidget *tab1 = new QWidget();
+      tab1->setLayout(layout);
+      layout->addWidget(selectRecordsButton, 4, 0, 1, 2);
+      layout->addWidget(peerCitation, 5, 0, 1, 2);
+
+      QGridLayout *layout2 = new QGridLayout();
+      QWidget *tab2 = new QWidget();
+      tab2->setLayout(layout2);
+
+      layout2->addWidget(&recordSelectionPlot,0,0,1,1);    
+      recordSelectionPlot.setHidden(true);
+      recordsTable->setHidden(true);      
+      layout2->addWidget(recordsTable, 1, 0, 2, 1);
+
+      theTabWidget->addTab(tab1, "Selection Criteria");
+      theTabWidget->addTab(tab2, "Selected Records");
+
+      QVBoxLayout *mainLayout = new QVBoxLayout(this);
+      mainLayout->addWidget(theTabWidget);
+      theWidget->setLayout(mainLayout);
+    }
     
 
     // sy - **NOTE** QWebEngineView display is VERY SLOW in debug mode / Max size of figure is limited to 2MB
@@ -355,9 +396,6 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     RSN=QStringList(); // for batchRSN
     numDownloaded = 0; // for batchRSN
-
-    layout->setRowStretch(0,1);
-    //layout->setColumnStretch(layout->columnCount(), 1);
 }
 
 void PEER_NGA_Records::setupConnections()
@@ -541,6 +579,7 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
 
     plotSpectra();
     statusMessage(QString(""));
+    theTabWidget->setCurrentIndex(1);
 }
 
 void PEER_NGA_Records::setRecordsTable(QList<PeerScaledRecord> records)
@@ -1289,7 +1328,6 @@ bool PEER_NGA_Records::outputCitation(QJsonObject &jsonObject){
         jsonObject = GMCitation;
 
     }
-
 
     return true;
 }
