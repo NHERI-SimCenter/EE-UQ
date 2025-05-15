@@ -168,7 +168,9 @@ private:
     UserSpectrumWidget *userSpectrumTarget;
 
     QGridLayout *layout;
-  QTabWidget *theTabWidget;
+    QTabWidget *theTabWidget;
+
+    bool loadFromExisting;
 
 };
 

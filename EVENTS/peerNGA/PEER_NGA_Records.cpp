@@ -342,11 +342,14 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     QPushButton *previousSelectionButton = new QPushButton("Load Previous");
 
     connect(previousSelectionButton, &QPushButton::clicked, this, [this]() {
+
       QString tempRecordsPath = outdirLE->text();
       QDir tempRecordsDir = QDir(tempRecordsPath);
-      if(tempRecordsDir.exists("_SearchResults.csv"))      
+      if(tempRecordsDir.exists("_SearchResults.csv")) {
+	currentRecords.clear();
+	loadFromExisting = true;
 	this->processPeerRecords(tempRecordsPath);
-      else {
+      } else {
 	QString msg("PEER_NGA_Records no file: _SearchResults.csv exists in directory: "); msg += tempRecordsPath;
 	errorMessage(msg);
       }
@@ -556,7 +559,6 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     if(!resultFolder.exists())
         return;
 
-
     QString readMePathString = RecordsDir + QDir::separator() + QString("_readME.txt");
     QFileInfo readMeInfo(readMePathString);
     if (readMeInfo.exists()) {
@@ -579,7 +581,9 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     }
 
     clearSpectra();
+    
     auto tmpList = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+
     currentRecords = currentRecords + tmpList;
     //if (currentRecords.length()!=numDownloaded) {
     //    errorMessage(QString("Some records are missing"));
@@ -685,8 +689,9 @@ void PEER_NGA_Records::clearSpectra()
 
 void PEER_NGA_Records::plotSpectra()
 {
-    //Spectra can be plotted here using the data in
-    //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+  //Spectra can be plotted here using the data in
+  //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+  
   if (coverageImage != 0)
     coverageImage->setHidden(true);
   
@@ -730,6 +735,8 @@ void PEER_NGA_Records::updateStatus(QString status)
 void PEER_NGA_Records::selectRecords()
 {
 
+    loadFromExisting = false;
+    
     // Set the search scaling parameters
     // 0 is not scaling
     // 1 is minimize MSE
@@ -908,8 +915,12 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Magnitude = values[12].trimmed().toDouble();
                 record.Distance = values[15].trimmed().toDouble();
                 record.Vs30 = values[16].trimmed().toDouble();
-
-                record.Scale = values[4].toDouble()*additionalScaling[ng];
+		
+		if (loadFromExisting == false)
+		  record.Scale = values[4].toDouble()*additionalScaling[ng];
+		else	
+		  record.Scale = values[4].toDouble();
+		
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
@@ -1185,6 +1196,13 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     }
     destinationFolder.cd(inputDataDirPath);
 
+    QFileInfoList fileList = destinationFolder.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+    qDebug() << "DESTINATION: " << inputDataDirPath << "\n files: \n";
+    for (const QFileInfo &fi : fileList) {
+        qDebug() << fi.fileName();           // Just filename
+        // qDebug() << fi.absoluteFilePath(); // Full path if needed
+    }
+    
     //
     // now copy files
     //
@@ -1192,11 +1210,24 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     bool ok = true;
     QString msg;
     int count = 0;
+
+
+    //qDebug() << "RECORDS: " << currentRecords;
+    
     for (auto& record:currentRecords)
       {
+	
+	// qDebug() << "record: " << record;
+
+	  msg = "PEER NGA: Copying H1 file:" +  recordsFolder.filePath(record.Horizontal1File) + " to "  
+	    + destinationFolder.filePath(record.Horizontal1File);
+	  qDebug() << msg;
+	  
         //Copying Horizontal1 file
-	if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
-	  msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal1File);
+	if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
+	  msg = "PEER NGA: failed to copy H1 file:" +  recordsFolder.filePath(record.Horizontal1File) + " to "  
+	    + destinationFolder.filePath(record.Horizontal1File);
+	  qDebug() << msg;
 	  ok = false;
 	  break;
 	}
@@ -1208,8 +1239,9 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
 	  {
 	    
             //Copying Horizontal2 file
-	    if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
-	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal2File);
+	    if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
+	      msg = "PEER NGA: failed to copy H2 file:" +  recordsFolder.filePath(record.Horizontal2File);
+	      qDebug() << msg;	      
 	      ok = false;
 	      break; 	    
 	    }
@@ -1218,8 +1250,10 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
 	if(components == GroundMotionComponents::Three)
 	  {
             //Copying Vertical file
-	    if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
-	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.VerticalFile);
+	    if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
+	      
+	      msg = "PEER NGA: failed to copy H3 file:" +  recordsFolder.filePath(record.VerticalFile);
+	      qDebug() << msg;	      
 	      ok = false;
 	      break;
 	    }
@@ -1228,6 +1262,8 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
       }
 
 
+    qDebug() << "OK & COUNT: " << ok << " " << count;
+    
     if (ok == false || count == 0) {
       statusMessage(QString("PEER-NGA no motions Downloaded"));      
       switch( QMessageBox::question( 
