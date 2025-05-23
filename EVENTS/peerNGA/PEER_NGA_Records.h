@@ -171,7 +171,6 @@ private:
     QTabWidget *theTabWidget;
 
     bool loadFromExisting;
-
 };
 
 #endif // PEER_NGA_RECORDS_H

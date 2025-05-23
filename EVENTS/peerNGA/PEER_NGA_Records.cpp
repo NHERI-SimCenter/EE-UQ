@@ -343,6 +343,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     connect(previousSelectionButton, &QPushButton::clicked, this, [this]() {
 
+      additionalScaling.clear();
       QString tempRecordsPath = outdirLE->text();
       QDir tempRecordsDir = QDir(tempRecordsPath);
       if(tempRecordsDir.exists("_SearchResults.csv")) {
@@ -354,8 +355,6 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 	errorMessage(msg);
       }
     });
-
-
     
     bool newLayout = true;
     if (newLayout == false) {
@@ -916,7 +915,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Distance = values[15].trimmed().toDouble();
                 record.Vs30 = values[16].trimmed().toDouble();
 		
-		if (loadFromExisting == false)
+		if (additionalScaling.size() != 0)
 		  record.Scale = values[4].toDouble()*additionalScaling[ng];
 		else	
 		  record.Scale = values[4].toDouble();
@@ -946,6 +945,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
         //Parsing scaled spectra
         if(line.contains("Scaled Spectra used in Search & Scaling"))
         {
+	  qDebug() << "FOUND SCALED SELECTED SPECTRA";
             //skip header
             searchResultsStream.readLine();
             line = searchResultsStream.readLine();
@@ -962,7 +962,10 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 scaledSelectedSpectra.resize(values.size() - 5);
                 for (int i = 5; i < values.size(); i++)
                 {
+		  if (additionalScaling.size() != 0)
                     scaledSelectedSpectra[i-5].push_back(values[i].toDouble()*additionalScaling[i-5]);
+		  else
+                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble());		    
                 }
                 line = searchResultsStream.readLine();
             }
