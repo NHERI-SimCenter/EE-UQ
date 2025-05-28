@@ -12,6 +12,10 @@
 #include<QHttpMultiPart>
 #include <QSslConfiguration>
 
+#ifdef _INCLUDE_USER_PASS
+#include "R2DUserPass.h"
+#endif
+
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     nRecords(3), isLoggedIn(false), retries(0)
 {
@@ -245,8 +249,14 @@ void PeerNgaWest2Client::processSignInPageReply()
 
     signInParameters.clear();
     signInParameters.addQueryItem("authenticity_token", authenticityToken);
+#ifdef _INCLUDE_USER_PASS
+    signInParameters.addQueryItem("user[email]", getPEERUserName());
+    signInParameters.addQueryItem("user[password]", getPEERPassWord());
+#else
     signInParameters.addQueryItem("user[email]", username);
-    signInParameters.addQueryItem("user[password]", password);
+    signInParameters.addQueryItem("user[password]", password);    
+#endif
+
     signInParameters.addQueryItem("user[remember_me]", "0");
     signInParameters.addQueryItem("commit", "Sign in");
 
@@ -568,3 +578,4 @@ void PeerNgaWest2Client::setScalingParameters(const int scaleFlag,
     searchWeightPoints = weightPoints;
     searchSinglePeriodScalingT = scalingPeriod;
 }
+
