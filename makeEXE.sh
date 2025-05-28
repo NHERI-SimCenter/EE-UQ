@@ -23,11 +23,11 @@ fi
 
 if [ -n "$release" ] && [ "$release" = "release" ]; then
     echo "******** RELEASE BUILD *************"    
-    qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE ../EE-UQ.pro
+    qmake QMAKE_CXXFLAGS+=-D_SC_RELEASE QMAKE_CXXFLAGS+=-D_INCLUDE_USER_PASS ../EE-UQ.pro
     cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $cmd_status; fi        
 else
     echo "********* NON RELEASE BUILD ********"
-    qmake ../EE-UQ.pro
+    qmake ../EE-UQ.pro QMAKE_CXXFLAGS+=-D_INCLUDE_USER_PASS
     cmd_status=$?; if [[ $cmd_status != 0 ]]; then echo "EE-UQ: qmake failed"; exit $cmd_status; fi    
 fi
 
@@ -39,7 +39,7 @@ fi
 # make
 #
 
-touch ../WorkflowAppEE-UQ.cpp
+touch ../main.cpp
 make -j 4
 
 
