@@ -36,7 +36,8 @@ SOURCES +=  \
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.cpp \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.cpp \
     $$PWD/EVENTS/drmEvent/drmEvent.cpp \
-    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.cpp
+    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.cpp \
+    $$PWD/EVENTS/drmEvent/drmPredefinedEventWidget.cpp
 
 HEADERS +=  \
     $$PWD/EVENTS/EarthquakeEventSelection.h \
@@ -66,5 +67,6 @@ HEADERS +=  \
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h \
     $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.h \
     $$PWD/EVENTS/drmEvent/drmEvent.h \
-    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.h
+    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.h \
+    $$PWD/EVENTS/drmEvent/drmPredefinedEventWidget.h
 

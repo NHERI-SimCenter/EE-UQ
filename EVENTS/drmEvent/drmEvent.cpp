@@ -13,7 +13,7 @@ DRMevent::DRMevent(QWidget *parent) : SimCenterAppWidget(parent) {
 
     stackedWidget = new QStackedWidget(this);
     localWidget = new DRMLocalEventWidget(this);
-    predefWidget = new QLabel("Predefined-DesignSafe event selection not implemented yet.", this);
+    predefWidget = new DRMPredefinedEventWidget(this);
     convWidget = new QLabel("Convolution event selection not implemented yet.", this);
     remoteWidget = new QLabel("Remote-DesignSafe event selection not implemented yet.", this);
 
@@ -37,6 +37,8 @@ bool DRMevent::outputToJSON(QJsonObject &jsonObject) {
     int idx = eventTypeCombo->currentIndex();
     if (idx == 0) {
         return localWidget->outputToJSON(jsonObject);
+    } else if (idx == 1) {
+        return predefWidget->outputToJSON(jsonObject);
     }
     return true;
 }
@@ -47,8 +49,11 @@ bool DRMevent::inputFromJSON(QJsonObject &jsonObject) {
     }
     if (jsonObject.contains("type") && jsonObject["type"].toString() == "DRM") {
         if (jsonObject.contains("system") && jsonObject["system"].toString() == "local") {
-            eventTypeCombo->setCurrentIndex(0); // Default to local if not specified
+            eventTypeCombo->setCurrentIndex(0);
             return localWidget->inputFromJSON(jsonObject);
+        } else if (jsonObject.contains("system") && jsonObject["system"].toString() == "predefined-designsafe") {
+            eventTypeCombo->setCurrentIndex(1);
+            return predefWidget->inputFromJSON(jsonObject);
         }
     }
     // print key names for debugging
@@ -59,6 +64,8 @@ bool DRMevent::outputAppDataToJSON(QJsonObject &jsonObject) {
     int idx = eventTypeCombo->currentIndex();
     if (idx == 0) {
         return localWidget->outputAppDataToJSON(jsonObject);
+    } else if (idx == 1) {
+        return predefWidget->outputAppDataToJSON(jsonObject);
     }
     return true;
 }
@@ -74,5 +81,6 @@ bool DRMevent::copyFiles(QString &destDir) {
 
 void DRMevent::clear() {
     localWidget->clear();
+    predefWidget->clear();
     eventTypeCombo->setCurrentIndex(0);
 }

@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include "drmLocalEventWidget.h"
+#include "drmPredefinedEventWidget.h"
 
 class DRMevent : public SimCenterAppWidget {
     Q_OBJECT
@@ -23,7 +24,7 @@ private:
     QComboBox *eventTypeCombo;
     QStackedWidget *stackedWidget;
     DRMLocalEventWidget *localWidget;
-    QWidget *predefWidget;
+    DRMPredefinedEventWidget *predefWidget;
     QWidget *convWidget;
     QWidget *remoteWidget;
 };
