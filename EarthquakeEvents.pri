@@ -34,7 +34,10 @@ SOURCES +=  \
     $$PWD/EVENTS/physicsBasedSimulation/M9SingleSite.cpp \
     $$PWD/EVENTS/physicsBasedSimulation/IstanbulSingleSite.cpp \
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.cpp \
-    $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.cpp
+    $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.cpp \
+    $$PWD/EVENTS/drmEvent/drmEvent.cpp \
+    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.cpp \
+    $$PWD/EVENTS/drmEvent/drmPredefinedEventWidget.cpp
 
 HEADERS +=  \
     $$PWD/EVENTS/EarthquakeEventSelection.h \
@@ -62,5 +65,8 @@ HEADERS +=  \
     $$PWD/EVENTS/physicsBasedSimulation/M9SingleSite.h \  
     $$PWD/EVENTS/physicsBasedSimulation/IstanbulSingleSite.h \  
     $$PWD/EVENTS/userDefinedDatabase/User_Defined_Database.h \
-    $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.h
+    $$PWD/EVENTS/groundMotionModel/BakerJayaram2008.h \
+    $$PWD/EVENTS/drmEvent/drmEvent.h \
+    $$PWD/EVENTS/drmEvent/drmLocalEventWidget.h \
+    $$PWD/EVENTS/drmEvent/drmPredefinedEventWidget.h
 
