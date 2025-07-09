@@ -156,10 +156,10 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
     QJsonObject info;
     
     if (drmName == "HaywardFaultSW4_nearField") {
-        info["description"] = "Hayward Fault SW4 near-field simulation data";
-        info["magnitude"] = 6.7;
-        info["distance"] = "2 km";
-        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/drmload.h5drm";
+        info["description"] = "Hayward Fault SW4 Site 1";
+        info["magnitude"] = 6.5;
+        info["distance"] = "1 km";
+        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site1.h5drm";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
@@ -169,10 +169,10 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["timeStep"] = 0.0107783;
         info["numPoints"] = 2551;
     } else if (drmName == "HaywardFaultSW4_midField") {
-        info["description"] = "Hayward Fault SW4 mid-field simulation data";
-        info["magnitude"] = 6.7;
-        info["distance"] = "5 km";
-        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/drmload.h5drm";
+        info["description"] = "Hayward Fault SW4 Site 2";
+        info["magnitude"] = 6.5;
+        info["distance"] = "18 km";
+        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site2.h5drm";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
@@ -182,10 +182,10 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["timeStep"] = 0.0107783;
         info["numPoints"] = 2551;
     } else if (drmName == "HaywardFaultSW4_farField") {
-        info["description"] = "Hayward Fault SW4 far-field simulation data";
-        info["magnitude"] = 6.7;
-        info["distance"] = "10 km";
-        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/drmload.h5drm";
+        info["description"] = "Hayward Fault SW4 Site 3";
+        info["magnitude"] = 6.5;
+        info["distance"] = "1 km";
+        info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site3.h5drm";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
