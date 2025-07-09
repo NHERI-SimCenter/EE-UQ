@@ -22,6 +22,10 @@ DRMevent::DRMevent(QWidget *parent) : SimCenterAppWidget(parent) {
     stackedWidget->addWidget(convWidget);
     stackedWidget->addWidget(remoteWidget);
 
+    // make the widgets fixed height
+    localWidget->setFixedHeight(450);
+    predefWidget->setFixedHeight(450);
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(new QLabel("DRM Event Type:"));
     mainLayout->addWidget(eventTypeCombo);
