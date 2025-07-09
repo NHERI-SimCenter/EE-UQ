@@ -8,6 +8,11 @@
 #include <QSplitter>
 #include <QTextEdit>
 #include <QComboBox>
+#include <QPixmap>
+#include <QApplication>
+#include <QtCore/QBuffer>
+#include <QByteArray>
+#include <QIODevice>
 
 DRMPredefinedEventWidget::DRMPredefinedEventWidget(QWidget *parent) : SimCenterAppWidget(parent) {
     table = new QTableWidget(this);
@@ -30,6 +35,7 @@ DRMPredefinedEventWidget::DRMPredefinedEventWidget(QWidget *parent) : SimCenterA
     // Right side: information viewer for selected DRM
     infoViewer = new QTextEdit(this);
     infoViewer->setReadOnly(true);
+    infoViewer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     infoViewer->setHtml(R"(
     <h3>Predefined DesignSafe DRM Events</h3>
     <p>Select a DRM event from the dropdown to view its details.</p>
@@ -45,8 +51,17 @@ DRMPredefinedEventWidget::DRMPredefinedEventWidget(QWidget *parent) : SimCenterA
     QSplitter *splitter = new QSplitter(this);
     splitter->addWidget(leftWidget);
     splitter->addWidget(infoViewer);
-    splitter->setStretchFactor(0, 3);
-    splitter->setStretchFactor(1, 2);
+    
+    // Set equal stretch factors for better alignment
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 1);
+    
+    // Set minimum sizes to ensure proper alignment
+    leftWidget->setMinimumHeight(400);
+    infoViewer->setMinimumHeight(400);
+    
+    // Set proportional widths while maintaining equal heights
+    splitter->setSizes({600, 400});
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(splitter);
@@ -83,6 +98,9 @@ void DRMPredefinedEventWidget::setupTable() {
     
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
+    
+    // Set size policy for better height control
+    table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 void DRMPredefinedEventWidget::addEventRow() {
@@ -160,6 +178,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["magnitude"] = 6.5;
         info["distance"] = "1 km";
         info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site1.h5drm";
+        info["imagePath"] = ":/EVENTS/drmEvent/HaywardFaultSites.png";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
@@ -173,6 +192,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["magnitude"] = 6.5;
         info["distance"] = "18 km";
         info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site2.h5drm";
+        info["imagePath"] = ":/EVENTS/drmEvent/HaywardFaultSites.png";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
@@ -186,6 +206,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["magnitude"] = 6.5;
         info["distance"] = "1 km";
         info["filePath"] = "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site3.h5drm";
+        info["imagePath"] = ":/EVENTS/drmEvent/HaywardFaultSites.png";
         info["crd_scale"] = 1.0;
         info["distance_tolerance"] = 0.001;
         info["T00"] = 1.0; info["T01"] = 0.0; info["T02"] = 0.0;
@@ -209,6 +230,7 @@ void DRMPredefinedEventWidget::updateInfoViewer(const QString &drmName) {
     
     QJsonObject info = getDRMFileInfo(drmName);
     
+    // Create base HTML content
     QString html = QString(R"(
     <h3>%1</h3>
     <p><b>Description:</b> %2</p>
@@ -216,27 +238,72 @@ void DRMPredefinedEventWidget::updateInfoViewer(const QString &drmName) {
     <p><b>Distance:</b> %4</p>
     <p><b>Duration:</b> %5 seconds</p>
     <p><b>Time Step:</b> %6 seconds</p>
-    <p><b>Number of Points:</b> %7</p>
-    <hr>
-    <h4>Predefined Parameters:</h4>
-    <ul>
-      <li><b>File Path:</b> %8</li>
-      <li><b>Coordinate Scale:</b> %9</li>
-      <li><b>Distance Tolerance:</b> %10</li>
-      <li><b>Transformation Matrix:</b><br>
-          [%11, %12, %13]<br>
-          [%14, %15, %16]<br>
-          [%17, %18, %19]</li>
-    </ul>
-    <p><i>You can modify x00, x01, x02, dt, and numSteps in the table.</i></p>
-    )")
+    <p><b>Number of Points:</b> %7</p>)")
     .arg(drmName)
     .arg(info["description"].toString())
     .arg(info["magnitude"].toDouble())
     .arg(info["distance"].toString())
     .arg(info["duration"].toDouble())
     .arg(info["timeStep"].toDouble())
-    .arg(info["numPoints"].toInt())
+    .arg(info["numPoints"].toInt());
+    
+    // Add image if available
+    QString imagePath = info["imagePath"].toString();
+    if (!imagePath.isEmpty()) {
+        QPixmap pixmap;
+        
+        // Try to load from resource first, then from file system
+        if (imagePath.startsWith(":/")) {
+            pixmap.load(imagePath);
+        } else {
+            // Try relative to application directory
+            QString appDir = QApplication::applicationDirPath();
+            QString fullImagePath = appDir + "/" + imagePath;
+            if (!pixmap.load(fullImagePath)) {
+                // Try absolute path
+                pixmap.load(imagePath);
+            }
+        }
+        
+        if (!pixmap.isNull()) {
+            // Scale the image to fit within reasonable bounds while maintaining aspect ratio
+            QPixmap scaledPixmap = pixmap.scaled(500, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            
+            // Convert to base64 for embedding in HTML
+            QByteArray byteArray;
+            QBuffer buffer(&byteArray);
+            buffer.open(QIODevice::WriteOnly);
+            scaledPixmap.save(&buffer, "PNG");
+            QString base64Image = byteArray.toBase64();
+            
+            html += QString(R"(
+    <hr>
+    <h4>Schematic:</h4>
+    <div style="text-align: center;">
+        <img src="data:image/png;base64,%1" alt="DRM Site Schematic" style="max-width: 100%; height: auto;">
+    </div>)").arg(base64Image);
+        } else {
+            html += QString(R"(
+    <hr>
+    <h4>Schematic:</h4>
+    <p><i>Image not found: %1</i></p>)").arg(imagePath);
+        }
+    }
+    
+    // Add predefined parameters section
+    html += QString(R"(
+    <hr>
+    <h4>Predefined Parameters:</h4>
+    <ul>
+      <li><b>File Path:</b> %1</li>
+      <li><b>Coordinate Scale:</b> %2</li>
+      <li><b>Distance Tolerance:</b> %3</li>
+      <li><b>Transformation Matrix:</b><br>
+          [%4, %5, %6]<br>
+          [%7, %8, %9]<br>
+          [%10, %11, %12]</li>
+    </ul>
+    <p><i>You can modify x00, x01, x02, dt, and numSteps in the table.</i></p>)")
     .arg(info["filePath"].toString())
     .arg(info["crd_scale"].toDouble())
     .arg(info["distance_tolerance"].toDouble())
@@ -354,10 +421,12 @@ bool DRMPredefinedEventWidget::outputAppDataToJSON(QJsonObject &jsonObject) {
 }
 
 bool DRMPredefinedEventWidget::inputAppDataFromJSON(QJsonObject &jsonObject) {
+    Q_UNUSED(jsonObject);
     return true;
 }
 
 bool DRMPredefinedEventWidget::copyFiles(QString &destDir) {
+    Q_UNUSED(destDir);
     // For predefined events, files are already on DesignSafe, no need to copy
     return true;
 }
