@@ -144,9 +144,9 @@ QStringList DRMPredefinedEventWidget::getAvailableDRMFiles() const {
     // TODO: This should be populated with actual available DRM files from DesignSafe
     // For now, return some example DRM files
     return QStringList{
-        "HaywardFaultSW4_nearField",
-        "HaywardFaultSW4_midField",
-        "HaywardFaultSW4_farField",
+        "HaywardFaultSW4_Site1",
+        "HaywardFaultSW4_Site2",
+        "HaywardFaultSW4_Site3",
     };
 }
 
@@ -155,7 +155,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
     // For now, return example data for each DRM file
     QJsonObject info;
     
-    if (drmName == "HaywardFaultSW4_nearField") {
+    if (drmName == "HaywardFaultSW4_Site1") {
         info["description"] = "Hayward Fault SW4 Site 1";
         info["magnitude"] = 6.5;
         info["distance"] = "1 km";
@@ -168,7 +168,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["duration"] = 27.5;
         info["timeStep"] = 0.0107783;
         info["numPoints"] = 2551;
-    } else if (drmName == "HaywardFaultSW4_midField") {
+    } else if (drmName == "HaywardFaultSW4_Site2") {
         info["description"] = "Hayward Fault SW4 Site 2";
         info["magnitude"] = 6.5;
         info["distance"] = "18 km";
@@ -181,7 +181,7 @@ QJsonObject DRMPredefinedEventWidget::getDRMFileInfo(const QString &drmName) con
         info["duration"] = 27.5;
         info["timeStep"] = 0.0107783;
         info["numPoints"] = 2551;
-    } else if (drmName == "HaywardFaultSW4_farField") {
+    } else if (drmName == "HaywardFaultSW4_Site3") {
         info["description"] = "Hayward Fault SW4 Site 3";
         info["magnitude"] = 6.5;
         info["distance"] = "1 km";
