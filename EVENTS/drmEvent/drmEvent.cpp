@@ -8,8 +8,8 @@ DRMevent::DRMevent(QWidget *parent) : SimCenterAppWidget(parent) {
     eventTypeCombo = new QComboBox(this);
     eventTypeCombo->addItem("Local");
     eventTypeCombo->addItem("Predefined-DesignSafe");
-    eventTypeCombo->addItem("Convolution");
-    eventTypeCombo->addItem("Remote-DesignSafe");
+    // eventTypeCombo->addItem("Convolution");
+    // eventTypeCombo->addItem("Remote-DesignSafe");
 
     stackedWidget = new QStackedWidget(this);
     localWidget = new DRMLocalEventWidget(this);
