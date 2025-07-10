@@ -58,6 +58,11 @@
       "name": "E11: Multi-fidelity Monte Carlo",
       "description": "This example uses a low-fidelity model to inform high-fidelity response statistics",
       "inputFile": "eeuq-0011/src/input.json"
+    },
+    {
+      "name": "E12: Seismic Wave Basin Effects Model (DRM Example)",
+      "description": "This example demonstrates the effect of a semi-hemispherical sedimentary basin on seismic wave propagation using the Domain Reduction Method (DRM) in EE-UQ, based on Femora Example 3.",
+      "inputFile": "eeuq-0012/src/input.json"
     }
   ]
 }
