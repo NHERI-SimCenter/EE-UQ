@@ -5,6 +5,7 @@
     </qresource>
     <qresource prefix="/">
         <file>resources/directivityParameters.png</file>
+        <file>EVENTS/drmEvent/HaywardFaultSites.png</file>
         <file>icons/NHERI-EEUQ-Icon.icns</file>
         <file>icons/NHERI-EEUQ-Icon.ico</file>
         <file>icons/NHERI-EEUQ-Icon.png</file>
