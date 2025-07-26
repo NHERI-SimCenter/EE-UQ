@@ -64,15 +64,27 @@
                             "dirn": 1,
                             "factor": 0.6283647415075889,
                             "fileName": "RSN97_PTMUGU_PHN180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.6283647415075889,
                             "fileName": "RSN97_PTMUGU_PHN270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 17.71,
+                        "Earthquake": "Point Mugu",
+                        "Magnitude": 5.65,
+                        "RSN": 97,
+                        "Scale": 0.6283647415075889,
+                        "Station": "Port Hueneme",
+                        "accelH1": "RSN97_PTMUGU_PHN180.AT2",
+                        "accelH2": "RSN97_PTMUGU_PHN270.AT2",
+                        "accelV3": "RSN97_PTMUGU_PHN-UP.AT2",
+                        "vs30": 248.98
+                    },
                     "name": "PEER-Record-97",
                     "type": "PeerEvent"
                 },
@@ -83,15 +95,27 @@
                             "dirn": 1,
                             "factor": 2.6814700855713123,
                             "fileName": "RSN107_OROVILLE_B-OAP180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.6814700855713123,
                             "fileName": "RSN107_OROVILLE_B-OAP270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 14.07,
+                        "Earthquake": "Oroville-02",
+                        "Magnitude": 4.79,
+                        "RSN": 107,
+                        "Scale": 2.6814700855713123,
+                        "Station": "Oroville Airport",
+                        "accelH1": "RSN107_OROVILLE_B-OAP180.AT2",
+                        "accelH2": "RSN107_OROVILLE_B-OAP270.AT2",
+                        "accelV3": "RSN107_OROVILLE_B-OAPDWN.AT2",
+                        "vs30": 391.76
+                    },
                     "name": "PEER-Record-107",
                     "type": "PeerEvent"
                 },
@@ -102,15 +126,27 @@
                             "dirn": 1,
                             "factor": 1.1365675733742917,
                             "fileName": "RSN125_FRIULI.A_A-TMZ000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.1365675733742917,
                             "fileName": "RSN125_FRIULI.A_A-TMZ270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 15.82,
+                        "Earthquake": "Friuli_ Italy-01",
+                        "Magnitude": 6.5,
+                        "RSN": 125,
+                        "Scale": 1.1365675733742917,
+                        "Station": "Tolmezzo",
+                        "accelH1": "RSN125_FRIULI.A_A-TMZ000.AT2",
+                        "accelH2": "RSN125_FRIULI.A_A-TMZ270.AT2",
+                        "accelV3": "RSN125_FRIULI.A_A-TMZ-UP.AT2",
+                        "vs30": 505.23
+                    },
                     "name": "PEER-Record-125",
                     "type": "PeerEvent"
                 },
@@ -121,15 +157,27 @@
                             "dirn": 1,
                             "factor": 5.149502202760423,
                             "fileName": "RSN140_TABAS_FER-L1.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.149502202760423,
                             "fileName": "RSN140_TABAS_FER-T1.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 91.14,
+                        "Earthquake": "Tabas_ Iran",
+                        "Magnitude": 7.35,
+                        "RSN": 140,
+                        "Scale": 5.149502202760423,
+                        "Station": "Ferdows",
+                        "accelH1": "RSN140_TABAS_FER-L1.AT2",
+                        "accelH2": "RSN140_TABAS_FER-T1.AT2",
+                        "accelV3": "RSN140_TABAS_FER-V1.AT2",
+                        "vs30": 302.64
+                    },
                     "name": "PEER-Record-140",
                     "type": "PeerEvent"
                 },
@@ -140,15 +188,27 @@
                             "dirn": 1,
                             "factor": 1.4752289647863683,
                             "fileName": "RSN146_COYOTELK_G01230.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.4752289647863683,
                             "fileName": "RSN146_COYOTELK_G01320.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 10.67,
+                        "Earthquake": "Coyote Lake",
+                        "Magnitude": 5.74,
+                        "RSN": 146,
+                        "Scale": 1.4752289647863683,
+                        "Station": "Gilroy Array #1",
+                        "accelH1": "RSN146_COYOTELK_G01230.AT2",
+                        "accelH2": "RSN146_COYOTELK_G01320.AT2",
+                        "accelV3": "RSN146_COYOTELK_G01-UP.AT2",
+                        "vs30": 1428.14
+                    },
                     "name": "PEER-Record-146",
                     "type": "PeerEvent"
                 },
@@ -159,15 +219,27 @@
                             "dirn": 1,
                             "factor": 1.4999459794504595,
                             "fileName": "RSN149_COYOTELK_G04270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.4999459794504595,
                             "fileName": "RSN149_COYOTELK_G04360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 5.7,
+                        "Earthquake": "Coyote Lake",
+                        "Magnitude": 5.74,
+                        "RSN": 149,
+                        "Scale": 1.4999459794504595,
+                        "Station": "Gilroy Array #4",
+                        "accelH1": "RSN149_COYOTELK_G04270.AT2",
+                        "accelH2": "RSN149_COYOTELK_G04360.AT2",
+                        "accelV3": "RSN149_COYOTELK_G04-UP.AT2",
+                        "vs30": 221.78
+                    },
                     "name": "PEER-Record-149",
                     "type": "PeerEvent"
                 },
@@ -178,15 +250,27 @@
                             "dirn": 1,
                             "factor": 8.288636706254913,
                             "fileName": "RSN167_IMPVALL.H_H-CMP015.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 8.288636706254913,
                             "fileName": "RSN167_IMPVALL.H_H-CMP285.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 15.3,
+                        "Earthquake": "Imperial Valley-06",
+                        "Magnitude": 6.53,
+                        "RSN": 167,
+                        "Scale": 8.288636706254913,
+                        "Station": "Compuertas",
+                        "accelH1": "RSN167_IMPVALL.H_H-CMP015.AT2",
+                        "accelH2": "RSN167_IMPVALL.H_H-CMP285.AT2",
+                        "accelV3": "RSN167_IMPVALL.H_H-CMPDWN.AT2",
+                        "vs30": 259.86
+                    },
                     "name": "PEER-Record-167",
                     "type": "PeerEvent"
                 },
@@ -197,15 +281,27 @@
                             "dirn": 1,
                             "factor": 2.877073413150287,
                             "fileName": "RSN171_IMPVALL.H_H-EMO000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.877073413150287,
                             "fileName": "RSN171_IMPVALL.H_H-EMO270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 0.07,
+                        "Earthquake": "Imperial Valley-06",
+                        "Magnitude": 6.53,
+                        "RSN": 171,
+                        "Scale": 2.877073413150287,
+                        "Station": "El Centro - Meloland Geot. Array",
+                        "accelH1": "RSN171_IMPVALL.H_H-EMO000.AT2",
+                        "accelH2": "RSN171_IMPVALL.H_H-EMO270.AT2",
+                        "accelV3": "RSN171_IMPVALL.H_H-EMO-UP.AT2",
+                        "vs30": 264.57
+                    },
                     "name": "PEER-Record-171",
                     "type": "PeerEvent"
                 },
@@ -216,15 +312,27 @@
                             "dirn": 1,
                             "factor": 3.0268320166327185,
                             "fileName": "RSN181_IMPVALL.H_H-E06140.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.0268320166327185,
                             "fileName": "RSN181_IMPVALL.H_H-E06230.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 1.35,
+                        "Earthquake": "Imperial Valley-06",
+                        "Magnitude": 6.53,
+                        "RSN": 181,
+                        "Scale": 3.0268320166327185,
+                        "Station": "El Centro Array #6",
+                        "accelH1": "RSN181_IMPVALL.H_H-E06140.AT2",
+                        "accelH2": "RSN181_IMPVALL.H_H-E06230.AT2",
+                        "accelV3": "RSN181_IMPVALL.H_H-E06-UP.AT2",
+                        "vs30": 203.22
+                    },
                     "name": "PEER-Record-181",
                     "type": "PeerEvent"
                 },
@@ -235,15 +343,27 @@
                             "dirn": 1,
                             "factor": 0.8790622815030853,
                             "fileName": "RSN209_IMPVALL.BG_F-WSM180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.8790622815030853,
                             "fileName": "RSN209_IMPVALL.BG_F-WSM090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 9.76,
+                        "Earthquake": "Imperial Valley-08",
+                        "Magnitude": 5.62,
+                        "RSN": 209,
+                        "Scale": 0.8790622815030853,
+                        "Station": "Westmorland Fire Sta",
+                        "accelH1": "RSN209_IMPVALL.BG_F-WSM180.AT2",
+                        "accelH2": "RSN209_IMPVALL.BG_F-WSM090.AT2",
+                        "accelV3": "RSN209_IMPVALL.BG_F-WSM-UP.AT2",
+                        "vs30": 193.67
+                    },
                     "name": "PEER-Record-209",
                     "type": "PeerEvent"
                 },
@@ -254,15 +374,27 @@
                             "dirn": 1,
                             "factor": 0.5817023279040141,
                             "fileName": "RSN220_LIVERMOR_B-FRE075.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.5817023279040141,
                             "fileName": "RSN220_LIVERMOR_B-FRE345.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 28.44,
+                        "Earthquake": "Livermore-02",
+                        "Magnitude": 5.42,
+                        "RSN": 220,
+                        "Scale": 0.5817023279040141,
+                        "Station": "Fremont - Mission San Jose",
+                        "accelH1": "RSN220_LIVERMOR_B-FRE075.AT2",
+                        "accelH2": "RSN220_LIVERMOR_B-FRE345.AT2",
+                        "accelV3": "RSN220_LIVERMOR_B-FRE-UP.AT2",
+                        "vs30": 367.57
+                    },
                     "name": "PEER-Record-220",
                     "type": "PeerEvent"
                 },
@@ -273,15 +405,27 @@
                             "dirn": 1,
                             "factor": 5.396044953064072,
                             "fileName": "RSN249_MAMMOTH.L_L-FIS000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.396044953064072,
                             "fileName": "RSN249_MAMMOTH.L_L-FIS090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 12.39,
+                        "Earthquake": "Mammoth Lakes-06",
+                        "Magnitude": 5.94,
+                        "RSN": 249,
+                        "Scale": 5.396044953064072,
+                        "Station": "Fish & Game (FIS)",
+                        "accelH1": "RSN249_MAMMOTH.L_L-FIS000.AT2",
+                        "accelH2": "RSN249_MAMMOTH.L_L-FIS090.AT2",
+                        "accelV3": "RSN249_MAMMOTH.L_L-FIS-UP.AT2",
+                        "vs30": 373.18
+                    },
                     "name": "PEER-Record-249",
                     "type": "PeerEvent"
                 },
@@ -292,15 +436,27 @@
                             "dirn": 1,
                             "factor": 1.3340133285679872,
                             "fileName": "RSN253_MAMMOTH.AH_C-XLV000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.3340133285679872,
                             "fileName": "RSN253_MAMMOTH.AH_C-XLV270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 6.25,
+                        "Earthquake": "Mammoth Lakes-07",
+                        "Magnitude": 4.73,
+                        "RSN": 253,
+                        "Scale": 1.3340133285679872,
+                        "Station": "Long Valley Fire Sta",
+                        "accelH1": "RSN253_MAMMOTH.AH_C-XLV000.AT2",
+                        "accelH2": "RSN253_MAMMOTH.AH_C-XLV270.AT2",
+                        "accelV3": "RSN253_MAMMOTH.AH_C-XLV-UP.AT2",
+                        "vs30": 377.41
+                    },
                     "name": "PEER-Record-253",
                     "type": "PeerEvent"
                 },
@@ -311,15 +467,27 @@
                             "dirn": 1,
                             "factor": 6.052051724866923,
                             "fileName": "RSN288_ITALY_A-BRZ000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.052051724866923,
                             "fileName": "RSN288_ITALY_A-BRZ270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 22.56,
+                        "Earthquake": "Irpinia_ Italy-01",
+                        "Magnitude": 6.9,
+                        "RSN": 288,
+                        "Scale": 6.052051724866923,
+                        "Station": "Brienza",
+                        "accelH1": "RSN288_ITALY_A-BRZ000.AT2",
+                        "accelH2": "RSN288_ITALY_A-BRZ270.AT2",
+                        "accelV3": "RSN288_ITALY_A-BRZ-UP.AT2",
+                        "vs30": 561.04
+                    },
                     "name": "PEER-Record-288",
                     "type": "PeerEvent"
                 },
@@ -330,15 +498,27 @@
                             "dirn": 1,
                             "factor": 0.9593606769721321,
                             "fileName": "RSN344_COALINGA.H_H-Z06000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.9593606769721321,
                             "fileName": "RSN344_COALINGA.H_H-Z06090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 32.87,
+                        "Earthquake": "Coalinga-01",
+                        "Magnitude": 6.36,
+                        "RSN": 344,
+                        "Scale": 0.9593606769721321,
+                        "Station": "Parkfield - Fault Zone 6",
+                        "accelH1": "RSN344_COALINGA.H_H-Z06000.AT2",
+                        "accelH2": "RSN344_COALINGA.H_H-Z06090.AT2",
+                        "accelV3": "RSN344_COALINGA.H_H-Z06-UP.AT2",
+                        "vs30": 266.65
+                    },
                     "name": "PEER-Record-344",
                     "type": "PeerEvent"
                 },
@@ -349,15 +529,27 @@
                             "dirn": 1,
                             "factor": 2.1278664283772337,
                             "fileName": "RSN355_COALINGA.H_H-PG6000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.1278664283772337,
                             "fileName": "RSN355_COALINGA.H_H-PG6090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 47.88,
+                        "Earthquake": "Coalinga-01",
+                        "Magnitude": 6.36,
+                        "RSN": 355,
+                        "Scale": 2.1278664283772337,
+                        "Station": "Parkfield - Gold Hill 6W",
+                        "accelH1": "RSN355_COALINGA.H_H-PG6000.AT2",
+                        "accelH2": "RSN355_COALINGA.H_H-PG6090.AT2",
+                        "accelV3": "RSN355_COALINGA.H_H-PG6-UP.AT2",
+                        "vs30": 232.44
+                    },
                     "name": "PEER-Record-355",
                     "type": "PeerEvent"
                 },
@@ -368,15 +560,27 @@
                             "dirn": 1,
                             "factor": 6.114352732613537,
                             "fileName": "RSN366_COALINGA.H_H-VC6000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.114352732613537,
                             "fileName": "RSN366_COALINGA.H_H-VC6090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 40.92,
+                        "Earthquake": "Coalinga-01",
+                        "Magnitude": 6.36,
+                        "RSN": 366,
+                        "Scale": 6.114352732613537,
+                        "Station": "Parkfield - Vineyard Cany 6W",
+                        "accelH1": "RSN366_COALINGA.H_H-VC6000.AT2",
+                        "accelH2": "RSN366_COALINGA.H_H-VC6090.AT2",
+                        "accelV3": "RSN366_COALINGA.H_H-VC6-UP.AT2",
+                        "vs30": 392.24
+                    },
                     "name": "PEER-Record-366",
                     "type": "PeerEvent"
                 },
@@ -387,15 +591,27 @@
                             "dirn": 1,
                             "factor": 0.6246127501236031,
                             "fileName": "RSN430_SMART1.25_25M01EW.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.6246127501236031,
                             "fileName": "RSN430_SMART1.25_25M01NS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 96.76,
+                        "Earthquake": "Taiwan SMART1(25)",
+                        "Magnitude": 6.5,
+                        "RSN": 430,
+                        "Scale": 0.6246127501236031,
+                        "Station": "SMART1 M01",
+                        "accelH1": "RSN430_SMART1.25_25M01EW.AT2",
+                        "accelH2": "RSN430_SMART1.25_25M01NS.AT2",
+                        "accelV3": "RSN430_SMART1.25_25M01DN.AT2",
+                        "vs30": 268.37
+                    },
                     "name": "PEER-Record-430",
                     "type": "PeerEvent"
                 },
@@ -406,15 +622,27 @@
                             "dirn": 1,
                             "factor": 0.6320722930145968,
                             "fileName": "RSN435_BORAH.MS_ANLCSOU.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.6320722930145968,
                             "fileName": "RSN435_BORAH.MS_ANLCEAS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 100.22,
+                        "Earthquake": "Borah Peak_ ID-01",
+                        "Magnitude": 6.88,
+                        "RSN": 435,
+                        "Scale": 0.6320722930145968,
+                        "Station": "ANL-768 Power Plant (Bsmt)",
+                        "accelH1": "RSN435_BORAH.MS_ANLCSOU.AT2",
+                        "accelH2": "RSN435_BORAH.MS_ANLCEAS.AT2",
+                        "accelV3": "RSN435_BORAH.MS_ANLC-UP.AT2",
+                        "vs30": 445.66
+                    },
                     "name": "PEER-Record-435",
                     "type": "PeerEvent"
                 },
@@ -425,15 +653,27 @@
                             "dirn": 1,
                             "factor": 2.5334359743428463,
                             "fileName": "RSN490_SMART1.33_33M07EW.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.5334359743428463,
                             "fileName": "RSN490_SMART1.33_33M07NS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 41.7,
+                        "Earthquake": "Taiwan SMART1(33)",
+                        "Magnitude": 5.8,
+                        "RSN": 490,
+                        "Scale": 2.5334359743428463,
+                        "Station": "SMART1 M07",
+                        "accelH1": "RSN490_SMART1.33_33M07EW.AT2",
+                        "accelH2": "RSN490_SMART1.33_33M07NS.AT2",
+                        "accelV3": "RSN490_SMART1.33_33M07DN.AT2",
+                        "vs30": 327.61
+                    },
                     "name": "PEER-Record-490",
                     "type": "PeerEvent"
                 },
@@ -444,15 +684,27 @@
                             "dirn": 1,
                             "factor": 5.638916612690887,
                             "fileName": "RSN503_SMART1.40_40C00EW.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.638916612690887,
                             "fileName": "RSN503_SMART1.40_40C00NS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 59.92,
+                        "Earthquake": "Taiwan SMART1(40)",
+                        "Magnitude": 6.32,
+                        "RSN": 503,
+                        "Scale": 5.638916612690887,
+                        "Station": "SMART1 C00",
+                        "accelH1": "RSN503_SMART1.40_40C00EW.AT2",
+                        "accelH2": "RSN503_SMART1.40_40C00NS.AT2",
+                        "accelV3": "RSN503_SMART1.40_40C00DN.AT2",
+                        "vs30": 309.41
+                    },
                     "name": "PEER-Record-503",
                     "type": "PeerEvent"
                 },
@@ -463,15 +715,27 @@
                             "dirn": 1,
                             "factor": 1.126418920556759,
                             "fileName": "RSN511_PALMSPR_ARM270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.126418920556759,
                             "fileName": "RSN511_PALMSPR_ARM360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 38.43,
+                        "Earthquake": "N. Palm Springs",
+                        "Magnitude": 6.06,
+                        "RSN": 511,
+                        "Scale": 1.126418920556759,
+                        "Station": "Anza - Red Mountain",
+                        "accelH1": "RSN511_PALMSPR_ARM270.AT2",
+                        "accelH2": "RSN511_PALMSPR_ARM360.AT2",
+                        "accelV3": "RSN511_PALMSPR_ARM-UP.AT2",
+                        "vs30": 680.37
+                    },
                     "name": "PEER-Record-511",
                     "type": "PeerEvent"
                 },
@@ -482,15 +746,27 @@
                             "dirn": 1,
                             "factor": 1.1032761193297222,
                             "fileName": "RSN522_PALMSPR_INO225.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.1032761193297222,
                             "fileName": "RSN522_PALMSPR_INO315.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 35.57,
+                        "Earthquake": "N. Palm Springs",
+                        "Magnitude": 6.06,
+                        "RSN": 522,
+                        "Scale": 1.1032761193297222,
+                        "Station": "Indio",
+                        "accelH1": "RSN522_PALMSPR_INO225.AT2",
+                        "accelH2": "RSN522_PALMSPR_INO315.AT2",
+                        "accelV3": "RSN522_PALMSPR_INO-UP.AT2",
+                        "vs30": 307.54
+                    },
                     "name": "PEER-Record-522",
                     "type": "PeerEvent"
                 },
@@ -501,15 +777,27 @@
                             "dirn": 1,
                             "factor": 1.8605993171599136,
                             "fileName": "RSN545_CHALFANT.B_B-BPL070.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.8605993171599136,
                             "fileName": "RSN545_CHALFANT.B_B-BPL160.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 15.13,
+                        "Earthquake": "Chalfant Valley-01",
+                        "Magnitude": 5.77,
+                        "RSN": 545,
+                        "Scale": 1.8605993171599136,
+                        "Station": "Bishop - Paradise Lodge",
+                        "accelH1": "RSN545_CHALFANT.B_B-BPL070.AT2",
+                        "accelH2": "RSN545_CHALFANT.B_B-BPL160.AT2",
+                        "accelV3": "RSN545_CHALFANT.B_B-BPL-UP.AT2",
+                        "vs30": 585.12
+                    },
                     "name": "PEER-Record-545",
                     "type": "PeerEvent"
                 },
@@ -520,15 +808,27 @@
                             "dirn": 1,
                             "factor": 1.5540638020725366,
                             "fileName": "RSN571_SMART1.45_45EO1EW.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.5540638020725366,
                             "fileName": "RSN571_SMART1.45_45EO1NS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 53.31,
+                        "Earthquake": "Taiwan SMART1(45)",
+                        "Magnitude": 7.3,
+                        "RSN": 571,
+                        "Scale": 1.5540638020725366,
+                        "Station": "SMART1 E01",
+                        "accelH1": "RSN571_SMART1.45_45EO1EW.AT2",
+                        "accelH2": "RSN571_SMART1.45_45EO1NS.AT2",
+                        "accelV3": "RSN571_SMART1.45_45EO1DN.AT2",
+                        "vs30": 308.39
+                    },
                     "name": "PEER-Record-571",
                     "type": "PeerEvent"
                 },
@@ -539,15 +839,27 @@
                             "dirn": 1,
                             "factor": 0.6934615403629751,
                             "fileName": "RSN581_SMART1.45_45O07EW.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.6934615403629751,
                             "fileName": "RSN581_SMART1.45_45O07NS.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 54.17,
+                        "Earthquake": "Taiwan SMART1(45)",
+                        "Magnitude": 7.3,
+                        "RSN": 581,
+                        "Scale": 0.6934615403629751,
+                        "Station": "SMART1 O07",
+                        "accelH1": "RSN581_SMART1.45_45O07EW.AT2",
+                        "accelH2": "RSN581_SMART1.45_45O07NS.AT2",
+                        "accelV3": "RSN581_SMART1.45_45O07DN.AT2",
+                        "vs30": 314.33
+                    },
                     "name": "PEER-Record-581",
                     "type": "PeerEvent"
                 },
@@ -558,15 +870,27 @@
                             "dirn": 1,
                             "factor": 1.6960169673325687,
                             "fileName": "RSN595_WHITTIER.A_A-JAB207.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.6960169673325687,
                             "fileName": "RSN595_WHITTIER.A_A-JAB297.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 17.79,
+                        "Earthquake": "Whittier Narrows-01",
+                        "Magnitude": 5.99,
+                        "RSN": 595,
+                        "Scale": 1.6960169673325687,
+                        "Station": "Bell Gardens - Jaboneria",
+                        "accelH1": "RSN595_WHITTIER.A_A-JAB207.AT2",
+                        "accelH2": "RSN595_WHITTIER.A_A-JAB297.AT2",
+                        "accelV3": "RSN595_WHITTIER.A_A-JAB-UP.AT2",
+                        "vs30": 267.13
+                    },
                     "name": "PEER-Record-595",
                     "type": "PeerEvent"
                 },
@@ -577,15 +901,27 @@
                             "dirn": 1,
                             "factor": 1.3752394369318917,
                             "fileName": "RSN638_WHITTIER.A_A-WST000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.3752394369318917,
                             "fileName": "RSN638_WHITTIER.A_A-WST270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 21.11,
+                        "Earthquake": "Whittier Narrows-01",
+                        "Magnitude": 5.99,
+                        "RSN": 638,
+                        "Scale": 1.3752394369318917,
+                        "Station": "LA - N Westmoreland",
+                        "accelH1": "RSN638_WHITTIER.A_A-WST000.AT2",
+                        "accelH2": "RSN638_WHITTIER.A_A-WST270.AT2",
+                        "accelV3": "RSN638_WHITTIER.A_A-WST-UP.AT2",
+                        "vs30": 315.06
+                    },
                     "name": "PEER-Record-638",
                     "type": "PeerEvent"
                 },
@@ -596,15 +932,27 @@
                             "dirn": 1,
                             "factor": 0.8218743967757601,
                             "fileName": "RSN645_WHITTIER.A_A-OR2010.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.8218743967757601,
                             "fileName": "RSN645_WHITTIER.A_A-OR2280.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 24.54,
+                        "Earthquake": "Whittier Narrows-01",
+                        "Magnitude": 5.99,
+                        "RSN": 645,
+                        "Scale": 0.8218743967757601,
+                        "Station": "LB - Orange Ave",
+                        "accelH1": "RSN645_WHITTIER.A_A-OR2010.AT2",
+                        "accelH2": "RSN645_WHITTIER.A_A-OR2280.AT2",
+                        "accelV3": "RSN645_WHITTIER.A_A-OR2-UP.AT2",
+                        "vs30": 344.72
+                    },
                     "name": "PEER-Record-645",
                     "type": "PeerEvent"
                 },
@@ -615,15 +963,27 @@
                             "dirn": 1,
                             "factor": 6.571697576073294,
                             "fileName": "RSN648_WHITTIER.A_A-NYA090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.571697576073294,
                             "fileName": "RSN648_WHITTIER.A_A-NYA180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 26.04,
+                        "Earthquake": "Whittier Narrows-01",
+                        "Magnitude": 5.99,
+                        "RSN": 648,
+                        "Scale": 6.571697576073294,
+                        "Station": "La Crescenta - New York",
+                        "accelH1": "RSN648_WHITTIER.A_A-NYA090.AT2",
+                        "accelH2": "RSN648_WHITTIER.A_A-NYA180.AT2",
+                        "accelV3": "RSN648_WHITTIER.A_A-NYA-UP.AT2",
+                        "vs30": 411.55
+                    },
                     "name": "PEER-Record-648",
                     "type": "PeerEvent"
                 },
@@ -634,15 +994,27 @@
                             "dirn": 1,
                             "factor": 1.437049142179594,
                             "fileName": "RSN711_WHITTIER.B_B-116270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.437049142179594,
                             "fileName": "RSN711_WHITTIER.B_B-116360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 22.98,
+                        "Earthquake": "Whittier Narrows-02",
+                        "Magnitude": 5.27,
+                        "RSN": 711,
+                        "Scale": 1.437049142179594,
+                        "Station": "LA - 116th St School",
+                        "accelH1": "RSN711_WHITTIER.B_B-116270.AT2",
+                        "accelH2": "RSN711_WHITTIER.B_B-116360.AT2",
+                        "accelV3": "RSN711_WHITTIER.B_B-116-UP.AT2",
+                        "vs30": 301
+                    },
                     "name": "PEER-Record-711",
                     "type": "PeerEvent"
                 },
@@ -653,15 +1025,27 @@
                             "dirn": 1,
                             "factor": 1.913474057319242,
                             "fileName": "RSN724_SUPER.B_B-PLS045.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.913474057319242,
                             "fileName": "RSN724_SUPER.B_B-PLS135.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 22.25,
+                        "Earthquake": "Superstition Hills-02",
+                        "Magnitude": 6.54,
+                        "RSN": 724,
+                        "Scale": 1.913474057319242,
+                        "Station": "Plaster City",
+                        "accelH1": "RSN724_SUPER.B_B-PLS045.AT2",
+                        "accelH2": "RSN724_SUPER.B_B-PLS135.AT2",
+                        "accelV3": "-----",
+                        "vs30": 316.64
+                    },
                     "name": "PEER-Record-724",
                     "type": "PeerEvent"
                 },
@@ -672,15 +1056,27 @@
                             "dirn": 1,
                             "factor": 6.985969137283467,
                             "fileName": "RSN731_LOMAP_A10000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.985969137283467,
                             "fileName": "RSN731_LOMAP_A10090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 41.88,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 731,
+                        "Scale": 6.985969137283467,
+                        "Station": "APEEL 10 - Skyline",
+                        "accelH1": "RSN731_LOMAP_A10000.AT2",
+                        "accelH2": "RSN731_LOMAP_A10090.AT2",
+                        "accelV3": "RSN731_LOMAP_A10-UP.AT2",
+                        "vs30": 391.91
+                    },
                     "name": "PEER-Record-731",
                     "type": "PeerEvent"
                 },
@@ -691,15 +1087,27 @@
                             "dirn": 1,
                             "factor": 0.5554864044019399,
                             "fileName": "RSN738_LOMAP_NAS180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.5554864044019399,
                             "fileName": "RSN738_LOMAP_NAS270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 71,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 738,
+                        "Scale": 0.5554864044019399,
+                        "Station": "Alameda Naval Air Stn Hanger",
+                        "accelH1": "RSN738_LOMAP_NAS180.AT2",
+                        "accelH2": "RSN738_LOMAP_NAS270.AT2",
+                        "accelV3": "RSN738_LOMAP_NAS-UP.AT2",
+                        "vs30": 190
+                    },
                     "name": "PEER-Record-738",
                     "type": "PeerEvent"
                 },
@@ -710,15 +1118,27 @@
                             "dirn": 1,
                             "factor": 6.458327948977827,
                             "fileName": "RSN745_LOMAP_BVU220.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.458327948977827,
                             "fileName": "RSN745_LOMAP_BVU310.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 71.39,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 745,
+                        "Scale": 6.458327948977827,
+                        "Station": "Bear Valley #14_ Upper Butts Rn",
+                        "accelH1": "RSN745_LOMAP_BVU220.AT2",
+                        "accelH2": "RSN745_LOMAP_BVU310.AT2",
+                        "accelV3": "RSN745_LOMAP_BVU-UP.AT2",
+                        "vs30": 422.79
+                    },
                     "name": "PEER-Record-745",
                     "type": "PeerEvent"
                 },
@@ -729,15 +1149,27 @@
                             "dirn": 1,
                             "factor": 4.977835724317675,
                             "fileName": "RSN754_LOMAP_CLD195.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.977835724317675,
                             "fileName": "RSN754_LOMAP_CLD285.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 20.8,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 754,
+                        "Scale": 4.977835724317675,
+                        "Station": "Coyote Lake Dam (Downst)",
+                        "accelH1": "RSN754_LOMAP_CLD195.AT2",
+                        "accelH2": "RSN754_LOMAP_CLD285.AT2",
+                        "accelV3": "RSN754_LOMAP_CLD-UP.AT2",
+                        "vs30": 295.01
+                    },
                     "name": "PEER-Record-754",
                     "type": "PeerEvent"
                 },
@@ -748,15 +1180,27 @@
                             "dirn": 1,
                             "factor": 4.300027521692244,
                             "fileName": "RSN758_LOMAP_EMY260.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.300027521692244,
                             "fileName": "RSN758_LOMAP_EMY350.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 76.97,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 758,
+                        "Scale": 4.300027521692244,
+                        "Station": "Emeryville; Pacific Park #2_ Free Field",
+                        "accelH1": "RSN758_LOMAP_EMY260.AT2",
+                        "accelH2": "RSN758_LOMAP_EMY350.AT2",
+                        "accelV3": "RSN758_LOMAP_EMY-UP.AT2",
+                        "vs30": 198.74
+                    },
                     "name": "PEER-Record-758",
                     "type": "PeerEvent"
                 },
@@ -767,15 +1211,27 @@
                             "dirn": 1,
                             "factor": 0.5852265566571346,
                             "fileName": "RSN787_LOMAP_SLC270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.5852265566571346,
                             "fileName": "RSN787_LOMAP_SLC360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 30.86,
+                        "Earthquake": "Loma Prieta",
+                        "Magnitude": 6.93,
+                        "RSN": 787,
+                        "Scale": 0.5852265566571346,
+                        "Station": "Palo Alto - SLAC Lab",
+                        "accelH1": "RSN787_LOMAP_SLC270.AT2",
+                        "accelH2": "RSN787_LOMAP_SLC360.AT2",
+                        "accelV3": "RSN787_LOMAP_SLC-UP.AT2",
+                        "vs30": 425.3
+                    },
                     "name": "PEER-Record-787",
                     "type": "PeerEvent"
                 },
@@ -786,15 +1242,27 @@
                             "dirn": 1,
                             "factor": 7.41760916025413,
                             "fileName": "RSN862_LANDERS_IND000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.41760916025413,
                             "fileName": "RSN862_LANDERS_IND090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 54.25,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 862,
+                        "Scale": 7.41760916025413,
+                        "Station": "Indio - Coachella Canal",
+                        "accelH1": "RSN862_LANDERS_IND000.AT2",
+                        "accelH2": "RSN862_LANDERS_IND090.AT2",
+                        "accelV3": "RSN862_LANDERS_IND-UP.AT2",
+                        "vs30": 339.02
+                    },
                     "name": "PEER-Record-862",
                     "type": "PeerEvent"
                 },
@@ -805,15 +1273,27 @@
                             "dirn": 1,
                             "factor": 3.6198223987248292,
                             "fileName": "RSN879_LANDERS_LCN260.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.6198223987248292,
                             "fileName": "RSN879_LANDERS_LCN345.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 2.19,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 879,
+                        "Scale": 3.6198223987248292,
+                        "Station": "Lucerne",
+                        "accelH1": "RSN879_LANDERS_LCN260.AT2",
+                        "accelH2": "RSN879_LANDERS_LCN345.AT2",
+                        "accelV3": "RSN879_LANDERS_LCN-UP.AT2",
+                        "vs30": 1369
+                    },
                     "name": "PEER-Record-879",
                     "type": "PeerEvent"
                 },
@@ -824,15 +1304,27 @@
                             "dirn": 1,
                             "factor": 1.531743455369887,
                             "fileName": "RSN880_LANDERS_MCF000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.531743455369887,
                             "fileName": "RSN880_LANDERS_MCF090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 26.96,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 880,
+                        "Scale": 1.531743455369887,
+                        "Station": "Mission Creek Fault",
+                        "accelH1": "RSN880_LANDERS_MCF000.AT2",
+                        "accelH2": "RSN880_LANDERS_MCF090.AT2",
+                        "accelV3": "RSN880_LANDERS_MCF-UP.AT2",
+                        "vs30": 355.42
+                    },
                     "name": "PEER-Record-880",
                     "type": "PeerEvent"
                 },
@@ -843,15 +1335,27 @@
                             "dirn": 1,
                             "factor": 4.5968402071408505,
                             "fileName": "RSN884_LANDERS_PSA000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.5968402071408505,
                             "fileName": "RSN884_LANDERS_PSA090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 36.15,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 884,
+                        "Scale": 4.5968402071408505,
+                        "Station": "Palm Springs Airport",
+                        "accelH1": "RSN884_LANDERS_PSA000.AT2",
+                        "accelH2": "RSN884_LANDERS_PSA090.AT2",
+                        "accelV3": "RSN884_LANDERS_PSA-UP.AT2",
+                        "vs30": 312.47
+                    },
                     "name": "PEER-Record-884",
                     "type": "PeerEvent"
                 },
@@ -862,15 +1366,27 @@
                             "dirn": 1,
                             "factor": 3.4950082782053453,
                             "fileName": "RSN886_LANDERS_PLC000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.4950082782053453,
                             "fileName": "RSN886_LANDERS_PLC090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 94.48,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 886,
+                        "Scale": 3.4950082782053453,
+                        "Station": "Puerta La Cruz",
+                        "accelH1": "RSN886_LANDERS_PLC000.AT2",
+                        "accelH2": "RSN886_LANDERS_PLC090.AT2",
+                        "accelV3": "RSN886_LANDERS_PLC-UP.AT2",
+                        "vs30": 442.7
+                    },
                     "name": "PEER-Record-886",
                     "type": "PeerEvent"
                 },
@@ -881,15 +1397,27 @@
                             "dirn": 1,
                             "factor": 0.783707914965343,
                             "fileName": "RSN897_LANDERS_29P000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.783707914965343,
                             "fileName": "RSN897_LANDERS_29P090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 41.43,
+                        "Earthquake": "Landers",
+                        "Magnitude": 7.28,
+                        "RSN": 897,
+                        "Scale": 0.783707914965343,
+                        "Station": "Twentynine Palms",
+                        "accelH1": "RSN897_LANDERS_29P000.AT2",
+                        "accelH2": "RSN897_LANDERS_29P090.AT2",
+                        "accelV3": "RSN897_LANDERS_29P-UP.AT2",
+                        "vs30": 635.01
+                    },
                     "name": "PEER-Record-897",
                     "type": "PeerEvent"
                 },
@@ -900,15 +1428,27 @@
                             "dirn": 1,
                             "factor": 8.236849394733484,
                             "fileName": "RSN1059_NORTHR_PTH090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 8.236849394733484,
                             "fileName": "RSN1059_NORTHR_PTH180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 51.78,
+                        "Earthquake": "Northridge-01",
+                        "Magnitude": 6.69,
+                        "RSN": 1059,
+                        "Scale": 8.236849394733484,
+                        "Station": "Port Hueneme - Naval Lab.",
+                        "accelH1": "RSN1059_NORTHR_PTH090.AT2",
+                        "accelH2": "RSN1059_NORTHR_PTH180.AT2",
+                        "accelV3": "RSN1059_NORTHR_PTH-UP.AT2",
+                        "vs30": 248.98
+                    },
                     "name": "PEER-Record-1059",
                     "type": "PeerEvent"
                 },
@@ -919,15 +1459,27 @@
                             "dirn": 1,
                             "factor": 0.590350771594849,
                             "fileName": "RSN1084_NORTHR_SCS052.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.590350771594849,
                             "fileName": "RSN1084_NORTHR_SCS142.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 5.35,
+                        "Earthquake": "Northridge-01",
+                        "Magnitude": 6.69,
+                        "RSN": 1084,
+                        "Scale": 0.590350771594849,
+                        "Station": "Sylmar - Converter Sta",
+                        "accelH1": "RSN1084_NORTHR_SCS052.AT2",
+                        "accelH2": "RSN1084_NORTHR_SCS142.AT2",
+                        "accelV3": "RSN1084_NORTHR_SCS-UP.AT2",
+                        "vs30": 251.24
+                    },
                     "name": "PEER-Record-1084",
                     "type": "PeerEvent"
                 },
@@ -938,15 +1490,27 @@
                             "dirn": 1,
                             "factor": 1.1991914566617186,
                             "fileName": "RSN1090_NORTHR_SYC135.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.1991914566617186,
                             "fileName": "RSN1090_NORTHR_SYC225.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 83.72,
+                        "Earthquake": "Northridge-01",
+                        "Magnitude": 6.69,
+                        "RSN": 1090,
+                        "Scale": 1.1991914566617186,
+                        "Station": "Tustin - E Sycamore",
+                        "accelH1": "RSN1090_NORTHR_SYC135.AT2",
+                        "accelH2": "RSN1090_NORTHR_SYC225.AT2",
+                        "accelV3": "RSN1090_NORTHR_SYC-UP.AT2",
+                        "vs30": 303.09
+                    },
                     "name": "PEER-Record-1090",
                     "type": "PeerEvent"
                 },
@@ -957,15 +1521,27 @@
                             "dirn": 1,
                             "factor": 1.1073048683489197,
                             "fileName": "RSN1140_DINAR_DEN000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.1073048683489197,
                             "fileName": "RSN1140_DINAR_DEN090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 86.31,
+                        "Earthquake": "Dinar_ Turkey",
+                        "Magnitude": 6.4,
+                        "RSN": 1140,
+                        "Scale": 1.1073048683489197,
+                        "Station": "Denizli",
+                        "accelH1": "RSN1140_DINAR_DEN000.AT2",
+                        "accelH2": "RSN1140_DINAR_DEN090.AT2",
+                        "accelV3": "RSN1140_DINAR_DENDWN.AT2",
+                        "vs30": 377.56
+                    },
                     "name": "PEER-Record-1140",
                     "type": "PeerEvent"
                 },
@@ -976,15 +1552,27 @@
                             "dirn": 1,
                             "factor": 7.266591994777507,
                             "fileName": "RSN1155_KOCAELI_BUR000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.266591994777507,
                             "fileName": "RSN1155_KOCAELI_BUR090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 60.43,
+                        "Earthquake": "Kocaeli_ Turkey",
+                        "Magnitude": 7.51,
+                        "RSN": 1155,
+                        "Scale": 7.266591994777507,
+                        "Station": "Bursa Tofas",
+                        "accelH1": "RSN1155_KOCAELI_BUR000.AT2",
+                        "accelH2": "RSN1155_KOCAELI_BUR090.AT2",
+                        "accelV3": "RSN1155_KOCAELI_BUR-UP.AT2",
+                        "vs30": 289.69
+                    },
                     "name": "PEER-Record-1155",
                     "type": "PeerEvent"
                 },
@@ -995,15 +1583,27 @@
                             "dirn": 1,
                             "factor": 1.5194871245195163,
                             "fileName": "RSN1160_KOCAELI_FAT000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.5194871245195163,
                             "fileName": "RSN1160_KOCAELI_FAT090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 55.48,
+                        "Earthquake": "Kocaeli_ Turkey",
+                        "Magnitude": 7.51,
+                        "RSN": 1160,
+                        "Scale": 1.5194871245195163,
+                        "Station": "Fatih",
+                        "accelH1": "RSN1160_KOCAELI_FAT000.AT2",
+                        "accelH2": "RSN1160_KOCAELI_FAT090.AT2",
+                        "accelV3": "RSN1160_KOCAELI_FAT-UP.AT2",
+                        "vs30": 386.75
+                    },
                     "name": "PEER-Record-1160",
                     "type": "PeerEvent"
                 },
@@ -1014,15 +1614,27 @@
                             "dirn": 1,
                             "factor": 1.4374488360411333,
                             "fileName": "RSN1162_KOCAELI_GYN000.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.4374488360411333,
                             "fileName": "RSN1162_KOCAELI_GYN090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 31.74,
+                        "Earthquake": "Kocaeli_ Turkey",
+                        "Magnitude": 7.51,
+                        "RSN": 1162,
+                        "Scale": 1.4374488360411333,
+                        "Station": "Goynuk",
+                        "accelH1": "RSN1162_KOCAELI_GYN000.AT2",
+                        "accelH2": "RSN1162_KOCAELI_GYN090.AT2",
+                        "accelV3": "RSN1162_KOCAELI_GYN-UP.AT2",
+                        "vs30": 347.62
+                    },
                     "name": "PEER-Record-1162",
                     "type": "PeerEvent"
                 },
@@ -1033,15 +1645,27 @@
                             "dirn": 1,
                             "factor": 0.4961262210840066,
                             "fileName": "RSN1180_CHICHI_CHY002-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.4961262210840066,
                             "fileName": "RSN1180_CHICHI_CHY002-W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 24.96,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1180,
+                        "Scale": 0.4961262210840066,
+                        "Station": "CHY002",
+                        "accelH1": "RSN1180_CHICHI_CHY002-N.AT2",
+                        "accelH2": "RSN1180_CHICHI_CHY002-W.AT2",
+                        "accelV3": "RSN1180_CHICHI_CHY002-V.AT2",
+                        "vs30": 235.13
+                    },
                     "name": "PEER-Record-1180",
                     "type": "PeerEvent"
                 },
@@ -1052,15 +1676,27 @@
                             "dirn": 1,
                             "factor": 2.801593464477283,
                             "fileName": "RSN1196_CHICHI_CHY027-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.801593464477283,
                             "fileName": "RSN1196_CHICHI_CHY027-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 41.99,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1196,
+                        "Scale": 2.801593464477283,
+                        "Station": "CHY027",
+                        "accelH1": "RSN1196_CHICHI_CHY027-E.AT2",
+                        "accelH2": "RSN1196_CHICHI_CHY027-N.AT2",
+                        "accelV3": "RSN1196_CHICHI_CHY027-V.AT2",
+                        "vs30": 210.01
+                    },
                     "name": "PEER-Record-1196",
                     "type": "PeerEvent"
                 },
@@ -1071,15 +1707,27 @@
                             "dirn": 1,
                             "factor": 1.8763772579863502,
                             "fileName": "RSN1210_CHICHI_CHY050-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.8763772579863502,
                             "fileName": "RSN1210_CHICHI_CHY050-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 44.76,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1210,
+                        "Scale": 1.8763772579863502,
+                        "Station": "CHY050",
+                        "accelH1": "RSN1210_CHICHI_CHY050-E.AT2",
+                        "accelH2": "RSN1210_CHICHI_CHY050-N.AT2",
+                        "accelV3": "RSN1210_CHICHI_CHY050-V.AT2",
+                        "vs30": 538.93
+                    },
                     "name": "PEER-Record-1210",
                     "type": "PeerEvent"
                 },
@@ -1090,15 +1738,27 @@
                             "dirn": 1,
                             "factor": 6.1877756109467414,
                             "fileName": "RSN1235_CHICHI_CHY087-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.1877756109467414,
                             "fileName": "RSN1235_CHICHI_CHY087-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 28.91,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1235,
+                        "Scale": 6.1877756109467414,
+                        "Station": "CHY087",
+                        "accelH1": "RSN1235_CHICHI_CHY087-E.AT2",
+                        "accelH2": "RSN1235_CHICHI_CHY087-N.AT2",
+                        "accelV3": "RSN1235_CHICHI_CHY087-V.AT2",
+                        "vs30": 505.2
+                    },
                     "name": "PEER-Record-1235",
                     "type": "PeerEvent"
                 },
@@ -1109,15 +1769,27 @@
                             "dirn": 1,
                             "factor": 2.9650188568430607,
                             "fileName": "RSN1247_CHICHI_CHY107-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.9650188568430607,
                             "fileName": "RSN1247_CHICHI_CHY107-W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 50.61,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1247,
+                        "Scale": 2.9650188568430607,
+                        "Station": "CHY107",
+                        "accelH1": "RSN1247_CHICHI_CHY107-N.AT2",
+                        "accelH2": "RSN1247_CHICHI_CHY107-W.AT2",
+                        "accelV3": "RSN1247_CHICHI_CHY107-V.AT2",
+                        "vs30": 175.68
+                    },
                     "name": "PEER-Record-1247",
                     "type": "PeerEvent"
                 },
@@ -1128,15 +1800,27 @@
                             "dirn": 1,
                             "factor": 3.9916316909459035,
                             "fileName": "RSN1301_CHICHI_HWA056-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.9916316909459035,
                             "fileName": "RSN1301_CHICHI_HWA056-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 41.1,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1301,
+                        "Scale": 3.9916316909459035,
+                        "Station": "HWA056",
+                        "accelH1": "RSN1301_CHICHI_HWA056-E.AT2",
+                        "accelH2": "RSN1301_CHICHI_HWA056-N.AT2",
+                        "accelV3": "RSN1301_CHICHI_HWA056-V.AT2",
+                        "vs30": 511.3
+                    },
                     "name": "PEER-Record-1301",
                     "type": "PeerEvent"
                 },
@@ -1147,15 +1831,27 @@
                             "dirn": 1,
                             "factor": 2.0981158064469048,
                             "fileName": "RSN1426_CHICHI_TAP034-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.0981158064469048,
                             "fileName": "RSN1426_CHICHI_TAP034-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 92.73,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1426,
+                        "Scale": 2.0981158064469048,
+                        "Station": "TAP034",
+                        "accelH1": "RSN1426_CHICHI_TAP034-E.AT2",
+                        "accelH2": "RSN1426_CHICHI_TAP034-N.AT2",
+                        "accelV3": "RSN1426_CHICHI_TAP034-V.AT2",
+                        "vs30": 538.69
+                    },
                     "name": "PEER-Record-1426",
                     "type": "PeerEvent"
                 },
@@ -1166,15 +1862,27 @@
                             "dirn": 1,
                             "factor": 7.032295442215068,
                             "fileName": "RSN1476_CHICHI_TCU029-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.032295442215068,
                             "fileName": "RSN1476_CHICHI_TCU029-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 28.04,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1476,
+                        "Scale": 7.032295442215068,
+                        "Station": "TCU029",
+                        "accelH1": "RSN1476_CHICHI_TCU029-E.AT2",
+                        "accelH2": "RSN1476_CHICHI_TCU029-N.AT2",
+                        "accelV3": "RSN1476_CHICHI_TCU029-V.AT2",
+                        "vs30": 406.53
+                    },
                     "name": "PEER-Record-1476",
                     "type": "PeerEvent"
                 },
@@ -1185,15 +1893,27 @@
                             "dirn": 1,
                             "factor": 2.279232166484912,
                             "fileName": "RSN1512_CHICHI_TCU078-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.279232166484912,
                             "fileName": "RSN1512_CHICHI_TCU078-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 8.2,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1512,
+                        "Scale": 2.279232166484912,
+                        "Station": "TCU078",
+                        "accelH1": "RSN1512_CHICHI_TCU078-E.AT2",
+                        "accelH2": "RSN1512_CHICHI_TCU078-N.AT2",
+                        "accelV3": "RSN1512_CHICHI_TCU078-V.AT2",
+                        "vs30": 443.04
+                    },
                     "name": "PEER-Record-1512",
                     "type": "PeerEvent"
                 },
@@ -1204,15 +1924,27 @@
                             "dirn": 1,
                             "factor": 3.7106518419211034,
                             "fileName": "RSN1514_CHICHI_TCU081-E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.7106518419211034,
                             "fileName": "RSN1514_CHICHI_TCU081-N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 55.48,
+                        "Earthquake": "Chi-Chi_ Taiwan",
+                        "Magnitude": 7.62,
+                        "RSN": 1514,
+                        "Scale": 3.7106518419211034,
+                        "Station": "TCU081",
+                        "accelH1": "RSN1514_CHICHI_TCU081-E.AT2",
+                        "accelH2": "RSN1514_CHICHI_TCU081-N.AT2",
+                        "accelV3": "RSN1514_CHICHI_TCU081-V.AT2",
+                        "vs30": 430.47
+                    },
                     "name": "PEER-Record-1514",
                     "type": "PeerEvent"
                 },
@@ -1223,15 +1955,27 @@
                             "dirn": 1,
                             "factor": 7.084211390718831,
                             "fileName": "RSN1628_STELIAS_059V2090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.084211390718831,
                             "fileName": "RSN1628_STELIAS_059V2180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 26.46,
+                        "Earthquake": "St Elias_ Alaska",
+                        "Magnitude": 7.54,
+                        "RSN": 1628,
+                        "Scale": 7.084211390718831,
+                        "Station": "Icy Bay",
+                        "accelH1": "RSN1628_STELIAS_059V2090.AT2",
+                        "accelH2": "RSN1628_STELIAS_059V2180.AT2",
+                        "accelV3": "RSN1628_STELIAS_059V27UP.AT2",
+                        "vs30": 306.37
+                    },
                     "name": "PEER-Record-1628",
                     "type": "PeerEvent"
                 },
@@ -1242,15 +1986,27 @@
                             "dirn": 1,
                             "factor": 8.531435568763396,
                             "fileName": "RSN1806_HECTOR_LF1090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 8.531435568763396,
                             "fileName": "RSN1806_HECTOR_LF1360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 172.05,
+                        "Earthquake": "Hector Mine",
+                        "Magnitude": 7.13,
+                        "RSN": 1806,
+                        "Scale": 8.531435568763396,
+                        "Station": "Leona Valley - Fire Station #1",
+                        "accelH1": "RSN1806_HECTOR_LF1090.AT2",
+                        "accelH2": "RSN1806_HECTOR_LF1360.AT2",
+                        "accelV3": "RSN1806_HECTOR_LF1-UP.AT2",
+                        "vs30": 427.41
+                    },
                     "name": "PEER-Record-1806",
                     "type": "PeerEvent"
                 },
@@ -1261,15 +2017,27 @@
                             "dirn": 1,
                             "factor": 5.096642922673505,
                             "fileName": "RSN1902_BEARAFT_2009A090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.096642922673505,
                             "fileName": "RSN1902_BEARAFT_2009B360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 30.1,
+                        "Earthquake": "Big Bear-02",
+                        "Magnitude": 4.53,
+                        "RSN": 1902,
+                        "Scale": 5.096642922673505,
+                        "Station": "San Bernardino - Serrano School",
+                        "accelH1": "RSN1902_BEARAFT_2009A090.AT2",
+                        "accelH2": "RSN1902_BEARAFT_2009B360.AT2",
+                        "accelV3": "RSN1902_BEARAFT_2009C-UP.AT2",
+                        "vs30": 396.01
+                    },
                     "name": "PEER-Record-1902",
                     "type": "PeerEvent"
                 },
@@ -1280,15 +2048,27 @@
                             "dirn": 1,
                             "factor": 2.7851131360486647,
                             "fileName": "RSN1915_MOHAWK_1399C090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.7851131360486647,
                             "fileName": "RSN1915_MOHAWK_1399A360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 80.29,
+                        "Earthquake": "Mohawk Val_ Portola",
+                        "Magnitude": 5.17,
+                        "RSN": 1915,
+                        "Scale": 2.7851131360486647,
+                        "Station": "Reno - Sierra Pacific Power Co",
+                        "accelH1": "RSN1915_MOHAWK_1399C090.AT2",
+                        "accelH2": "RSN1915_MOHAWK_1399A360.AT2",
+                        "accelV3": "RSN1915_MOHAWK_1399B-UP.AT2",
+                        "vs30": 280.26
+                    },
                     "name": "PEER-Record-1915",
                     "type": "PeerEvent"
                 },
@@ -1299,15 +2079,27 @@
                             "dirn": 1,
                             "factor": 0.7903520672253406,
                             "fileName": "RSN1946_ANZA1_INJ180.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.7903520672253406,
                             "fileName": "RSN1946_ANZA1_INJ270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 38.92,
+                        "Earthquake": "Anza-02",
+                        "Magnitude": 4.92,
+                        "RSN": 1946,
+                        "Scale": 0.7903520672253406,
+                        "Station": "Indio - Jackson Road",
+                        "accelH1": "RSN1946_ANZA1_INJ180.AT2",
+                        "accelH2": "RSN1946_ANZA1_INJ270.AT2",
+                        "accelV3": "RSN1946_ANZA1_INJ-UP.AT2",
+                        "vs30": 292.12
+                    },
                     "name": "PEER-Record-1946",
                     "type": "PeerEvent"
                 },
@@ -1318,15 +2110,27 @@
                             "dirn": 1,
                             "factor": 9.479913661536148,
                             "fileName": "RSN2110_DENALI_FAIGO-90.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 9.479913661536148,
                             "fileName": "RSN2110_DENALI_FAIGO360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 141.29,
+                        "Earthquake": "Denali_ Alaska",
+                        "Magnitude": 7.9,
+                        "RSN": 2110,
+                        "Scale": 9.479913661536148,
+                        "Station": "Fairbanks - Geophysic. Obs_ CIGO",
+                        "accelH1": "RSN2110_DENALI_FAIGO-90.AT2",
+                        "accelH2": "RSN2110_DENALI_FAIGO360.AT2",
+                        "accelV3": "RSN2110_DENALI_FAIGO-UP.AT2",
+                        "vs30": 338.67
+                    },
                     "name": "PEER-Record-2110",
                     "type": "PeerEvent"
                 },
@@ -1337,15 +2141,27 @@
                             "dirn": 1,
                             "factor": 5.656107854266901,
                             "fileName": "RSN2137_BEARCTY_1980B270.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.656107854266901,
                             "fileName": "RSN2137_BEARCTY_1980A360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 46.35,
+                        "Earthquake": "Big Bear City",
+                        "Magnitude": 4.92,
+                        "RSN": 2137,
+                        "Scale": 5.656107854266901,
+                        "Station": "San Bernardino - Co Service Bldg - Freefield",
+                        "accelH1": "RSN2137_BEARCTY_1980B270.AT2",
+                        "accelH2": "RSN2137_BEARCTY_1980A360.AT2",
+                        "accelV3": "RSN2137_BEARCTY_1980C-UP.AT2",
+                        "vs30": 322
+                    },
                     "name": "PEER-Record-2137",
                     "type": "PeerEvent"
                 },
@@ -1356,15 +2172,27 @@
                             "dirn": 1,
                             "factor": 2.6167283960112213,
                             "fileName": "RSN2143_BEARCTY_SF9090.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.6167283960112213,
                             "fileName": "RSN2143_BEARCTY_SF9360.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 51.42,
+                        "Earthquake": "Big Bear City",
+                        "Magnitude": 4.92,
+                        "RSN": 2143,
+                        "Scale": 2.6167283960112213,
+                        "Station": "San Bernardino - Fire Sta. #9",
+                        "accelH1": "RSN2143_BEARCTY_SF9090.AT2",
+                        "accelH2": "RSN2143_BEARCTY_SF9360.AT2",
+                        "accelV3": "RSN2143_BEARCTY_SF9-UP.AT2",
+                        "vs30": 325.97
+                    },
                     "name": "PEER-Record-2143",
                     "type": "PeerEvent"
                 },
@@ -1375,15 +2203,27 @@
                             "dirn": 1,
                             "factor": 6.470683357508925,
                             "fileName": "RSN2195_CHICHI.02_CHY080N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.470683357508925,
                             "fileName": "RSN2195_CHICHI.02_CHY080E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 43.39,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2195,
+                        "Scale": 6.470683357508925,
+                        "Station": "CHY080",
+                        "accelH1": "RSN2195_CHICHI.02_CHY080N.AT2",
+                        "accelH2": "RSN2195_CHICHI.02_CHY080E.AT2",
+                        "accelV3": "RSN2195_CHICHI.02_CHY080V.AT2",
+                        "vs30": 496.21
+                    },
                     "name": "PEER-Record-2195",
                     "type": "PeerEvent"
                 },
@@ -1394,15 +2234,27 @@
                             "dirn": 1,
                             "factor": 4.4280627113902,
                             "fileName": "RSN2240_CHICHI.02_HWA033N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.4280627113902,
                             "fileName": "RSN2240_CHICHI.02_HWA033E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 50.59,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2240,
+                        "Scale": 4.4280627113902,
+                        "Station": "HWA033",
+                        "accelH1": "RSN2240_CHICHI.02_HWA033N.AT2",
+                        "accelH2": "RSN2240_CHICHI.02_HWA033E.AT2",
+                        "accelV3": "RSN2240_CHICHI.02_HWA033V.AT2",
+                        "vs30": 395.57
+                    },
                     "name": "PEER-Record-2240",
                     "type": "PeerEvent"
                 },
@@ -1413,15 +2265,27 @@
                             "dirn": 1,
                             "factor": 9.051026426112298,
                             "fileName": "RSN2299_CHICHI.02_ILA067N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 9.051026426112298,
                             "fileName": "RSN2299_CHICHI.02_ILA067E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 56.07,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2299,
+                        "Scale": 9.051026426112298,
+                        "Station": "ILA067",
+                        "accelH1": "RSN2299_CHICHI.02_ILA067N.AT2",
+                        "accelH2": "RSN2299_CHICHI.02_ILA067E.AT2",
+                        "accelV3": "RSN2299_CHICHI.02_ILA067V.AT2",
+                        "vs30": 665.2
+                    },
                     "name": "PEER-Record-2299",
                     "type": "PeerEvent"
                 },
@@ -1432,15 +2296,27 @@
                             "dirn": 1,
                             "factor": 0.8993752270403974,
                             "fileName": "RSN2314_CHICHI.02_TAP014N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.8993752270403974,
                             "fileName": "RSN2314_CHICHI.02_TAP014E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 124.77,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2314,
+                        "Scale": 0.8993752270403974,
+                        "Station": "TAP014",
+                        "accelH1": "RSN2314_CHICHI.02_TAP014N.AT2",
+                        "accelH2": "RSN2314_CHICHI.02_TAP014E.AT2",
+                        "accelV3": "RSN2314_CHICHI.02_TAP014V.AT2",
+                        "vs30": 188.98
+                    },
                     "name": "PEER-Record-2314",
                     "type": "PeerEvent"
                 },
@@ -1451,15 +2327,27 @@
                             "dirn": 1,
                             "factor": 0.49446081136380443,
                             "fileName": "RSN2365_CHICHI.02_TCU040N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.49446081136380443,
                             "fileName": "RSN2365_CHICHI.02_TCU040E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 63.49,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2365,
+                        "Scale": 0.49446081136380443,
+                        "Station": "TCU040",
+                        "accelH1": "RSN2365_CHICHI.02_TCU040N.AT2",
+                        "accelH2": "RSN2365_CHICHI.02_TCU040E.AT2",
+                        "accelV3": "RSN2365_CHICHI.02_TCU040V.AT2",
+                        "vs30": 362.03
+                    },
                     "name": "PEER-Record-2365",
                     "type": "PeerEvent"
                 },
@@ -1470,15 +2358,27 @@
                             "dirn": 1,
                             "factor": 0.6333228352437623,
                             "fileName": "RSN2405_CHICHI.02_TCU104N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.6333228352437623,
                             "fileName": "RSN2405_CHICHI.02_TCU104E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 52.57,
+                        "Earthquake": "Chi-Chi_ Taiwan-02",
+                        "Magnitude": 5.9,
+                        "RSN": 2405,
+                        "Scale": 0.6333228352437623,
+                        "Station": "TCU104",
+                        "accelH1": "RSN2405_CHICHI.02_TCU104N.AT2",
+                        "accelH2": "RSN2405_CHICHI.02_TCU104E.AT2",
+                        "accelV3": "RSN2405_CHICHI.02_TCU104V.AT2",
+                        "vs30": 410.45
+                    },
                     "name": "PEER-Record-2405",
                     "type": "PeerEvent"
                 },
@@ -1489,15 +2389,27 @@
                             "dirn": 1,
                             "factor": 2.500014932399413,
                             "fileName": "RSN2461_CHICHI.03_CHY028N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.500014932399413,
                             "fileName": "RSN2461_CHICHI.03_CHY028E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 24.38,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2461,
+                        "Scale": 2.500014932399413,
+                        "Station": "CHY028",
+                        "accelH1": "RSN2461_CHICHI.03_CHY028N.AT2",
+                        "accelH2": "RSN2461_CHICHI.03_CHY028E.AT2",
+                        "accelV3": "RSN2461_CHICHI.03_CHY028V.AT2",
+                        "vs30": 542.61
+                    },
                     "name": "PEER-Record-2461",
                     "type": "PeerEvent"
                 },
@@ -1508,15 +2420,27 @@
                             "dirn": 1,
                             "factor": 0.4254362789845082,
                             "fileName": "RSN2466_CHICHI.03_CHY035N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.4254362789845082,
                             "fileName": "RSN2466_CHICHI.03_CHY035E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 34.52,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2466,
+                        "Scale": 0.4254362789845082,
+                        "Station": "CHY035",
+                        "accelH1": "RSN2466_CHICHI.03_CHY035N.AT2",
+                        "accelH2": "RSN2466_CHICHI.03_CHY035E.AT2",
+                        "accelV3": "RSN2466_CHICHI.03_CHY035V.AT2",
+                        "vs30": 573.04
+                    },
                     "name": "PEER-Record-2466",
                     "type": "PeerEvent"
                 },
@@ -1527,15 +2451,27 @@
                             "dirn": 1,
                             "factor": 0.7602640876723903,
                             "fileName": "RSN2492_CHICHI.03_CHY076N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.7602640876723903,
                             "fileName": "RSN2492_CHICHI.03_CHY076E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 59.62,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2492,
+                        "Scale": 0.7602640876723903,
+                        "Station": "CHY076",
+                        "accelH1": "RSN2492_CHICHI.03_CHY076N.AT2",
+                        "accelH2": "RSN2492_CHICHI.03_CHY076E.AT2",
+                        "accelV3": "RSN2492_CHICHI.03_CHY076V.AT2",
+                        "vs30": 169.84
+                    },
                     "name": "PEER-Record-2492",
                     "type": "PeerEvent"
                 },
@@ -1546,15 +2482,27 @@
                             "dirn": 1,
                             "factor": 6.894114716008727,
                             "fileName": "RSN2535_CHICHI.03_HWA032N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.894114716008727,
                             "fileName": "RSN2535_CHICHI.03_HWA032E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 53.76,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2535,
+                        "Scale": 6.894114716008727,
+                        "Station": "HWA032",
+                        "accelH1": "RSN2535_CHICHI.03_HWA032N.AT2",
+                        "accelH2": "RSN2535_CHICHI.03_HWA032E.AT2",
+                        "accelV3": "RSN2535_CHICHI.03_HWA032V.AT2",
+                        "vs30": 573.04
+                    },
                     "name": "PEER-Record-2535",
                     "type": "PeerEvent"
                 },
@@ -1565,15 +2513,27 @@
                             "dirn": 1,
                             "factor": 6.030479010008617,
                             "fileName": "RSN2551_CHICHI.03_HWA051N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.030479010008617,
                             "fileName": "RSN2551_CHICHI.03_HWA051W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 67.16,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2551,
+                        "Scale": 6.030479010008617,
+                        "Station": "HWA051",
+                        "accelH1": "RSN2551_CHICHI.03_HWA051N.AT2",
+                        "accelH2": "RSN2551_CHICHI.03_HWA051W.AT2",
+                        "accelV3": "RSN2551_CHICHI.03_HWA051V.AT2",
+                        "vs30": 440.5
+                    },
                     "name": "PEER-Record-2551",
                     "type": "PeerEvent"
                 },
@@ -1584,15 +2544,27 @@
                             "dirn": 1,
                             "factor": 5.852720752170047,
                             "fileName": "RSN2552_CHICHI.03_HWA056N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 5.852720752170047,
                             "fileName": "RSN2552_CHICHI.03_HWA056E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 72.86,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2552,
+                        "Scale": 5.852720752170047,
+                        "Station": "HWA056",
+                        "accelH1": "RSN2552_CHICHI.03_HWA056N.AT2",
+                        "accelH2": "RSN2552_CHICHI.03_HWA056E.AT2",
+                        "accelV3": "RSN2552_CHICHI.03_HWA056V.AT2",
+                        "vs30": 511.3
+                    },
                     "name": "PEER-Record-2552",
                     "type": "PeerEvent"
                 },
@@ -1603,15 +2575,27 @@
                             "dirn": 1,
                             "factor": 0.5554504001844653,
                             "fileName": "RSN2632_CHICHI.03_TCU084N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.5554504001844653,
                             "fileName": "RSN2632_CHICHI.03_TCU084E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 9.32,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2632,
+                        "Scale": 0.5554504001844653,
+                        "Station": "TCU084",
+                        "accelH1": "RSN2632_CHICHI.03_TCU084N.AT2",
+                        "accelH2": "RSN2632_CHICHI.03_TCU084E.AT2",
+                        "accelV3": "RSN2632_CHICHI.03_TCU084V.AT2",
+                        "vs30": 665.2
+                    },
                     "name": "PEER-Record-2632",
                     "type": "PeerEvent"
                 },
@@ -1622,15 +2606,27 @@
                             "dirn": 1,
                             "factor": 1.2077847006050557,
                             "fileName": "RSN2650_CHICHI.03_TCU116N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.2077847006050557,
                             "fileName": "RSN2650_CHICHI.03_TCU116E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 22.13,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2650,
+                        "Scale": 1.2077847006050557,
+                        "Station": "TCU116",
+                        "accelH1": "RSN2650_CHICHI.03_TCU116N.AT2",
+                        "accelH2": "RSN2650_CHICHI.03_TCU116E.AT2",
+                        "accelV3": "RSN2650_CHICHI.03_TCU116V.AT2",
+                        "vs30": 493.09
+                    },
                     "name": "PEER-Record-2650",
                     "type": "PeerEvent"
                 },
@@ -1641,15 +2637,27 @@
                             "dirn": 1,
                             "factor": 9.955952683160842,
                             "fileName": "RSN2666_CHICHI.03_TTN001N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 9.955952683160842,
                             "fileName": "RSN2666_CHICHI.03_TTN001W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 75.06,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2666,
+                        "Scale": 9.955952683160842,
+                        "Station": "TTN001",
+                        "accelH1": "RSN2666_CHICHI.03_TTN001N.AT2",
+                        "accelH2": "RSN2666_CHICHI.03_TTN001W.AT2",
+                        "accelV3": "RSN2666_CHICHI.03_TTN001V.AT2",
+                        "vs30": 484.6
+                    },
                     "name": "PEER-Record-2666",
                     "type": "PeerEvent"
                 },
@@ -1660,15 +2668,27 @@
                             "dirn": 1,
                             "factor": 4.416971656017203,
                             "fileName": "RSN2680_CHICHI.03_TTN028N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.416971656017203,
                             "fileName": "RSN2680_CHICHI.03_TTN028E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 110.78,
+                        "Earthquake": "Chi-Chi_ Taiwan-03",
+                        "Magnitude": 6.2,
+                        "RSN": 2680,
+                        "Scale": 4.416971656017203,
+                        "Station": "TTN028",
+                        "accelH1": "RSN2680_CHICHI.03_TTN028N.AT2",
+                        "accelH2": "RSN2680_CHICHI.03_TTN028E.AT2",
+                        "accelV3": "RSN2680_CHICHI.03_TTN028V.AT2",
+                        "vs30": 616.17
+                    },
                     "name": "PEER-Record-2680",
                     "type": "PeerEvent"
                 },
@@ -1679,15 +2699,27 @@
                             "dirn": 1,
                             "factor": 2.4212159409102183,
                             "fileName": "RSN2701_CHICHI.04_CHY026N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 2.4212159409102183,
                             "fileName": "RSN2701_CHICHI.04_CHY026E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 39.66,
+                        "Earthquake": "Chi-Chi_ Taiwan-04",
+                        "Magnitude": 6.2,
+                        "RSN": 2701,
+                        "Scale": 2.4212159409102183,
+                        "Station": "CHY026",
+                        "accelH1": "RSN2701_CHICHI.04_CHY026N.AT2",
+                        "accelH2": "RSN2701_CHICHI.04_CHY026E.AT2",
+                        "accelV3": "RSN2701_CHICHI.04_CHY026V.AT2",
+                        "vs30": 226.01
+                    },
                     "name": "PEER-Record-2701",
                     "type": "PeerEvent"
                 },
@@ -1698,15 +2730,27 @@
                             "dirn": 1,
                             "factor": 1.2358844823145692,
                             "fileName": "RSN2736_CHICHI.04_CHY076N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.2358844823145692,
                             "fileName": "RSN2736_CHICHI.04_CHY076E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 56.37,
+                        "Earthquake": "Chi-Chi_ Taiwan-04",
+                        "Magnitude": 6.2,
+                        "RSN": 2736,
+                        "Scale": 1.2358844823145692,
+                        "Station": "CHY076",
+                        "accelH1": "RSN2736_CHICHI.04_CHY076N.AT2",
+                        "accelH2": "RSN2736_CHICHI.04_CHY076E.AT2",
+                        "accelV3": "RSN2736_CHICHI.04_CHY076V.AT2",
+                        "vs30": 169.84
+                    },
                     "name": "PEER-Record-2736",
                     "type": "PeerEvent"
                 },
@@ -1717,15 +2761,27 @@
                             "dirn": 1,
                             "factor": 8.266439447140094,
                             "fileName": "RSN2919_CHICHI.04_TTN025N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 8.266439447140094,
                             "fileName": "RSN2919_CHICHI.04_TTN025E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 69.31,
+                        "Earthquake": "Chi-Chi_ Taiwan-04",
+                        "Magnitude": 6.2,
+                        "RSN": 2919,
+                        "Scale": 8.266439447140094,
+                        "Station": "TTN025",
+                        "accelH1": "RSN2919_CHICHI.04_TTN025N.AT2",
+                        "accelH2": "RSN2919_CHICHI.04_TTN025E.AT2",
+                        "accelV3": "RSN2919_CHICHI.04_TTN025V.AT2",
+                        "vs30": 704.96
+                    },
                     "name": "PEER-Record-2919",
                     "type": "PeerEvent"
                 },
@@ -1736,15 +2792,27 @@
                             "dirn": 1,
                             "factor": 1.3472389879702744,
                             "fileName": "RSN2973_CHICHI.05_CHY071N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.3472389879702744,
                             "fileName": "RSN2973_CHICHI.05_CHY071E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 119.4,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 2973,
+                        "Scale": 1.3472389879702744,
+                        "Station": "CHY071",
+                        "accelH1": "RSN2973_CHICHI.05_CHY071N.AT2",
+                        "accelH2": "RSN2973_CHICHI.05_CHY071E.AT2",
+                        "accelV3": "RSN2973_CHICHI.05_CHY071V.AT2",
+                        "vs30": 202.95
+                    },
                     "name": "PEER-Record-2973",
                     "type": "PeerEvent"
                 },
@@ -1755,15 +2823,27 @@
                             "dirn": 1,
                             "factor": 4.189407082437613,
                             "fileName": "RSN3029_CHICHI.05_HWA044N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.189407082437613,
                             "fileName": "RSN3029_CHICHI.05_HWA044E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 44.68,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3029,
+                        "Scale": 4.189407082437613,
+                        "Station": "HWA044",
+                        "accelH1": "RSN3029_CHICHI.05_HWA044N.AT2",
+                        "accelH2": "RSN3029_CHICHI.05_HWA044E.AT2",
+                        "accelV3": "RSN3029_CHICHI.05_HWA044V.AT2",
+                        "vs30": 534.41
+                    },
                     "name": "PEER-Record-3029",
                     "type": "PeerEvent"
                 },
@@ -1774,15 +2854,27 @@
                             "dirn": 1,
                             "factor": 1.7815425922574624,
                             "fileName": "RSN3053_CHICHI.05_ILA015N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 1.7815425922574624,
                             "fileName": "RSN3053_CHICHI.05_ILA015W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 117.28,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3053,
+                        "Scale": 1.7815425922574624,
+                        "Station": "ILA015",
+                        "accelH1": "RSN3053_CHICHI.05_ILA015N.AT2",
+                        "accelH2": "RSN3053_CHICHI.05_ILA015W.AT2",
+                        "accelV3": "RSN3053_CHICHI.05_ILA015V.AT2",
+                        "vs30": 782.59
+                    },
                     "name": "PEER-Record-3053",
                     "type": "PeerEvent"
                 },
@@ -1793,15 +2885,27 @@
                             "dirn": 1,
                             "factor": 3.5906138728655503,
                             "fileName": "RSN3090_CHICHI.05_KAU040N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 3.5906138728655503,
                             "fileName": "RSN3090_CHICHI.05_KAU040E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 174.3,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3090,
+                        "Scale": 3.5906138728655503,
+                        "Station": "KAU040",
+                        "accelH1": "RSN3090_CHICHI.05_KAU040N.AT2",
+                        "accelH2": "RSN3090_CHICHI.05_KAU040E.AT2",
+                        "accelV3": "RSN3090_CHICHI.05_KAU040V.AT2",
+                        "vs30": 567.64
+                    },
                     "name": "PEER-Record-3090",
                     "type": "PeerEvent"
                 },
@@ -1812,15 +2916,27 @@
                             "dirn": 1,
                             "factor": 9.814256132033536,
                             "fileName": "RSN3096_CHICHI.05_KAU056N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 9.814256132033536,
                             "fileName": "RSN3096_CHICHI.05_KAU056E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 151.62,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3096,
+                        "Scale": 9.814256132033536,
+                        "Station": "KAU056",
+                        "accelH1": "RSN3096_CHICHI.05_KAU056N.AT2",
+                        "accelH2": "RSN3096_CHICHI.05_KAU056E.AT2",
+                        "accelV3": "RSN3096_CHICHI.05_KAU056V.AT2",
+                        "vs30": 283.02
+                    },
                     "name": "PEER-Record-3096",
                     "type": "PeerEvent"
                 },
@@ -1831,15 +2947,27 @@
                             "dirn": 1,
                             "factor": 4.921549096977752,
                             "fileName": "RSN3138_CHICHI.05_TAP075N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 4.921549096977752,
                             "fileName": "RSN3138_CHICHI.05_TAP075W.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 142.89,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3138,
+                        "Scale": 4.921549096977752,
+                        "Station": "TAP075",
+                        "accelH1": "RSN3138_CHICHI.05_TAP075N.AT2",
+                        "accelH2": "RSN3138_CHICHI.05_TAP075W.AT2",
+                        "accelV3": "RSN3138_CHICHI.05_TAP075V.AT2",
+                        "vs30": 856.38
+                    },
                     "name": "PEER-Record-3138",
                     "type": "PeerEvent"
                 },
@@ -1850,15 +2978,27 @@
                             "dirn": 1,
                             "factor": 0.7113705439077227,
                             "fileName": "RSN3242_CHICHI.05_TTN026N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.7113705439077227,
                             "fileName": "RSN3242_CHICHI.05_TTN026E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 98.65,
+                        "Earthquake": "Chi-Chi_ Taiwan-05",
+                        "Magnitude": 6.2,
+                        "RSN": 3242,
+                        "Scale": 0.7113705439077227,
+                        "Station": "TTN026",
+                        "accelH1": "RSN3242_CHICHI.05_TTN026N.AT2",
+                        "accelH2": "RSN3242_CHICHI.05_TTN026E.AT2",
+                        "accelV3": "RSN3242_CHICHI.05_TTN026V.AT2",
+                        "vs30": 573.04
+                    },
                     "name": "PEER-Record-3242",
                     "type": "PeerEvent"
                 },
@@ -1869,15 +3009,27 @@
                             "dirn": 1,
                             "factor": 7.199826138128278,
                             "fileName": "RSN3427_CHICHI.06_TAP050N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.199826138128278,
                             "fileName": "RSN3427_CHICHI.06_TAP050E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 134.49,
+                        "Earthquake": "Chi-Chi_ Taiwan-06",
+                        "Magnitude": 6.3,
+                        "RSN": 3427,
+                        "Scale": 7.199826138128278,
+                        "Station": "TAP050",
+                        "accelH1": "RSN3427_CHICHI.06_TAP050N.AT2",
+                        "accelH2": "RSN3427_CHICHI.06_TAP050E.AT2",
+                        "accelV3": "RSN3427_CHICHI.06_TAP050V.AT2",
+                        "vs30": 462.31
+                    },
                     "name": "PEER-Record-3427",
                     "type": "PeerEvent"
                 },
@@ -1888,15 +3040,27 @@
                             "dirn": 1,
                             "factor": 0.7044852412460503,
                             "fileName": "RSN3474_CHICHI.06_TCU079N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.7044852412460503,
                             "fileName": "RSN3474_CHICHI.06_TCU079E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 10.05,
+                        "Earthquake": "Chi-Chi_ Taiwan-06",
+                        "Magnitude": 6.3,
+                        "RSN": 3474,
+                        "Scale": 0.7044852412460503,
+                        "Station": "TCU079",
+                        "accelH1": "RSN3474_CHICHI.06_TCU079N.AT2",
+                        "accelH2": "RSN3474_CHICHI.06_TCU079E.AT2",
+                        "accelV3": "RSN3474_CHICHI.06_TCU079V.AT2",
+                        "vs30": 363.99
+                    },
                     "name": "PEER-Record-3474",
                     "type": "PeerEvent"
                 },
@@ -1907,15 +3071,27 @@
                             "dirn": 1,
                             "factor": 6.7005440302912485,
                             "fileName": "RSN3480_CHICHI.06_TCU086N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 6.7005440302912485,
                             "fileName": "RSN3480_CHICHI.06_TCU086E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 64.22,
+                        "Earthquake": "Chi-Chi_ Taiwan-06",
+                        "Magnitude": 6.3,
+                        "RSN": 3480,
+                        "Scale": 6.7005440302912485,
+                        "Station": "TCU086",
+                        "accelH1": "RSN3480_CHICHI.06_TCU086N.AT2",
+                        "accelH2": "RSN3480_CHICHI.06_TCU086E.AT2",
+                        "accelV3": "RSN3480_CHICHI.06_TCU086V.AT2",
+                        "vs30": 222.22
+                    },
                     "name": "PEER-Record-3480",
                     "type": "PeerEvent"
                 },
@@ -1926,15 +3102,27 @@
                             "dirn": 1,
                             "factor": 0.7464835861807299,
                             "fileName": "RSN3496_CHICHI.06_TCU110N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 0.7464835861807299,
                             "fileName": "RSN3496_CHICHI.06_TCU110E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 36.51,
+                        "Earthquake": "Chi-Chi_ Taiwan-06",
+                        "Magnitude": 6.3,
+                        "RSN": 3496,
+                        "Scale": 0.7464835861807299,
+                        "Station": "TCU110",
+                        "accelH1": "RSN3496_CHICHI.06_TCU110N.AT2",
+                        "accelH2": "RSN3496_CHICHI.06_TCU110E.AT2",
+                        "accelV3": "RSN3496_CHICHI.06_TCU110V.AT2",
+                        "vs30": 212.72
+                    },
                     "name": "PEER-Record-3496",
                     "type": "PeerEvent"
                 },
@@ -1945,15 +3133,27 @@
                             "dirn": 1,
                             "factor": 7.576818776603677,
                             "fileName": "RSN3501_CHICHI.06_TCU119N.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         },
                         {
                             "dirn": 2,
                             "factor": 7.576818776603677,
                             "fileName": "RSN3501_CHICHI.06_TCU119E.AT2",
-                            "filePath": "C:/Users/SimCenter/AppData/Local/Temp.DQGSxH"
+                            "filePath": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/peerNGA"
                         }
                     ],
+                    "metadata": {
+                        "Distance": 61.66,
+                        "Earthquake": "Chi-Chi_ Taiwan-06",
+                        "Magnitude": 6.3,
+                        "RSN": 3501,
+                        "Scale": 7.576818776603677,
+                        "Station": "TCU119",
+                        "accelH1": "RSN3501_CHICHI.06_TCU119N.AT2",
+                        "accelH2": "RSN3501_CHICHI.06_TCU119E.AT2",
+                        "accelV3": "RSN3501_CHICHI.06_TCU119V.AT2",
+                        "vs30": 221.7
+                    },
                     "name": "PEER-Record-3501",
                     "type": "PeerEvent"
                 }
@@ -2117,16 +3317,16 @@
                 }
             },
             "accuracyLimit": 0.02,
-            "advancedOpt": false,
+            "advancedOpt": true,
             "existingDoE": false,
-            "initialDoE": -1,
+            "initialDoE": 0,
             "inpFile": "NA",
-            "kernel": "Radial Basis",
+            "kernel": "Matern 5/2",
             "linear": false,
             "logTransform": true,
             "method": "Sampling and Simulation",
             "nuggetOpt": "Heteroscedastic",
-            "nuggetString": "NA",
+            "nuggetString": "",
             "numRepl": 1,
             "numSampToBeRepl": 1,
             "outFile": "NA",
@@ -2142,7 +3342,7 @@
     "correlationMatrix": [
         1
     ],
-    "localAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
+    "localAppDir": "C:/Users/SimCenter/Downloads/EE-UQ_Windows_Download_nest/EE-UQ_Windows_Download",
     "randomVariables": [
         {
             "distribution": "Uniform",
@@ -2155,11 +3355,11 @@
             "variableClass": "Uniform"
         }
     ],
-    "remoteAppDir": "C:/Users/SimCenter/Sangri/SimCenterBackendApplications",
-    "resultType": "SimCenterUQResultsSurrogate",
+    "remoteAppDir": "C:/Users/SimCenter/Downloads/EE-UQ_Windows_Download_nest/EE-UQ_Windows_Download",
+    "resultType": "SimCenterUQResultsSampling",
     "runDir": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir/tmp.SimCenter",
     "runType": "runningLocal",
-    "summary": {
-    },
-    "workingDir": "C:/Users/SimCenter/Documents/EE-UQ/LocalWorkDir"
+    "summary": [
+    ],
+    "workingDir": "C:/Users/SimCenter/Documents\\EE-UQ\\LocalWorkDir"
 }
