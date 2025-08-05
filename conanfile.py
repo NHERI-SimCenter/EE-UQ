@@ -1,17 +1,18 @@
-
 from conans import ConanFile
 
 class EEUQ(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    version = "2.2.3"
+    version = "4.0.0"
     license = "BSD"
     author = "NHERI SimCenter"
-    url = "https://github.com/NHERI-SimCenter/PBE"
+    url = "https://github.com/NHERI-SimCenter/EE-UQ"
     description = "NHERI SimCenter Earthquake Engineering with Uncertainty Quantification Research Tool"
     settings = "os", "compiler", "build_type", "arch"
     generators = "qmake"
     requires = "jansson/2.13.1", \
-               "zlib/1.2.11"
+               "libcurl/8.1.1", \
+               "zlib/1.2.11", \
+               "openssl/3.2.2"
 
     build_policy = "missing"
 
@@ -39,6 +40,8 @@ class EEUQ(ConanFile):
         self.copy("createEVENT/multiple*", dst=appsDestination, src="bin")
         self.copy("createEVENT/siteRes*", dst=appsDestination, src="bin")
         self.copy("createEVENT/stochasticGr*", dst=appsDestination, src="bin")
+        self.copy("createEVENT/SimCenterEvent*", dst=appsDestination, src="bin")
+        self.copy("createEVENT/TaichiEvent", dst=appsDestination, src="bin")
 
         self.copy("createSAM/*", dst=appsDestination, src="bin")
         self.copy("createEDP/*", dst=appsDestination, src="bin")
