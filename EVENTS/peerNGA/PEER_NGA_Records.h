@@ -159,6 +159,7 @@ private:
     QList<PeerScaledRecord> parseSearchResults(QString searchResultsFilePath);
     void setRecordsTable(QList<PeerScaledRecord>);
     void clearSpectra();
+    void clear(void);  
     void plotSpectra();
     void updateStatus(QString status);
     void selectRecords();

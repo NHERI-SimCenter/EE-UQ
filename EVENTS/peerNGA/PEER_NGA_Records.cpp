@@ -121,25 +121,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionGroup = new QGroupBox("Record Selection");
 
     recordSelectionLayout = new QGridLayout();
-
-
-    // yhrow inside a QScrollBar
-    /*
-    QWidget *theWidget2 = new QWidget();
-    theWidget2->setLayout(recordSelectionLayout);
-    
-    // scroll area
-    QGridLayout *layoutWithScroll2 = new QGridLayout();
-    QScrollArea *sa2 = new QScrollArea;
-    sa2->setWidgetResizable(true);
-    sa2->setLineWidth(0);
-    sa2->setFrameShape(QFrame::NoFrame);
-    sa2->setWidget(theWidget2);
-    layoutWithScroll2->addWidget(sa2);
-    recordSelectionGroup->setLayout(layoutWithScroll2);
-    */
     recordSelectionGroup->setLayout(recordSelectionLayout);    
-    
 
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
@@ -1105,8 +1087,20 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     return true;
 }
 
+void PEER_NGA_Records::clear(void) {
+  recordsTable->clear();
+  currentRecords.clear();
+  this->clearSpectra();
+}
+
 bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
 {
+
+  this->clear();
+  recordSelectionPlot.setHidden(true);
+  recordsTable->setHidden(true);
+  theTabWidget->setCurrentIndex(0);
+  
     if(jsonObject["TargetSpectrum"].isObject() && jsonObject["TargetSpectrum"].toObject().keys().contains("SpectrumType"))
     {
         auto targetSpectrumJson = jsonObject["TargetSpectrum"].toObject();
@@ -1200,7 +1194,6 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     destinationFolder.cd(inputDataDirPath);
 
     QFileInfoList fileList = destinationFolder.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
-    qDebug() << "DESTINATION: " << inputDataDirPath << "\n files: \n";
     for (const QFileInfo &fi : fileList) {
         qDebug() << fi.fileName();           // Just filename
         // qDebug() << fi.absoluteFilePath(); // Full path if needed
@@ -1387,6 +1380,7 @@ bool PEER_NGA_Records::outputCitation(QJsonObject &jsonObject){
 
     return true;
 }
+
 
 
 
