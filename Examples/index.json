@@ -354,6 +354,23 @@
         "Simulation": "OpenSees-Simulation"
       }
     }
+    ,
+    "eeuq-0013": {
+      "id": "eeuq-0013",
+      "title": "Full 3D SSI Model with Laminar and DRM Inputs",
+      "base": "eeuq-0013",
+      "doc": [
+        "eeuq-0013/README.rst"
+      ],
+      "entry_point": "eeuq-0013/./input_laminar.json",
+      "summary": "A full 3D SSI model of a 10-story steel frame with elastic soil layers, demonstrated with two input options: laminar/perimeter (PEER record) and DRM (predefined DesignSafe H5DRM).",
+      "logo": "eeuq-0013/figures/ee13_main.png",
+      "published": "2025-09-30T00:00:00.000000-08:00",
+      "categories": {
+        "Difficulty": "2",
+        "Simulation": "OpenSees-Simulation"
+      }
+    }
   },
     "categories": {
       "Difficulty": {
