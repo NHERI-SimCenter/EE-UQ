@@ -77,7 +77,6 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <UQ_EngineSelection.h>
 #include <UQ_Results.h>
 #include <LocalApplication.h>
-#include <Stampede3Machine.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
 #include <RunWidget.h>
@@ -764,7 +763,7 @@ WorkflowAppEE_UQ::getMaxNumParallelTasks() {
 int
 WorkflowAppEE_UQ::createCitation(QJsonObject &citation, QString citeFile) {
 
-  QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, Pedro Arduino, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 4.1.0 (v4.1.0).\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment. It is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
+  QString cit("{\"EE-UQ\": { \"citations\": [{\"citation\": \"Frank McKenna, Kuanshi Zhong, Amin Pakzad, Pedro Arduino, Adam Zsarnoczay, Michael Gardner, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, & Wael Elhaddad. (2025).NHERI-SimCenter/EE-UQ: Version 4.2.0 (v4.2.0). Zenodo. https://doi.org/10.5281/zenodo.17238806\",\"description\": \"This is the overall tool reference used to indicate the version of the tool.\"},{\"citation\": \"Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706\",\"description\": \" This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment. It is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets.\"}]}}");
 
   QJsonDocument docC = QJsonDocument::fromJson(cit.toUtf8());
   if(!docC.isNull()) {

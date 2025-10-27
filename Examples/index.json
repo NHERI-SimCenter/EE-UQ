@@ -297,7 +297,7 @@
         "Simulation": "OpenSees-Simulation"
       }
     },
-      "eeuq-0011": {
+    "eeuq-0011": {
       "id": "eeuq-0011",
       "title": "Muti-fidelity Monte Carlo",
       "base": "eeuq-0011",
@@ -322,6 +322,50 @@
       "summary": "This example shows how to replace structural dynamic simulations using a pre-trained Gaussian process (GP) surrogate model for running forward uncertainty propagation (Monte Carlo Simulation)",
       "logo": "eeuq-0011/figures/EE11_main.png",
       "published": "2022-07-10T21:26:53.946381-08:00",
+      "categories": {
+        "Difficulty": "2",
+        "Simulation": "OpenSees-Simulation"
+      }
+    },
+    "eeuq-0012": {
+      "id": "eeuq-0012",
+      "title": "Seismic Wave Basin Effects Model with External Mesh (DRM Example)",
+      "base": "eeuq-0012",
+      "doc": [
+        "eeuq-0012/figures/ee12_GI.png",
+        "eeuq-0012/figures/ee12_UQ.png",
+        "eeuq-0012/figures/ee12_SIM.png",
+        "eeuq-0012/figures/ee12_event_predefinedDRM.png",
+        "eeuq-0012/figures/ee12_predefinedDRM_Options.png",
+        "eeuq-0012/figures/ee12_FEM.png",
+        "eeuq-0012/figures/ee12_EDP.png",
+        "eeuq-0012/figures/ee12_RV.png",
+        "eeuq-0012/figures/ee12_res1.png",
+        "eeuq-0012/figures/ee12_res2.png",
+        "eeuq-0012/figures/ee12_correlation.png",
+        "eeuq-0012/README.rst"
+      ],
+      "entry_point": "eeuq-0012/./input.json",
+      "summary": "This example demonstrates the effect of a semi-hemispherical sedimentary basin on seismic wave propagation using the Domain Reduction Method (DRM) in EE-UQ, based on Femora Example 3. The model uses an external mesh to represent the basin geometry and soft soil materials, highlighting basin amplification and resonance effects.",
+      "logo": "eeuq-0012/figures/ee12_GI.png",
+      "published": "2025-07-07T00:00:00.000000-08:00",
+      "categories": {
+        "Difficulty": "2",
+        "Simulation": "OpenSees-Simulation"
+      }
+    }
+    ,
+    "eeuq-0013": {
+      "id": "eeuq-0013",
+      "title": "Full 3D SSI Model with Laminar and DRM Inputs",
+      "base": "eeuq-0013",
+      "doc": [
+        "eeuq-0013/README.rst"
+      ],
+      "entry_point": "eeuq-0013/./input_laminar.json",
+      "summary": "A full 3D SSI model of a 10-story steel frame with elastic soil layers, demonstrated with two input options: laminar/perimeter (PEER record) and DRM (predefined DesignSafe H5DRM).",
+      "logo": "eeuq-0013/figures/ee13_main.png",
+      "published": "2025-09-30T00:00:00.000000-08:00",
       "categories": {
         "Difficulty": "2",
         "Simulation": "OpenSees-Simulation"

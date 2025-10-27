@@ -121,25 +121,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     recordSelectionGroup = new QGroupBox("Record Selection");
 
     recordSelectionLayout = new QGridLayout();
-
-
-    // yhrow inside a QScrollBar
-    /*
-    QWidget *theWidget2 = new QWidget();
-    theWidget2->setLayout(recordSelectionLayout);
-    
-    // scroll area
-    QGridLayout *layoutWithScroll2 = new QGridLayout();
-    QScrollArea *sa2 = new QScrollArea;
-    sa2->setWidgetResizable(true);
-    sa2->setLineWidth(0);
-    sa2->setFrameShape(QFrame::NoFrame);
-    sa2->setWidget(theWidget2);
-    layoutWithScroll2->addWidget(sa2);
-    recordSelectionGroup->setLayout(layoutWithScroll2);
-    */
     recordSelectionGroup->setLayout(recordSelectionLayout);    
-    
 
     recordSelectionLayout->addWidget(new QLabel("Number of Records"), 0, 0);
     nRecordsEditBox = new QLineEdit("16");
@@ -338,7 +320,24 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
     // Select Records Button
     selectRecordsButton = new QPushButton("Select Records");
-      
+
+    QPushButton *previousSelectionButton = new QPushButton("Load Previous");
+
+    connect(previousSelectionButton, &QPushButton::clicked, this, [this]() {
+
+      additionalScaling.clear();
+      QString tempRecordsPath = outdirLE->text();
+      QDir tempRecordsDir = QDir(tempRecordsPath);
+      if(tempRecordsDir.exists("_SearchResults.csv")) {
+	currentRecords.clear();
+	loadFromExisting = true;
+	this->processPeerRecords(tempRecordsPath);
+      } else {
+	QString msg("PEER_NGA_Records no file: _SearchResults.csv exists in directory: "); msg += tempRecordsPath;
+	errorMessage(msg);
+      }
+    });
+    
     bool newLayout = true;
     if (newLayout == false) {
 
@@ -351,6 +350,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
       
 
       layout->addWidget(selectRecordsButton, 3, 2, 1, 1);
+      
       layout->addWidget(peerCitation, 4, 0, 1, 3);
       
       layout->setColumnStretch(0,1);
@@ -370,7 +370,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
 
       QWidget *tab1 = new QWidget();
       tab1->setLayout(layout);
-      layout->addWidget(selectRecordsButton, 4, 0, 1, 2);
+      layout->addWidget(selectRecordsButton, 4, 1, 1, 1);
+      layout->addWidget(previousSelectionButton, 4, 0, 1, 1);      
       layout->addWidget(peerCitation, 5, 0, 1, 2);
 
       QGridLayout *layout2 = new QGridLayout();
@@ -404,8 +405,8 @@ void PEER_NGA_Records::setupConnections()
     if(outdirpath.compare("NULL") == 0)
         this->chooseOutputDirectory();
 
-    connect(selectRecordsButton, &QPushButton::clicked, this, [this]()
-    {
+    connect(selectRecordsButton, &QPushButton::clicked, this, [this]() {
+      
         currentRecords.clear();
         if(!peerClient.loggedIn())
         {
@@ -539,7 +540,6 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     if(!resultFolder.exists())
         return;
 
-
     QString readMePathString = RecordsDir + QDir::separator() + QString("_readME.txt");
     QFileInfo readMeInfo(readMePathString);
     if (readMeInfo.exists()) {
@@ -562,7 +562,9 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
     }
 
     clearSpectra();
+    
     auto tmpList = parseSearchResults(resultFolder.filePath("_SearchResults.csv"));
+
     currentRecords = currentRecords + tmpList;
     //if (currentRecords.length()!=numDownloaded) {
     //    errorMessage(QString("Some records are missing"));
@@ -668,8 +670,9 @@ void PEER_NGA_Records::clearSpectra()
 
 void PEER_NGA_Records::plotSpectra()
 {
-    //Spectra can be plotted here using the data in
-    //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+  //Spectra can be plotted here using the data in
+  //periods, targetSpectrum, meanSpectrum, meanPlusSigmaSpectrum, meanMinusSigmaSpectrum, scaledSelectedSpectra
+  
   if (coverageImage != 0)
     coverageImage->setHidden(true);
   
@@ -713,6 +716,8 @@ void PEER_NGA_Records::updateStatus(QString status)
 void PEER_NGA_Records::selectRecords()
 {
 
+    loadFromExisting = false;
+    
     // Set the search scaling parameters
     // 0 is not scaling
     // 1 is minimize MSE
@@ -891,8 +896,12 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 record.Magnitude = values[12].trimmed().toDouble();
                 record.Distance = values[15].trimmed().toDouble();
                 record.Vs30 = values[16].trimmed().toDouble();
-
-                record.Scale = values[4].toDouble()*additionalScaling[ng];
+		
+		if (additionalScaling.size() != 0)
+		  record.Scale = values[4].toDouble()*additionalScaling[ng];
+		else	
+		  record.Scale = values[4].toDouble();
+		
                 record.Horizontal1File = values[19].trimmed();
                 record.Horizontal2File = values[20].trimmed();
                 record.VerticalFile = values[21].trimmed();
@@ -918,6 +927,7 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
         //Parsing scaled spectra
         if(line.contains("Scaled Spectra used in Search & Scaling"))
         {
+	  qDebug() << "FOUND SCALED SELECTED SPECTRA";
             //skip header
             searchResultsStream.readLine();
             line = searchResultsStream.readLine();
@@ -934,7 +944,10 @@ QList<PeerScaledRecord> PEER_NGA_Records::parseSearchResults(QString searchResul
                 scaledSelectedSpectra.resize(values.size() - 5);
                 for (int i = 5; i < values.size(); i++)
                 {
+		  if (additionalScaling.size() != 0)
                     scaledSelectedSpectra[i-5].push_back(values[i].toDouble()*additionalScaling[i-5]);
+		  else
+                    scaledSelectedSpectra[i-5].push_back(values[i].toDouble());		    
                 }
                 line = searchResultsStream.readLine();
             }
@@ -1074,8 +1087,20 @@ bool PEER_NGA_Records::outputToJSON(QJsonObject &jsonObject)
     return true;
 }
 
+void PEER_NGA_Records::clear(void) {
+  recordsTable->clear();
+  currentRecords.clear();
+  this->clearSpectra();
+}
+
 bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
 {
+
+  this->clear();
+  recordSelectionPlot.setHidden(true);
+  recordsTable->setHidden(true);
+  theTabWidget->setCurrentIndex(0);
+  
     if(jsonObject["TargetSpectrum"].isObject() && jsonObject["TargetSpectrum"].toObject().keys().contains("SpectrumType"))
     {
         auto targetSpectrumJson = jsonObject["TargetSpectrum"].toObject();
@@ -1168,6 +1193,12 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     }
     destinationFolder.cd(inputDataDirPath);
 
+    QFileInfoList fileList = destinationFolder.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+    for (const QFileInfo &fi : fileList) {
+        qDebug() << fi.fileName();           // Just filename
+        // qDebug() << fi.absoluteFilePath(); // Full path if needed
+    }
+    
     //
     // now copy files
     //
@@ -1175,11 +1206,24 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
     bool ok = true;
     QString msg;
     int count = 0;
+
+
+    //qDebug() << "RECORDS: " << currentRecords;
+    
     for (auto& record:currentRecords)
       {
+	
+	// qDebug() << "record: " << record;
+
+	  msg = "PEER NGA: Copying H1 file:" +  recordsFolder.filePath(record.Horizontal1File) + " to "  
+	    + destinationFolder.filePath(record.Horizontal1File);
+	  qDebug() << msg;
+	  
         //Copying Horizontal1 file
-	if (!QFile::copy(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
-	  msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal1File);
+	if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.Horizontal1File), destinationFolder.filePath(record.Horizontal1File))) {
+	  msg = "PEER NGA: failed to copy H1 file:" +  recordsFolder.filePath(record.Horizontal1File) + " to "  
+	    + destinationFolder.filePath(record.Horizontal1File);
+	  qDebug() << msg;
 	  ok = false;
 	  break;
 	}
@@ -1191,8 +1235,9 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
 	  {
 	    
             //Copying Horizontal2 file
-	    if (!QFile::copy(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
-	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.Horizontal2File);
+	    if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.Horizontal2File), destinationFolder.filePath(record.Horizontal2File))) {
+	      msg = "PEER NGA: failed to copy H2 file:" +  recordsFolder.filePath(record.Horizontal2File);
+	      qDebug() << msg;	      
 	      ok = false;
 	      break; 	    
 	    }
@@ -1201,8 +1246,10 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
 	if(components == GroundMotionComponents::Three)
 	  {
             //Copying Vertical file
-	    if (!QFile::copy(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
-	      msg = "PEER NGA: failed to record:" +  recordsFolder.filePath(record.VerticalFile);
+	    if (!SCUtils::copyAndOverwrite(recordsFolder.filePath(record.VerticalFile), destinationFolder.filePath(record.VerticalFile))) {
+	      
+	      msg = "PEER NGA: failed to copy H3 file:" +  recordsFolder.filePath(record.VerticalFile);
+	      qDebug() << msg;	      
 	      ok = false;
 	      break;
 	    }
@@ -1211,6 +1258,8 @@ bool PEER_NGA_Records::copyFiles(QString &destDir)
       }
 
 
+    qDebug() << "OK & COUNT: " << ok << " " << count;
+    
     if (ok == false || count == 0) {
       statusMessage(QString("PEER-NGA no motions Downloaded"));      
       switch( QMessageBox::question( 

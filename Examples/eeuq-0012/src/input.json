@@ -1,0 +1,237 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "UserDefinedEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "DRM",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "FemoraInput",
+            "ApplicationData": {
+                "fileName": "femoramodel.py",
+                "filePath": "{Current_Dir}/."
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "EDP": [
+            {"name": "pga_x"},
+            {"name": "pga_y"},
+            {"name": "pga_z"},
+            {"name": "pgv_x"},
+            {"name": "pgv_y"},
+            {"name": "pgv_z"},
+            {"name": "pgd_x"},
+            {"name": "pgd_y"},
+            {"name": "pgd_z"},
+            {"name": "Arias_x"},
+            {"name": "Arias_y"},
+            {"name": "Arias_z"},
+            {"name": "CAV_x"},
+            {"name": "CAV_y"},
+            {"name": "CAV_z"},
+            {"name": "RMS_x"},
+            {"name": "RMS_y"},
+            {"name": "RMS_z"},
+            {"name": "duration_x"},
+            {"name": "duration_y"},
+            {"name": "duration_z"}
+        ],
+        "fileNamePS": "postprocess.py",
+        "filePathPS": "{Current_Dir}/.",
+        "type": "UserDefinedEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+                {
+                    "T00": 1,
+                    "T01": 0,
+                    "T02": 0,
+                    "T10": 0,
+                    "T11": 1,
+                    "T12": 0,
+                    "T20": 0,
+                    "T21": 0,
+                    "T22": 1,
+                    "crd_scale": 1,
+                    "dT": 0.0107783,
+                    "distance_tolerance": 0.001,
+                    "do_coordinate_transformation": 1,
+                    "filePath": "tapis://designsafe.storage.community/SimCenter/Datasets/SimulationAndExperimentalDatasets/DRM_records_for_opensees/HaywardFault_SW4_DRM_Site1.h5drm",
+                    "index": 0,
+                    "name": "HaywardFaultSW4_Site1",
+                    "numSteps": 2551,
+                    "x00": 0,
+                    "x01": 0,
+                    "x02": 0
+                }
+            ],
+            "system": "predefined-designsafe",
+            "type": "DRM"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 1,
+        "PlanArea": 129600,
+        "YearBuilt": 1990,
+        "depth": 360,
+        "height": 144,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "Basin Effect",
+        "planArea": 129600,
+        "stories": 1,
+        "units": {
+            "force": "kN",
+            "length": "m",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 360
+    },
+    "Modeling": {
+        "centroidNodes": [
+        ],
+        "dampingRatio": 0,
+        "modelFile": "{Current_Dir}/femoramodel.py",
+        "ndf": 3,
+        "ndm": 3,
+        "numCores": 10,
+        "randomVar": [
+            {
+                "name": "softMat_vs",
+                "value": "RV.softMat_vs"
+            },
+            {
+                "name": "softMat_vp_vs_ratio",
+                "value": "RV.softMat_vp_vs_ratio"
+            },
+            {
+                "name": "softMat_rho",
+                "value": "RV.softMat_rho"
+            }
+        ],
+        "responseNodes": [
+        ],
+        "type": "FemoraInput",
+        "useDamping": false
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Linear",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "fileName": "analysis.tcl",
+        "filePath": "{Current_Dir}/.",
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": -1,
+        "rayleighTangent": "Initial",
+        "secondMode": -1,
+        "solver": "Umfpack"
+    },
+    "UQ": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 50,
+            "seed": 503
+        },
+        "saveWorkDir": true,
+        "uqType": "Forward Propagation"
+    },
+    "correlationMatrix": [
+        1,
+        -0.25,
+        0.5,
+        -0.25,
+        1,
+        -0.3,
+        0.5,
+        -0.3,
+        1
+    ],
+    "localAppDir": "/home/aminp/Projects/EE-UQ/build",
+    "randomVariables": [
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 100,
+            "name": "softMat_vs",
+            "refCount": 11,
+            "upperbound": 300,
+            "value": "RV.softMat_vs",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 2.1,
+            "name": "softMat_vp_vs_ratio",
+            "refCount": 5,
+            "stdDev": 0.15,
+            "value": "RV.softMat_vp_vs_ratio",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 1.8,
+            "name": "softMat_rho",
+            "refCount": 5,
+            "stdDev": 0.15,
+            "value": "RV.softMat_rho",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home/aminp/Projects/EE-UQ/build",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "/home/aminp/Projects/SimCenterWork/EEUQ/LocalWorkDir"
+}

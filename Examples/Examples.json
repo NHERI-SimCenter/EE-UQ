@@ -58,6 +58,17 @@
       "name": "E11: Multi-fidelity Monte Carlo",
       "description": "This example uses a low-fidelity model to inform high-fidelity response statistics",
       "inputFile": "eeuq-0011/src/input.json"
+    },
+    {
+      "name": "E12: Seismic Wave Basin Effects Model (DRM Example)",
+      "description": "This example demonstrates the effect of a semi-hemispherical sedimentary basin on seismic wave propagation using the Domain Reduction Method (DRM) in EE-UQ, based on Femora Example 3.",
+      "inputFile": "eeuq-0012/src/input.json"
+    }
+    ,
+    {
+      "name": "E13: Full 3D SSI Model with Laminar and DRM Inputs",
+      "description": "A full 3D SSI model of a 10-story steel frame with elastic soil layers, demonstrated with two input options: laminar/perimeter (PEER record) and DRM (predefined DesignSafe H5DRM).",
+      "inputFile": "eeuq-0013/input_laminar.json"
     }
   ]
 }

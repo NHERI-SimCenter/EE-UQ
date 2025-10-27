@@ -1,0 +1,572 @@
+{
+    "Applications": {
+        "EDP": {
+            "Application": "StandardEarthquakeEDP",
+            "ApplicationData": {
+            }
+        },
+        "Events": [
+            {
+                "Application": "ExistingPEER_Events",
+                "ApplicationData": {
+                },
+                "EventClassification": "Earthquake"
+            }
+        ],
+        "Modeling": {
+            "Application": "SSISimulation",
+            "ApplicationData": {
+            }
+        },
+        "Simulation": {
+            "Application": "OpenSees-Simulation",
+            "ApplicationData": {
+            }
+        },
+        "UQ": {
+            "Application": "Dakota-UQ",
+            "ApplicationData": {
+            }
+        }
+    },
+    "DefaultValues": {
+        "driverFile": "driver",
+        "edpFiles": [
+            "EDP.json"
+        ],
+        "filenameAIM": "AIM.json",
+        "filenameDL": "BIM.json",
+        "filenameEDP": "EDP.json",
+        "filenameEVENT": "EVENT.json",
+        "filenameSAM": "SAM.json",
+        "filenameSIM": "SIM.json",
+        "rvFiles": [
+            "AIM.json",
+            "SAM.json",
+            "EVENT.json",
+            "SIM.json"
+        ],
+        "workflowInput": "scInput.json",
+        "workflowOutput": "EDP.json"
+    },
+    "EDP": {
+        "type": "StandardEarthquakeEDP"
+    },
+    "Events": [
+        {
+            "EventClassification": "Earthquake",
+            "Events": [
+                {
+                    "EventClassification": "Earthquake",
+                    "Records": [
+                        {
+                            "dirn": 1,
+                            "factor": "RV.factor",
+                            "fileName": "elCentro.AT2",
+                            "filePath": "{Current_Dir}/."
+                        }
+                    ],
+                    "name": "elCentro",
+                    "type": "PeerEvent"
+                }
+            ],
+            "type": "ExistingPEER_Events"
+        }
+    ],
+    "GeneralInformation": {
+        "NumberOfStories": 10,
+        "PlanArea": 729,
+        "YearBuilt": 1990,
+        "depth": 27,
+        "height": 41,
+        "location": {
+            "latitude": 37.8715,
+            "longitude": -122.273
+        },
+        "name": "FEMA_Building",
+        "planArea": 729,
+        "stories": 10,
+        "units": {
+            "force": "kN",
+            "length": "m",
+            "temperature": "C",
+            "time": "sec"
+        },
+        "width": 27
+    },
+    "Modeling": {
+        "building_type": "custom_3d_building",
+        "numCores": 6,
+        "randomVar": [
+            {
+                "name": "E_kips",
+                "value": "RV.E_kips"
+            },
+            {
+                "name": "Fy_kips",
+                "value": "RV.Fy_kips"
+            }
+        ],
+        "soil_foundation_info": {
+            "foundation_info": {
+                "column_embedment_depth": 0.6,
+                "column_section_props": {
+                    "A": 0.282,
+                    "E": 30000000,
+                    "G": 12500000,
+                    "Iy": 0.0063585,
+                    "Iz": 0.0063585,
+                    "J": 0.012717
+                },
+                "dx": 2,
+                "dy": 2,
+                "dz": 0.3,
+                "embedded": true,
+                "foundation_profile": [
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            35000000,
+                            0.2,
+                            2.4
+                        ],
+                        "material": "Elastic",
+                        "x_max": 20,
+                        "x_min": -20,
+                        "y_max": 20,
+                        "y_min": -20,
+                        "z_bot": -1.8,
+                        "z_top": 0
+                    }
+                ],
+                "gravity_x": 0,
+                "gravity_y": 0,
+                "gravity_z": -9.81,
+                "num_partitions": 1
+            },
+            "pile_info": {
+                "pile_interface": {
+                    "num_points_along_length": 4,
+                    "num_points_on_perimeter": 8,
+                    "penalty_parameter": 1000000000000
+                },
+                "pile_profile": [
+                    {
+                        "mat_props": [
+                            30000000,
+                            0.282,
+                            0.0063585,
+                            0.0063585,
+                            12500000,
+                            0.012717
+                        ],
+                        "material": "Elastic",
+                        "nx": 3,
+                        "ny": 3,
+                        "nz": 15,
+                        "r": 0.3,
+                        "section": "No-Section",
+                        "spacing_x": 15,
+                        "spacing_y": 15,
+                        "transformation": [
+                            "Linear",
+                            0,
+                            1,
+                            0
+                        ],
+                        "type": "grid",
+                        "x_start": -15,
+                        "y_start": -15,
+                        "z_bot": -10,
+                        "z_top": -0.5
+                    }
+                ]
+            },
+            "soil_info": {
+                "boundary_conditions": "periodic",
+                "gravity_x": 0,
+                "gravity_y": 0,
+                "gravity_z": -9.81,
+                "num_partitions": 4,
+                "nx": 32,
+                "ny": 32,
+                "soil_profile": [
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0211,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -48,
+                        "z_top": -40
+                    },
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0211,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -40,
+                        "z_top": -32
+                    },
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0234,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -32,
+                        "z_top": -24
+                    },
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0249,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -24,
+                        "z_top": -16
+                    },
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0269,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -16,
+                        "z_top": -8
+                    },
+                    {
+                        "damping": "Frequency-Rayleigh",
+                        "damping_props": [
+                            0.0296,
+                            3,
+                            15
+                        ],
+                        "mat_props": [
+                            2031050,
+                            0.306926,
+                            2.16275
+                        ],
+                        "material": "Elastic",
+                        "nz": 2,
+                        "z_bot": -8,
+                        "z_top": 0
+                    }
+                ],
+                "x_max": 64,
+                "x_min": -64,
+                "y_max": 64,
+                "y_min": -64
+            }
+        },
+        "soil_type": "soil_foundation_type_1",
+        "structure_info": {
+            "NodeMapping": [
+                {
+                    "cline": "response",
+                    "floor": "0",
+                    "node": 101
+                },
+                {
+                    "cline": "response",
+                    "floor": "1",
+                    "node": 117
+                },
+                {
+                    "cline": "response",
+                    "floor": "2",
+                    "node": 133
+                },
+                {
+                    "cline": "response",
+                    "floor": "3",
+                    "node": 149
+                },
+                {
+                    "cline": "response",
+                    "floor": "4",
+                    "node": 165
+                },
+                {
+                    "cline": "response",
+                    "floor": "5",
+                    "node": 181
+                },
+                {
+                    "cline": "response",
+                    "floor": "6",
+                    "node": 197
+                },
+                {
+                    "cline": "response",
+                    "floor": "7",
+                    "node": 213
+                },
+                {
+                    "cline": "response",
+                    "floor": "8",
+                    "node": 229
+                },
+                {
+                    "cline": "response",
+                    "floor": "9",
+                    "node": 245
+                },
+                {
+                    "cline": "response",
+                    "floor": "10",
+                    "node": 261
+                }
+            ],
+            "centroidNodes": [
+            ],
+            "columns_base": [
+                {
+                    "tag": 101,
+                    "x": -13.716,
+                    "y": -13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 102,
+                    "x": -4.572,
+                    "y": -13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 103,
+                    "x": 4.572,
+                    "y": -13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 104,
+                    "x": 13.716,
+                    "y": -13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 105,
+                    "x": -13.716,
+                    "y": -4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 106,
+                    "x": -4.572,
+                    "y": -4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 107,
+                    "x": 4.572,
+                    "y": -4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 108,
+                    "x": 13.716,
+                    "y": -4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 109,
+                    "x": -13.716,
+                    "y": 4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 110,
+                    "x": -4.572,
+                    "y": 4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 111,
+                    "x": 4.572,
+                    "y": 4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 112,
+                    "x": 13.716,
+                    "y": 4.572,
+                    "z": 0
+                },
+                {
+                    "tag": 113,
+                    "x": -13.716,
+                    "y": 13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 114,
+                    "x": -4.572,
+                    "y": 13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 115,
+                    "x": 4.572,
+                    "y": 13.716,
+                    "z": 0
+                },
+                {
+                    "tag": 116,
+                    "x": 13.716,
+                    "y": 13.716,
+                    "z": 0
+                }
+            ],
+            "dampingRatio": 0,
+            "mesh_file": "{Current_Dir}/building.vtkhdf",
+            "model_file": "{Current_Dir}/steel_frame.tcl",
+            "ndf": 6,
+            "ndm": 3,
+            "num_partitions": 1,
+            "responseNodes": [
+                101,
+                117,
+                133,
+                149,
+                165,
+                181,
+                197,
+                213,
+                229,
+                245,
+                261
+            ],
+            "useDamping": false,
+            "x_max": 13.716,
+            "x_min": -13.716,
+            "y_max": 13.716,
+            "y_min": -13.716,
+            "z_max": 40.8432,
+            "z_min": 0
+        },
+        "type": "SSISimulation"
+    },
+    "Simulation": {
+        "Application": "OpenSees-Simulation",
+        "algorithm": "Newton",
+        "analysis": "Transient -numSubLevels 2 -numSubSteps 10",
+        "convergenceTest": "NormUnbalance 1.0e-2 10",
+        "dampingModel": "Rayleigh Damping",
+        "fileName": "analysis_laminar.tcl",
+        "filePath": "{Current_Dir}/.",
+        "firstMode": 1,
+        "integration": "Newmark 0.5 0.25",
+        "modalRayleighTangentRatio": 0,
+        "numModesModal": -1,
+        "rayleighTangent": "Initial",
+        "secondMode": -1,
+        "solver": "Umfpack"
+    },
+    "UQ": {
+        "parallelExecution": true,
+        "samplingMethodData": {
+            "method": "LHS",
+            "samples": 15,
+            "seed": 174
+        },
+        "saveWorkDir": true,
+        "uqType": "Forward Propagation"
+    },
+    "correlationMatrix": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+    ],
+    "localAppDir": "/home/amnp95/Desktop/TMPSIMCENTER/EE-UQ/build",
+    "randomVariables": [
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 29000,
+            "name": "E_kips",
+            "refCount": 6,
+            "stdDev": 1000,
+            "value": "RV.E_kips",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Normal",
+            "inputType": "Parameters",
+            "mean": 57.6,
+            "name": "Fy_kips",
+            "refCount": 6,
+            "stdDev": 2,
+            "value": "RV.Fy_kips",
+            "variableClass": "Uncertain"
+        },
+        {
+            "distribution": "Uniform",
+            "inputType": "Parameters",
+            "lowerbound": 0.8,
+            "name": "factor",
+            "refCount": 1,
+            "upperbound": 1.2,
+            "value": "RV.factor",
+            "variableClass": "Uncertain"
+        }
+    ],
+    "remoteAppDir": "/home/amnp95/Desktop/TMPSIMCENTER/EE-UQ/build",
+    "resultType": "SimCenterUQResultsSampling",
+    "runType": "runningLocal",
+    "summary": [
+    ],
+    "workingDir": "/home/amnp95/Documents/EE-UQ/LocalWorkDir"
+}
