@@ -196,7 +196,6 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
     this->setContentsMargins(0,5,0,5);
-    horizontalLayout->setMargin(0);
 
     //
     // create the component selection & add the components to it
@@ -770,7 +769,7 @@ WorkflowAppEE_UQ::createCitation(QJsonObject &citation, QString citeFile) {
     if(docC.isObject()) {
       citation = docC.object();        
     }  else {
-      qDebug() << "WorkflowAppEE_UQ citation text is not valid JSON: \n" << cit << endl;
+      qDebug() << "WorkflowAppEE_UQ citation text is not valid JSON: \n" << cit << Qt::endl;
     }
   }
   
