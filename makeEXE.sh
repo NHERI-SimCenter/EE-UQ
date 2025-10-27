@@ -11,7 +11,7 @@ cd build
 rm -fr *.dmg *.app
 
 # conan install
-conan install .. --build missing
+conan install .. --output-folder=. --build=missing
 
 if [[ $0 != 0 ]]; then
     echo "EE-UQ: conan install failed";

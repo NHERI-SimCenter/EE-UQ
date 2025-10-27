@@ -135,11 +135,15 @@ IstanbulSingleSite::IstanbulSingleSite(QWidget *parent)
   QGroupBox *mapbox = new QGroupBox("Grid Map");
   QGridLayout *maplayout = new QGridLayout(mapbox);
 
-  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
-  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
 
+  //  QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+  // QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+  
   // webView1->page()->setDevToolsPage(new QWebEnginePage());
   webView1 = new QWebEngineView();
+  webView1->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+  webView1->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+  
   QString appDir = SimCenterPreferences::getInstance()->getAppDir();
   QString mappscript = appDir + QDir::separator() + "applications" + QDir::separator()
     + "createEVENT" + QDir::separator() + "Istanbul" + QDir::separator();
