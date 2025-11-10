@@ -23,7 +23,9 @@
 #include <QDir>
 #include <QStatusBar>
 #include <QWebEngineView>
+
 #include <Utils/FileOperations.h>
+#include <Utils/SimCenterConfigFile.h>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -72,7 +74,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    QCoreApplication::setApplicationVersion("4.2.0");    
+    QCoreApplication::setApplicationVersion("4.2.1");    
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -184,7 +186,6 @@ int main(int argc, char *argv[])
     QFile file(":/styleCommon/stylesheetMAC.qss");
 #endif
 
-
     if(file.open(QFile::ReadOnly)) {
         a.setStyleSheet(file.readAll());
         qDebug() << "Stylesheet loaded: " << file.fileName();	
@@ -193,35 +194,50 @@ int main(int argc, char *argv[])
       qDebug() << "could not open stylesheet";
     }
 
-
-
+    QString analyticsOption = getConfigOptionString("GoogleAnalytics");
+    
 #ifdef _SC_RELEASE
 
-    //Setting Google Analytics Tracking Information
     qDebug() << "Running a Release Version of EE-UQ";
-    GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
-    GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
-    GoogleAnalytics::CreateSessionId();
-    GoogleAnalytics::StartSession();
 
-    // Opening a QWebEngineView and using github to get app geographic usage
-    QWebEngineView view;
-    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
-    view.resize(1024, 750);
-    view.show();
-    view.hide();
+    if (analyticsOption != "No") {
+
+      GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+      GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+      GoogleAnalytics::CreateSessionId();
+      GoogleAnalytics::StartSession();
+
+      qDebug() << "Google Analytics: Started";
+      
+      // Opening a QWebEngineView and using github to get app geographic usage
+      QWebEngineView view;
+      view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+	view.resize(1024, 750);
+	view.show();
+	view.hide();
+	
+    } else
+      qDebug() << "Google Analytics: None";
     
+        
 #endif
 
 #ifdef _ANALYTICS
 
     //Setting Google Analytics Tracking Information
-    qDebug() << "compiled with: ANALYTICS";
-    GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
-    GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
-    GoogleAnalytics::CreateSessionId();
-    GoogleAnalytics::StartSession();
+    if (analyticsOption != "No") {
+      qDebug() << "Google Analytics: Started";    
+      qDebug() << "compiled with: ANALYTICS";
+      GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
+      GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
+      GoogleAnalytics::CreateSessionId();
+      GoogleAnalytics::StartSession();
+
+      qDebug() << "Google Analytics: Started";
     
+  } else
+    qDebug() << "Google Analytics: None";              
+          
 #endif
 
     //
@@ -234,12 +250,14 @@ int main(int argc, char *argv[])
 #ifdef _GA_AFTER
     
     // Opening a QWebEngineView and using github to get app geographic usage
-    qDebug() << "compiled with: _GA_AFTER";
-    QWebEngineView view;
-    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
-    view.resize(1024, 750);
-    view.show();
-    view.hide();
+    if (analyticsOption != "No") {    
+      qDebug() << "compiled with: _GA_AFTER";
+      QWebEngineView view;
+      view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+      view.resize(1024, 750);
+      view.show();
+      view.hide();
+    }
     
 #endif        
     
