@@ -1,4 +1,20 @@
-nning Conan to install dependencies
+#Making sure we are not using multi configuration
+CONFIG -= debug_and_release
+
+
+#Checking Conan version
+message(Detecting Conan: $$system(conan -v))
+
+#Detecting build type
+CONFIG(release, debug|release) {
+  BUILD_TYPE = Release
+}
+
+CONFIG(debug, debug|release) {
+  BUILD_TYPE = Debug
+}
+
+#Running Conan to install dependencies
 message(Running Conan)
 CONAN_INSTALL_COMMAND=cd $$OUT_PWD && conan install $$PWD -s build_type=$$BUILD_TYPE --build missing
 message($$CONAN_INSTALL_COMMAND)
