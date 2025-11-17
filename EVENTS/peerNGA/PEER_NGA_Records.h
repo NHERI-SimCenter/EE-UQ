@@ -159,6 +159,7 @@ private:
     QList<PeerScaledRecord> parseSearchResults(QString searchResultsFilePath);
     void setRecordsTable(QList<PeerScaledRecord>);
     void clearSpectra();
+    void clear(void);  
     void plotSpectra();
     void updateStatus(QString status);
     void selectRecords();
@@ -168,8 +169,9 @@ private:
     UserSpectrumWidget *userSpectrumTarget;
 
     QGridLayout *layout;
-  QTabWidget *theTabWidget;
+    QTabWidget *theTabWidget;
 
+    bool loadFromExisting;
 };
 
 #endif // PEER_NGA_RECORDS_H

@@ -1,0 +1,42 @@
+{
+    "EE-UQ": {
+        "citations": [
+            {
+                "citation": "Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, Pedro Arduino, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 4.1.0 (v4.1.0).",
+                "description": "This is the overall tool reference used to indicate the version of the tool."
+            },
+            {
+                "citation": "Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706",
+                "description": " This marker paper describes the SimCenter application framework, which was designed to simulate the impacts of natural hazards on the built environment. It is a necessary attribute for publishing work resulting from the use of SimCenter tools, software, and datasets."
+            }
+        ]
+    },
+    "OpenSees-Simulation": {
+        "citation": "McKenna, F., Scott, M. H., and Fenves, G. L. (2010) “Nonlinear finite-element analysis software architecture using object composition.” Journal of Computing in Civil Engineering, 24(1):95-107.",
+        "description": "A number of nonlinear time history analysis were performed in the generation of the results using the open-source software application OpenSees."
+    },
+    "PEER NGA RECORDS": {
+        "citation": "Ancheta, T., Darragh, R., Stewart, J., Seyhan, E., Silva, W.J., Chiou, B.S.J., Wooddell, K.E., Graves, R.W., Kottke, A.R., Boore, D.M. and Kishida, T., 2013. PEER 2013/03: PEER NGA-West2 Database. Pacific Earthquake Engineering Research.",
+        "description": "This is to acknowledge that the ground motions are selected from the PEER NGA West 2 DataBase, possibly using their ground motion selection algorithms."
+    },
+    "SimCenter-UQ": {
+        "citations": [
+            {
+                "citation": "GPy. (2012-present). GPy: A Gaussian process framework in Python. Retrieved from http://github.com/SheffieldML/GPy.",
+                "description": "Surrogate modeling functionality of quoFEM is built upon the GPy library, an open-source Python framework for Gaussian process modeling developed in the Sheffield machine learning group."
+            },
+            {
+                "citation": "Kyprioti, A.P., Zhang, J., and Taflanidis, A.A. (2020). Adaptive design of experiments for global Kriging metamodeling through cross-validation information. Structural and Multidisciplinary Optimization, 1-23.",
+                "description": "If the user selected the IMSEw or MMSEw DoE Options under the 'Advanced Option for Gaussian Process Model' in the SimCenterUQ engine, the algorithm outlined in this paper is utilized."
+            },
+            {
+                "citation": "Yi, S.R. and Taflanidis, A.A., (2023). Computationally Efficient Adaptive Design of Experiments for Global Metamodeling through Integrated Error Approximation and Multicriteria Search Strategies. Journal of Engineering Mechanics, 149(8), p.04023050.",
+                "description": "If the user selected the Pareto DoE Option under the 'Advanced Option for Gaussian Process Model' in the SimCenterUQ engine, the algorithm outlined in this paper is utilized."
+            },
+            {
+                "citation": "Kyprioti, A.P. and Taflanidis, A.A., (2021). Kriging metamodeling for seismic response distribution estimation. Earthquake Engineering & Structural Dynamics, 50(13), pp.3550-3576.",
+                "description": "If the user selected the Heteroscedastic 'Nugget Variances' option under the 'Advanced Option for Gaussian Process Model' in the SimCenterUQ engine, the algorithm outlined in this paper is utilized."
+            }
+        ]
+    }
+}

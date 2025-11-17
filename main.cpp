@@ -23,7 +23,9 @@
 #include <QDir>
 #include <QStatusBar>
 #include <QWebEngineView>
+
 #include <Utils/FileOperations.h>
+#include <Utils/SimCenterConfigFile.h>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -47,7 +49,7 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
         QFile outFile(logFilePath);
         outFile.open(QIODevice::WriteOnly | QIODevice::Append);
         QTextStream ts(&outFile);
-        ts << txt << endl;
+        ts << txt << Qt::endl;
         outFile.close();
     } else {
         fprintf(stderr, "%s %s: %s (%s:%u, %s)\n", formattedTimeMsg.constData(), logLevelMsg.constData(), localMsg.constData(), context.file, context.line, context.function);
@@ -72,8 +74,7 @@ int main(int argc, char *argv[])
     //Setting Core Application Name, Organization, and Version
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
-    //QCoreApplication::setApplicationVersion("3.6.0");
-    QCoreApplication::setApplicationVersion("4.1.1");    
+    QCoreApplication::setApplicationVersion("4.2.1");    
 
     //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
     Q_INIT_RESOURCE(images1);
@@ -143,7 +144,7 @@ int main(int argc, char *argv[])
     QString version = QString("Version ") + QCoreApplication::applicationVersion();
     w.setVersion(version);
 
-    QString citeText("1)Frank McKenna, Kuanshi Zhong, Michael Gardner, Adam Zsarnoczay, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, Amin Pakzad, Pedro Arduino, & Wael Elhaddad. (2024). NHERI-SimCenter/EE-UQ: Version 4.1.0 (v4.1.0). Zenodo. https://doi.org/10.5281/zenodo.13865428 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
+    QString citeText("1)Frank McKenna, Kuanshi Zhong, Amin Pakzad, Pedro Arduino, Adam Zsarnoczay, Michael Gardner, Sang-ri Yi, Aakash Bangalore Satish, Charles Wang, & Wael Elhaddad.  (2025). NHERI-SimCenter/EE-UQ: Version 4.2.0 (v4.2.0). Zenodo. https://doi.org/10.5281/zenodo.17238806 \n\n2) Gregory G. Deierlein, Frank McKenna, Adam Zsarnóczay, Tracy Kijewski-Correa, Ahsan Kareem, Wael Elhaddad, Laura Lowes, Matthew J. Schoettler, and Sanjay Govindjee (2020) A Cloud-Enabled Application Framework for Simulating Regional-Scale Impacts of Natural Hazards on the Built Environment. Frontiers in the Built Environment. 6:558706. doi: 10.3389/fbuil.2020.558706");
     w.setCite(citeText);
 
     
@@ -185,7 +186,6 @@ int main(int argc, char *argv[])
     QFile file(":/styleCommon/stylesheetMAC.qss");
 #endif
 
-
     if(file.open(QFile::ReadOnly)) {
         a.setStyleSheet(file.readAll());
         qDebug() << "Stylesheet loaded: " << file.fileName();	
@@ -194,35 +194,50 @@ int main(int argc, char *argv[])
       qDebug() << "could not open stylesheet";
     }
 
-
-
+    QString analyticsOption = getConfigOptionString("GoogleAnalytics");
+    
 #ifdef _SC_RELEASE
 
-    //Setting Google Analytics Tracking Information
     qDebug() << "Running a Release Version of EE-UQ";
-    GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
-    GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
-    GoogleAnalytics::CreateSessionId();
-    GoogleAnalytics::StartSession();
 
-    // Opening a QWebEngineView and using github to get app geographic usage
-    QWebEngineView view;
-    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
-    view.resize(1024, 750);
-    view.show();
-    view.hide();
+    if (analyticsOption != "No") {
+
+      GoogleAnalytics::SetMeasurementId("G-7P3PV7SM6J");
+      GoogleAnalytics::SetAPISecret("UxuZgMQaS7aoqpQskrcG9w");
+      GoogleAnalytics::CreateSessionId();
+      GoogleAnalytics::StartSession();
+
+      qDebug() << "Google Analytics: Started";
+      
+      // Opening a QWebEngineView and using github to get app geographic usage
+      QWebEngineView view;
+      view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+	view.resize(1024, 750);
+	view.show();
+	view.hide();
+	
+    } else
+      qDebug() << "Google Analytics: None";
     
+        
 #endif
 
 #ifdef _ANALYTICS
 
     //Setting Google Analytics Tracking Information
-    qDebug() << "compiled with: ANALYTICS";
-    GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
-    GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
-    GoogleAnalytics::CreateSessionId();
-    GoogleAnalytics::StartSession();
+    if (analyticsOption != "No") {
+      qDebug() << "Google Analytics: Started";    
+      qDebug() << "compiled with: ANALYTICS";
+      GoogleAnalytics::SetMeasurementId("G-CPFD5EFJ4Y");
+      GoogleAnalytics::SetAPISecret("vxNbZfRdRUyVx3fBpdUXxg");
+      GoogleAnalytics::CreateSessionId();
+      GoogleAnalytics::StartSession();
+
+      qDebug() << "Google Analytics: Started";
     
+  } else
+    qDebug() << "Google Analytics: None";              
+          
 #endif
 
     //
@@ -235,12 +250,14 @@ int main(int argc, char *argv[])
 #ifdef _GA_AFTER
     
     // Opening a QWebEngineView and using github to get app geographic usage
-    qDebug() << "compiled with: _GA_AFTER";
-    QWebEngineView view;
-    view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
-    view.resize(1024, 750);
-    view.show();
-    view.hide();
+    if (analyticsOption != "No") {    
+      qDebug() << "compiled with: _GA_AFTER";
+      QWebEngineView view;
+      view.setUrl(QUrl("https://nheri-simcenter.github.io/EE-UQ/GA4.html"));
+      view.resize(1024, 750);
+      view.show();
+      view.hide();
+    }
     
 #endif        
     

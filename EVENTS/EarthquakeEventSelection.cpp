@@ -52,6 +52,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "peerNGA/PEER_NGA_Records.h"
 #include "userDefinedDatabase/User_Defined_Database.h"
 #include "physicsBasedSimulation/PhysicsBasedMotionSelection.h"
+#include "drmEvent/drmEvent.h"
 #include "SimCenterAppMulti.h"
 
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariables,
@@ -76,6 +77,8 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     this->addComponent(tr("Multiple SimCenter"), "ExistingSimCenterEvents", theExistingEvents);
     this->addComponent(tr("User Specified Database"), "USER_DEFINED_DATABASE", userDefinedDatabase);
     this->addComponent(tr("Physics Based Simulations"), "PhysicsBasedMotion", physicsBased);
+    DRMevent *drmEventWidget = new DRMevent(this);
+    this->addComponent(tr("DRM Event"), "DRM", drmEventWidget);
 
   if (doMulti == true) {
     SimCenterAppWidget *multi = new SimCenterAppMulti(QString("Events"), QString("MultiModel-Events"),this, this);

@@ -53,6 +53,7 @@ class SC_DoubleLineEdit;
 class SC_IntLineEdit;
 class SC_DirEdit;
 class SC_ComboBox;
+class QPushButton;
 
 class IstanbulSingleSite : public SimCenterAppWidget
 {
@@ -73,6 +74,7 @@ signals:
 
 public slots:
   void downloadMotions(void);
+  void motionsDownloaded(int returnCode);
   
 private:
   SC_DoubleLineEdit *lat;
@@ -84,6 +86,11 @@ private:
   int count;
   bool ok;
   
+  QPushButton *getMotions;
+  bool downloadedMotions;
+  bool motionsDownloading;
+  QString username;
+  QString password;
 };
 
 #endif // ISTANBUL_SINGLE_SITE_WIDGET_H

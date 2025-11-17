@@ -1,0 +1,5 @@
+id: eeuq-0013
+title: Full 3D SSI Model with Laminar and DRM Inputs
+summary: Creates a full 3D SSI model of a 10-story steel frame with elastic soil layers and compares laminar/perimeter boundaries (PEER record) versus DRM boundaries (predefined DesignSafe H5DRM).
+difficulty: 2
+
