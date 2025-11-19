@@ -1,0 +1,16 @@
+shapely
+numpy
+plotly
+scipy
+scikit-learn
+matplotlib
+tapipy
+geopandas
+pandas
+xarray
+GPy
+mpi4py
+paramz
+scipy
+openseespy
+femora
