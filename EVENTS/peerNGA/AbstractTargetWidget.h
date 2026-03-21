@@ -16,7 +16,7 @@ public:
     virtual QList<QPair<double, double>> spectrum() const = 0;
 
 signals:
-    virtual void targetChanged();
+    void targetChanged();
     void statusUpdated(QString status);
 
 };
