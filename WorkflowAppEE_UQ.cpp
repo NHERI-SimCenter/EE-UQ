@@ -79,7 +79,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <LocalApplication.h>
 #include <RemoteApplication.h>
 #include <RemoteJobManager.h>
-#include <RunWidget.h>
+#include "RunWidget.h"
 #include <InputWidgetBIM.h>
 #include <Stampede3Machine.h>
 #include <SC_ToolDialog.h>

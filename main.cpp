@@ -10,7 +10,7 @@
 #include <QObject>
 
 #include <TapisV3.h>
-#include <WorkflowAppEE_UQ.h>
+#include "WorkflowAppEE_UQ.h"
 #include <QCoreApplication>
 
 #include <QApplication>
