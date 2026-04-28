@@ -55,6 +55,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "drmEvent/drmEvent.h"
 #include "SimCenterAppMulti.h"
 
+#include <QCoreApplication>
+
 EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *theRandomVariables,
 						   GeneralInformationWidget* generalInfo, bool doMulti,
 						   QWidget *parent)
@@ -67,7 +69,6 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     ExistingPEER_Records *theExistingPeerEvents = new ExistingPEER_Records(theRandomVariables);
     ExistingSimCenterEvents *theExistingEvents = new ExistingSimCenterEvents(theRandomVariables);
     User_Defined_Database *userDefinedDatabase = new User_Defined_Database(generalInfo, this);
-    PhysicsBasedMotionSelection *physicsBased = new PhysicsBasedMotionSelection(generalInfo, this);
 
     // upper case below need to move to tools
     this->addComponent(tr("Stochastic Ground Motion"),"StochasticGroundMotion", theStochasticMotionWidget);
@@ -76,9 +77,16 @@ EarthquakeEventSelection::EarthquakeEventSelection(RandomVariablesContainer *the
     this->addComponent(tr("Multiple PEER"), "ExistingPEER_Events", theExistingPeerEvents);
     this->addComponent(tr("Multiple SimCenter"), "ExistingSimCenterEvents", theExistingEvents);
     this->addComponent(tr("User Specified Database"), "USER_DEFINED_DATABASE", userDefinedDatabase);
-    this->addComponent(tr("Physics Based Simulations"), "PhysicsBasedMotion", physicsBased);
-    DRMevent *drmEventWidget = new DRMevent(this);
-    this->addComponent(tr("DRM Event"), "DRM", drmEventWidget);
+
+    // Physics Based Simulations and DRM Event are advanced earthquake event
+    // types intended for EE-UQ users.
+    QString appName = QCoreApplication::applicationName();
+    if (appName != "PBE") {
+        PhysicsBasedMotionSelection *physicsBased = new PhysicsBasedMotionSelection(generalInfo, this);
+        this->addComponent(tr("Physics Based Simulations"), "PhysicsBasedMotion", physicsBased);
+        DRMevent *drmEventWidget = new DRMevent(this);
+        this->addComponent(tr("DRM Event"), "DRM", drmEventWidget);
+    }
 
   if (doMulti == true) {
     SimCenterAppWidget *multi = new SimCenterAppMulti(QString("Events"), QString("MultiModel-Events"),this, this);
