@@ -23,7 +23,8 @@ PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
     // ngawest2.berkeley.edu
     cookie.setDomain("peer-prod-03.ist.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
-
+    networkManager.setRedirectPolicy(QNetworkRequest::ManualRedirectPolicy);
+    
     searchScaleFlag = -1;
 
     setupConnection();
