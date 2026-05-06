@@ -144,7 +144,7 @@ PhysicsBasedMotionSelection::PhysicsBasedMotionSelection(GeneralInformationWidge
     // connect signal and slots
     //
 
-    connect(eventSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(eventSelectionChanged(QString)));
+    connect(eventSelection, SIGNAL(currentTextChanged(QString)), this, SLOT(eventSelectionChanged(QString)));
 
     global_layout->setSpacing(0);
     layout->setSpacing(0);
