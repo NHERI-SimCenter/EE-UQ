@@ -65,6 +65,7 @@ postprocessDAKOTA
 debug.log
 MDOF_BuildingModelToSAM
 tmp.SimCenter
-build
+build*
 userID.sh
 .DS_Store
+CMakePresets.json
