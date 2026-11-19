@@ -19,7 +19,7 @@ static const QString peerHost("https://ngawest2.berkeley.edu");
 // uncomment the next line to see all PEER http requests/replies in the console
 //
 
-// #define PEER_NGA_DEBUG
+#define PEER_NGA_DEBUG
 
 [[maybe_unused]] static QString shortValue(const QByteArray& value)
 {
@@ -501,7 +501,17 @@ void PeerNgaWest2Client::processGetRecordsReply()
 {
 
     emit statusUpdated("Downloading Ground Motions from PEER NGA West 2 Database");
-    auto replyText = QString(getRecordsReply->readAll());
+    QByteArray replyData = getRecordsReply->readAll();
+
+    // sometimes the search redirects straight to the zip, so this reply IS the records
+    // (zip files start with "PK\x03\x04")
+    QString contentType = getRecordsReply->header(QNetworkRequest::ContentTypeHeader).toString();
+    if (contentType.contains("zip", Qt::CaseInsensitive) || replyData.startsWith("PK\x03\x04")) {
+        saveRecords(replyData);
+        return;
+    }
+
+    auto replyText = QString::fromUtf8(replyData);
     // qDebug() << "::processGetRecordsReply: reply Request:";    
     // qDebug() << "replyText: " << replyText;
 #ifdef PEER_NGA_DEBUG
@@ -552,7 +562,11 @@ void PeerNgaWest2Client::processGetRecordsReply()
 
 void PeerNgaWest2Client::processDownloadRecordsReply()
 {
-  // qDebug() << "PROCESS DOWNLOADS RECORD REPLY";
+    saveRecords(downloadRecordsReply->readAll());
+}
+
+void PeerNgaWest2Client::saveRecords(const QByteArray& zipData)
+{
     emit selectionFinished();
     auto tempLocation = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
 
@@ -575,7 +589,7 @@ void PeerNgaWest2Client::processDownloadRecordsReply()
         return;
     }
 
-    file.write(downloadRecordsReply->readAll());
+    file.write(zipData);
     file.close();
 
     emit statusUpdated("Ground Motions Downloaded Sucessfully");

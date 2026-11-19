@@ -86,6 +86,7 @@ private:
     void processPostSearchReply();
     void processGetRecordsReply();
     void processDownloadRecordsReply();
+    void saveRecords(const QByteArray& zipData);
     void retryPostSpectra();
     void retry();
 
