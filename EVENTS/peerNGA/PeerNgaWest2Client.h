@@ -16,7 +16,15 @@ class PeerNgaWest2Client : public QObject
 public:
     explicit PeerNgaWest2Client(QObject *parent = nullptr);
     bool loggedIn();
-    void signIn(QString username, QString password);
+
+    // Login is done interactively in a QWebEngineView (PeerLoginDialog) because the
+    // site is protected by Cloudflare Turnstile; the dialog hands the resulting
+    // session cookies + Rails CSRF token to this client, which then issues requests as before.
+    void setSession(const QList<QNetworkCookie>& cookies, const QString& csrfToken);
+    void invalidateSession();
+
+    // re-post the last spectrum request (e.g. after logging in again on sessionExpired)
+    void resubmit();
     void selectRecords(double sds, double sd1, double tl, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, QVariant durationRange, int peerSRkey, int peerSRmeanFlag, int peerFaultType, int peerPulse);
     void selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, QVariant durationRange, int peerSRkey, int peerSRmeanFlag, int peerFaultType, int peerPulse);
     void selectRecords(QStringList);
@@ -28,6 +36,7 @@ public:
 
 signals:
     void loginFinished(bool result);
+    void sessionExpired();
     void recordsDownloaded(QString recordsPath);
     void statusUpdated(QString status);
     void selectionStarted();
@@ -38,8 +47,6 @@ public slots:
 private:
     QNetworkAccessManager networkManager;
 
-    QNetworkReply* signInPageReply;
-    QNetworkReply* signInReply;
     QNetworkReply* getSpectraReply;
     QNetworkReply* postSpectraReply;
     QNetworkReply* postSearchReply;
@@ -48,8 +55,6 @@ private:
     QNetworkReply* uploadFileReply;
 
     QString authenticityToken;
-    QString username;
-    QString password;
     int nRecords;
     int SRkey;
     int SRmeanFlag;
@@ -68,26 +73,20 @@ private:
 
     //Data for retry on failure
     int retries;
-    QList<QNetworkCookie> signInCookies;
     QNetworkRequest postSpectraRequest;
     QUrlQuery postSpectraParameters;
-    QNetworkRequest peerSignInRequest;
-    QUrlQuery signInParameters;
     QNetworkRequest uploadFileRequest;
     QStringList recordsToDownload;
 
     void setupConnection();
     void processNetworkReply(QNetworkReply *reply);
 
-    void processSignInPageReply();
-    void processSignInReply();
     void processUploadFileReply();
     void processPostSpectrumReply();
     void processPostSearchReply();
     void processGetRecordsReply();
     void processDownloadRecordsReply();
     void retryPostSpectra();
-    void retrySignIn();
     void retry();
 
 

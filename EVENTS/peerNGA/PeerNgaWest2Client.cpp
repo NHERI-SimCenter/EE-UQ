@@ -12,16 +12,79 @@
 #include<QHttpMultiPart>
 #include <QSslConfiguration>
 
-#ifdef _INCLUDE_USER_PASS
-#include "R2DUserPass.h"
+static const QString peerHost("https://ngawest2.berkeley.edu");
+
+//
+// DEBUG helpers - log every request sent and reply received
+// uncomment the next line to see all PEER http requests/replies in the console
+//
+
+// #define PEER_NGA_DEBUG
+
+[[maybe_unused]] static QString shortValue(const QByteArray& value)
+{
+    // don't dump full session secrets to the console
+    return value.size() > 16 ? QString::fromUtf8(value.left(16)) + "..." : QString::fromUtf8(value);
+}
+
+static void logRequest(const char* method, QNetworkAccessManager& manager,
+                       const QNetworkRequest& request, const QByteArray& body = QByteArray())
+{
+#ifndef PEER_NGA_DEBUG
+    Q_UNUSED(method); Q_UNUSED(manager); Q_UNUSED(request); Q_UNUSED(body);
+#else
+    qDebug().noquote() << "PEER >>" << method << request.url().toString();
+
+    QStringList cookieList;
+    for (const auto& cookie : manager.cookieJar()->cookiesForUrl(request.url()))
+        cookieList << QString::fromUtf8(cookie.name()) + "=" + shortValue(cookie.value());
+    qDebug().noquote() << "     cookies sent:" << cookieList.join("; ");
+
+    for (const auto& header : request.rawHeaderList())
+        qDebug().noquote() << "     header:" << header << ":" << request.rawHeader(header);
+
+    if (!body.isEmpty())
+        qDebug().noquote() << "     body:" << QString::fromUtf8(body.left(2000));
 #endif
+}
+
+static void logReply(QNetworkReply* reply, const char* name)
+{
+#ifndef PEER_NGA_DEBUG
+    Q_UNUSED(reply); Q_UNUSED(name);
+#else
+    int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QString reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+
+    qDebug().noquote() << "PEER <<" << name << status << reason << reply->url().toString();
+    if (reply->error() != QNetworkReply::NoError)
+        qDebug().noquote() << "     error:" << reply->error() << reply->errorString();
+
+    if (reply->hasRawHeader("Location"))
+        qDebug().noquote() << "     Location:" << reply->rawHeader("Location");
+    if (reply->hasRawHeader("Content-Type"))
+        qDebug().noquote() << "     Content-Type:" << reply->rawHeader("Content-Type");
+
+    // Set-Cookie may contain several cookies separated by newlines
+    for (const auto& line : reply->rawHeader("Set-Cookie").split('\n'))
+        if (!line.isEmpty())
+            qDebug().noquote() << "     Set-Cookie:" << shortValue(line.split(';').first());
+
+    // peek so the processXXX functions can still readAll()
+    QByteArray body = reply->peek(reply->bytesAvailable());
+    qDebug().noquote() << "     body (" << body.size() << "bytes):"
+                       << QString::fromUtf8(body.left(1500)).simplified();
+#endif
+}
 
 PeerNgaWest2Client::PeerNgaWest2Client(QObject *parent) : QObject(parent),
+    getSpectraReply(nullptr), postSpectraReply(nullptr), postSearchReply(nullptr),
+    getRecordsReply(nullptr), downloadRecordsReply(nullptr), uploadFileReply(nullptr),
     nRecords(3), isLoggedIn(false), retries(0)
 {
     QNetworkCookie cookie("sourceDb_flag", "1");
     // ngawest2.berkeley.edu
-    cookie.setDomain("peer-prod-03.ist.berkeley.edu");
+    cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
     networkManager.setRedirectPolicy(QNetworkRequest::ManualRedirectPolicy);
     
@@ -35,18 +98,44 @@ bool PeerNgaWest2Client::loggedIn()
     return this->isLoggedIn;
 }
 
-void PeerNgaWest2Client::signIn(QString username, QString password)
+void PeerNgaWest2Client::setSession(const QList<QNetworkCookie>& cookies, const QString& csrfToken)
 {
-    emit statusUpdated("Logging in to PEER NGA West 2 Database");
-    //TODO: storing password in memory may not be the best choice for security
-    //a more secure way of handling password might be needed
-    this->username = username;
-    this->password = password;
+    // copy the browser session (_session_id, remember token, ...) into our cookie jar
+    for (const auto& cookie : cookies)
+        networkManager.cookieJar()->insertCookie(cookie);
 
-    QNetworkRequest peerSignInPageRequest(QUrl("https://peer-prod-03.ist.berkeley.edu/users/sign_in"));
-    signInPageReply = networkManager.get(peerSignInPageRequest);
+    authenticityToken = csrfToken;
+    isLoggedIn = !authenticityToken.isEmpty();
+
+#ifdef PEER_NGA_DEBUG
+    qDebug().noquote() << "PEER setSession: csrf token length" << csrfToken.length()
+                       << "," << cookies.size() << "cookies from browser:";
+    for (const auto& cookie : cookies)
+        qDebug().noquote() << "     " << cookie.name() << "=" << shortValue(cookie.value())
+                           << "domain:" << cookie.domain() << "path:" << cookie.path()
+                           << "secure:" << cookie.isSecure() << "httpOnly:" << cookie.isHttpOnly();
+    QStringList jar;
+    for (const auto& cookie : networkManager.cookieJar()->cookiesForUrl(QUrl(peerHost + "/spectras")))
+        jar << QString::fromUtf8(cookie.name());
+    qDebug().noquote() << "     cookie jar now sends for /spectras:" << jar.join(", ");
+#endif
+
+    if (isLoggedIn)
+        emit statusUpdated("Successfully signed in to PEER NGA West 2");
+    emit loginFinished(isLoggedIn);
 }
-//https://peer-prod-03.ist.berkeley.edu/
+
+void PeerNgaWest2Client::invalidateSession()
+{
+    isLoggedIn = false;
+    authenticityToken.clear();
+}
+
+void PeerNgaWest2Client::resubmit()
+{
+    retries = 0;
+    retryPostSpectra();
+}
 
 void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, int nRecords, QVariant magnitudeRange, QVariant distanceRange, QVariant vs30Range, QVariant durationRange, int peerSRkey, int peerSRmeanFlag, int peerFaultType, int peerPulse)
 {
@@ -63,7 +152,7 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     this->faultType = peerFaultType;
     this->pulse = peerPulse;
 
-    uploadFileRequest.setUrl(QUrl("https://peer-prod-03.ist.berkeley.edu/spectras/uploadFile"));
+    uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     //Token part
@@ -95,6 +184,9 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     multiPart->append(commitPart);
 
     recordsToDownload.clear();
+    logRequest("POST (multipart)", networkManager, uploadFileRequest,
+               "authenticity_token=" + authenticityToken.toUtf8() + "\n"
+               + "upload[datafile]=UserSpectrum.csv:\n" + userSpectrum.toUtf8() + "commit=Upload");
     uploadFileReply = networkManager.post(uploadFileRequest, multiPart);
 }
 
@@ -110,10 +202,10 @@ void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nR
     this->pulse = peerPulse;
 
     QNetworkCookie cookie("SpectrumModel_Dropdown", "99");
-    cookie.setDomain("peer-prod-03.ist.berkeley.edu");
+    cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
 
-    postSpectraRequest.setUrl(QUrl("https://peer-prod-03.ist.berkeley.edu/spectras"));
+    postSpectraRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras"));
     postSpectraRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     postSpectraParameters.clear();
@@ -135,6 +227,7 @@ void PeerNgaWest2Client::selectRecords(double sds, double sd1, double tl, int nR
     this->durationRange = durationRange;
 
     recordsToDownload.clear();
+    logRequest("POST", networkManager, postSpectraRequest, postSpectraParameters.query().toUtf8());
     postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
 }
 
@@ -144,10 +237,10 @@ void PeerNgaWest2Client::selectRecords(QStringList records)
     emit statusUpdated("Performing Record Selection...");
 
     QNetworkCookie cookie("SpectrumModel_Dropdown", "88");
-    cookie.setDomain("peer-prod-03.ist.berkeley.edu");
+    cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
 
-    postSpectraRequest.setUrl(QUrl("https://peer-prod-03.ist.berkeley.edu/spectras"));
+    postSpectraRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras"));
     postSpectraRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     postSpectraParameters.clear();
@@ -161,6 +254,7 @@ void PeerNgaWest2Client::selectRecords(QStringList records)
     postSpectraParameters.addQueryItem("spectra[menu_Mechanism]", "1");
 
     recordsToDownload = records;
+    logRequest("POST", networkManager, postSpectraRequest, postSpectraParameters.query().toUtf8());
     postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
 }
 
@@ -183,13 +277,15 @@ void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
 
        qDebug() << "support ssl: " << QSslSocket::supportsSsl();
   */
-    if(reply == signInPageReply)
-        processSignInPageReply();
+    const char* name = (reply == uploadFileReply)      ? "uploadFile"
+                     : (reply == postSpectraReply)     ? "postSpectra"
+                     : (reply == postSearchReply)      ? "postSearch"
+                     : (reply == getRecordsReply)      ? "getRecords"
+                     : (reply == downloadRecordsReply) ? "downloadRecords"
+                                                       : "unknown";
+    logReply(reply, name);
 
-    else if(reply == signInReply)
-        processSignInReply();
-
-    else if(reply == uploadFileReply)
+    if(reply == uploadFileReply)
         processUploadFileReply();
 
     else if(reply == postSpectraReply)
@@ -207,63 +303,8 @@ void PeerNgaWest2Client::processNetworkReply(QNetworkReply *reply)
     else
         qDebug() << reply->readAll();
 
+    reply->deleteLater();
 }
-
-void PeerNgaWest2Client::processSignInPageReply()
-{
-
-    if(signInPageReply->error() == QNetworkReply::HostNotFoundError)
-    {
-        emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
-        emit loginFinished(false);
-        return;
-    }
-
-#ifdef _WIN32
-    // mac reg expression not working with \" char .. improvise!
-    QRegularExpression regex("authenticity_token.+div");
-    auto match = regex.match(QString(signInPageReply->readAll()));
-    if (match.hasMatch()) {
-        QString stringCaptured = match.captured(0);
-        QString startString = stringCaptured.remove(0,41);
-        QString finalString = startString.remove(44,100);
-        authenticityToken = finalString;
-
-    } else {
-        qDebug() << "PeerNGAClient: NO MATCH token\n";
-    }
-
-#else
-    QRegularExpression regex("[\\s\\S]+authenticity_token.+value=\"(.+)\".+<\\/div>");
-    auto match = regex.match(QString(signInPageReply->readAll()));
-    if (match.hasMatch()) {
-
-    } else {
-        qDebug() << "PeerNGAClient: NO MATCH token\n";      
-    }
-
-    authenticityToken = match.captured(1);
-#endif
-
-    peerSignInRequest.setUrl(QUrl("https://peer-prod-03.ist.berkeley.edu/users/sign_in"));
-    peerSignInRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-
-    signInParameters.clear();
-    signInParameters.addQueryItem("authenticity_token", authenticityToken);
-#ifdef _INCLUDE_USER_PASS
-    signInParameters.addQueryItem("user[email]", getPEERUserName());
-    signInParameters.addQueryItem("user[password]", getPEERPassWord());
-#else
-    signInParameters.addQueryItem("user[email]", username);
-    signInParameters.addQueryItem("user[password]", password);    
-#endif
-
-    signInParameters.addQueryItem("user[remember_me]", "0");
-    signInParameters.addQueryItem("commit", "Sign in");
-
-    signInReply = networkManager.post(peerSignInRequest, signInParameters.query().toUtf8());
-}
-
 
 static void debugRequest(QNetworkRequest request, QByteArray data = QByteArray())
 {
@@ -275,47 +316,15 @@ static void debugRequest(QNetworkRequest request, QByteArray data = QByteArray()
   qDebug() << data;
 }
 
-void PeerNgaWest2Client::processSignInReply()
-{
-    if(signInReply->error() == QNetworkReply::NoError)
-    {
-        //Checking if we are being redirected
-        //This means log in is sucessful
-        if(signInReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 302)
-        {
-            emit statusUpdated("Sucessfully signed in to PEER NGA West 2");
-            isLoggedIn = true;
-            emit loginFinished(true);
-
-            if(retries > 0 && retries <= 5)
-            {
-                retryPostSpectra();
-            }
-            return;
-        }
-    }
-
-    auto err = signInReply->error();
-
-    if(signInReply->error() == QNetworkReply::HostNotFoundError)
-        emit statusUpdated("Failed to connect to PEER NGA West 2, Please check your internet connection");
-    else
-        emit statusUpdated("Failed to login to PEER NGA West 2 database, please check your credentials!");
-
-    emit loginFinished(false);
-    isLoggedIn = false;
-
-}
-
 void PeerNgaWest2Client::processUploadFileReply()
 {
   // qDebug() << "PROCESS UPLOAD FILE REPLY";
 
     QNetworkCookie cookie("SpectrumModel_Dropdown", "0");
-    cookie.setDomain("peer-prod-03.ist.berkeley.edu");
+    cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
 
-    postSpectraRequest.setUrl(QUrl("https://peer-prod-03.ist.berkeley.edu/spectras"));
+    postSpectraRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras"));
     postSpectraRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     postSpectraParameters.clear();
@@ -328,12 +337,13 @@ void PeerNgaWest2Client::processUploadFileReply()
     postSpectraParameters.addQueryItem("model[ID]", "0");
     postSpectraParameters.addQueryItem("spectra[menu_Mechanism]", "1");
 
-    for (auto cookie: networkManager.cookieJar()->cookiesForUrl(QUrl("https://peer-prod-03.ist.berkeley.edu")))
+    for (auto cookie: networkManager.cookieJar()->cookiesForUrl(QUrl("https://ngawest2.berkeley.edu")))
         if (0 == cookie.name().compare("upload_file"))
             postSpectraParameters.addQueryItem("spectra[filename]", cookie.value());
 
 
     //debugRequest(postSpectraRequest, postSpectraParameters.query().toUtf8());
+    logRequest("POST", networkManager, postSpectraRequest, postSpectraParameters.query().toUtf8());
     postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
 }
 
@@ -352,18 +362,18 @@ void PeerNgaWest2Client::processPostSpectrumReply()
     {
         int statusCode = postSpectraReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
-        //if we get redirected to sign in we will retry
-        if(statusCode == 302) {
-            QUrl redirectUrl = postSpectraReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-            if (0 == redirectUrl.toString().compare("/users/sign_in?unauthenticated=true"))
-            {
-                retry();
-                return;
-            }
+        //if we get redirected to sign in, the session has expired -> need to log in again
+        QUrl redirectUrl = postSpectraReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+        if((statusCode == 302 || statusCode == 303) && redirectUrl.path().endsWith("/members/sign_in")) {
+            invalidateSession();
+            emit statusUpdated("PEER NGA West 2 session has expired, please log in again");
+            emit sessionExpired();
+            return;
         }
 
         retries = 0;
-        auto url = postSpectraReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+        // Location may be relative or absolute
+        auto url = postSpectraReply->url().resolved(redirectUrl);
         auto searchPost = url.toString().remove("/new").remove("/edit").remove("/searches").append("/searches");
 
         QNetworkRequest searchPostRequest(searchPost);
@@ -465,7 +475,7 @@ void PeerNgaWest2Client::processPostSpectrumReply()
             params.addQueryItem("search[magnitude]", "");
         }
 
-        debugRequest(searchPostRequest, params.query().toUtf8());
+        logRequest("POST", networkManager, searchPostRequest, params.query().toUtf8());
         postSearchReply = networkManager.post(searchPostRequest, params.query().toUtf8());
     }
 }
@@ -475,14 +485,15 @@ void PeerNgaWest2Client::processPostSearchReply()
   // qDebug() << "PROCESS POST SEARCH REPLY";
     emit statusUpdated("Retrieving Record Selection Results from PEER NGA West 2 Database");
 
-    auto url = postSearchReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+    auto url = postSearchReply->url().resolved(postSearchReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl());
     auto getRecordsUrl = url.toString().replace("/edit", "/?getRecords=1");
 
 
     QNetworkRequest getRecordsRequest(getRecordsUrl);
-    
+
     //qDebug() << "URL: " << getRecordsRequest.url().toString();    
     
+    logRequest("GET", networkManager, getRecordsRequest);
     getRecordsReply = networkManager.get(getRecordsRequest);
 }
 
@@ -493,15 +504,48 @@ void PeerNgaWest2Client::processGetRecordsReply()
     auto replyText = QString(getRecordsReply->readAll());
     // qDebug() << "::processGetRecordsReply: reply Request:";    
     // qDebug() << "replyText: " << replyText;
-    QString newUrl = replyText.remove("window.location.href = \"").remove("\";").prepend("https://peer-prod-03.ist.berkeley.edu");
-    // qDebug() << "NewURL: " << newUrl;
-    
-    auto url = newUrl;
+#ifdef PEER_NGA_DEBUG
+    // the site's notice has the download count/limit and search warnings - pass it on
+    static const QRegularExpression noticeRegex(R"(<div id="notice">\s*(.*?)\s*</div>)",
+                                                QRegularExpression::DotMatchesEverythingOption);
+    auto notice = noticeRegex.match(replyText);
+    if (notice.hasMatch())
+        qDebug().noquote() << "PEER notice:" << notice.captured(1).simplified();
+#endif
+
+    // new site: HTML page with <a href="/tmp/UnscaledAccRecordNNN.zip">
+    // old site: JS snippet  window.location.href = "/path/to/records.zip";
+    static const QRegularExpression zipLinkRegex(R"(href\s*=\s*["']([^"']+\.zip)["'])",
+                                                 QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression jsLinkRegex(R"(window\.location(?:\.href)?\s*=\s*["']([^"']+)["'])");
+    auto match = zipLinkRegex.match(replyText);
+    if (!match.hasMatch())
+        match = jsLinkRegex.match(replyText);
+    if (!match.hasMatch()) {
+        // save the whole reply so we can see what the site sent back
+        QString dumpPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/PeerGetRecordsReply.html";
+        QFile dump(dumpPath);
+        if (dump.open(QIODevice::WriteOnly)) {
+            dump.write(replyText.toUtf8());
+            dump.close();
+        }
+        qDebug().noquote() << "PEER getRecords: no download link found in reply, full reply saved to" << dumpPath;
+        emit statusUpdated("Failed to get ground motion download link from PEER NGA West 2 Database");
+        emit selectionFinished();
+        return;
+    }
+
+    // link may be relative or absolute
+    QUrl url = getRecordsReply->url().resolved(QUrl(match.captured(1)));
+#ifdef PEER_NGA_DEBUG
+    qDebug().noquote() << "PEER getRecords: download link" << url.toString();
+#endif
 
     QNetworkRequest downloadRecordsRequest(url);
 
     // qDebug() << "processGetRecordsReply: URL: " << downloadRecordsRequest.url().toString();        
     
+    logRequest("GET", networkManager, downloadRecordsRequest);
     downloadRecordsReply = networkManager.get(downloadRecordsRequest);
 }
 
@@ -542,29 +586,24 @@ void PeerNgaWest2Client::retryPostSpectra()
 {
     postSpectraParameters.removeQueryItem("authenticity_token");
     postSpectraParameters.addQueryItem("authenticity_token", authenticityToken);
+    logRequest("POST", networkManager, postSpectraRequest, postSpectraParameters.query().toUtf8());
     postSpectraReply = networkManager.post(postSpectraRequest, postSpectraParameters.query().toUtf8());
-}
-
-void PeerNgaWest2Client::retrySignIn()
-{
-    QNetworkRequest peerSignInPageRequest(QUrl("https://peer-prod-03.ist.berkeley.edu/users/sign_in"));
-    signInPageReply = networkManager.get(peerSignInPageRequest);
 }
 
 void PeerNgaWest2Client::retry()
 {
+    // network-level failure: re-post (login can no longer be done silently, see sessionExpired)
     if(retries < 5)
     {
         retries++;
         emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database, retrying");
-        retrySignIn();
+        retryPostSpectra();
     }
     else
     {
         emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
         retries = 0;
         emit selectionFinished();
-        retrySignIn();
     }
 }
 

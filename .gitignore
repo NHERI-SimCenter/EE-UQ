@@ -69,3 +69,5 @@ build*
 userID.sh
 .DS_Store
 CMakePresets.json
+# private PEER account for automatic login - never commit
+EVENTS/peerNGA/PeerMasterLogin.h
