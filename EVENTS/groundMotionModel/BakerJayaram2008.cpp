@@ -47,7 +47,7 @@ double BakerJayaram2008(double T1, double T2) {
     double Tmax = std::max(T1,T2);
 
     // coefficients
-    double C1 = (1.0-cos(PI/2.0)-0.366*log(Tmax/std::max(Tmin,0.109)));
+    double C1 = (1.0-cos(PI/2.0-0.366*log(Tmax/std::max(Tmin,0.109))));
     double C2 = 1000.0;
     if (Tmax < 0.2) {
         C2 = 1.0-0.105*(1.0-1.0/(1.0+exp(100.0*Tmax-5.0)))*(Tmax-Tmin)/(Tmax-0.0099);
