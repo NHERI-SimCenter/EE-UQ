@@ -10,6 +10,9 @@
 #include <math.h>
 #include <QStandardItemModel>
 #include "groundMotionModel/BakerJayaram2008.h"
+#include "UsgsNshmpService.h"
+#include <algorithm>
+#include <cassert>
 
 NSHMPDeagg::NSHMPDeagg(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -44,10 +47,13 @@ NSHMPDeagg::NSHMPDeagg(GeneralInformationWidget* generalInfoWidget, QWidget* par
     layout->addWidget(new QLabel(tr("Disagg. NSHM")), 3, 0);
     editionBox = new QComboBox();
     layout->addWidget(editionBox, 3, 1);
-    editionBox->addItem("Conterminous U.S. 2014 v4.2.0", "https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2014B/COUS");
-    editionBox->addItem("Conterminous U.S. 2014 v4.1.4", "https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2014/COUS");
-    editionBox->addItem("Conterminous U.S. 2008 v3.3.3", "https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2008/COUS");
-    editionBox->addItem("Alaska 2007 v2.1.2", "https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2007/AK");
+    // USGS retired the 2014/2008/2007 nshmp-haz-ws services (Nov 2026); these are the models
+    // offered by the current https://earthquake.usgs.gov/ws/nshmp services. All of them
+    // provide every period in imtBox below.
+    editionBox->addItem("Conterminous U.S. 2023", UsgsNshmp::baseUrl + "/conus-2023/dynamic");
+    editionBox->addItem("Conterminous U.S. 2018", UsgsNshmp::baseUrl + "/conus-2018/dynamic");
+    editionBox->addItem("Alaska 2023", UsgsNshmp::baseUrl + "/alaska-2023/dynamic");
+    editionBox->addItem("Hawaii 2021", UsgsNshmp::baseUrl + "/hawaii-2021/dynamic");
     editionBox->setCurrentIndex(0);
 
     auto positiveIntegerValidator = new QIntValidator(1, 9999); // USGS limits the return period from 2 to 9999
@@ -61,20 +67,17 @@ NSHMPDeagg::NSHMPDeagg(GeneralInformationWidget* generalInfoWidget, QWidget* par
     layout->addWidget(new QLabel(tr("GM Model")), 5, 0);
     gmpeBox = new QComboBox();
     layout->addWidget(gmpeBox, 5, 1);
-    gmpeBox->addItem("Boore, Stewart, Syhan & Atkinson (2014)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=BSSA_14");
-    gmpeBox->addItem("Boore, Stewart, Seyhan & Atkinson (2014) : Basin", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=BSSA_14_BASIN");
-    gmpeBox->addItem("Campbell & Bozorgnia (2014)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=CB_14");
-    gmpeBox->addItem("Campbell & Bozorgnia (2014) : Basin", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=CB_14_BASIN");
-    gmpeBox->addItem("Chiou & Youngs (2014)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=CY_14");
-    gmpeBox->addItem("Chiou & Youngs (2014) : Basin", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=CB_14_BASIN");
-    gmpeBox->addItem("Idriss (2014)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=IDRISS_14");
-    gmpeBox->addItem("Combined: CEUS 2014", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=COMBINED_CEUS_2014");
-    gmpeBox->addItem("Combined: WUS 2014 (4.1)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=COMBINED_WUS_2014_41");
-    gmpeBox->addItem("Combined: WUS 2014 (4.2)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=COMBINED_WUS_2014_42");
-    gmpeBox->addItem("Combined: CEUS 2018 (5.0)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=COMBINED_CEUS_2018");
-    gmpeBox->addItem("Combined: WUS 2018 (5.0)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=COMBINED_WUS_2018");
-    gmpeBox->addItem("NGA-Sub Interface (2018)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=NGA_SUB_USGS_INTERFACE");
-    gmpeBox->addItem("NGA-Sub Slab (2018)", "https://earthquake.usgs.gov/nshmp-haz-ws/gmm/spectra?gmm=NGA_SUB_USGS_SLAB");
+    // the COMBINED_* and NGA_SUB_USGS_* models are not offered by the new gmm service
+    const QString gmmUrl = UsgsNshmp::baseUrl + "/gmm/spectra?gmm=";
+    gmpeBox->addItem("Boore, Stewart, Seyhan & Atkinson (2014)", gmmUrl + "BSSA_14");
+    gmpeBox->addItem("Boore, Stewart, Seyhan & Atkinson (2014) : Basin", gmmUrl + "BSSA_14_BASIN");
+    gmpeBox->addItem("Campbell & Bozorgnia (2014)", gmmUrl + "CB_14");
+    gmpeBox->addItem("Campbell & Bozorgnia (2014) : Basin", gmmUrl + "CB_14_BASIN");
+    gmpeBox->addItem("Chiou & Youngs (2014)", gmmUrl + "CY_14");
+    gmpeBox->addItem("Chiou & Youngs (2014) : Basin", gmmUrl + "CY_14_BASIN");
+    gmpeBox->addItem("Abrahamson, Silva & Kamai (2014)", gmmUrl + "ASK_14");
+    gmpeBox->addItem("Abrahamson, Silva & Kamai (2014) : Basin", gmmUrl + "ASK_14_BASIN");
+    gmpeBox->addItem("Idriss (2014)", gmmUrl + "IDRISS_14");
     gmpeBox->setCurrentIndex(0);
 
     layout->addWidget(new QLabel(tr("Conditional IM")), 6, 0);
@@ -125,54 +128,8 @@ NSHMPDeagg::NSHMPDeagg(GeneralInformationWidget* generalInfoWidget, QWidget* par
         generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
     });
 
-    connect(editionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
-        for (int i=0; i<11; i++) {
-            this->SetComboBoxItemEnabled(imtBox, i, true);
-        }
-        for (int i=0; i<7; i++) {
-            this->SetComboBoxItemEnabled(vs30Box, i, true);
-        }
-        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2008"))
-        {
-            this->SetComboBoxItemEnabled(imtBox, 9, false);
-            this->SetComboBoxItemEnabled(imtBox, 10, false);
-            availPeriod = {0.001, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 2.0, 3.0};
-            TxValidator->setRange(0.001, 3.0, 3);
-            TxBox->setValidator(TxValidator);
-        }
-        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2014/COUS"))
-        {
-            this->SetComboBoxItemEnabled(imtBox, 5, false);
-            this->SetComboBoxItemEnabled(imtBox, 8, false);
-            this->SetComboBoxItemEnabled(imtBox, 9, false);
-            this->SetComboBoxItemEnabled(imtBox, 10, false);
-            availPeriod = {0.001, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0};
-            TxValidator->setRange(0.001, 2.0, 3);
-            TxBox->setValidator(TxValidator);
-        }
-        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2007"))
-        {
-            this->SetComboBoxItemEnabled(imtBox, 5, false);
-            this->SetComboBoxItemEnabled(imtBox, 8, false);
-            this->SetComboBoxItemEnabled(imtBox, 9, false);
-            this->SetComboBoxItemEnabled(imtBox, 10, false);
-            this->SetComboBoxItemEnabled(vs30Box, 0, false);
-            this->SetComboBoxItemEnabled(vs30Box, 1, false);
-            this->SetComboBoxItemEnabled(vs30Box, 2, false);
-            this->SetComboBoxItemEnabled(vs30Box, 3, false);
-            this->SetComboBoxItemEnabled(vs30Box, 5, false);
-            this->SetComboBoxItemEnabled(vs30Box, 6, false);
-            availPeriod = {0.001, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0};
-            TxValidator->setRange(0.001, 2.0, 3);
-            TxBox->setValidator(TxValidator);
-        }
-        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/nshmp-haz-ws/deagg/E2014B"))
-        {
-            availPeriod = {0.001, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 2.0, 3.0, 4.0, 5.0};
-            TxValidator->setRange(0.001, 5.0, 3);
-            TxBox->setValidator(TxValidator);
-        }
-    });
+    // (the per-edition enabling/disabling of periods & Vs30 is gone: every current USGS
+    //  model supports all the periods in imtBox, i.e. availPeriod = 0.001 (PGA) ... 5.0s)
 
     connect(imtBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
         if(imtBox->itemData(index).toString().startsWith("SATX"))
@@ -197,9 +154,10 @@ QList<QPair<double, QList<double>>> NSHMPDeagg::getDeagg(QJsonObject& json) cons
     qDebug() << "Processing USGS sesimic disaggregation results...";
     QList<QPair<double, QList<double>>> deagginfo_set;
     QList<QPair<double, QList<double>>> deagginfo;
-    auto deaggRes = json["response"].toArray();
-
-    qDebug() << deaggRes[0].toObject()["metadata"].toObject()["edition"].toObject()["value"].toString();
+    // { "response": { "metadata": {...}, "disaggs": [ { "imt": {"value": "SA1P0"},
+    //     "data": [ { "component": "Total", "summary": [ ... ] } ] } ] } }
+    // summary[0] = targets (data[2] = ground motion), summary[3] = mean (m, r, eps0)
+    auto deaggRes = json["response"].toObject()["disaggs"].toArray();
     // Add an additional check of the return period range accepted by USGS
     if (returnPeriodBox->text().isEmpty() || returnPeriodBox->text().toInt() < 2)
     {
@@ -213,10 +171,12 @@ QList<QPair<double, QList<double>>> NSHMPDeagg::getDeagg(QJsonObject& json) cons
     }
     for (auto curDeagg: deaggRes)
     {
-        auto imt = curDeagg.toObject()["metadata"].toObject()["imt"].toObject()["value"].toString();
-        double period = 0;
-        if (imt.startsWith("SA"))
-            period = imt.remove("SA").replace('P', '.').toDouble();
+        auto imt = curDeagg.toObject()["imt"].toObject()["value"].toString();
+        // PGA -> 0.01s (as NSHMPTarget does): getSpectrum() interpolates the GMM spectrum in
+        // log(T) at this period, which starts at 0.01s, so 0 would never be bracketed
+        double period = UsgsNshmp::imtPeriod(imt);
+        if (period <= 0)
+            period = 0.01;
         qDebug() << "Conditional period T = " + QString::number(period);
         // psa
         double psa = curDeagg.toObject()["data"].toArray()[0].toObject()["summary"].toArray()[0].toObject()["data"].toArray()[2].toObject()["value"].toDouble();
@@ -237,17 +197,11 @@ QList<QPair<double, QList<double>>> NSHMPDeagg::getDeagg(QJsonObject& json) cons
         return deagginfo;
     }
 
-    if (deagginfo_set.size()==1) {
-        deagginfo = deagginfo_set;
-    } else {
-        for (int i=0; i<availPeriod.size()-1; i++) {
-            if (availPeriod[i]<=TxBox->text().toDouble() && availPeriod[i+1]>=TxBox->text().toDouble()) {
-                deagginfo.append(deagginfo_set[i]);
-                deagginfo.append(deagginfo_set[i+1]);
-                break;
-            }
-        }
-    }
+    // deagginfo() asks only for the one period wanted, or the two periods bracketing Tx,
+    // so the set is already what we need; just make sure it is ordered by period
+    deagginfo = deagginfo_set;
+    std::sort(deagginfo.begin(), deagginfo.end(),
+              [](const QPair<double, QList<double>>& a, const QPair<double, QList<double>>& b) { return a.first < b.first; });
 
     return deagginfo;
 }
@@ -257,6 +211,8 @@ QList<QPair<double, double>> NSHMPDeagg::getSpectrum(QJsonObject& json, double T
     qDebug() << "Processing USGS deterministic GMPE results...";
     QList<QPair<double, double>> spectrum;
     QList<QPair<double, double>> cms; // conditional mean spectrum
+    // json is the "response" object: { "means":  { "data": [ { "id": "BSSA_14", "data": { "pga": .., "sa": {"xs": [..], "ys": [..]} } } ] },
+    //                                   "sigmas": { same layout } }
     auto meanSpectra = json["means"].toObject()["data"].toArray();
     auto sigmaSpectra = json["sigmas"].toObject()["data"].toArray();
 
@@ -269,11 +225,11 @@ QList<QPair<double, double>> NSHMPDeagg::getSpectrum(QJsonObject& json, double T
 
     // append mean data and compute rho
     QList<QPair<double, double>> spectrum_rho;
-    double eps;
+    double eps = 0.0;
     for (auto curMean: meanSpectra)
     {
-        auto xs = curMean.toObject()["data"].toObject()["xs"].toArray();
-        auto ys = curMean.toObject()["data"].toObject()["ys"].toArray();
+        auto xs = curMean.toObject()["data"].toObject()["sa"].toObject()["xs"].toArray();
+        auto ys = curMean.toObject()["data"].toObject()["sa"].toObject()["ys"].toArray();
 
         for (int i=0; i<xs.size(); i++) {
             spectrum.append({xs[i].toDouble(),ys[i].toDouble()});
@@ -293,8 +249,8 @@ QList<QPair<double, double>> NSHMPDeagg::getSpectrum(QJsonObject& json, double T
     QList<QPair<double, double>> spectrum_sigmas;
     for (auto curSigma: sigmaSpectra)
     {
-        auto xs = curSigma.toObject()["data"].toObject()["xs"].toArray();
-        auto ys = curSigma.toObject()["data"].toObject()["ys"].toArray();
+        auto xs = curSigma.toObject()["data"].toObject()["sa"].toObject()["xs"].toArray();
+        auto ys = curSigma.toObject()["data"].toObject()["sa"].toObject()["ys"].toArray();
 
         for (int i=0; i<xs.size(); i++) {
             spectrum_sigmas.append({xs[i].toDouble(),ys[i].toDouble()});
@@ -374,32 +330,19 @@ QList<QPair<double, double>> NSHMPDeagg::spectrum() const
 
         qDebug() << "USGS deterministic GMPE URL = " + url;
 
-        QNetworkRequest request(url);
+        QString errorMessage;
+        QJsonObject replyJson = UsgsNshmp::getJson(networkManager, QUrl(url), errorMessage);
+        QJsonObject response = replyJson["response"].toObject();
 
-        auto reply = networkManager.get(request);
-
-        QEventLoop loop;
-        connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        loop.exec();
-
-        QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
-
-        qDebug() << "USGS deterministic GMPE results returned.";
-
-        if(reply->error() != QNetworkReply::NoError)
+        if (!errorMessage.isEmpty() || !response.contains("means"))
         {
-            qDebug() << "QNectworkReply Error.";
-            return QList<QPair<double, double>>();
-        }
-        else if(!replyJson.keys().contains("means"))
-        {
-            qDebug() << "USGS deterministic GMPE results not valid.";
-            if (replyJson.keys().contains("status") && replyJson["status"].toString() == "busy")
-                const_cast<NSHMPDeagg*>(this)->emit statusUpdated("USGS Disaggregation Error: " + replyJson["message"].toString());
+            qDebug() << "USGS deterministic GMPE results not valid." << errorMessage;
+            const_cast<NSHMPDeagg*>(this)->emit statusUpdated("USGS GMM Spectra Error: " +
+                (errorMessage.isEmpty() ? QString("unexpected reply from gmm service") : errorMessage));
             return QList<QPair<double, double>>();
         }
 
-        spectrum_set.append(getSpectrum(replyJson, cur_deagg.first, cur_deagg.second[0]));
+        spectrum_set.append(getSpectrum(response, cur_deagg.first, cur_deagg.second[0]));
     }
 
     if (spectrum_set.size()==1) {
@@ -417,10 +360,8 @@ QList<QPair<double, QList<double>>> NSHMPDeagg::deagginfo() const
 {
     //GoogleAnalytics::Report("RecordSelection", "USGS_DEAGG");
 
-    QString url(editionBox->currentData().toString());
-
-    url.append("/" + longitudeBox->text());
-    url.append("/" + latitudeBox->text());
+    // {model}/dynamic/disagg/{longitude}/{latitude}/{vs30}/{returnPeriod}?imt=X[&imt=Y]
+    QStringList imts;
     if (imtBox->currentData().toString() == "SATX") {
         if (TxBox->text().isEmpty() || TxBox->text().toDouble() > availPeriod.last())
         {
@@ -430,53 +371,55 @@ QList<QPair<double, QList<double>>> NSHMPDeagg::deagginfo() const
         auto TxString = QString::number(TxBox->text().toDouble());
         for (int i=0; i<availPeriod.size()-1; i++) {
             if (availPeriod[i]<=TxBox->text().toDouble() && availPeriod[i+1]>=TxBox->text().toDouble()) {
+                // Tx is one of the available periods -> just that one,
+                // otherwise the two bracketing periods (results are interpolated)
                 if (availPeriod[i]==TxBox->text().toDouble()) {
-                    url.append("/" + imtBox->itemData(i).toString());
+                    imts << imtBox->itemData(i).toString();
                     break;
                 }
                 if (availPeriod[i+1]==TxBox->text().toDouble()) {
-                    url.append("/" + imtBox->itemData(i+1).toString());
+                    imts << imtBox->itemData(i+1).toString();
                     break;
                 }
-                url.append("/any");
+                imts << imtBox->itemData(i).toString() << imtBox->itemData(i+1).toString();
                 break;
             }
         }
+        if (imts.isEmpty()) {
+            const_cast<NSHMPDeagg*>(this)->emit statusUpdated("Please input a valid Tx (0.001~+"+ QString::number(availPeriod.last())+ ").");
+            return QList<QPair<double, QList<double>>>();
+        }
     } else {
-        url.append("/" + imtBox->currentData().toString());
+        imts << imtBox->currentData().toString();
     }
-    url.append("/" + vs30Box->currentData().toString());
+
     if (returnPeriodBox->text().isEmpty() || returnPeriodBox->text().toInt() < 2)
     {
         const_cast<NSHMPDeagg*>(this)->emit statusUpdated("Please input a valid return period (2~9999).");
         return QList<QPair<double, QList<double>>>();
     }
+
+    QString url(editionBox->currentData().toString());
+    url.append("/disagg");
+    url.append("/" + longitudeBox->text());
+    url.append("/" + latitudeBox->text());
+    url.append("/" + vs30Box->currentData().toString());
     url.append("/" + returnPeriodBox->text());
+    url.append("?imt=" + imts.join("&imt="));
 
     qDebug() << "USGS sesimic disaggregation URL = " + url;
+    const_cast<NSHMPDeagg*>(this)->emit statusUpdated("Running USGS seismic disaggregation (this can take 20s or more) ...");
 
-    QNetworkRequest request(url);
-
-    auto reply = networkManager.get(request);
-
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-
-    QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
+    QString errorMessage;
+    QJsonObject replyJson = UsgsNshmp::getJson(networkManager, QUrl(url), errorMessage);
 
     qDebug() << "USGS sesimic disaggregation results returned.";
 
-    if(reply->error() != QNetworkReply::NoError)
+    if (!errorMessage.isEmpty() || !replyJson["response"].toObject().contains("disaggs"))
     {
-        qDebug() << "QNectworkReply Error.";
-        return QList<QPair<double, QList<double>>>();
-    }
-    else if(!replyJson.keys().contains("response"))
-    {
-        qDebug() << "USGS sesimic disaggregation results not valid.";
-        if (replyJson.keys().contains("status") && replyJson["status"].toString() == "busy")
-            const_cast<NSHMPDeagg*>(this)->emit statusUpdated("USGS Disaggregation Error: " + replyJson["message"].toString());
+        qDebug() << "USGS sesimic disaggregation results not valid." << errorMessage;
+        const_cast<NSHMPDeagg*>(this)->emit statusUpdated("USGS Disaggregation Error: " +
+            (errorMessage.isEmpty() ? QString("unexpected reply from disaggregation service") : errorMessage));
         return QList<QPair<double, QList<double>>>();
     }
 

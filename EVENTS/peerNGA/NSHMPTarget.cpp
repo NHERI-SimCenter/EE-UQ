@@ -8,6 +8,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <GoogleAnalytics.h>
 #include <math.h>
+#include "UsgsNshmpService.h"
 
 NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -29,12 +30,12 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     layout->addWidget(new QLabel(tr("Edition")), 2, 0);
     editionBox = new QComboBox();
     layout->addWidget(editionBox, 2, 1);
-    editionBox->addItem("2014 v4.2.0 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2014B/COUS");
-    editionBox->addItem("2014 v4.1.4 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2014/COUS");
-    editionBox->addItem("2014 v4.0.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2014R1/COUS0P05");
-    editionBox->addItem("2008 v3.3.3 (Dynamic)", "https://earthquake.usgs.gov/nshmp-haz-ws/hazard/E2008/COUS");
-    editionBox->addItem("2008 v3.2.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2008R3/COUS0P05");
-    editionBox->addItem("2008 v3.1.0 (Static)", "https://earthquake.usgs.gov/hazws/staticcurve/1/E2008R2/COUS0P05");
+    // USGS retired the 2014/2008 nshmp-haz-ws and hazws services (Nov 2026); these are the
+    // models offered by the current https://earthquake.usgs.gov/ws/nshmp services
+    editionBox->addItem("Conterminous U.S. 2023", UsgsNshmp::baseUrl + "/conus-2023/dynamic");
+    editionBox->addItem("Conterminous U.S. 2018", UsgsNshmp::baseUrl + "/conus-2018/dynamic");
+    editionBox->addItem("Alaska 2023", UsgsNshmp::baseUrl + "/alaska-2023/dynamic");
+    editionBox->addItem("Hawaii 2021", UsgsNshmp::baseUrl + "/hawaii-2021/dynamic");
 
 
     layout->addWidget(new QLabel(tr("Vs30")), 3, 0);
@@ -88,22 +89,14 @@ NSHMPTarget::NSHMPTarget(GeneralInformationWidget* generalInfoWidget, QWidget* p
     connect(longitudeBox, &QLineEdit::editingFinished, this, [this, generalInfoWidget](){
         generalInfoWidget->setBuildingLocation(latitudeBox->text().toDouble(), longitudeBox->text().toDouble());
     });
-
-    connect(editionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
-        if(editionBox->itemData(index).toString().startsWith("https://earthquake.usgs.gov/hazws/staticcurve"))
-        {
-            vs30Box->setEnabled(false);
-            vs30Box->setCurrentIndex(4);
-        }
-        else
-            vs30Box->setEnabled(true);
-    });
 }
 
 QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
 {
     QList<QPair<double, double>> spectrum;
-    auto hazardCurves = json["response"].toArray();
+    // { "response": { "hazardCurves": [ { "imt": {"value": "SA1P0"},
+    //                                     "data": [ {"component": "Total", "values": {"xs": [...], "ys": [...]}}, ... ] } ] } }
+    auto hazardCurves = json["response"].toObject()["hazardCurves"].toArray();
 
     //double exceedanceProb = 1.0/returnPeriod->currentText().toDouble();
     // Add an additional check of the return period range accepted by USGS
@@ -115,22 +108,23 @@ QList<QPair<double, double>> NSHMPTarget::getUHS(QJsonObject& json) const
     double exceedanceProb = 1.0/returnPeriodBox->text().toDouble();
     for (auto hazardCurve: hazardCurves)
     {
-        auto imt = hazardCurve.toObject()["metadata"].toObject()["imt"].toObject()["value"].toString();
-        // double period = 0;
-        double period = 0.01; // KZ: default period at 0.01 second for PGA as 0 second in NGA West's log-log interpolation is non-sense...
-        if (imt.startsWith("SA"))
-            period = imt.remove("SA").replace('P', '.').toDouble();
+        auto imt = hazardCurve.toObject()["imt"].toObject()["value"].toString();
 
+        // skip PGA and PGV: the service now also returns SA0P01, which gives the 0.01s point
+        // (previously PGA was used as 0.01s, so it would now duplicate that period)
+        double period = UsgsNshmp::imtPeriod(imt);
+        if (period <= 0)
+            continue;
+
+        // total hazard curve (other components are per source type)
         QJsonArray x, y;
-        if(hazardCurve.toObject()["data"].toArray()[0].toObject().keys().contains("yvalues"))
-            y = hazardCurve.toObject()["data"].toArray()[0].toObject()["yvalues"].toArray();
-        else
-            y = hazardCurve.toObject()["data"].toArray()[0].toObject()["yvals"].toArray();
-
-        if(hazardCurve.toObject()["metadata"].toObject().keys().contains("xvalues"))
-            x = hazardCurve.toObject()["metadata"].toObject()["xvalues"].toArray();
-        else
-            x = hazardCurve.toObject()["metadata"].toObject()["xvals"].toArray();
+        for (auto component : hazardCurve.toObject()["data"].toArray()) {
+            if (component.toObject()["component"].toString() == "Total") {
+                x = component.toObject()["values"].toObject()["xs"].toArray();
+                y = component.toObject()["values"].toObject()["ys"].toArray();
+                break;
+            }
+        }
 
         for(int i = y.size()-1; i > 0; i--)
         {
@@ -181,31 +175,22 @@ QList<QPair<double, double>> NSHMPTarget::spectrum() const
 {
     GoogleAnalytics::Report("RecordSelection", "USGS_UHS");
 
+    // {model}/dynamic/hazard/{longitude}/{latitude}/{vs30}  (all IMTs returned)
     QString url(editionBox->currentData().toString());
-
+    url.append("/hazard");
     url.append("/" + longitudeBox->text());
     url.append("/" + latitudeBox->text());
-    url.append("/any");
     url.append("/" + vs30Box->currentData().toString());
 
-    QNetworkRequest request(url);
+    qDebug() << "USGS hazard URL = " + url;
 
-    auto reply = networkManager.get(request);
+    QString errorMessage;
+    QJsonObject replyJson = UsgsNshmp::getJson(networkManager, QUrl(url), errorMessage);
 
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-
-    QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
-
-    if(reply->error() != QNetworkReply::NoError)
+    if (!errorMessage.isEmpty() || !replyJson["response"].isObject())
     {
-        return QList<QPair<double, double>>();
-    }
-    else if(!replyJson.keys().contains("response"))
-    {
-        if (replyJson.keys().contains("status") && replyJson["status"].toString() == "busy")
-            const_cast<NSHMPTarget*>(this)->emit statusUpdated("USGS NSHMP Error: " + replyJson["message"].toString());
+        const_cast<NSHMPTarget*>(this)->emit statusUpdated("USGS NSHMP Error: " +
+            (errorMessage.isEmpty() ? QString("unexpected reply from hazard service") : errorMessage));
         return QList<QPair<double, double>>();
     }
 
