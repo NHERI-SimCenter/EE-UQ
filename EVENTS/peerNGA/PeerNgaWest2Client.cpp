@@ -19,7 +19,7 @@ static const QString peerHost("https://ngawest2.berkeley.edu");
 // uncomment the next line to see all PEER http requests/replies in the console
 //
 
-#define PEER_NGA_DEBUG
+// #define PEER_NGA_DEBUG
 
 [[maybe_unused]] static QString shortValue(const QByteArray& value)
 {
@@ -152,7 +152,7 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     this->faultType = peerFaultType;
     this->pulse = peerPulse;
 
-    uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/uploadFile"));
+    uploadFileRequest.setUrl(QUrl("https://ngawest2.berkeley.edu/spectras/file/upload"));
     QHttpMultiPart* multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     //Token part
@@ -163,7 +163,7 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
 
     //Spectrum File part
     QHttpPart filePart;
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"upload[datafile]\"; filename=\"UserSpectrum.csv\""));
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"upload\"; filename=\"UserSpectrum.csv\""));
     filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/vnd.ms-excel"));
 
     QString userSpectrum;
@@ -186,7 +186,7 @@ void PeerNgaWest2Client::selectRecords(QList<QPair<double, double>> spectrum, in
     recordsToDownload.clear();
     logRequest("POST (multipart)", networkManager, uploadFileRequest,
                "authenticity_token=" + authenticityToken.toUtf8() + "\n"
-               + "upload[datafile]=UserSpectrum.csv:\n" + userSpectrum.toUtf8() + "commit=Upload");
+               + "upload=UserSpectrum.csv:\n" + userSpectrum.toUtf8() + "commit=Upload");
     uploadFileReply = networkManager.post(uploadFileRequest, multiPart);
 }
 
@@ -320,6 +320,23 @@ void PeerNgaWest2Client::processUploadFileReply()
 {
   // qDebug() << "PROCESS UPLOAD FILE REPLY";
 
+    // the upload must succeed (2xx, or a 3xx back to the spectrum page); otherwise the spectrum
+    // post below goes in without a filename and PEER returns its form page (no redirect)
+    int uploadStatus = uploadFileReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QUrl uploadRedirect = uploadFileReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+    if (uploadStatus >= 300 && uploadStatus < 400 && uploadRedirect.path().endsWith("/members/sign_in")) {
+        invalidateSession();
+        emit statusUpdated("PEER NGA West 2 session has expired, please log in again");
+        emit sessionExpired();
+        return;
+    }
+    if (uploadFileReply->error() != QNetworkReply::NoError || uploadStatus >= 400) {
+        emit statusUpdated(QString("Failed to upload target spectrum to PEER NGA West 2 (HTTP %1: %2)")
+                           .arg(uploadStatus).arg(uploadFileReply->url().toString()));
+        emit selectionFinished();
+        return;
+    }
+
     QNetworkCookie cookie("SpectrumModel_Dropdown", "0");
     cookie.setDomain("ngawest2.berkeley.edu");
     networkManager.cookieJar()->insertCookie(cookie);
@@ -368,6 +385,19 @@ void PeerNgaWest2Client::processPostSpectrumReply()
             invalidateSession();
             emit statusUpdated("PEER NGA West 2 session has expired, please log in again");
             emit sessionExpired();
+            return;
+        }
+
+        // a successful spectrum post redirects to /spectras/N/edit; anything else (e.g. 200 with the
+        // form page re-rendered because a field was rejected) means the spectrum was not accepted
+        if(!(statusCode >= 300 && statusCode < 400) || !redirectUrl.isValid()) {
+            emit statusUpdated(QString("PEER NGA West 2 did not accept the target spectrum (HTTP %1, no redirect)").arg(statusCode));
+#ifdef PEER_NGA_DEBUG
+            QFile dump(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/PeerPostSpectraReply.html");
+            if (dump.open(QIODevice::WriteOnly)) { dump.write(data); dump.close(); }
+            qDebug() << "PEER postSpectra reply saved to" << dump.fileName();
+#endif
+            emit selectionFinished();
             return;
         }
 
