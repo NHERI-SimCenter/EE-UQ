@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <GoogleAnalytics.h>
+#include "UsgsNshmpService.h"
 
 USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, QWidget* parent):AbstractTargetWidget(parent), generalInfoWidget(generalInfoWidget)
 {
@@ -31,6 +32,7 @@ USGSTargetWidget::USGSTargetWidget(GeneralInformationWidget* generalInfoWidget, 
     designStandardBox = new QComboBox();
     layout->addWidget(designStandardBox, 2, 1);
     designStandardBox->addItem("ASCE 7-16", "asce7-16");
+    designStandardBox->addItem("ASCE 7-22", "asce7-22");
     designStandardBox->addItem("ASCE 7-10", "asce7-10");
     designStandardBox->addItem("ASCE 7-05", "asce7-05");
     designStandardBox->addItem("ASCE 41-17", "asce41-17");
@@ -141,7 +143,9 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
 {
     GoogleAnalytics::Report("RecordSelection", "USGS_DesignMaps");
     QList<QPair<double, double>> spectrum;
-    QUrl usgswsUrl("https://earthquake.usgs.gov/ws/designmaps/" + designStandardBox->currentData().toString() +".json");
+    // ws/designmaps/{std}.json now redirects (to http://, which Qt won't follow) to
+    // ws/building-codes/{std}/calculate - so call that directly
+    QUrl usgswsUrl("https://earthquake.usgs.gov/ws/building-codes/" + designStandardBox->currentData().toString() + "/calculate");
     QUrlQuery parameters;
     parameters.addQueryItem("latitude", latitudeBox->text());
     parameters.addQueryItem("longitude", longitudeBox->text());
@@ -151,39 +155,45 @@ QList<QPair<double, double>> USGSTargetWidget::spectrum() const
     parameters.addQueryItem("title", "EEUQ");
 
     usgswsUrl.setQuery(parameters);
-    QNetworkRequest request(usgswsUrl);
 
-    auto reply = networkManager.get(request);
+    qDebug() << "USGS design maps URL = " + usgswsUrl.toString();
 
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
+    QString errorMessage;
+    QJsonObject replyJson = UsgsNshmp::getJson(networkManager, usgswsUrl, errorMessage);
 
-    if(reply->error() != QNetworkReply::NoError)
+    if (!errorMessage.isEmpty())
     {
-        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: Failed to retrieve design spectrum with the inputs provided");
+        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: " + errorMessage);
         return spectrum;
     }
 
-    QJsonObject replyJson = QJsonDocument::fromJson(reply->readAll()).object();
-
     //auto designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodMCErSpectrum"].toArray();
 
-    QJsonArray designSpectrum;
+    QJsonValue designSpectrum;
     if(designStandardBox->currentData().toString().startsWith("asce41"))
     {
         for (auto hazardLevelObjective: replyJson["response"].toObject()["data"].toArray())
             if(hazardLevelObjective.toObject()["hazardLevel"].toString().compare(performanceObjectiveBox->currentText()) == 0)
-                designSpectrum = hazardLevelObjective.toObject()["horizontalSpectrum"].toArray();
+                designSpectrum = hazardLevelObjective.toObject()["horizontalSpectrum"];
     }
     else
-        designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodDesignSpectrum"].toArray();
+        designSpectrum = replyJson["response"].toObject()["data"].toObject()["twoPeriodDesignSpectrum"];
 
-    for (auto point: designSpectrum)
-        spectrum.append({point.toArray()[0].toDouble(), point.toArray()[1].toDouble()});
+    if (designSpectrum.isArray()) {
+        // older standards (asce7-10, asce7-05, ibc, nehrp-2015/2009, asce41): [[T, Sa], [T, Sa], ...]
+        for (auto point: designSpectrum.toArray())
+            spectrum.append({point.toArray()[0].toDouble(), point.toArray()[1].toDouble()});
+    } else if (designSpectrum.isObject()) {
+        // newer standards (asce7-16, asce7-22, nehrp-2020): {"periods": [...], "ordinates": [...]}
+        auto periods = designSpectrum.toObject()["periods"].toArray();
+        auto ordinates = designSpectrum.toObject()["ordinates"].toArray();
+        for (int i = 0; i < periods.size() && i < ordinates.size(); i++)
+            spectrum.append({periods[i].toDouble(), ordinates[i].toDouble()});
+    }
 
     if(spectrum.empty())
-        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: Failed to retrieve design spectrum with the inputs provided");
+        const_cast<USGSTargetWidget*>(this)->emit statusUpdated("USGS DesignMaps Error: no design spectrum returned for "
+            + designStandardBox->currentText() + " at this site/site class (the standard may require a site-specific analysis)");
 
 
     return spectrum;
