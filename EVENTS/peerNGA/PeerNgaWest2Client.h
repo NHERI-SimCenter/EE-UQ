@@ -39,6 +39,7 @@ signals:
     void sessionExpired();
     void recordsDownloaded(QString recordsPath);
     void statusUpdated(QString status);
+    void selectionFailed(QString message);  // terminal failure, user should be told
     void selectionStarted();
     void selectionFinished();
 

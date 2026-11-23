@@ -13,12 +13,11 @@
 #include <QPointer>
 #include <QVector>
 #include <QCheckBox>
-#include "RecordSelectionPlot.h"
+//#include "RecordSelectionPlot.h"
 #include <QProgressBar>
 #include <QStackedWidget>
 #include <GeneralInformationWidget.h>
 #include <QWebEngineView>
-
 
 class QComboBox;
 class QLabel;
@@ -26,6 +25,7 @@ class QGroupBox;
 class QTabWidget;
 class SpectrumFromRegionalSurrogate;
 class UserSpectrumWidget;
+class RecordSelectionPlot;
 
 struct PeerScaledRecord
 {
@@ -84,7 +84,7 @@ private:
     QLineEdit* nRecordsEditBox;
     QTableWidget* recordsTable;
     QComboBox* groundMotionsComponentsBox;
-    RecordSelectionPlot recordSelectionPlot;
+    RecordSelectionPlot *recordSelectionPlot;
     QProgressBar* progressBar;
     QComboBox* spectrumTypeComboBox;
     QStackedWidget* targetSpectrumDetails;
@@ -162,6 +162,7 @@ private:
     void clear(void);  
     void plotSpectra();
     void updateStatus(QString status);
+    void showSelectionError(const QString &message);
     void selectRecords();
     void addTableItem(int row, int Column, QString value);
 
@@ -172,6 +173,7 @@ private:
     QTabWidget *theTabWidget;
 
     bool loadFromExisting;
+    int searchSpectrumType = -1;  // spectrumTypeComboBox index the last search ran with, -1 unknown
 };
 
 #endif // PEER_NGA_RECORDS_H

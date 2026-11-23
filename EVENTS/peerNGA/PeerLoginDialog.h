@@ -9,6 +9,8 @@
 class QWebEngineView;
 class QWebEngineProfile;
 class QLabel;
+class QStackedLayout;
+class QTimer;
 
 //
 // Shows the PEER NGA West 2 sign-in page in an embedded browser. The site uses
@@ -31,10 +33,14 @@ private:
     void onLoadFinished(bool ok);
     void tryHandoff();
     void tryAutoLogin();
+    void showBrowser(const QString& message);   // built-in account: drop the cover, clear the form
 
     PeerNgaWest2Client* peerClient;
     QWebEngineView* view;
     QLabel* statusLabel;
+    QStackedLayout* stack;   // built-in account: browser kept under a cover so the account is not seen
+    QWidget* cover;
+    QTimer* fallbackTimer;
     QMap<QByteArray, QNetworkCookie> cookies;  // keyed by name+domain+path
     QString csrfToken;
     bool done;

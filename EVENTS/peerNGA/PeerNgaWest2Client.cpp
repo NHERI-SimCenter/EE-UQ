@@ -331,9 +331,9 @@ void PeerNgaWest2Client::processUploadFileReply()
         return;
     }
     if (uploadFileReply->error() != QNetworkReply::NoError || uploadStatus >= 400) {
-        emit statusUpdated(QString("Failed to upload target spectrum to PEER NGA West 2 (HTTP %1: %2)")
-                           .arg(uploadStatus).arg(uploadFileReply->url().toString()));
         emit selectionFinished();
+        emit selectionFailed(QString("Failed to upload target spectrum to PEER NGA West 2 (HTTP %1: %2)")
+                           .arg(uploadStatus).arg(uploadFileReply->url().toString()));
         return;
     }
 
@@ -391,13 +391,13 @@ void PeerNgaWest2Client::processPostSpectrumReply()
         // a successful spectrum post redirects to /spectras/N/edit; anything else (e.g. 200 with the
         // form page re-rendered because a field was rejected) means the spectrum was not accepted
         if(!(statusCode >= 300 && statusCode < 400) || !redirectUrl.isValid()) {
-            emit statusUpdated(QString("PEER NGA West 2 did not accept the target spectrum (HTTP %1, no redirect)").arg(statusCode));
 #ifdef PEER_NGA_DEBUG
             QFile dump(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/PeerPostSpectraReply.html");
             if (dump.open(QIODevice::WriteOnly)) { dump.write(data); dump.close(); }
             qDebug() << "PEER postSpectra reply saved to" << dump.fileName();
 #endif
             emit selectionFinished();
+            emit selectionFailed(QString("PEER NGA West 2 did not accept the target spectrum (HTTP %1, no redirect)").arg(statusCode));
             return;
         }
 
@@ -570,8 +570,8 @@ void PeerNgaWest2Client::processGetRecordsReply()
             dump.close();
         }
         qDebug().noquote() << "PEER getRecords: no download link found in reply, full reply saved to" << dumpPath;
-        emit statusUpdated("Failed to get ground motion download link from PEER NGA West 2 Database");
         emit selectionFinished();
+        emit selectionFailed("Failed to get ground motion download link from PEER NGA West 2 Database");
         return;
     }
 
@@ -604,7 +604,8 @@ void PeerNgaWest2Client::saveRecords(const QByteArray& zipData)
     {
         if(!QDir(tempLocation).mkpath("."))
         {
-            emit statusUpdated("Ground Motions Download Failed!");
+            emit selectionFailed(QString("Ground Motions Download Failed! Could not create temporary folder: %1").arg(tempLocation));
+            return;
         }
     }
     //TODO: we might need to use temporary files
@@ -615,7 +616,7 @@ void PeerNgaWest2Client::saveRecords(const QByteArray& zipData)
     QFile file(recordsPath);
     if(!file.open(QIODevice::WriteOnly))
     {
-        emit statusUpdated("Ground Motions Download Failed!");
+        emit selectionFailed(QString("Ground Motions Download Failed! Could not write file: %1").arg(recordsPath));
         return;
     }
 
@@ -645,9 +646,9 @@ void PeerNgaWest2Client::retry()
     }
     else
     {
-        emit statusUpdated("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
         retries = 0;
         emit selectionFinished();
+        emit selectionFailed("Failed to submit target spectrum to PEER NGA West 2 Database after 5 retries, Please try again shortly.");
     }
 }
 

@@ -8,6 +8,8 @@
 #include <QWebEngineCookieStore>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QStackedLayout>
+#include <QTimer>
 
 //
 // Optional built-in PEER account. PeerMasterLogin.h is NOT in git (see .gitignore and
@@ -47,7 +49,7 @@ QWebEngineProfile* PeerLoginDialog::peerProfile()
 }
 
 PeerLoginDialog::PeerLoginDialog(PeerNgaWest2Client* peerClient, QWidget *parent) : QDialog(parent),
-    peerClient(peerClient), done(false), autoLoginTried(false)
+    peerClient(peerClient), stack(nullptr), cover(nullptr), fallbackTimer(nullptr), done(false), autoLoginTried(false)
 {
     this->setWindowTitle("Log in to PEER NGA West 2 Ground Motion Database");
     this->resize(900, 750);
@@ -77,7 +79,36 @@ PeerLoginDialog::PeerLoginDialog(PeerNgaWest2Client* peerClient, QWidget *parent
 
     view = new QWebEngineView(this);
     view->setPage(new QWebEnginePage(profile, view));
+
+#ifdef PEER_HAVE_MASTER_LOGIN
+    // Built-in account: users should not see which account is used, so the browser runs
+    // underneath an opaque cover. StackAll keeps the view "visible" to Chromium (hidden pages
+    // get throttled and Cloudflare may treat them differently); the cover just sits on top.
+    statusLabel->setText("Signing in to PEER NGA West 2, please wait ...");
+    auto stackHolder = new QWidget(this);
+    stack = new QStackedLayout(stackHolder);
+    stack->setStackingMode(QStackedLayout::StackAll);
+    stack->setContentsMargins(0, 0, 0, 0);
+    cover = new QLabel("Signing in to PEER NGA West 2 ...");
+    static_cast<QLabel*>(cover)->setAlignment(Qt::AlignCenter);
+    cover->setAutoFillBackground(true);
+    stack->addWidget(view);
+    stack->addWidget(cover);
+    stack->setCurrentWidget(cover);   // current widget is raised to the top
+    layout->addWidget(stackHolder, 1);
+    this->resize(500, 220);
+
+    // Cloudflare may want a click, or the site may be slow: give up on hiding after 45s
+    fallbackTimer = new QTimer(this);
+    fallbackTimer->setSingleShot(true);
+    connect(fallbackTimer, &QTimer::timeout, this, [this]() {
+        showBrowser("Automatic login is taking too long. Please log in with your own PEER "
+                    "credentials (or sign up for a new account) using the page below.");
+    });
+    fallbackTimer->start(45000);
+#else
     layout->addWidget(view, 1);
+#endif
 
     connect(view, &QWebEngineView::loadFinished, this, &PeerLoginDialog::onLoadFinished);
 
@@ -128,13 +159,13 @@ void PeerLoginDialog::tryAutoLogin()
 #ifdef PEER_HAVE_MASTER_LOGIN
     if (autoLoginTried) {
         // we came back to sign_in after submitting => login was rejected
-        statusLabel->setText("Automatic login with the built-in PEER account failed. "
-                             "Please log in with your own PEER credentials below.");
+        showBrowser("Automatic login to PEER failed. "
+                    "Please log in with your own PEER credentials below.");
         return;
     }
+    if (cover == nullptr || cover->isHidden())
+        return;   // already fallen back to the visible browser: user logs in themselves
     autoLoginTried = true;
-    statusLabel->setText("Logging in to PEER automatically, please wait ... "
-                         "(if a Cloudflare check box appears, please tick it)");
 
     // pass credentials as a JSON array so quotes etc. are escaped safely for JS
     QJsonArray credentials{QString(PEER_MASTER_EMAIL), QString(PEER_MASTER_PASSWORD)};
@@ -152,7 +183,7 @@ void PeerLoginDialog::tryAutoLogin()
   var remember = f.querySelector('#member_remember_me');
   if (remember) remember.checked = true;
   var start = Date.now();
-  var timer = setInterval(function() {
+  var timer = window.__peerAutoLoginTimer = setInterval(function() {
     var t = f.querySelector('[name="cf-turnstile-response"]');
     var elapsed = Date.now() - start;
     if (t && t.value.length > 0 && elapsed > 5000) {
@@ -169,6 +200,31 @@ void PeerLoginDialog::tryAutoLogin()
 
     view->page()->runJavaScript(script);
 #endif
+}
+
+void PeerLoginDialog::showBrowser(const QString& message)
+{
+    if (cover == nullptr || cover->isHidden() || done)
+        return;
+    if (fallbackTimer)
+        fallbackTimer->stop();
+
+    // stop any pending auto-submit and blank the form BEFORE uncovering it, so the built-in
+    // account's email/password are never shown
+    view->page()->runJavaScript(R"JS(
+(function() {
+  if (window.__peerAutoLoginTimer) clearInterval(window.__peerAutoLoginTimer);
+  var e = document.getElementById('member_email');    if (e) e.value = '';
+  var p = document.getElementById('member_password'); if (p) p.value = '';
+})()
+)JS", [this, message](const QVariant&) {
+        if (done)
+            return;
+        cover->hide();
+        stack->setCurrentWidget(view);
+        statusLabel->setText(message);
+        this->resize(900, 750);
+    });
 }
 
 void PeerLoginDialog::tryHandoff()

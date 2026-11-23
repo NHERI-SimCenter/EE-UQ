@@ -35,12 +35,15 @@
 #include <QJsonArray>
 #include <QTabWidget>
 #include <Utils/FileOperations.h>
+#include "RecordSelectionPlot.h"
 
 
 PEER_NGA_Records::PEER_NGA_Records(GeneralInformationWidget* generalInfoWidget, QWidget *parent) : SimCenterAppWidget(parent)
 {
+  recordSelectionPlot = new RecordSelectionPlot(this);
   QString workDirPath = SCUtils::getAppWorkDir();  
   QString pathToFolder = workDirPath + QDir::separator() + "LocalWorkDir" + QDir::separator() + "peerNGA";
+
   
   // make sure tool dir exists in Documentss folder
   groundMotionsFolder = new QDir(pathToFolder);
@@ -331,6 +334,7 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
       if(tempRecordsDir.exists("_SearchResults.csv")) {
 	currentRecords.clear();
 	loadFromExisting = true;
+	searchSpectrumType = -1; // don't know what spectrum the earlier search used
 	this->processPeerRecords(tempRecordsPath);
       } else {
 	QString msg("PEER_NGA_Records no file: _SearchResults.csv exists in directory: "); msg += tempRecordsPath;
@@ -342,8 +346,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
     if (newLayout == false) {
 
       //add record selection plot
-      layout->addWidget(&recordSelectionPlot,0,2,1,1);    
-      recordSelectionPlot.setHidden(true);
+      layout->addWidget(recordSelectionPlot,0,2,1,1);    
+      recordSelectionPlot->setHidden(true);
       recordsTable->setHidden(true);      
 
       layout->addWidget(recordsTable, 1, 2, 2, 1);    
@@ -378,8 +382,8 @@ void PEER_NGA_Records::setupUI(GeneralInformationWidget* generalInfoWidget)
       QWidget *tab2 = new QWidget();
       tab2->setLayout(layout2);
 
-      layout2->addWidget(&recordSelectionPlot,0,0,1,1);    
-      recordSelectionPlot.setHidden(true);
+      layout2->addWidget(recordSelectionPlot,0,0,1,1);    
+      recordSelectionPlot->setHidden(true);
       recordsTable->setHidden(true);      
       layout2->addWidget(recordsTable, 1, 0, 2, 1);
 
@@ -466,7 +470,23 @@ void PEER_NGA_Records::setupConnections()
         durationMax->setEnabled(checked);
     });
 
+    // session expired mid-selection: log in again in the browser dialog, then re-post
+    connect(&peerClient, &PeerNgaWest2Client::sessionExpired, this, [this]()
+    {
+        PeerLoginDialog loginDialog(&peerClient, this);
+        loginDialog.setWindowModality(Qt::ApplicationModal);
+        if (loginDialog.exec() == QDialog::Accepted)
+            peerClient.resubmit();
+        else {
+            this->progressBar->setHidden(true);
+            this->selectRecordsButton->setEnabled(true);
+            this->selectRecordsButton->setDown(false);
+        }
+    }, Qt::QueuedConnection);
+
     connect(&peerClient, &PeerNgaWest2Client::statusUpdated, this, &PEER_NGA_Records::updateStatus);
+
+    connect(&peerClient, &PeerNgaWest2Client::selectionFailed, this, &PEER_NGA_Records::showSelectionError);
 
     connect(&peerClient, &PeerNgaWest2Client::selectionStarted, this, [this]()
     {
@@ -495,7 +515,7 @@ void PEER_NGA_Records::setupConnections()
                 selectedRows << i;
         }
 
-        recordSelectionPlot.highlightSpectra(selectedRows);
+        recordSelectionPlot->highlightSpectra(selectedRows);
     });
 
     connect(spectrumTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index){
@@ -553,8 +573,8 @@ void PEER_NGA_Records::processPeerRecords(QDir resultFolder)
            readMeFile.close();
         }
         if (line.contains("No records")) {
-            errorMessage(QString(QString("Failed to download PEER NGA records: ") + line));
-            errorMessage(QString("The limit can be 100 per day, 200 per week, 400 per month"));
+            showSelectionError(QString("Failed to download PEER NGA records: ") + line
+                               + QString("\nThe limit can be 100 per day, 200 per week, 400 per month"));
             return;
         } else {
             infoMessage(QString(QString("Message from PEER NGA: ") + line));
@@ -676,18 +696,23 @@ void PEER_NGA_Records::plotSpectra()
   if (coverageImage != 0)
     coverageImage->setHidden(true);
   
-    recordSelectionPlot.setHidden(true);
-    if (spectrumTypeComboBox->currentIndex()!=6) {
-        recordSelectionPlot.setHidden(false);
-        recordSelectionPlot.setSelectedSpectra(periods, scaledSelectedSpectra);
-        recordSelectionPlot.setMean(periods, meanSpectrum);
-        recordSelectionPlot.setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
-        recordSelectionPlot.setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
-        recordSelectionPlot.setTargetSpectrum(periods, targetSpectrum);
+    recordSelectionPlot->setHidden(true);
 
-        auto size = recordSelectionPlot.size();
+    // use the spectrum type the search was run with (not whatever the combo box shows now);
+    // "No Spectrum - Uniform IMs" (6) shows the coverage image instead. If the search
+    // type is unknown (reloaded previous selection), show the plot if there is data.
+    bool noSpectrumSearch = (searchSpectrumType == 6);
+    if (!noSpectrumSearch && !periods.isEmpty()) {
+        recordSelectionPlot->setHidden(false);
+        recordSelectionPlot->setSelectedSpectra(periods, scaledSelectedSpectra);
+        recordSelectionPlot->setMean(periods, meanSpectrum);
+        recordSelectionPlot->setMeanPlusSigma(periods, meanPlusSigmaSpectrum);
+        recordSelectionPlot->setMeanMinusSigma(periods, meanMinusSigmaSpectrum);
+        recordSelectionPlot->setTargetSpectrum(periods, targetSpectrum);
+
+        auto size = recordSelectionPlot->size();
         size.setWidth(size.height());
-        recordSelectionPlot.setMinimumSize(size);
+        recordSelectionPlot->setMinimumSize(size);
     } else {
       if (coverageImage != 0)
         coverageImage->setHidden(false);
@@ -695,6 +720,13 @@ void PEER_NGA_Records::plotSpectra()
 
 }
 
+
+void PEER_NGA_Records::showSelectionError(const QString &message)
+{
+    // log to the output pane as before, but also pop up a box so the user does not miss it
+    errorMessage(message);
+    QMessageBox::warning(this, tr("PEER NGA Record Selection Failed"), message);
+}
 
 void PEER_NGA_Records::updateStatus(QString status)
 {
@@ -717,7 +749,8 @@ void PEER_NGA_Records::selectRecords()
 {
 
     loadFromExisting = false;
-    
+    searchSpectrumType = spectrumTypeComboBox->currentIndex();
+
     // Set the search scaling parameters
     // 0 is not scaling
     // 1 is minimize MSE
@@ -1097,7 +1130,7 @@ bool PEER_NGA_Records::inputFromJSON(QJsonObject &jsonObject)
 {
 
   this->clear();
-  recordSelectionPlot.setHidden(true);
+  recordSelectionPlot->setHidden(true);
   recordsTable->setHidden(true);
   theTabWidget->setCurrentIndex(0);
   
