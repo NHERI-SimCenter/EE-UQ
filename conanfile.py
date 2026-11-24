@@ -1,49 +1,38 @@
+from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
+from conan.tools.files import copy
+import os
 
-from conans import ConanFile
-
-class EEUQ(ConanFile):
-    settings = "os", "compiler", "build_type", "arch"
-    version = "2.2.3"
-    license = "BSD"
+class EEUQConan(ConanFile):
+    name = "EE_UQ"
+    license = "BSD-3-Clause"
     author = "NHERI SimCenter"
-    url = "https://github.com/NHERI-SimCenter/PBE"
-    description = "NHERI SimCenter Earthquake Engineering with Uncertainty Quantification Research Tool"
-    settings = "os", "compiler", "build_type", "arch"
-    generators = "qmake"
-    requires = "jansson/2.13.1", \
-               "zlib/1.2.11"
+    url = "https://github.com/NHERI-SimCenter/EE-UQ"
+    description = "NHERI SimCenter EE-UQ Tool"
 
-    build_policy = "missing"
+    settings = "os", "compiler", "build_type", "arch"
 
     def requirements(self):
+        self.requires("zlib/1.3.1")
         if self.settings.os != "Linux":
-            self.requires("libcurl/7.72.0")
-    
-    def configure(self):
+            self.requires("libcurl/8.12.1")
+            
+    def layout(self):
+        # flat layout: generators & build output go directly in --output-folder
+        # (cmake_layout would nest them under build/Release/generators)
+        self.folders.build = "."
+        self.folders.generators = "."
+
+    def generate(self):
+        # Generate toolchain + find_package config files        
+        deps = CMakeDeps(self)
+        deps.generate()
+        tc = CMakeToolchain(self)
+        tc.generate()
+
+        # The following solves the "DLL not found" error during local development
         if self.settings.os == "Windows":
-            self.options["lapack"].visual_studio = True
-            self.options["lapack"].shared = True
-
-    def imports(self):
-        if self.settings.os == "Windows":
-            output = './%s' % self.settings.build_type
-            self.copy("lib*.dll", dst=output, src="bin")
-            self.copy("*", dst='{}/resources'.format(output), src="resources")
-
-        appsDestination = "./applications"
-        if self.settings.os == "Windows":
-            appsDestination = './%s/applications' % self.settings.build_type
-        elif self.settings.os == "Macos":
-            appsDestination = './EE_UQ.app/Contents/MacOS/applications'
-
-        self.copy("createEVENT/multiple*", dst=appsDestination, src="bin")
-        self.copy("createEVENT/siteRes*", dst=appsDestination, src="bin")
-        self.copy("createEVENT/stochasticGr*", dst=appsDestination, src="bin")
-
-        self.copy("createSAM/*", dst=appsDestination, src="bin")
-        self.copy("createEDP/*", dst=appsDestination, src="bin")
-        self.copy("performSIMULATION/*", dst=appsDestination, src="bin")
-        self.copy("performUQ/*", dst=appsDestination, src="bin")
-        self.copy("Workflow/*", dst=appsDestination, src="bin")
-        self.copy("*", dst="{}/opensees".format(appsDestination), src="opensees")
-        self.copy("*", dst="{}/dakota".format(appsDestination), src="dakota")
+            # Ninja (single-config) puts the exe directly in the build folder
+            bindir = self.build_folder
+            for dep in self.dependencies.values():
+                copy(self, "*.dll", dep.cpp_info.bindirs[0], bindir)

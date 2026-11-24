@@ -132,24 +132,13 @@ echo.
 echo Running conan install...
 echo.
 
-set "CONAN_FILE_SWAPPED=NO"
-if exist conanfile2.py (
-    move conanfile.py conanfile.old >nul
-    copy conanfile2.py conanfile.py >nul
-    set "CONAN_FILE_SWAPPED=YES"
-)
-
 conan install . --output-folder="%BUILD_DIR%" --build missing -s build_type=Release -pr "%CONAN_PROFILE%" -c tools.cmake.cmaketoolchain:generator=Ninja
 if errorlevel 1 (
-    if "%CONAN_FILE_SWAPPED%"=="YES" if exist conanfile.old move /y conanfile.old conanfile.py >nul
     echo.
     echo FAIL: Conan install failed.
     echo.
     exit /b 1
 )
-
-
-if "%CONAN_FILE_SWAPPED%"=="YES" if exist conanfile.old move /y conanfile.old conanfile.py >nul
 
 
 :: ---- CMake configure ----

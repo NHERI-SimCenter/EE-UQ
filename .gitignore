@@ -71,3 +71,4 @@ userID.sh
 CMakePresets.json
 # private PEER account for automatic login - never commit
 EVENTS/peerNGA/PeerMasterLogin.h
+CMakeUserPresets.json
