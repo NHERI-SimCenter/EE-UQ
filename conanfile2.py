@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from conan.tools.files import copy
 import os
 
@@ -18,7 +18,10 @@ class EEUQConan(ConanFile):
             self.requires("libcurl/8.12.1")
             
     def layout(self):
-        cmake_layout(self)
+        # flat layout: generators & build output go directly in --output-folder
+        # (cmake_layout would nest them under build/Release/generators)
+        self.folders.build = "."
+        self.folders.generators = "."
 
     def generate(self):
         # Generate toolchain + find_package config files        
@@ -29,7 +32,7 @@ class EEUQConan(ConanFile):
 
         # The following solves the "DLL not found" error during local development
         if self.settings.os == "Windows":
-            # For CMake, the binary usually ends up in build/Release or build/Debug
-            bindir = os.path.join(self.build_folder, str(self.settings.build_type))
+            # Ninja (single-config) puts the exe directly in the build folder
+            bindir = self.build_folder
             for dep in self.dependencies.values():
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], bindir)
